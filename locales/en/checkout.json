@@ -1,0 +1,101 @@
+{
+  "title": "Checkout",
+  "productsInOrder": "Products in your order",
+  "itemsOne": "1 item",
+  "itemsMany": "{count} items",
+  "removeItem": "Remove item",
+  "contactInformation": "Contact Information",
+  "shippingMethod": "Shipping Method",
+  "shippingAddress": "Shipping Address",
+  "paymentMethod": "Payment Method",
+  "orderSummary": "Order Summary",
+  "form": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "floor": "Floor",
+    "intercomCode": "Intercom code",
+    "city": "City",
+    "deliveryLocation": "Delivery location",
+    "selectLocation": "Select location"
+  },
+  "placeholders": {
+    "phone": "+374XXXXXXXX",
+    "address": "Street, building, etc.",
+    "floor": "e.g. 3",
+    "intercomCode": "e.g. 24#",
+    "city": "City"
+  },
+  "map": {
+    "openMap": "Map",
+    "title": "Pick address on the map",
+    "hint": "Click the map or drag the pin to choose the exact delivery point.",
+    "confirm": "Use this address",
+    "cancel": "Close",
+    "resolving": "Resolving address…"
+  },
+  "schedule": {
+    "title": "Delivery date & time",
+    "pickDate": "Pick a date",
+    "pickTime": "Pick a time",
+    "noSlots": "No delivery slots are available right now.",
+    "prevMonth": "Previous",
+    "nextMonth": "Next",
+    "selectSlot": "Please select a delivery date and time"
+  },
+  "cashChange": {
+    "title": "Need change from",
+    "hint": "Select the banknote you will pay with so the courier can bring change.",
+    "aria": "Cash change denomination",
+    "select": "Please select the banknote you will pay with"
+  },
+  "shipping": {
+    "storePickup": "Store Pickup",
+    "storePickupDescription": "Pick up your order from our store (Free)",
+    "delivery": "Delivery",
+    "deliveryDescription": "We will deliver your order to your address. Price is based on distance.",
+    "freePickup": "Free (Store Pickup)",
+    "enterCity": "Enter City",
+    "selectDeliveryLocation": "Select delivery location",
+    "enterDeliveryAddress": "Enter a delivery address to calculate shipping",
+    "calculatingDelivery": "Calculating delivery…"
+  },
+  "payment": {
+    "cashOnDelivery": "Cash on Delivery",
+    "cashOnDeliveryDescription": "Pay cash when you receive your order",
+    "idram": "Idram",
+    "idramDescription": "Pay with Idram wallet or card",
+    "arca": "ArCa",
+    "arcaDescription": "Pay with ArCa card"
+  },
+  "coupon": {
+    "title": "Have a coupon?",
+    "placeholder": "Enter your coupon code",
+    "apply": "Apply",
+    "applying": "Applying…"
+  },
+  "summary": {
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "total": "Total"
+  },
+  "buttons": {
+    "placeOrder": "Place Order",
+    "processing": "Processing...",
+    "continueShopping": "Continue Shopping"
+  },
+  "errors": {
+    "cartEmpty": "Cart is empty"
+  },
+  "success": {
+    "title": "Order confirmed",
+    "body": "Order {orderNumber} was placed successfully. Your cart has been cleared.",
+    "total": "Total: {amount}",
+    "continueShopping": "Continue shopping",
+    "viewOrders": "View orders"
+  }
+}

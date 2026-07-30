@@ -1,0 +1,101 @@
+{
+  "title": "Վճարում",
+  "productsInOrder": "Պատվերի ապրանքներ",
+  "itemsOne": "1 ապրանք",
+  "itemsMany": "{count} ապրանք",
+  "removeItem": "Հեռացնել ապրանքը",
+  "contactInformation": "Կոնտակտային տվյալներ",
+  "shippingMethod": "Առաքման եղանակ",
+  "shippingAddress": "Առաքման հասցե",
+  "paymentMethod": "Վճարման եղանակ",
+  "orderSummary": "Պատվերի ամփոփում",
+  "form": {
+    "firstName": "Անուն",
+    "lastName": "Ազգանուն",
+    "email": "Էլ․ փոստ",
+    "phone": "Հեռախոս",
+    "address": "Հասցե",
+    "floor": "Հարկ",
+    "intercomCode": "Դոմոֆոնի կոդ",
+    "city": "Քաղաք",
+    "deliveryLocation": "Առաքման վայր",
+    "selectLocation": "Ընտրեք վայրը"
+  },
+  "placeholders": {
+    "phone": "+374XXXXXXXX",
+    "address": "Փողոց, շենք և այլն",
+    "floor": "Օր․ 3",
+    "intercomCode": "Օր․ 24#",
+    "city": "Քաղաք"
+  },
+  "map": {
+    "openMap": "Քարտեզ",
+    "title": "Ընտրեք հասցեն քարտեզից",
+    "hint": "Սեղմեք քարտեզին կամ տեղափոխեք նշիչը՝ կոնկրետ կետ ընտրելու համար։",
+    "confirm": "Օգտագործել այս հասցեն",
+    "cancel": "Փակել",
+    "resolving": "Հասցեն որոշվում է…"
+  },
+  "schedule": {
+    "title": "Առաքման օր և ժամ",
+    "pickDate": "Ընտրեք օրը",
+    "pickTime": "Ընտրեք ժամը",
+    "noSlots": "Առայժմ հասանելի առաքման ժամեր չկան։",
+    "prevMonth": "Նախորդ",
+    "nextMonth": "Հաջորդ",
+    "selectSlot": "Ընտրեք առաքման օրը և ժամը"
+  },
+  "cashChange": {
+    "title": "Մանր տալ",
+    "hint": "Ընտրեք թղթադրամը, որով կվճարեք, որպեսզի առաքիչը մանր բերի։",
+    "aria": "Մանրի անվանում",
+    "select": "Ընտրեք թղթադրամը, որով կվճարեք"
+  },
+  "shipping": {
+    "storePickup": "Ինքնաառաքում",
+    "storePickupDescription": "Վերցրեք պատվերը խանութից (Անվճար)",
+    "delivery": "Առաքում",
+    "deliveryDescription": "Կառաքենք ձեր հասցեով։ Գինը հաշվվում է հեռավորությամբ։",
+    "freePickup": "Անվճար (Ինքնաառաքում)",
+    "enterCity": "Մուտքագրեք քաղաքը",
+    "selectDeliveryLocation": "Ընտրեք առաքման վայրը",
+    "enterDeliveryAddress": "Մուտքագրեք հասցեն՝ առաքման գինը հաշվելու համար",
+    "calculatingDelivery": "Առաքման գինը հաշվվում է…"
+  },
+  "payment": {
+    "cashOnDelivery": "Կանխիկ առաքման պահին",
+    "cashOnDeliveryDescription": "Վճարեք կանխիկ՝ պատվերը ստանալիս",
+    "idram": "Idram",
+    "idramDescription": "Վճարեք Idram դրամապանակով կամ քարտով",
+    "arca": "ArCa",
+    "arcaDescription": "Վճարեք ArCa քարտով"
+  },
+  "coupon": {
+    "title": "Ունե՞ք պրոմոկոդ",
+    "placeholder": "Մուտքագրեք պրոմոկոդը",
+    "apply": "Կիրառել",
+    "applying": "Կիրառվում է…"
+  },
+  "summary": {
+    "subtotal": "Ենթագումար",
+    "discount": "Զեղչ",
+    "shipping": "Առաքում",
+    "tax": "Հարկ",
+    "total": "Ընդամենը"
+  },
+  "buttons": {
+    "placeOrder": "Պատվիրել",
+    "processing": "Մշակվում է…",
+    "continueShopping": "Շարունակել գնումները"
+  },
+  "errors": {
+    "cartEmpty": "Զամբյուղը դատարկ է"
+  },
+  "success": {
+    "title": "Պատվերը հաստատված է",
+    "body": "Պատվեր {orderNumber}-ը հաջողությամբ տեղադրվել է։ Զամբյուղը մաքրվել է։",
+    "total": "Ընդամենը՝ {amount}",
+    "continueShopping": "Շարունակել գնումները",
+    "viewOrders": "Դիտել պատվերները"
+  }
+}
