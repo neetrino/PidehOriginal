@@ -23,6 +23,7 @@
     "profile": "Profile",
     "admin": "Admin",
     "createAccount": "Register",
+    "customOrder": "Custom order",
     "search": "Search",
     "searchClose": "Close search",
     "searchPlaceholder": "Search products…",

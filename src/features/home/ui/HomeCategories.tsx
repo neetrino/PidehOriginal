@@ -4,9 +4,12 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 
 import { PidehPillButton } from "@/components/brand/PidehPillButton";
+import { RevealOnView } from "@/components/motion/RevealOnView";
+import { fadeUp, pillPop, titleSweep } from "@/components/motion/presets";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
-import { HomeCategoryArc } from "@/features/home/ui/HomeCategoryArc";
+import { HomeCategoriesOrbit } from "@/features/home/ui/HomeCategoriesOrbit";
 import { HomeYellowWave } from "@/features/home/ui/HomeYellowWave";
+import { categoryFigmaBox } from "@/features/home/ui/category-orbit-slots";
 
 type CategoryItem = {
   id: string;
@@ -26,17 +29,7 @@ type HomeCategoriesProps = {
 };
 
 /** Figma Categories frame (1:373) — 1448 × 850. */
-const FRAME = { w: 1448, h: 850 } as const;
 const DEMO_PRODUCT_COUNT = 4;
-
-function figmaBox(x: number, y: number, width: number, height: number) {
-  return {
-    left: `${(x / FRAME.w) * 100}%`,
-    top: `${(y / FRAME.h) * 100}%`,
-    width: `${(width / FRAME.w) * 100}%`,
-    height: `${(height / FRAME.h) * 100}%`,
-  };
-}
 
 const PIDE_CROP = {
   height: "116.23%",
@@ -44,49 +37,6 @@ const PIDE_CROP = {
   left: "-46.39%",
   top: "-5.81%",
 } as const;
-
-type OrbitSlot = {
-  box: ReturnType<typeof figmaBox>;
-  innerClassName: string;
-  innerStyle: { width: string; height: string };
-};
-
-/**
- * Orbit AABBs from Figma Group 70675 (1:374). Inner sizes are the
- * pre-transform leaf boxes as % of each AABB — not inflated fill %.
- */
-const ORBIT_SLOTS: readonly OrbitSlot[] = [
-  {
-    // 1:377 — AABB 516.702×243.154, leaf 243.154×516.702, -scale-y-100 rotate-90
-    box: figmaBox(780, 334.45, 516.702, 243.154),
-    innerClassName: "-scale-y-100 rotate-90",
-    innerStyle: { width: "47.06%", height: "212.5%" },
-  },
-  {
-    // 1:378 — AABB 272.565×242.72, leaf 118.095×250.952, -scale-y-100 rotate-125.86
-    box: figmaBox(1096.52, 91.58, 272.565, 242.72),
-    innerClassName: "-scale-y-100 rotate-[125.86deg]",
-    innerStyle: { width: "43.33%", height: "103.39%" },
-  },
-  {
-    // 1:379 — visual AABB top is 53 (not unrotated 304)
-    box: figmaBox(1414.79, 53, 118.186, 251.145),
-    innerClassName: "-scale-y-100",
-    innerStyle: { width: "100%", height: "100%" },
-  },
-  {
-    // 1:380
-    box: figmaBox(1414.79, 598.42, 118.392, 251.583),
-    innerClassName: "",
-    innerStyle: { width: "100%", height: "100%" },
-  },
-  {
-    // 1:381 — AABB 263.173×258.582, leaf 118.095×250.952, rotate-[-133.6deg]
-    box: figmaBox(1097.4, 586.96, 263.173, 258.582),
-    innerClassName: "rotate-[-133.6deg]",
-    innerStyle: { width: "44.87%", height: "97.05%" },
-  },
-];
 
 export function HomeCategories({
   title,
@@ -145,13 +95,14 @@ export function HomeCategories({
   const active = displayCategories[index] ?? displayCategories[0] ?? null;
   const canCycle = displayCategories.length > 1;
 
-  const orbitImages = useMemo(() => {
-    return ORBIT_SLOTS.map((_, slotIndex) => {
-      const category =
-        displayCategories[(index + slotIndex) % displayCategories.length];
-      return category?.imageUrl ?? PIDEH_ASSETS.foodPide;
-    });
-  }, [displayCategories, index]);
+  const orbitItems = useMemo(
+    () =>
+      displayCategories.map((category) => ({
+        id: category.id,
+        imageUrl: category.imageUrl ?? PIDEH_ASSETS.foodPide,
+      })),
+    [displayCategories],
+  );
 
   function go(delta: number): void {
     if (!canCycle) {
@@ -165,7 +116,7 @@ export function HomeCategories({
 
   return (
     <section className="relative z-0 overflow-x-clip overflow-y-hidden bg-[#ff6b00] pt-24 md:pt-36">
-      <div className="absolute inset-x-0 top-0 z-0 w-full min-w-full">
+      <div className="absolute inset-x-0 top-0 z-0 w-full">
         <HomeYellowWave />
       </div>
 
@@ -173,89 +124,73 @@ export function HomeCategories({
         className="relative z-10 mx-auto w-full max-w-[1448px]"
         style={{ aspectRatio: "1448 / 850" }}
       >
-        <h2
+        <RevealOnView
           className="font-display absolute z-10 text-[#ff6b00]"
           style={{
-            ...figmaBox(10, 92, 708, 218),
+            ...categoryFigmaBox(10, 92, 708, 218),
             fontSize: "clamp(2.75rem, 9.67vw, 8.75rem)",
             lineHeight: 0.78,
             letterSpacing: 0,
           }}
+          variants={titleSweep}
         >
-          {title}
-        </h2>
+          <h2>{title}</h2>
+        </RevealOnView>
 
-        <div className="absolute z-20" style={figmaBox(10, 452, 213, 56)}>
+        <RevealOnView
+          className="absolute z-20"
+          style={categoryFigmaBox(10, 452, 213, 56)}
+          variants={pillPop}
+          delay={0.12}
+        >
           <PidehPillButton
             href={viewAllHref}
             label={viewAllLabel}
             tone="orange"
             className="h-full w-full px-6 py-4"
           />
-        </div>
+        </RevealOnView>
 
         {active ? (
           <>
-            <p
+            <RevealOnView
               className="font-display absolute z-20 whitespace-nowrap text-[#1e1e1e]"
               style={{
-                ...figmaBox(324, 438, 200, 68),
+                ...categoryFigmaBox(324, 438, 200, 68),
                 fontSize: "clamp(1.75rem, 3.73vw, 3.375rem)",
                 lineHeight: 1.25,
               }}
+              variants={fadeUp}
+              delay={0.16}
             >
-              {active.title}
-            </p>
+              <p>{active.title}</p>
+            </RevealOnView>
             {active.productCount != null ? (
-              <p
+              <RevealOnView
                 className="absolute z-20 whitespace-nowrap text-[clamp(0.875rem,1.24vw,1.125rem)] leading-[1.25] font-medium text-[#1e1e1e]/60"
-                style={figmaBox(524, 466, 120, 23)}
+                style={categoryFigmaBox(524, 466, 120, 23)}
+                variants={fadeUp}
+                delay={0.2}
               >
-                {typesLabel.replace("{count}", String(active.productCount))}
-              </p>
+                <p>
+                  {typesLabel.replace("{count}", String(active.productCount))}
+                </p>
+              </RevealOnView>
             ) : null}
           </>
         ) : null}
 
-        <HomeCategoryArc
-          className="z-0"
-          style={figmaBox(1034.27, 108.24, 691.104, 691.104)}
+        <HomeCategoriesOrbit
+          items={orbitItems}
+          index={index}
+          crop={PIDE_CROP}
+          arcStyle={categoryFigmaBox(1034.27, 108.24, 691.104, 691.104)}
         />
-
-        {orbitImages.map((src, slotIndex) => {
-          const slot = ORBIT_SLOTS[slotIndex];
-          if (!slot) {
-            return null;
-          }
-
-          return (
-            <div
-              key={`${src}-${slotIndex}`}
-              className="absolute z-10 flex items-center justify-center"
-              style={slot.box}
-            >
-              <div
-                className={`relative flex-none overflow-hidden ${slot.innerClassName}`}
-                style={slot.innerStyle}
-              >
-                <Image
-                  src={src}
-                  alt=""
-                  width={800}
-                  height={800}
-                  sizes="(max-width: 768px) 55vw, 520px"
-                  className="absolute max-w-none"
-                  style={PIDE_CROP}
-                />
-              </div>
-            </div>
-          );
-        })}
 
         {canCycle ? (
           <div
             className="absolute z-30 flex items-center gap-[6px]"
-            style={figmaBox(1352.57, 440, 108, 51)}
+            style={categoryFigmaBox(1352.57, 440, 108, 51)}
           >
             <button
               type="button"

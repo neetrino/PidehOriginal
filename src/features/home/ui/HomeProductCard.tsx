@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type MouseEvent } from "react";
 
@@ -44,6 +45,7 @@ export function HomeProductCard({
   orderLabel,
 }: HomeProductCardProps) {
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
   const [pending, startTransition] = useTransition();
   const [justAdded, setJustAdded] = useState(false);
 
@@ -67,8 +69,12 @@ export function HomeProductCard({
   }
 
   return (
-    <article className="flex w-full max-w-[325px] flex-col gap-[11px] rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
-      <div className="relative h-[180px] w-full overflow-visible rounded-[30px]">
+    <motion.article
+      className="flex w-full max-w-[325px] flex-col gap-[11px] rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]"
+      whileHover={reduceMotion ? undefined : { y: -6 }}
+      transition={{ type: "spring", stiffness: 280, damping: 22 }}
+    >
+      <div className="group relative h-[180px] w-full overflow-visible rounded-[30px]">
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}
@@ -81,7 +87,11 @@ export function HomeProductCard({
               fill
               sizes="325px"
               priority={priority}
-              className="object-contain object-center"
+              className={
+                reduceMotion
+                  ? "object-contain object-center"
+                  : "object-contain object-center transition-transform duration-500 group-hover:scale-105"
+              }
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gray-50 text-sm text-gray-400">
@@ -137,6 +147,6 @@ export function HomeProductCard({
         <span>{justAdded ? "✓" : orderLabel}</span>
         <ArrowRight className="size-5 shrink-0" aria-hidden="true" strokeWidth={2.5} />
       </button>
-    </article>
+    </motion.article>
   );
 }

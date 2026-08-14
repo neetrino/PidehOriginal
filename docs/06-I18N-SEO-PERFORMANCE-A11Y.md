@@ -207,6 +207,7 @@ Target՝ WCAG 2.2 AA where applicable։
 
 - Cart count/toast/status changes-ը չափավոր live region են, առանց duplicate announcements-ի։
 - Carousel-ը pause/control semantics ունի, auto-rotation-ը reduced motion/interaction policy է հարգում։
+- Home page entrance/scroll animation-ները (`motion`) անջատվում են `prefers-reduced-motion`-ի դեպքում։ Transform/opacity only — layout-shifting animation չկա։
 - Star rating-ը keyboard-operable radio-group semantics ունի։
 - Sortable/reorder UI-ն ունի non-pointer alternative։
 

@@ -1,8 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 import { PidehPillButton } from "@/components/brand/PidehPillButton";
+import { springSoft } from "@/components/motion/presets";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 import { HomeHeroMedia } from "@/features/home/ui/HomeHeroMedia";
 import { HomeHeroTitle } from "@/features/home/ui/HomeHeroTitle";
@@ -32,11 +39,18 @@ export function HomeHero({
   fallbackCtaHref,
 }: HomeHeroProps) {
   const [index, setIndex] = useState(0);
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const mediaY = useTransform(scrollYProgress, [0, 1], [0, 72]);
   const hasSlides = slides.length > 0;
   const active = hasSlides ? slides[index] : null;
 
   useEffect(() => {
-    if (slides.length <= 1) {
+    if (slides.length <= 1 || reduceMotion) {
       return;
     }
 
@@ -45,7 +59,7 @@ export function HomeHero({
     }, HERO_ROTATE_MS);
 
     return () => window.clearInterval(timer);
-  }, [slides.length]);
+  }, [slides.length, reduceMotion]);
 
   const title = active?.copy.title ?? fallbackTitle;
   const subtitle = active?.copy.subtitle ?? fallbackSubtitle;
@@ -61,29 +75,54 @@ export function HomeHero({
   const line2 = titleParts[1]?.trim() || fallbackTitleAccent;
 
   return (
-    <section className="relative min-h-[863px] overflow-hidden bg-[#ff6b00] pt-[100px] pb-28 md:pb-36">
-      {/* Figma Rectangle 8 (51:134) — subtle burn overlay across hero */}
-      <div
+    <section
+      ref={sectionRef}
+      className="relative min-h-[863px] overflow-hidden bg-[#ff6b00] pt-[100px] pb-28 md:pb-36"
+    >
+      <motion.div
         aria-hidden="true"
-        className="mix-blend-figma-linear-burn pointer-events-none absolute inset-x-0 top-0 z-[1] h-[863px] w-full bg-[#ff6b00] opacity-10"
+        className="mix-blend-figma-linear-burn pointer-events-none absolute inset-x-0 top-0 z-[1] h-[863px] w-full bg-[#ff6b00]"
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 0.1 }}
+        transition={{ duration: 0.9 }}
       />
 
       <div className="relative z-10 mx-auto flex max-w-[1440px] flex-col items-center px-4 text-center">
-        {/* Title + pide sandwich — Figma Component 1 over video 51:133 */}
-        <div className="relative w-full max-w-[872px] pt-2 md:min-h-[520px] md:pt-4">
+        <motion.div
+          className="relative w-full max-w-[872px] pt-2 md:min-h-[520px] md:pt-4"
+          style={reduceMotion ? undefined : { y: mediaY }}
+        >
+          <motion.div
+            className="relative"
+            initial={reduceMotion ? false : { scale: 0.92, rotate: -2 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={springSoft}
+          >
           <HomeHeroTitle line1={line1} line2={line2} />
           <HomeHeroMedia imageSrc={heroImage} />
-        </div>
+          </motion.div>
+        </motion.div>
 
         {subtitle ? (
-          <p className="relative z-30 mt-4 max-w-xl text-base leading-relaxed text-white/90 md:text-lg">
+          <motion.p
+            key={subtitle}
+            className="relative z-30 mt-4 max-w-xl text-base leading-relaxed text-white/90 md:text-lg"
+            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...springSoft, delay: 0.35 }}
+          >
             {subtitle}
-          </p>
+          </motion.p>
         ) : null}
 
-        <div className="pideh-hero-cta relative z-30 mt-10 md:mt-14">
+        <motion.div
+          className="pideh-hero-cta relative z-30 mt-10 md:mt-14"
+          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...springSoft, delay: 0.45 }}
+        >
           <PidehPillButton href={ctaHref} label={ctaLabel} tone="dark" />
-        </div>
+        </motion.div>
 
         {slides.length > 1 ? (
           <div className="relative z-30 mt-6 flex gap-2">

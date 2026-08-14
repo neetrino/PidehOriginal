@@ -1,6 +1,10 @@
+"use client";
+
 import Image from "next/image";
+import { motion, useReducedMotion } from "motion/react";
 
 import { PidehPillButton } from "@/components/brand/PidehPillButton";
+import { VIEWPORT_ONCE, specklePop } from "@/components/motion/presets";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 
 type HomeCtaCardProps = {
@@ -66,6 +70,7 @@ function CtaPide({
   innerWidthPct,
   innerHeightPct,
   rotate,
+  delay,
 }: {
   left: number;
   top: number;
@@ -74,12 +79,19 @@ function CtaPide({
   innerWidthPct: string;
   innerHeightPct: string;
   rotate: string;
+  delay: number;
 }) {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <div
+    <motion.div
       aria-hidden="true"
       className="pointer-events-none absolute flex items-center justify-center"
       style={figmaBox(left, top, width, height)}
+      initial={reduceMotion ? false : { opacity: 0, scale: 0.86, rotate: -8 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, scale: 1, rotate: 0 }}
+      viewport={VIEWPORT_ONCE}
+      transition={{ duration: 1.1, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       <div
         className="-scale-y-100 relative flex-none overflow-hidden"
@@ -94,7 +106,7 @@ function CtaPide({
           style={PIDE_CROP}
         />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -142,6 +154,7 @@ export function HomeCtaCard({
           innerWidthPct="42.59%"
           innerHeightPct="115.92%"
           rotate="63.89deg"
+          delay={0.08}
         />
         <CtaPide
           left={915}
@@ -151,6 +164,7 @@ export function HomeCtaCard({
           innerWidthPct="62.72%"
           innerHeightPct="91.29%"
           rotate="162.45deg"
+          delay={0.2}
         />
 
         <div
@@ -179,7 +193,7 @@ export function HomeCtaCard({
         </div>
 
         {CTA_DOTS.map((dot, index) => (
-          <div
+          <motion.div
             key={`${dot.src}-${index}`}
             aria-hidden="true"
             className="pointer-events-none absolute"
@@ -187,11 +201,16 @@ export function HomeCtaCard({
               ...figmaBox(dot.left, dot.top, dot.width, dot.height),
               rotate: dot.rotate,
             }}
+            initial="hidden"
+            whileInView="show"
+            viewport={VIEWPORT_ONCE}
+            variants={specklePop}
+            transition={{ delay: 0.18 + index * 0.05 }}
           >
             {/* Decorative SVG — next/image not used for this asset */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={dot.src} alt="" className="block size-full max-w-none" />
-          </div>
+          </motion.div>
         ))}
       </div>
     </>

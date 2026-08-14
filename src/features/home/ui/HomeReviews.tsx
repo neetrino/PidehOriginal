@@ -1,4 +1,7 @@
 import { PidehPillButton } from "@/components/brand/PidehPillButton";
+import { RevealOnView } from "@/components/motion/RevealOnView";
+import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
+import { pillPop, reviewCard, titleSweep } from "@/components/motion/presets";
 import { HomeYellowWave } from "@/features/home/ui/HomeYellowWave";
 
 type ReviewItem = {
@@ -81,7 +84,7 @@ export function HomeReviews({
 }: HomeReviewsProps) {
   return (
     <section
-      className="relative z-[15] overflow-x-clip bg-[#ff6b00] pb-20 md:pb-32"
+      className="relative z-[15] overflow-x-clip bg-[#ff6b00] pb-32 md:pb-44"
       style={{ clipPath: "inset(-81px 0 0 0)" }}
     >
       <div
@@ -96,71 +99,88 @@ export function HomeReviews({
       />
 
       <div className="relative z-10 px-4 py-12 md:hidden">
-        <h2
-          className="font-display mb-6 text-[#ff6b00]"
-          style={{
-            fontSize: "clamp(2.5rem, 12vw, 4.5rem)",
-            lineHeight: 0.78,
-          }}
+        <RevealOnView variants={titleSweep}>
+          <h2
+            className="font-display mb-6 text-[#ff6b00]"
+            style={{
+              fontSize: "clamp(2.5rem, 12vw, 4.5rem)",
+              lineHeight: 0.78,
+            }}
+          >
+            {title}
+          </h2>
+        </RevealOnView>
+        <RevealOnView variants={pillPop} delay={0.1}>
+          <PidehPillButton
+            href={viewAllHref}
+            label={viewAllLabel}
+            tone="orange"
+            className="mb-8"
+          />
+        </RevealOnView>
+        <StaggerGroup
+          className="-mx-4 flex gap-[30px] overflow-x-auto px-4 pb-4"
+          stagger={0.1}
         >
-          {title}
-        </h2>
-        <PidehPillButton
-          href={viewAllHref}
-          label={viewAllLabel}
-          tone="orange"
-          className="mb-8"
-        />
-        <div className="-mx-4 flex gap-[30px] overflow-x-auto px-4 pb-4">
           {reviews.map((review, index) => (
-            <ReviewCard
+            <StaggerItem
               key={`${review.name}-${index}`}
-              review={review}
-              className="h-[242px] w-[434px]"
-            />
+              variants={reviewCard}
+            >
+              <ReviewCard review={review} className="h-[242px] w-[434px]" />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </div>
 
       <div
         className="relative z-10 mx-auto hidden w-full max-w-[1440px] md:block"
         style={{ aspectRatio: `${FRAME.w} / ${FRAME.h}` }}
       >
-        <h2
+        <RevealOnView
           className="font-display absolute z-20 text-[#ff6b00]"
           style={{
-            ...figmaBox(-56, 79, 1076, 218),
+            ...figmaBox(40, 79, 1076, 218),
             fontSize: "clamp(3.5rem, 9.72vw, 140px)",
             lineHeight: 0.78,
           }}
+          variants={titleSweep}
         >
-          {title}
-        </h2>
+          <h2>{title}</h2>
+        </RevealOnView>
 
-        <div className="absolute z-20" style={figmaBox(1220, 243, 213, 56)}>
+        <RevealOnView
+          className="absolute z-20"
+          style={figmaBox(1220, 243, 213, 56)}
+          variants={pillPop}
+          delay={0.1}
+        >
           <PidehPillButton
             href={viewAllHref}
             label={viewAllLabel}
             tone="orange"
             className="h-full w-full"
           />
-        </div>
+        </RevealOnView>
 
-        <div
+        <StaggerGroup
           className="absolute z-20 flex items-center"
           style={{
             ...figmaBox(-193, 417, 1826, 242),
             gap: `${(30 / 1826) * 100}%`,
           }}
+          stagger={0.1}
         >
           {reviews.map((review, index) => (
-            <ReviewCard
+            <StaggerItem
               key={`${review.name}-${index}`}
-              review={review}
+              variants={reviewCard}
               className="h-full w-[23.77%]"
-            />
+            >
+              <ReviewCard review={review} className="h-full w-full" />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </div>
     </section>
   );

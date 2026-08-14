@@ -1,6 +1,9 @@
 import Image from "next/image";
 
 import { PidehPillButton } from "@/components/brand/PidehPillButton";
+import { RevealOnView } from "@/components/motion/RevealOnView";
+import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
+import { FEATURE_ENTRANCES, fadeUp, pillPop, titleSweep } from "@/components/motion/presets";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 
 type FeatureImageBox = {
@@ -55,19 +58,27 @@ export function HomeFeatures({
   return (
     <section className="relative z-10 overflow-x-clip overflow-y-hidden bg-[#ff6b00]">
       <div className="md:hidden px-4 py-12">
-        <h2 className="font-display mb-6 text-[clamp(2.5rem,12vw,4.5rem)] leading-[0.78] text-white">
-          <span className="block">{titleLine1}</span>
-          <span className="block">{titleLine2}</span>
-        </h2>
-        <PidehPillButton
-          href={viewAllHref}
-          label={viewAllLabel}
-          tone="yellow"
-          className="mb-8"
-        />
-        <div className="grid grid-cols-2 gap-6">
-          {items.map((item) => (
-            <div key={item.title} className="flex flex-col items-center text-center">
+        <RevealOnView variants={titleSweep}>
+          <h2 className="font-display mb-6 text-[clamp(2.5rem,12vw,4.5rem)] leading-[0.78] text-white">
+            <span className="block">{titleLine1}</span>
+            <span className="block">{titleLine2}</span>
+          </h2>
+        </RevealOnView>
+        <RevealOnView variants={pillPop} delay={0.1}>
+          <PidehPillButton
+            href={viewAllHref}
+            label={viewAllLabel}
+            tone="yellow"
+            className="mb-8"
+          />
+        </RevealOnView>
+        <StaggerGroup className="grid grid-cols-2 gap-6" stagger={0.1}>
+          {items.map((item, index) => (
+            <StaggerItem
+              key={item.title}
+              variants={FEATURE_ENTRANCES[index] ?? fadeUp}
+              className="flex flex-col items-center text-center"
+            >
               <p className="mb-2 text-[22px] leading-[0.85] font-black text-white">
                 {item.title}
               </p>
@@ -80,35 +91,43 @@ export function HomeFeatures({
                   className="object-contain"
                 />
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </div>
 
       <div
         className="relative mx-auto hidden w-full max-w-[1440px] md:block"
         style={{ aspectRatio: `${FRAME.w} / ${FRAME.h}` }}
       >
-        <h2
+        <RevealOnView
           className="font-display absolute z-30 text-white"
           style={{
             ...figmaBox(42, 42, 812, 218),
             fontSize: "clamp(3.5rem, 9.72vw, 140px)",
             lineHeight: 0.78,
           }}
+          variants={titleSweep}
         >
-          <span className="block">{titleLine1}</span>
-          <span className="block">{titleLine2}</span>
-        </h2>
+          <h2>
+            <span className="block">{titleLine1}</span>
+            <span className="block">{titleLine2}</span>
+          </h2>
+        </RevealOnView>
 
-        <div className="absolute z-30" style={figmaBox(1152, 211, 213, 56)}>
+        <RevealOnView
+          className="absolute z-30"
+          style={figmaBox(1152, 211, 213, 56)}
+          variants={pillPop}
+          delay={0.12}
+        >
           <PidehPillButton
             href={viewAllHref}
             label={viewAllLabel}
             tone="yellow"
             className="h-full w-full px-6 py-4"
           />
-        </div>
+        </RevealOnView>
 
         <div
           aria-hidden="true"
@@ -144,40 +163,46 @@ export function HomeFeatures({
           </div>
         </div>
 
-        {items.map((item) => (
-          <div key={item.title}>
-            <p
-              className="absolute z-20 text-[32px] leading-[0.85] font-black text-white"
-              style={figmaBox(
-                item.labelBox.left,
-                item.labelBox.top,
-                item.labelBox.width,
-                item.labelBox.height,
-              )}
+        <StaggerGroup className="absolute inset-0 z-20" stagger={0.12}>
+          {items.map((item, index) => (
+            <StaggerItem
+              key={item.title}
+              className="absolute inset-0"
+              variants={FEATURE_ENTRANCES[index] ?? fadeUp}
             >
-              {item.title}
-            </p>
-            <div
-              className="absolute z-20 overflow-hidden"
-              style={figmaBox(
-                item.imageBox.left,
-                item.imageBox.top,
-                item.imageBox.width,
-                item.imageBox.height,
-              )}
-            >
-              <Image
-                src={item.imageSrc}
-                alt=""
-                width={640}
-                height={640}
-                sizes="320px"
-                className="absolute max-w-none"
-                style={item.imageCrop}
-              />
-            </div>
-          </div>
-        ))}
+              <p
+                className="absolute z-20 text-[32px] leading-[0.85] font-black text-white"
+                style={figmaBox(
+                  item.labelBox.left,
+                  item.labelBox.top,
+                  item.labelBox.width,
+                  item.labelBox.height,
+                )}
+              >
+                {item.title}
+              </p>
+              <div
+                className="absolute z-20 overflow-hidden"
+                style={figmaBox(
+                  item.imageBox.left,
+                  item.imageBox.top,
+                  item.imageBox.width,
+                  item.imageBox.height,
+                )}
+              >
+                <Image
+                  src={item.imageSrc}
+                  alt=""
+                  width={640}
+                  height={640}
+                  sizes="320px"
+                  className="absolute max-w-none"
+                  style={item.imageCrop}
+                />
+              </div>
+            </StaggerItem>
+          ))}
+        </StaggerGroup>
       </div>
     </section>
   );
