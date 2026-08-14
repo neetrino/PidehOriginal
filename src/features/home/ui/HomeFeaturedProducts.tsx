@@ -42,17 +42,18 @@ export function HomeFeaturedProducts({
   products,
 }: HomeFeaturedProductsProps) {
   return (
-    <section className="relative -mt-[100px] overflow-x-clip bg-[#ff6b00] md:-mt-[160px]">
-      {/* Figma Rectangle 4 (1:82) — orange wave; yellow categories band shows in drip */}
-      <div className="absolute inset-x-0 top-0 z-0 w-[115%] max-w-none -translate-x-[6%]">
-        <HomeOrangeWave />
-      </div>
+    <section className="relative z-10 overflow-x-clip overflow-y-visible bg-[#ffcf48]">
+      {/* Wavy orange starts at this section — does not overlap categories */}
+      <HomeOrangeWave />
 
-      <div className="relative z-10 mx-auto max-w-[1440px] px-4 pt-36 pb-16 md:px-10 md:pt-48 md:pb-20 lg:px-14">
-        <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
+      <div className="relative z-10 mx-auto max-w-[1440px] px-4 pt-28 pb-16 md:px-[51px] md:pt-[280px] md:pb-20">
+        <div className="mb-10 flex flex-col gap-6 md:mb-[113px] md:flex-row md:items-end md:justify-between">
           <h2
-            className="font-display max-w-[14ch] text-white"
-            style={{ fontSize: "clamp(2.75rem, 7vw, 7rem)" }}
+            className="font-display max-w-[891px] text-white"
+            style={{
+              fontSize: "clamp(2.75rem, 9.72vw, 8.75rem)",
+              lineHeight: 0.78,
+            }}
           >
             {title}
           </h2>
@@ -60,14 +61,14 @@ export function HomeFeaturedProducts({
             href={viewAllHref}
             label={viewAllLabel}
             tone="yellow"
-            className="self-start md:self-auto"
+            className="self-start md:self-auto md:mb-2"
           />
         </div>
 
         {products.length === 0 ? (
           <p className="text-white/90">{emptyLabel}</p>
         ) : (
-          <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-wrap justify-center gap-[13px]">
             {products.slice(0, 4).map((product, index) => (
               <HomeProductCard
                 key={product.id}

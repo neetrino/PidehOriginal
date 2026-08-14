@@ -67,7 +67,7 @@ export function HomeProductCard({
   }
 
   return (
-    <article className="flex w-full max-w-[325px] flex-col rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
+    <article className="flex w-full max-w-[325px] flex-col gap-[11px] rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
       <div className="relative h-[180px] w-full overflow-visible rounded-[30px]">
         <AppLink
           href={href}
@@ -101,19 +101,19 @@ export function HomeProductCard({
         />
       </div>
 
-      <h3 className="mt-[11px] line-clamp-2 text-[20px] leading-[1.25] font-extrabold text-[#1e1e1e]">
+      <h3 className="line-clamp-2 text-[20px] leading-[1.25] font-extrabold text-[#1e1e1e]">
         <AppLink href={href} prefetchPolicy="auto" className="hover:underline">
           {title}
         </AppLink>
       </h3>
 
       {description ? (
-        <p className="mt-1 line-clamp-2 text-sm leading-[1.25] text-[#6b6b6b]">
+        <p className="line-clamp-2 max-w-[213px] text-sm leading-[1.25] text-[#6b6b6b]">
           {description}
         </p>
       ) : null}
 
-      <div className="mt-2 flex flex-wrap items-baseline gap-2">
+      <div className="flex flex-wrap items-baseline gap-2">
         <p className="text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]">
           {priceFormatted}
         </p>
@@ -132,7 +132,7 @@ export function HomeProductCard({
         type="button"
         onClick={handleOrder}
         disabled={!inStock || pending}
-        className="relative mt-3 inline-flex w-full items-center justify-center gap-1 overflow-hidden rounded-[42px] border border-[rgba(255,107,0,0.43)] bg-[#ff6b00] px-6 py-4 text-base leading-[1.25] font-bold text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
+        className="relative inline-flex w-full items-center justify-center gap-1 overflow-hidden rounded-[42px] border border-[rgba(255,107,0,0.43)] bg-[#ff6b00] px-6 py-4 text-base leading-[1.25] font-bold text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span>{justAdded ? "✓" : orderLabel}</span>
         <ArrowRight className="size-5 shrink-0" aria-hidden="true" strokeWidth={2.5} />

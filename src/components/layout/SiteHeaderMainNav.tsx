@@ -126,6 +126,7 @@ export function SiteHeaderMainNav({
               currency={currency}
               currencyLabel={dictionary.header.currency}
               languageLabel={dictionary.header.language}
+              compact
             />
             <HeaderSearch
               locale={locale}

@@ -3,11 +3,26 @@ import Image from "next/image";
 import { PidehPillButton } from "@/components/brand/PidehPillButton";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 
+type FeatureImageBox = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
+type FeatureImageCrop = {
+  width: string;
+  height: string;
+  left: string;
+  top: string;
+};
+
 type FeatureItem = {
   title: string;
   imageSrc: string;
-  imageClassName: string;
-  labelClassName: string;
+  imageBox: FeatureImageBox;
+  imageCrop: FeatureImageCrop;
+  labelBox: FeatureImageBox;
 };
 
 type HomeFeaturesProps = {
@@ -18,10 +33,18 @@ type HomeFeaturesProps = {
   items: readonly FeatureItem[];
 };
 
-/**
- * Figma "Why choose us" (1:408) — sits on the page orange base (#FF6B00)
- * between featured (Rect 4) and reviews (Rect 5).
- */
+/** Figma “Why choose us” (1:408) — 1440 × 996. */
+const FRAME = { w: 1440, h: 996 } as const;
+
+function figmaBox(x: number, y: number, width: number, height: number) {
+  return {
+    left: `${(x / FRAME.w) * 100}%`,
+    top: `${(y / FRAME.h) * 100}%`,
+    width: `${(width / FRAME.w) * 100}%`,
+    height: `${(height / FRAME.h) * 100}%`,
+  };
+}
+
 export function HomeFeatures({
   titleLine1,
   titleLine2,
@@ -30,59 +53,131 @@ export function HomeFeatures({
   items,
 }: HomeFeaturesProps) {
   return (
-    <section className="relative overflow-hidden bg-[#ff6b00]">
-      <div className="relative mx-auto max-w-[1440px] px-4 py-16 md:px-10 md:py-20 lg:px-14">
-        <div className="mb-8 flex flex-col gap-6 md:mb-4 md:flex-row md:items-start md:justify-between">
-          <h2 className="font-display max-w-[12ch] text-[clamp(2.75rem,7vw,8.75rem)] text-white">
-            <span className="block">{titleLine1}</span>
-            <span className="block">{titleLine2}</span>
-          </h2>
+    <section className="relative z-10 overflow-x-clip overflow-y-hidden bg-[#ff6b00]">
+      <div className="md:hidden px-4 py-12">
+        <h2 className="font-display mb-6 text-[clamp(2.5rem,12vw,4.5rem)] leading-[0.78] text-white">
+          <span className="block">{titleLine1}</span>
+          <span className="block">{titleLine2}</span>
+        </h2>
+        <PidehPillButton
+          href={viewAllHref}
+          label={viewAllLabel}
+          tone="yellow"
+          className="mb-8"
+        />
+        <div className="grid grid-cols-2 gap-6">
+          {items.map((item) => (
+            <div key={item.title} className="flex flex-col items-center text-center">
+              <p className="mb-2 text-[22px] leading-[0.85] font-black text-white">
+                {item.title}
+              </p>
+              <div className="relative h-36 w-full">
+                <Image
+                  src={item.imageSrc}
+                  alt=""
+                  fill
+                  sizes="45vw"
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div
+        className="relative mx-auto hidden w-full max-w-[1440px] md:block"
+        style={{ aspectRatio: `${FRAME.w} / ${FRAME.h}` }}
+      >
+        <h2
+          className="font-display absolute z-30 text-white"
+          style={{
+            ...figmaBox(42, 42, 812, 218),
+            fontSize: "clamp(3.5rem, 9.72vw, 140px)",
+            lineHeight: 0.78,
+          }}
+        >
+          <span className="block">{titleLine1}</span>
+          <span className="block">{titleLine2}</span>
+        </h2>
+
+        <div className="absolute z-30" style={figmaBox(1152, 211, 213, 56)}>
           <PidehPillButton
             href={viewAllHref}
             label={viewAllLabel}
             tone="yellow"
-            className="self-start border border-[#1e1e1e]/20 md:mt-8"
+            className="h-full w-full px-6 py-4"
           />
         </div>
 
-        <div className="relative mt-8 min-h-[320px] md:mt-4 md:min-h-[420px]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute z-0 flex items-center justify-center overflow-visible"
+          style={figmaBox(-223, 301, 1885.222, 653.204)}
+        >
           <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-[-10%] top-[35%] hidden h-[200px] md:block"
+            className="-scale-y-100 relative flex-none rotate-[6.05deg]"
+            style={{
+              width: "min(1846.904px, 128.26vw)",
+              height: "min(461.004px, 32.014vw)",
+            }}
           >
-            <Image
-              src={PIDEH_ASSETS.featureWave}
-              alt=""
-              fill
-              className="object-contain"
-              sizes="100vw"
-            />
-          </div>
-
-          <div className="relative grid grid-cols-2 gap-6 lg:grid-cols-4 lg:gap-4">
-            {items.map((item) => (
-              <div
-                key={item.title}
-                className="flex flex-col items-center text-center"
-              >
-                <p
-                  className={`font-display mb-2 text-[clamp(1.25rem,2.5vw,2.125rem)] text-[#1e1e1e] ${item.labelClassName}`}
-                >
-                  {item.title}
-                </p>
-                <div className={`relative ${item.imageClassName}`}>
-                  <Image
-                    src={item.imageSrc}
-                    alt=""
-                    fill
-                    sizes="(max-width: 1024px) 40vw, 280px"
-                    className="object-contain"
-                  />
-                </div>
-              </div>
-            ))}
+            <div
+              className="absolute"
+              style={{
+                top: "-8.79%",
+                right: "-2.19%",
+                bottom: "-8.78%",
+                left: "-2.19%",
+              }}
+            >
+              {/* Decorative SVG stroke — next/image not used for this asset */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={PIDEH_ASSETS.featureWave}
+                alt=""
+                width={1928}
+                height={542}
+                className="block size-full max-w-none"
+              />
+            </div>
           </div>
         </div>
+
+        {items.map((item) => (
+          <div key={item.title}>
+            <p
+              className="absolute z-20 text-[32px] leading-[0.85] font-black text-white"
+              style={figmaBox(
+                item.labelBox.left,
+                item.labelBox.top,
+                item.labelBox.width,
+                item.labelBox.height,
+              )}
+            >
+              {item.title}
+            </p>
+            <div
+              className="absolute z-20 overflow-hidden"
+              style={figmaBox(
+                item.imageBox.left,
+                item.imageBox.top,
+                item.imageBox.width,
+                item.imageBox.height,
+              )}
+            >
+              <Image
+                src={item.imageSrc}
+                alt=""
+                width={640}
+                height={640}
+                sizes="320px"
+                className="absolute max-w-none"
+                style={item.imageCrop}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -92,25 +187,49 @@ export const HOME_FEATURE_VISUALS = [
   {
     key: "delivery" as const,
     imageSrc: PIDEH_ASSETS.featureDelivery,
-    imageClassName: "h-[180px] w-[220px] md:h-[220px] md:w-[280px]",
-    labelClassName: "order-1",
+    imageBox: { left: 39, top: 601, width: 318, height: 274 },
+    imageCrop: {
+      width: "115.09%",
+      height: "133.7%",
+      left: "-7.55%",
+      top: "-17.73%",
+    },
+    labelBox: { left: 103, top: 519, width: 190, height: 54 },
   },
   {
     key: "prep" as const,
     imageSrc: PIDEH_ASSETS.featurePrep,
-    imageClassName: "h-[200px] w-[180px] md:h-[260px] md:w-[220px]",
-    labelClassName: "order-2 md:order-none",
+    imageBox: { left: 449, top: 359, width: 271, height: 319 },
+    imageCrop: {
+      width: "184.48%",
+      height: "104.39%",
+      left: "-42.24%",
+      top: "0%",
+    },
+    labelBox: { left: 470, top: 671, width: 267, height: 54 },
   },
   {
     key: "quality" as const,
     imageSrc: PIDEH_ASSETS.featureQuality,
-    imageClassName: "h-[180px] w-[180px] md:h-[220px] md:w-[220px]",
-    labelClassName: "",
+    imageBox: { left: 783, top: 529, width: 254, height: 265 },
+    imageCrop: {
+      width: "201.57%",
+      height: "128.81%",
+      left: "-50%",
+      top: "-18.18%",
+    },
+    labelBox: { left: 807, top: 787, width: 213, height: 54 },
   },
   {
     key: "support" as const,
     imageSrc: PIDEH_ASSETS.featureSupport,
-    imageClassName: "h-[200px] w-[200px] md:h-[250px] md:w-[250px]",
-    labelClassName: "",
+    imageBox: { left: 1122, top: 452, width: 302, height: 298 },
+    imageCrop: {
+      width: "148.1%",
+      height: "100%",
+      left: "-22.47%",
+      top: "0%",
+    },
+    labelBox: { left: 1103, top: 412, width: 261, height: 54 },
   },
 ] as const;

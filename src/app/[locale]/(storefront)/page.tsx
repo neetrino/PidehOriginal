@@ -142,8 +142,9 @@ export default async function HomePage({ params }: HomePageProps) {
         items={HOME_FEATURE_VISUALS.map((visual) => ({
           title: featureTitles[visual.key],
           imageSrc: visual.imageSrc,
-          imageClassName: visual.imageClassName,
-          labelClassName: visual.labelClassName,
+          imageBox: visual.imageBox,
+          imageCrop: visual.imageCrop,
+          labelBox: visual.labelBox,
         }))}
       />
 

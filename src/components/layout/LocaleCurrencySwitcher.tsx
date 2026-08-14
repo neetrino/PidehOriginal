@@ -25,6 +25,8 @@ type LocaleCurrencySwitcherProps = {
   currency: Currency;
   currencyLabel: string;
   languageLabel: string;
+  /** Figma header 1:113 — locale code + chevron, currency stays in the menu. */
+  compact?: boolean;
 };
 
 function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
@@ -51,6 +53,7 @@ export function LocaleCurrencySwitcher({
   currency,
   currencyLabel,
   languageLabel,
+  compact = false,
 }: LocaleCurrencySwitcherProps) {
   const router = useRouter();
   const pathname = usePathname() ?? `/${locale}`;
@@ -163,24 +166,40 @@ export function LocaleCurrencySwitcher({
     >
       <button
         type="button"
-        className="flex h-9 w-[calc(2.75rem*3+0.5rem*2-0.75rem)] shrink-0 items-center rounded-full border border-gray-200 bg-white py-0 pr-3 pl-3 text-gray-700 transition-colors hover:bg-gray-50"
+        className={
+          compact
+            ? "flex h-5 items-center gap-px text-[16px] leading-4 font-bold text-[#101828]"
+            : "flex h-9 w-[calc(2.75rem*3+0.5rem*2-0.75rem)] shrink-0 items-center rounded-full border border-gray-200 bg-white py-0 pr-3 pl-3 text-gray-700 transition-colors hover:bg-gray-50"
+        }
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-controls={menuId}
         aria-label={`${currency} / ${localeShortLabels[locale]}`}
         onClick={() => (open ? closeMenu() : openMenu())}
       >
-        <span className="flex min-w-0 flex-1 items-center justify-center whitespace-nowrap text-[15px] font-bold leading-none tabular-nums">
-          <span>{currency}</span>
-          <span className="inline-block w-[2px]" aria-hidden />
-          <span>/</span>
-          <span className="inline-block w-[2px]" aria-hidden />
-          <span>{localeShortLabels[locale]}</span>
-        </span>
-        <ChevronDown
-          className={`h-4 w-4 shrink-0 text-gray-500 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
-          aria-hidden
-        />
+        {compact ? (
+          <>
+            <span>{localeShortLabels[locale]}</span>
+            <ChevronDown
+              className={`size-[14px] shrink-0 text-[#101828] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
+              aria-hidden
+            />
+          </>
+        ) : (
+          <>
+            <span className="flex min-w-0 flex-1 items-center justify-center whitespace-nowrap text-[15px] font-bold leading-none tabular-nums">
+              <span>{currency}</span>
+              <span className="inline-block w-[2px]" aria-hidden />
+              <span>/</span>
+              <span className="inline-block w-[2px]" aria-hidden />
+              <span>{localeShortLabels[locale]}</span>
+            </span>
+            <ChevronDown
+              className={`h-4 w-4 shrink-0 text-gray-500 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
+              aria-hidden
+            />
+          </>
+        )}
       </button>
 
       {rendered ? (

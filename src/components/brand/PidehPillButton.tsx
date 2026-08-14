@@ -1,6 +1,7 @@
-import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 
 type PidehPillTone = "dark" | "orange" | "yellow";
 
@@ -37,7 +38,17 @@ export function PidehPillButton({
     >
       <span>{label}</span>
       {showArrow ? (
-        <ArrowRight className="size-5 shrink-0" aria-hidden="true" strokeWidth={2.5} />
+        <Image
+          src={PIDEH_ASSETS.iconArrow}
+          alt=""
+          width={20}
+          height={20}
+          className={
+            tone === "yellow"
+              ? "size-5 shrink-0 brightness-0"
+              : "size-5 shrink-0"
+          }
+        />
       ) : null}
       <span
         aria-hidden="true"

@@ -1,28 +1,28 @@
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 
-type HomeOrangeWaveProps = {
-  className?: string;
-};
-
 /**
- * Figma Rectangle 4 (1:82) — orange drip-wave band for the featured products section.
- * Source: 1657.5 × 1406.7, fill #FF6B00.
+ * Figma Rectangle 4 (1:82) — keep native aspect so the wavy top is not flattened.
  */
-export function HomeOrangeWave({ className = "" }: HomeOrangeWaveProps) {
+export function HomeOrangeWave({ className = "" }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none relative w-full ${className}`}
-      style={{ aspectRatio: "1657.5 / 1406.7" }}
+      className={`pointer-events-none absolute z-0 ${className}`}
+      style={{
+        top: "-240px",
+        left: "-9.17%",
+        width: "115.11%",
+        aspectRatio: "1657.54 / 1406.69",
+      }}
     >
-      {/* Decorative SVG fill — next/image not used for this asset */}
+      {/* Decorative SVG — next/image not used for this asset */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={PIDEH_ASSETS.waveOrange}
         alt=""
-        className="absolute inset-0 block size-full max-w-none"
         width={1658}
         height={1407}
+        className="block size-full max-w-none"
       />
     </div>
   );
