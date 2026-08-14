@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 
-import { HeaderScrollFollow } from "@/components/layout/HeaderScrollFollow";
 import { SiteHeaderMainNav } from "@/components/layout/SiteHeaderMainNav";
 import { SiteHeaderTopBar } from "@/components/layout/SiteHeaderTopBar";
 import { getCartItemCount } from "@/features/cart/cart";
@@ -63,7 +62,10 @@ async function SiteHeaderMainNavAsync({
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
-    <HeaderScrollFollow className="site-header sticky top-0 z-[80] shrink-0">
+    <div
+      className="site-header sticky top-0 z-[80] shrink-0"
+      data-site-header
+    >
       <SiteHeaderTopBar
         locale={locale}
         currency={currency}
@@ -87,6 +89,6 @@ export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
           dictionary={dictionary}
         />
       </Suspense>
-    </HeaderScrollFollow>
+    </div>
   );
 }
