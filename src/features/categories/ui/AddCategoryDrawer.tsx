@@ -258,6 +258,8 @@ export function AddCategoryDrawer({
                 ) : null}
               </div>
               {imagePreview ? (
+                // Blob or remote preview URLs are not always next/image-safe.
+                // eslint-disable-next-line @next/next/no-img-element -- preview
                 <img
                   src={imagePreview}
                   alt=""

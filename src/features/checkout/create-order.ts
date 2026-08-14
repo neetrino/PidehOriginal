@@ -208,17 +208,11 @@ export async function createOrderAction(
           deliveryQuote?.countryCode?.trim().toUpperCase().slice(0, 2) || "AM",
         region: input.region,
         city:
-          input.shippingMethod === "pickup"
-            ? (input.city?.trim() || "Yerevan")
-            : (deliveryQuote?.city?.trim() ||
-              input.city?.trim() ||
-              "Yerevan"),
+          deliveryQuote?.city?.trim() || input.city?.trim() || "Yerevan",
         line1:
-          input.shippingMethod === "pickup"
-            ? (input.line1?.trim() || "Store pickup")
-            : (deliveryQuote?.destinationFormattedAddress ||
-              input.line1?.trim() ||
-              ""),
+          deliveryQuote?.destinationFormattedAddress ||
+          input.line1?.trim() ||
+          "",
         line2: input.line2,
         postalCode: input.postalCode,
         ...(input.shippingMethod === "delivery"
@@ -352,10 +346,7 @@ export async function createOrderAction(
 
       const stockAfterOrder = remainingStock;
 
-      const deliveryAmount =
-        input.shippingMethod === "pickup"
-          ? 0
-          : (deliveryQuote?.deliveryAmount ?? 0);
+      const deliveryAmount = deliveryQuote?.deliveryAmount ?? 0;
 
       let discountAmount = 0;
       let appliedPromotion: typeof promotions.$inferSelect | null = null;
@@ -433,23 +424,18 @@ export async function createOrderAction(
         promotionValueSnapshot: appliedPromotion?.discountValue ?? null,
         promotionDiscountAmount: appliedPromotion ? discountAmount : null,
         deliveryRuleId: null,
-        deliveryLabelSnapshot:
-          input.shippingMethod === "pickup"
-            ? "Store pickup"
-            : deliveryQuote
-              ? `Distance delivery (${deliveryQuote.distanceLabel})`
-              : "Delivery",
+        deliveryLabelSnapshot: deliveryQuote
+          ? `Distance delivery (${deliveryQuote.distanceLabel})`
+          : "Delivery",
         deliveryEstimateSnapshot:
-          input.shippingMethod === "pickup"
-            ? null
-            : [
-                deliveryQuote
-                  ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
-                  : null,
-                deliverySlotSnapshot,
-              ]
-                .filter(Boolean)
-                .join(" · ") || null,
+          [
+            deliveryQuote
+              ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
+              : null,
+            deliverySlotSnapshot,
+          ]
+            .filter(Boolean)
+            .join(" · ") || null,
         idempotencyScopeHash: scopeHash,
         idempotencyKeyHash: keyHash,
         requestFingerprint: fingerprint,

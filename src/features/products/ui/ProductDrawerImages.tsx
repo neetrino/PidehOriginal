@@ -107,6 +107,7 @@ export function ProductDrawerImages({
               key={image.key}
               className="relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element -- blob preview */}
               <img
                 src={image.previewUrl}
                 alt=""

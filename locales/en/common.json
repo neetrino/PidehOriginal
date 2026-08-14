@@ -1,8 +1,9 @@
 {
-  "brand": "White-Shop",
+  "brand": "Pideh",
   "nav": {
     "home": "Home",
     "products": "Products",
+    "menu": "Menu",
     "shop": "Shop",
     "blog": "Blog",
     "cart": "Cart",
@@ -21,7 +22,7 @@
     "logout": "Logout",
     "profile": "Profile",
     "admin": "Admin",
-    "createAccount": "Create account",
+    "createAccount": "Register",
     "search": "Search",
     "searchClose": "Close search",
     "searchPlaceholder": "Search products…",
@@ -31,13 +32,17 @@
   },
   "footer": {
     "shop": "Shop",
-    "description": "Professional e-commerce storefront for everyday shopping.",
+    "description": "Traditional form with modern fillings. More than 15 unique flavors.",
+    "navigation": "Navigation",
     "quickLinks": "Quick Links",
+    "support": "Support",
     "legal": "Legal",
     "privacyPolicy": "Privacy Policy",
-    "terms": "Terms",
-    "contactInfo": "Contact Information",
+    "terms": "Terms & Conditions",
+    "deliveryReturns": "Delivery & Returns",
+    "faq": "FAQ",
+    "contactInfo": "Contact",
     "followUs": "Follow us",
-    "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
+    "copyright": "Copyright © {year}. All Rights Reserved. Created by Neetrino IT Company"
   }
 }

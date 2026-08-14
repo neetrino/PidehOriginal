@@ -2,17 +2,17 @@ import { notFound } from "next/navigation";
 
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
 import { listActiveHeroSlides } from "@/features/hero/application/queries";
-import { HomeAboutTeaser } from "@/features/home/ui/HomeAboutTeaser";
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
+import { HomeCtaBanner } from "@/features/home/ui/HomeCtaBanner";
 import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
 import {
-  HOME_FEATURE_ICONS,
+  HOME_FEATURE_VISUALS,
   HomeFeatures,
 } from "@/features/home/ui/HomeFeatures";
 import { HomeHero } from "@/features/home/ui/HomeHero";
+import { HomeReviews } from "@/features/home/ui/HomeReviews";
 import {
   getFeaturedProducts,
-  getOfferProducts,
   type CatalogProduct,
 } from "@/features/products/queries";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
@@ -49,9 +49,9 @@ function toProductCards(
       id: product.id,
       href: `/${locale}/products/${product.translation.slug}`,
       title: product.translation.title,
+      description: product.translation.description ?? null,
       priceFormatted: price.formatted,
       compareAtFormatted: compareAt?.formatted ?? null,
-      discountPercent: product.discountPercent,
       imageUrl: product.imageUrl,
       inStock: product.stockOnHand > 0,
       inWishlist: wishlistIds.has(product.id),
@@ -68,23 +68,16 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const [heroSlides, categories, featuredProducts, offerProducts, currency, user] =
+  const [heroSlides, categories, featuredProducts, currency, user] =
     await Promise.all([
       listActiveHeroSlides(locale),
       listStorefrontCategories(locale),
       getFeaturedProducts(locale),
-      getOfferProducts(locale),
       getSelectedCurrency(),
       getCurrentUser(),
     ]);
 
-  const productIds = [
-    ...new Set([
-      ...featuredProducts.map((product) => product.id),
-      ...offerProducts.map((product) => product.id),
-    ]),
-  ];
-
+  const productIds = featuredProducts.map((product) => product.id);
   const [wishlistIds, formatPrice] = await Promise.all([
     getWishlistProductIds(productIds),
     createDisplayPriceFormatter(locale, currency),
@@ -96,26 +89,31 @@ export default async function HomePage({ params }: HomePageProps) {
     formatPrice,
     wishlistIds,
   );
-  const offerCards = toProductCards(
-    offerProducts,
-    locale,
-    formatPrice,
-    wishlistIds,
-  );
+
+  const featureTitles = {
+    delivery: dictionary.home.features.deliveryTitle,
+    prep: dictionary.home.features.prepTitle,
+    quality: dictionary.home.features.qualityTitle,
+    support: dictionary.home.features.supportTitle,
+  } as const;
 
   return (
-    <div className="-mx-4 -my-10 sm:-mx-6 lg:-mx-8">
+    <div className="pideh-home">
       <HomeHero
         slides={heroSlides}
-        fallbackTitle={dictionary.home.title}
+        fallbackTitle={dictionary.home.heroTitleLine1}
+        fallbackTitleAccent={dictionary.home.heroTitleLine2}
         fallbackSubtitle={dictionary.home.subtitle}
-        fallbackCtaLabel={dictionary.home.cta}
+        fallbackCtaLabel={dictionary.home.viewAllMenu}
         fallbackCtaHref={`/${locale}/products`}
       />
 
       <HomeCategories
         title={dictionary.home.categoriesTitle}
-        emptyLabel={dictionary.home.emptyCategories}
+        viewAllLabel={dictionary.home.viewAllMenu}
+        viewAllHref={`/${locale}/products`}
+        typesLabel={dictionary.home.categoryTypes}
+        demoCategoryTitle={dictionary.home.categoryDemoTitle}
         categories={categories.map((category) => ({
           id: category.id,
           title: category.title,
@@ -127,59 +125,41 @@ export default async function HomePage({ params }: HomePageProps) {
       <HomeFeaturedProducts
         locale={locale}
         title={dictionary.home.featuredTitle}
-        viewAllLabel={dictionary.home.viewAll}
+        viewAllLabel={dictionary.home.viewAllMenu}
         viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyFeatured}
         wishlistLabel={dictionary.nav.wishlist}
-        addToCartLabel={dictionary.product.addToCart}
+        orderLabel={dictionary.home.orderCta}
         isSignedIn={Boolean(user)}
         products={featuredCards}
       />
 
-      <HomeFeaturedProducts
-        locale={locale}
-        title={dictionary.home.offersTitle}
-        viewAllLabel={dictionary.home.viewAll}
-        viewAllHref={`/${locale}/products`}
-        emptyLabel={dictionary.home.emptyOffers}
-        wishlistLabel={dictionary.nav.wishlist}
-        addToCartLabel={dictionary.product.addToCart}
-        isSignedIn={Boolean(user)}
-        products={offerCards}
-      />
-
       <HomeFeatures
-        title={dictionary.home.whyUsTitle}
-        items={[
-          {
-            title: dictionary.home.features.deliveryTitle,
-            description: dictionary.home.features.deliveryDescription,
-            icon: HOME_FEATURE_ICONS.delivery,
-          },
-          {
-            title: dictionary.home.features.qualityTitle,
-            description: dictionary.home.features.qualityDescription,
-            icon: HOME_FEATURE_ICONS.quality,
-          },
-          {
-            title: dictionary.home.features.returnTitle,
-            description: dictionary.home.features.returnDescription,
-            icon: HOME_FEATURE_ICONS.return,
-          },
-          {
-            title: dictionary.home.features.supportTitle,
-            description: dictionary.home.features.supportDescription,
-            icon: HOME_FEATURE_ICONS.support,
-          },
-        ]}
+        titleLine1={dictionary.home.whyUsTitleLine1}
+        titleLine2={dictionary.home.whyUsTitleLine2}
+        viewAllLabel={dictionary.home.viewAllMenu}
+        viewAllHref={`/${locale}/products`}
+        items={HOME_FEATURE_VISUALS.map((visual) => ({
+          title: featureTitles[visual.key],
+          imageSrc: visual.imageSrc,
+          imageClassName: visual.imageClassName,
+          labelClassName: visual.labelClassName,
+        }))}
       />
 
-      <HomeAboutTeaser
-        eyebrow={dictionary.home.aboutEyebrow}
-        title={dictionary.home.aboutTitle}
-        description={dictionary.home.aboutDescription}
-        ctaLabel={dictionary.home.aboutCta}
-        ctaHref={`/${locale}/about`}
+      <HomeReviews
+        title={dictionary.home.reviewsTitle}
+        viewAllLabel={dictionary.home.viewAllMenu}
+        viewAllHref={`/${locale}/products`}
+        reviews={dictionary.home.reviews}
+      />
+
+      <HomeCtaBanner
+        titleLine1={dictionary.home.ctaTitleLine1}
+        titleLine2={dictionary.home.ctaTitleLine2}
+        description={dictionary.home.ctaDescription}
+        ctaLabel={dictionary.home.orderCta}
+        ctaHref={`/${locale}/products`}
       />
     </div>
   );

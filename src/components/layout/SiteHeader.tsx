@@ -31,10 +31,10 @@ async function SiteHeaderMainNavAsync({
 }: SiteHeaderProps) {
   const navItems = [
     { href: `/${locale}`, label: dictionary.nav.home },
-    { href: `/${locale}/products`, label: dictionary.nav.products },
-    { href: `/${locale}/blog`, label: dictionary.nav.blog },
+    { href: `/${locale}/products`, label: dictionary.nav.menu },
     { href: `/${locale}/about`, label: dictionary.nav.about },
     { href: `/${locale}/contact`, label: dictionary.nav.contact },
+    { href: `/${locale}/blog`, label: dictionary.nav.blog },
   ] as const;
 
   const [user, cartItemCount, wishlistCount] = await Promise.all([
@@ -73,8 +73,8 @@ export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
       />
       <Suspense
         fallback={
-          <header className="relative z-10 border-b border-gray-200/80 bg-gradient-to-b from-gray-50 to-white shadow-sm">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <header className="relative z-10 px-3 pt-3 md:px-6 md:pt-3.5 lg:px-10">
+            <div className="mx-auto flex h-16 max-w-[1311px] items-center justify-between rounded-[90px] bg-white px-6 shadow-[0_8px_30px_rgba(0,0,0,0.08)] md:h-20">
               <span className="text-lg font-semibold tracking-tight text-gray-900">
                 {dictionary.brand}
               </span>

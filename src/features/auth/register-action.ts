@@ -35,6 +35,7 @@ export async function registerAction(
 
   const { password, confirmPassword: _confirmPassword, ...registration } =
     parsed.data;
+  void _confirmPassword;
   const [user] = await getDb()
     .insert(users)
     .values({

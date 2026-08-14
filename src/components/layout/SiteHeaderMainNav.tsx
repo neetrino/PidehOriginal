@@ -1,11 +1,13 @@
+"use client";
+
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+
 import { AccountControls } from "@/components/layout/AccountControls";
 import { LocaleCurrencySwitcher } from "@/components/layout/LocaleCurrencySwitcher";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
-import {
-  SITE_HEADER_ACTIONS_RAIL,
-  SITE_HEADER_INNER,
-} from "@/components/layout/site-header-classes";
 import { AppLink } from "@/components/ui/AppLink";
+import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
 import { HeaderSearch } from "@/features/products/ui/HeaderSearch";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
@@ -29,10 +31,6 @@ type SiteHeaderMainNavProps = {
   wishlistCount: number;
 };
 
-function navLinkClassName(): string {
-  return "rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:text-gray-900";
-}
-
 function headerSearchLabels(
   header: Dictionary["header"],
 ): {
@@ -53,6 +51,16 @@ function headerSearchLabels(
   };
 }
 
+function isActiveHref(pathname: string, href: string): boolean {
+  if (pathname === href) {
+    return true;
+  }
+  if (href.endsWith("/products") && pathname.includes("/products")) {
+    return true;
+  }
+  return pathname.startsWith(`${href}/`);
+}
+
 export function SiteHeaderMainNav({
   locale,
   currency,
@@ -62,20 +70,110 @@ export function SiteHeaderMainNav({
   cartItemCount,
   wishlistCount,
 }: SiteHeaderMainNavProps) {
+  const pathname = usePathname();
   const searchLabels = headerSearchLabels(dictionary.header);
+  const primaryNav = navItems.filter(
+    (item) =>
+      !item.href.includes("/blog") && !item.href.endsWith("/cart"),
+  );
 
   return (
-    <header className="relative z-40 border-b border-gray-200/80 bg-gradient-to-b from-gray-50 to-white shadow-sm backdrop-blur-sm">
-      <div className={SITE_HEADER_INNER}>
-        <div className="flex flex-wrap items-center gap-2 py-4 sm:gap-4 md:py-3">
-          <div className="flex w-full items-center justify-between md:w-auto md:justify-start md:gap-0">
-            <AppLink
-              href={`/${locale}`}
-              prefetchPolicy="intent"
-              className="text-lg font-semibold tracking-tight text-gray-900"
-            >
-              {dictionary.brand}
-            </AppLink>
+    <header className="relative z-40 px-3 pt-3 md:px-6 md:pt-3.5 lg:px-10">
+      <div className="mx-auto flex h-16 max-w-[1311px] items-center justify-between gap-3 rounded-[90px] bg-white px-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:px-6 md:h-20 md:px-8">
+        <AppLink
+          href={`/${locale}`}
+          prefetchPolicy="intent"
+          className="relative h-12 w-[56px] shrink-0 md:h-16 md:w-[75px]"
+          aria-label={dictionary.brand}
+        >
+          <Image
+            src={PIDEH_ASSETS.logo}
+            alt={dictionary.brand}
+            fill
+            sizes="75px"
+            className="object-contain"
+            priority
+          />
+        </AppLink>
+
+        <nav
+          aria-label="Primary"
+          className="hidden flex-1 items-center justify-center gap-[26px] md:flex"
+        >
+          {primaryNav.map((item) => {
+            const active = isActiveHref(pathname, item.href);
+            return (
+              <AppLink
+                key={item.href}
+                href={item.href}
+                prefetchPolicy="intent"
+                className={
+                  active
+                    ? "inline-flex h-12 items-center rounded-[72px] bg-[#ff6b00] px-6 text-base font-bold text-white"
+                    : "text-base font-bold whitespace-nowrap text-[#364153] transition hover:text-[#ff6b00]"
+                }
+              >
+                {item.label}
+              </AppLink>
+            );
+          })}
+        </nav>
+
+        <div className="flex items-center gap-2 md:gap-3.5">
+          <div className="hidden items-center gap-2 md:flex">
+            <LocaleCurrencySwitcher
+              locale={locale}
+              currency={currency}
+              currencyLabel={dictionary.header.currency}
+              languageLabel={dictionary.header.language}
+            />
+            <HeaderSearch
+              locale={locale}
+              currency={currency}
+              labels={searchLabels}
+            />
+            <WishlistHeaderLink
+              locale={locale}
+              label={dictionary.nav.wishlist}
+              count={wishlistCount}
+            />
+            <CartDrawer
+              locale={locale}
+              currency={currency}
+              dictionary={dictionary}
+              itemCount={cartItemCount}
+            />
+          </div>
+
+          <div className="hidden items-center gap-[19px] md:flex">
+            {user ? (
+              <AccountControls
+                locale={locale}
+                loginLabel={dictionary.header.login}
+                logoutLabel={dictionary.header.logout}
+                profileLabel={dictionary.header.profile}
+                adminLabel={dictionary.header.admin}
+                user={user}
+              />
+            ) : (
+              <>
+                <AppLink
+                  href={`/${locale}/login`}
+                  prefetchPolicy="intent"
+                  className="text-base font-bold text-[#101828]"
+                >
+                  {dictionary.header.login}
+                </AppLink>
+                <AppLink
+                  href={`/${locale}/register`}
+                  prefetchPolicy="intent"
+                  className="inline-flex h-10 items-center justify-center rounded-[32px] bg-[#ff6900] px-5 text-base font-bold text-white transition hover:brightness-105"
+                >
+                  {dictionary.header.createAccount}
+                </AppLink>
+              </>
+            )}
+          </div>
 
           <div className="flex items-center gap-2 md:hidden">
             <HeaderSearch
@@ -93,52 +191,6 @@ export function SiteHeaderMainNav({
               locale={locale}
               dictionary={dictionary}
               navItems={navItems}
-            />
-          </div>
-          </div>
-
-          <nav
-            aria-label="Primary"
-            className="order-3 hidden w-full items-center justify-center gap-1 md:order-none md:flex md:flex-1"
-          >
-            {navItems.map((item) => (
-              <AppLink
-                key={item.href}
-                href={item.href}
-                prefetchPolicy="intent"
-                className={navLinkClassName()}
-              >
-                {item.label}
-              </AppLink>
-            ))}
-          </nav>
-
-          <div
-            className={`${SITE_HEADER_ACTIONS_RAIL} ml-auto hidden justify-center gap-2 md:flex`}
-          >
-            <HeaderSearch
-              locale={locale}
-              currency={currency}
-              labels={searchLabels}
-            />
-            <AccountControls
-              locale={locale}
-              loginLabel={dictionary.header.login}
-              logoutLabel={dictionary.header.logout}
-              profileLabel={dictionary.header.profile}
-              adminLabel={dictionary.header.admin}
-              user={user}
-            />
-            <WishlistHeaderLink
-              locale={locale}
-              label={dictionary.nav.wishlist}
-              count={wishlistCount}
-            />
-            <CartDrawer
-              locale={locale}
-              currency={currency}
-              dictionary={dictionary}
-              itemCount={cartItemCount}
             />
           </div>
         </div>

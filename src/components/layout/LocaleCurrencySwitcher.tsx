@@ -129,6 +129,8 @@ export function LocaleCurrencySwitcher({
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
+    // closeMenu is a stable event helper declared in the component body.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- see closeMenu
   }, [open]);
 
   function selectCurrency(next: Currency): void {

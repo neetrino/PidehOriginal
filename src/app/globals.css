@@ -8,6 +8,15 @@
   --accent: #111827;
   --accent-foreground: #f9fafb;
   --radius: 15px;
+  /* Pideh brand (Figma Pideh-Dev) */
+  --pideh-orange: #ff6b00;
+  --pideh-orange-hot: #ff6900;
+  --pideh-yellow: #ffd54a;
+  --pideh-yellow-bright: #ffd64d;
+  --pideh-ink: #1e1e1e;
+  --pideh-slate: #364153;
+  --pideh-muted: #6b6b6b;
+  --pideh-cream: #fff8e7;
 }
 
 @theme inline {
@@ -17,7 +26,17 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-pideh-orange: var(--pideh-orange);
+  --color-pideh-orange-hot: var(--pideh-orange-hot);
+  --color-pideh-yellow: var(--pideh-yellow);
+  --color-pideh-yellow-bright: var(--pideh-yellow-bright);
+  --color-pideh-ink: var(--pideh-ink);
+  --color-pideh-slate: var(--pideh-slate);
+  --color-pideh-muted: var(--pideh-muted);
+  --color-pideh-cream: var(--pideh-cream);
+  --font-sans: var(--font-montserrat), var(--font-noto-armenian), ui-sans-serif, sans-serif;
+  --font-display: var(--font-pricehigh), var(--font-noto-armenian), var(--font-montserrat),
+    ui-sans-serif, sans-serif;
   --font-mono: var(--font-geist-mono);
   --radius-sm: 15px;
   --radius-md: 15px;
@@ -31,7 +50,141 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, sans-serif;
+  font-family: var(--font-montserrat), var(--font-noto-armenian), ui-sans-serif,
+    sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-pricehigh), var(--font-noto-armenian),
+    var(--font-montserrat), ui-sans-serif, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.73;
+}
+
+/* Hero entrance + pide float (approximates Figma Kling video 51:133) */
+@keyframes pideh-hero-line1-in {
+  from {
+    opacity: 0;
+    transform: translateX(-12%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pideh-hero-line2-in {
+  from {
+    opacity: 0;
+    transform: translateX(12%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Asset is vertical; Figma hero shows horizontal boat — base -90deg (CCW). */
+@keyframes pideh-hero-media-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.92) rotate(-90deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(-90deg);
+  }
+}
+
+@keyframes pideh-hero-media-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-88.8deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-91.2deg);
+  }
+}
+
+@keyframes pideh-hero-cta-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pideh-hero-title-line1 {
+  animation: pideh-hero-line1-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.pideh-hero-title-line2 {
+  animation: pideh-hero-line2-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+.pideh-hero-media {
+  animation:
+    pideh-hero-media-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both,
+    pideh-hero-media-float 4.8s ease-in-out 1.1s infinite;
+}
+
+.pideh-hero-cta {
+  animation: pideh-hero-cta-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pideh-hero-title-line1,
+  .pideh-hero-title-line2,
+  .pideh-hero-cta {
+    animation: none;
+  }
+
+  .pideh-hero-media {
+    animation: none;
+    transform: rotate(-90deg);
+  }
+}
+
+/**
+ * Figma exports `mix-blend-mode: linear-burn` (Photoshop mode).
+ * Browsers do not support linear-burn; color-burn is the closest CSS equivalent.
+ * Prefer the utility below when a Figma linear-burn layer must be approximated.
+ */
+.mix-blend-figma-linear-burn {
+  mix-blend-mode: color-burn;
+}
+
+/* Full-bleed Pideh homepage shell (Figma 1:76) */
+.storefront-shell:has(.pideh-home) {
+  background: var(--pideh-orange);
+}
+
+.storefront-shell:has(.pideh-home) .storefront-main {
+  max-width: none;
+  padding: 0;
+  padding-bottom: 0;
+}
+
+.storefront-shell:has(.pideh-home) .site-header {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 80;
+  background: transparent;
+}
+
+.storefront-shell:has(.pideh-home) .site-header [data-site-header-topbar] {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .storefront-shell:has(.pideh-home) .storefront-main {
+    padding-bottom: 5.5rem;
+  }
 }
 
 @layer base {

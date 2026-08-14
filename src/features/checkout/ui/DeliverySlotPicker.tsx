@@ -49,7 +49,7 @@ function parseYmd(ymd: string): { year: number; monthIndex: number; day: number 
  * disagree for `hy` (SSR: "2026 թ․ հուլիս", client: "July 2026"), which
  * causes a hydration mismatch.
  */
-const MONTH_NAMES: Record<string, readonly string[]> = {
+const MONTH_NAMES = {
   en: [
     "January",
     "February",
@@ -92,11 +92,14 @@ const MONTH_NAMES: Record<string, readonly string[]> = {
     "ноябрь",
     "декабрь",
   ],
-};
+} as const;
 
 function monthLabel(year: number, monthIndex: number, locale: string): string {
-  const months = MONTH_NAMES[locale] ?? MONTH_NAMES.en;
-  const month = months[monthIndex] ?? months[0] ?? "";
+  const months =
+    locale === "hy" || locale === "ru" || locale === "en"
+      ? MONTH_NAMES[locale]
+      : MONTH_NAMES.en;
+  const month = months[monthIndex] ?? months[0];
   return `${month} ${year}`;
 }
 

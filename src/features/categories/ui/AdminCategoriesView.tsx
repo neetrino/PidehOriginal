@@ -280,6 +280,7 @@ export function AdminCategoriesView({
                       <td className={ADMIN_TABLE_TD}>
                         <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded border border-dashed border-gray-300 bg-gray-50">
                           {category.imageUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element -- admin thumb
                             <img
                               src={category.imageUrl}
                               alt=""
