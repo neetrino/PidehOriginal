@@ -32,26 +32,26 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   ];
 
   return (
-    <footer className="storefront-footer relative mt-auto hidden overflow-hidden bg-[#ff6b00] md:block">
-      {/* Figma Rectangle 7 (1:202) — 1442×472; top/side overflow kept, bottom clipped so it does not add page gap */}
-      <div className="relative w-full" style={{ aspectRatio: "1442 / 472" }}>
+    <div className="mt-auto hidden md:block">
+    <footer className="storefront-footer relative -mt-24 overflow-hidden bg-[#ff6b00] pt-24">
+      <div className="relative w-full">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute"
-          style={{ inset: "-8.05% -2.36% 0 -2.36%" }}
+          className="pointer-events-none absolute inset-0"
         >
-          {/* Decorative SVG — Next/Image fill would flatten the Figma overflow box */}
+          {/* Path is inset 34px in a 1510 viewBox — scale 1510/1442 so yellow meets the viewport edges */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={PIDEH_ASSETS.waveFooter}
             alt=""
             width={1510}
             height={540}
-            className="block size-full max-w-none"
+            className="absolute left-1/2 top-0 max-w-none -translate-x-1/2"
+            style={{ width: "104.72%", aspectRatio: "1510 / 540" }}
           />
         </div>
 
-        <div className="relative mx-auto flex h-full max-w-[1280px] flex-col justify-end px-8 pb-5 pt-[7.5%]">
+        <div className="relative z-[2] mx-auto flex max-w-[1280px] flex-col px-8 pb-16 pt-48">
           <div className="grid grid-cols-1 items-start gap-x-8 gap-y-8 md:grid-cols-2 lg:grid-cols-4">
             <div>
               <Image
@@ -215,7 +215,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             </div>
           </div>
 
-          <div className="mt-4 pt-2 text-center">
+          <div className="mt-16 pt-2 text-center">
             <p className="text-sm leading-4 tracking-[0.35px] text-[#1e1e1e]">
               {footer.copyright
                 .replace("{year}", String(year))
@@ -235,5 +235,6 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
         </div>
       </div>
     </footer>
+    </div>
   );
 }
