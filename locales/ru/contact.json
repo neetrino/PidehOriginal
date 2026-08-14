@@ -9,9 +9,10 @@
   "submit": "Отправить",
   "success": "Спасибо — сообщение отправлено.",
   "error": "Не удалось отправить сообщение.",
-  "storePhone": "+374 XX XXX XXX",
-  "storeEmail": "info@shop.am",
-  "storeAddress": "Ереван, Абовян 10",
+  "storePhone": "+374 95-044-888",
+  "storeEmail": "info@pideh.am",
+  "storeAddress": "ул. Зоравар Андраник 151/2",
+  "storeAddressSecondary": "ул. Езник Кохбаци 83",
   "social": {
     "instagram": "https://instagram.com",
     "facebook": "https://facebook.com",
@@ -23,7 +24,8 @@
   "writeDescription": "Заполните форму, и мы свяжемся с вами в течение 24 часов.",
   "emailLabel": "Email:",
   "hqTitle": "Главный офис:",
-  "hoursWeekdays": "Понедельник - Пятница: 9:00-20:00",
+  "hoursWeekdays": "Пн–Вс: 10:00 – 22:00",
+  "hoursDelivery": "Доставка: 11:00 – 21:00",
   "hoursSaturday": "Суббота: 11:00 - 15:00",
   "mapTitle": "Расположение магазина"
 }

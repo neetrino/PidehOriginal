@@ -41,7 +41,7 @@ function withValidOpenClose(
   const openTime = toHHmm(patch.openTime ?? hours.openTime);
   const closeTime = toHHmm(patch.closeTime ?? hours.closeTime);
   const openMinutes = timeToMinutes(openTime);
-  let closeMinutes = timeToMinutes(closeTime);
+  const closeMinutes = timeToMinutes(closeTime);
 
   if (closeMinutes > openMinutes) {
     return { openTime, closeTime };

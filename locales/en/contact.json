@@ -9,9 +9,10 @@
   "submit": "Send message",
   "success": "Thank you — your message was sent.",
   "error": "Unable to send your message.",
-  "storePhone": "+374 XX XXX XXX",
-  "storeEmail": "info@shop.am",
-  "storeAddress": "Yerevan, Abovyan 10",
+  "storePhone": "+374 95-044-888",
+  "storeEmail": "info@pideh.am",
+  "storeAddress": "Zoravar Andranik St. 151/2",
+  "storeAddressSecondary": "Yeznik Koghbatsi St. 83",
   "social": {
     "instagram": "https://instagram.com",
     "facebook": "https://facebook.com",
@@ -23,7 +24,8 @@
   "writeDescription": "Fill out our form and we will contact you within 24 hours.",
   "emailLabel": "Email:",
   "hqTitle": "Headquarters:",
-  "hoursWeekdays": "Monday - Friday: 9:00-20:00",
+  "hoursWeekdays": "Mon–Sun: 10:00 – 22:00",
+  "hoursDelivery": "Delivery: 11:00 – 21:00",
   "hoursSaturday": "Saturday: 11:00 - 15:00",
   "mapTitle": "Store location"
 }

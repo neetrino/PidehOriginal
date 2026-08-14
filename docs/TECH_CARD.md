@@ -33,6 +33,7 @@
 | Tables | TanStack Table | ✅ | Server-side sort/filter/page contracts |
 | Server state | RSC default; TanStack Query selective | ✅ | Admin live tables/interactive flows only |
 | Carousel | Embla Carousel | ✅ | Hero և related products |
+| Motion | `motion` (Framer Motion) | ✅ | Storefront home entrance/scroll; `prefers-reduced-motion` disables nonessential motion |
 | Icons | Lucide React | ✅ | Icon-only control-ները ունեն accessible name |
 | Internal navigation | Next.js `Link` | ✅ | Selective prefetch, no plain `<a>` internal routes-ի համար |
 | i18n | Locale segment + translation dictionaries | ✅ | `hy`, `en`, `ru`; admin content՝ locale selector + մեկ դաշտերի հավաքածու (`DEC-017`) |

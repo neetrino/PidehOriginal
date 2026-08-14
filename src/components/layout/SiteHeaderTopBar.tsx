@@ -26,7 +26,10 @@ export function SiteHeaderTopBar({
   dictionary,
 }: SiteHeaderTopBarProps) {
   return (
-    <div className="relative z-50 hidden border-b border-gray-200 bg-white md:block">
+    <div
+      data-site-header-topbar
+      className="relative z-50 hidden border-b border-gray-200 bg-white md:block"
+    >
       <div className={SITE_HEADER_INNER}>
         <div className="flex flex-col gap-3 py-3 text-sm text-gray-700 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">

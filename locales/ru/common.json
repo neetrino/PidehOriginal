@@ -1,8 +1,9 @@
 {
-  "brand": "White-Shop",
+  "brand": "Pideh",
   "nav": {
     "home": "Главная",
     "products": "Товары",
+    "menu": "Меню",
     "shop": "Магазин",
     "blog": "Блог",
     "cart": "Корзина",
@@ -21,7 +22,8 @@
     "logout": "Выход",
     "profile": "Профиль",
     "admin": "Админ",
-    "createAccount": "Создать аккаунт",
+    "createAccount": "Регистрация",
+    "customOrder": "Индивидуальный заказ",
     "search": "Поиск",
     "searchClose": "Закрыть поиск",
     "searchPlaceholder": "Искать товары…",
@@ -31,13 +33,17 @@
   },
   "footer": {
     "shop": "Магазин",
-    "description": "Профессиональный интернет-магазин для повседневных покупок.",
+    "description": "Традиционная форма с современными начинками. Более 15 уникальных вкусов.",
+    "navigation": "Навигация",
     "quickLinks": "Быстрые ссылки",
+    "support": "Поддержка",
     "legal": "Правовая информация",
     "privacyPolicy": "Политика конфиденциальности",
-    "terms": "Условия",
-    "contactInfo": "Контактная информация",
+    "terms": "Условия и положения",
+    "deliveryReturns": "Доставка и возврат",
+    "faq": "Частые вопросы",
+    "contactInfo": "Контакты",
     "followUs": "Мы в соцсетях",
-    "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
+    "copyright": "Copyright © {year}. All Rights Reserved. Created by Neetrino IT Company"
   }
 }

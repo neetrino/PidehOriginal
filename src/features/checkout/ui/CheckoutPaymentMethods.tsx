@@ -73,6 +73,7 @@ export function CheckoutPaymentMethods({
                       />
                     </svg>
                   ) : (
+                    // eslint-disable-next-line @next/next/no-img-element -- payment logos
                     <img
                       src={option.logoSrc ?? ""}
                       alt={option.name}

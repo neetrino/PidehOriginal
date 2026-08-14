@@ -32,6 +32,7 @@ export function formatMoneyAmount(
   currency: Currency,
   _locale: string,
 ): string {
+  void _locale;
   const meta = getCurrencyMeta(currency);
   const raw = typeof amount === "bigint" ? Number(amount) : amount;
 

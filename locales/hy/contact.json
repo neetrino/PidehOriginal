@@ -9,9 +9,10 @@
   "submit": "Ուղարկել",
   "success": "Շնորհակալություն — հաղորդագրությունն ուղարկված է։",
   "error": "Չհաջողվեց ուղարկել հաղորդագրությունը։",
-  "storePhone": "+374 XX XXX XXX",
-  "storeEmail": "info@shop.am",
-  "storeAddress": "Երևան, Աբովյան 10",
+  "storePhone": "+374 95-044-888",
+  "storeEmail": "info@pideh.am",
+  "storeAddress": "ул. Зоравар Андраник 151/2",
+  "storeAddressSecondary": "ул. Езник Кохбаци 83",
   "social": {
     "instagram": "https://instagram.com",
     "facebook": "https://facebook.com",
@@ -23,7 +24,8 @@
   "writeDescription": "Լրացրեք ձևը, և մենք կկապվենք ձեզ հետ 24 ժամվա ընթացքում։",
   "emailLabel": "Էլ. փոստ՝",
   "hqTitle": "Գլխամաս՝",
-  "hoursWeekdays": "Երկուշաբթի - Ուրբաթ՝ 9:00-20:00",
+  "hoursWeekdays": "Mon–Sun: 10:00 – 22:00",
+  "hoursDelivery": "Delivery: 11:00 – 21:00",
   "hoursSaturday": "Շաբաթ՝ 11:00 - 15:00",
   "mapTitle": "Խանութի գտնվելու վայրը"
 }

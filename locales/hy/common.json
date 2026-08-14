@@ -1,8 +1,9 @@
 {
-  "brand": "White-Shop",
+  "brand": "Pideh",
   "nav": {
     "home": "Գլխավոր",
     "products": "Ապրանքներ",
+    "menu": "Մենյու",
     "shop": "Խանութ",
     "blog": "Բլոգ",
     "cart": "Զամբյուղ",
@@ -21,7 +22,8 @@
     "logout": "Ելք",
     "profile": "Պրոֆիլ",
     "admin": "Ադմին",
-    "createAccount": "Գրանցվել",
+    "createAccount": "Գրանցում",
+    "customOrder": "Խմբային պատվեր",
     "search": "Որոնում",
     "searchClose": "Փակել որոնումը",
     "searchPlaceholder": "Որոնել ապրանքներ…",
@@ -31,13 +33,17 @@
   },
   "footer": {
     "shop": "Խանութ",
-    "description": "Պրոֆեսիոնալ առցանց խանութ ամենօրյա գնումների համար։",
+    "description": "Ավանդական ձև՝ ժամանակակից միջուկներով։ Ավելի քան 15 յուրահատուկ համ։",
+    "navigation": "Նավիգացիա",
     "quickLinks": "Արագ հղումներ",
+    "support": "Աջակցություն",
     "legal": "Իրավական",
     "privacyPolicy": "Գաղտնիության քաղաքականություն",
-    "terms": "Պայմաններ",
-    "contactInfo": "Կապի տվյալներ",
+    "terms": "Պայմաններ և դրույթներ",
+    "deliveryReturns": "Առաքում և Վերադարձ",
+    "faq": "Հաճախ տրվող հարցեր",
+    "contactInfo": "Կապ",
     "followUs": "Հետևեք մեզ",
-    "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
+    "copyright": "Copyright © {year}. All Rights Reserved. Created by Neetrino IT Company"
   }
 }
