@@ -1,5 +1,6 @@
 {
   "title": "Shopping Cart",
+  "ticketEyebrow": "Kitchen ticket",
   "itemsOne": "1 item",
   "itemsMany": "{count} items",
   "empty": "Your cart is empty.",
