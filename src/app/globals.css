@@ -163,13 +163,19 @@ body {
   background: var(--pideh-orange);
 }
 
-.storefront-shell:has(.pideh-home) .storefront-main {
+.storefront-shell:has(.pideh-about) {
+  background: var(--pideh-cream);
+}
+
+.storefront-shell:has(.pideh-home) .storefront-main,
+.storefront-shell:has(.pideh-about) .storefront-main {
   max-width: none;
   padding: 0;
   padding-bottom: 0;
 }
 
-.storefront-shell:has(.pideh-home) .site-header {
+.storefront-shell:has(.pideh-home) .site-header,
+.storefront-shell:has(.pideh-about) .site-header {
   position: fixed;
   inset-inline: 0;
   top: 0;
@@ -177,8 +183,20 @@ body {
   background: transparent;
 }
 
+.storefront-shell:has(.pideh-about) .storefront-main {
+  position: relative;
+  z-index: 20;
+}
+
+.storefront-shell:has(.pideh-about) .storefront-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: -6rem;
+}
+
 @media (max-width: 767px) {
-  .storefront-shell:has(.pideh-home) .storefront-main {
+  .storefront-shell:has(.pideh-home) .storefront-main,
+  .storefront-shell:has(.pideh-about) .storefront-main {
     padding-bottom: 5.5rem;
   }
 }

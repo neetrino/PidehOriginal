@@ -1,0 +1,18 @@
+@keyframes home-reviews-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.home-reviews-marquee-track {
+  animation: home-reviews-marquee 40s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-reviews-marquee-track {
+    animation: none;
+  }
+}
