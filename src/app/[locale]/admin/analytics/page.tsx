@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import { getAnalyticsSummary } from "@/features/analytics/application/queries";
 import {
   analyticsDateRangeSchema,
@@ -59,11 +59,11 @@ export default async function AdminAnalyticsPage({
 
   return (
     <section>
-      <div className="mb-6">
-        <p className={ADMIN_PAGE_SUBTITLE}>
-          {dictionary.admin.analytics.subtitle}
-        </p>
-      </div>
+      <AdminPageHeading
+        className="mb-6"
+        title={dictionary.admin.nav.analytics}
+        description={dictionary.admin.analytics.subtitle}
+      />
 
       <AnalyticsPeriodCard
         key={`${range.from}:${range.to}`}
@@ -78,7 +78,7 @@ export default async function AdminAnalyticsPage({
 
       <AnalyticsMetricCards
         orderCount={summary.orderCount}
-        revenueLabel={formatMoney(summary.revenueAmount)}
+        revenueAmount={summary.revenueAmount}
         userCount={summary.userCount}
         copy={dictionary.admin}
       />

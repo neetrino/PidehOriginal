@@ -9,6 +9,7 @@ import {
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
 import { AdminMenuDrawer } from "@/features/admin/ui/AdminMenuDrawer";
+import { AdminSidebarBackdrop } from "@/features/admin/ui/AdminSidebarBackdrop";
 import { AdminSidebarBrand } from "@/features/admin/ui/AdminSidebarBrand";
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
 import {
@@ -53,7 +54,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
         <div className="flex items-center justify-between gap-3">
           <Link
             href={`/${locale}`}
-            className="min-w-0 shrink text-sm font-semibold text-gray-900"
+            className="min-w-0 shrink text-sm font-extrabold tracking-wide text-[#1e1e1e] uppercase"
           >
             {shell.brandName}
           </Link>
@@ -61,6 +62,8 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
         </div>
       </div>
       <aside className={`${ADMIN_SIDEBAR_ASIDE} ${asideWidthClass}`}>
+        <AdminSidebarBackdrop />
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col">
         <AdminSidebarBrand locale={locale} shell={shell} />
         <nav
           className={`${ADMIN_SIDEBAR_NAV} ${collapsed ? "px-1" : "px-2"}`}
@@ -79,33 +82,35 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
             }
 
             const isActive = isAdminTabActive(tab.href, pathname, locale);
-            const rowClasses = `flex w-full items-center rounded-md text-sm font-medium transition-all ${
+            const rowClasses = `flex w-full items-center rounded-full text-sm font-bold transition-all ${
               collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
             } ${tab.isSubCategory && !collapsed ? "pl-12" : ""} ${
               isActive
-                ? "bg-gray-900 text-white"
-                : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                ? "bg-[#ff6b00] text-white shadow-[0_8px_24px_rgba(255,107,0,0.45)]"
+                : "text-white/80 hover:bg-white/12 hover:text-white"
             }`;
 
             if (tab.id === "products" && !collapsed) {
               return (
                 <div
                   key={tab.id}
-                  className={`flex w-full min-w-0 overflow-hidden rounded-md ${
-                    isActive ? "bg-gray-900 text-white" : "bg-transparent"
+                  className={`flex w-full min-w-0 overflow-hidden rounded-full ${
+                    isActive
+                      ? "bg-[#ff6b00] text-white shadow-[0_8px_24px_rgba(255,107,0,0.45)]"
+                      : "bg-transparent"
                   }`}
                 >
                   <Link
                     href={tab.href}
                     title={tab.label}
-                    className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left text-sm font-medium transition-all ${
+                    className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left text-sm font-bold transition-all ${
                       isActive
-                        ? "text-white hover:bg-gray-800"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        ? "text-white hover:bg-[#e85f00]"
+                        : "text-white/70 hover:bg-white/10 hover:text-white"
                     }`}
                   >
                     <span
-                      className={`shrink-0 ${isActive ? "text-white" : "text-gray-500"}`}
+                      className={`shrink-0 ${isActive ? "text-white" : "text-white/45"}`}
                     >
                       {tab.icon}
                     </span>
@@ -123,7 +128,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                     className={`shrink-0 border-l px-2 py-3 transition-colors ${
                       isActive
                         ? "border-white/25 text-white hover:bg-white/10"
-                        : "border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        : "border-white/10 text-white/60 hover:bg-white/10 hover:text-white"
                     }`}
                   >
                     <svg
@@ -153,7 +158,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                 className={rowClasses}
               >
                 <span
-                  className={`shrink-0 ${isActive ? "text-white" : "text-gray-500"}`}
+                  className={`shrink-0 ${isActive ? "text-white" : "text-white/45"}`}
                 >
                   {tab.icon}
                 </span>
@@ -164,6 +169,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
             );
           })}
         </nav>
+        </div>
       </aside>
     </>
   );

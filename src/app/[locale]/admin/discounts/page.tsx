@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import { getAdminDiscountsBoard } from "@/features/promotions/application/discounts-board";
 import { AdminDiscountsView } from "@/features/promotions/ui/AdminDiscountsView";
 import { isLocale } from "@/lib/i18n/config";
@@ -25,9 +25,7 @@ export default async function AdminDiscountsPage({
 
   return (
     <section className="w-full">
-      <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>{dict.admin.discounts.title}</h1>
-      </div>
+      <AdminPageHeading className="mb-6" title={dict.admin.discounts.title} />
 
       <AdminDiscountsView
         locale={locale}

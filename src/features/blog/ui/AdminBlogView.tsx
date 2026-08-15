@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/ConfirmDialog";
 import {
   ADMIN_INPUT,
-  ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteBlogPostAction } from "@/features/blog/application/manage-blog";
 import type { AdminBlogListItem } from "@/features/blog/application/queries";
@@ -94,7 +94,7 @@ export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>{copy.blog.title}</h1>
+        <AdminPageHeading title={copy.blog.title} />
         <Button
           type="button"
           size="sm"

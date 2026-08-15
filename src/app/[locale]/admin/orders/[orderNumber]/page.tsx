@@ -4,9 +4,9 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import {
   ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -83,7 +83,7 @@ export default async function AdminOrderDetailPage({
               {copy.orders.breadcrumb}
             </Link>
           </p>
-          <h1 className={ADMIN_PAGE_TITLE}>{order.orderNumber}</h1>
+          <AdminPageHeading title={order.orderNumber} />
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <span
               className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}

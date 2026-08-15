@@ -1,9 +1,6 @@
 import { notFound } from "next/navigation";
 
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import {
   getStoreFxRates,
   getStoreIdentity,
@@ -34,10 +31,11 @@ export default async function AdminSettingsPage({
 
   return (
     <section>
-      <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>{t.title}</h1>
-        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{t.subtitle}</p>
-      </div>
+      <AdminPageHeading
+        className="mb-6"
+        title={t.title}
+        description={t.subtitle}
+      />
 
       <StoreSettingsForms
         locale={locale}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
+import { ADMIN_PRIMARY_BTN } from "@/features/admin/ui/admin-form-classes";
 import type {
   AdminCategoryOption,
   AdminProductListItem,
@@ -66,7 +67,7 @@ export function AdminProductsView({
       <button
         type="button"
         onClick={openCreate}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+        className={`${ADMIN_PRIMARY_BTN} mb-4 w-full`}
       >
         <Plus className="h-4 w-4" aria-hidden />
         {copy.products.addNewProduct}
