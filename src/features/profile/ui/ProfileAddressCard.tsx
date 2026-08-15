@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { PROFILE_OUTLINE_BTN } from "@/features/profile/ui/profile-ui-classes";
 import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
 
 type ProfileAddressCardProps = {
@@ -26,29 +27,29 @@ export function ProfileAddressCard({
   onDelete,
 }: ProfileAddressCardProps) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 lg:p-6">
+    <div className="rounded-[22px] border border-[#ff6b00]/12 bg-[#fff8e7] p-4 sm:p-5 lg:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             {address.isDefaultShipping ? (
-              <span className="rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+              <span className="rounded-full bg-[#ff6b00] px-2.5 py-1 text-xs font-bold text-white">
                 {labels.defaultBadge}
               </span>
             ) : null}
           </div>
-          <p className="text-sm text-gray-800 sm:text-base">{address.line1}</p>
-          <p className="text-sm text-gray-800 sm:text-base">{address.city}</p>
+          <p className="text-sm text-[#1e1e1e] sm:text-base">{address.line1}</p>
+          <p className="text-sm text-[#1e1e1e] sm:text-base">{address.city}</p>
           {address.phone ? (
-            <p className="text-sm text-gray-600 sm:text-base">{address.phone}</p>
+            <p className="text-sm text-[#1e1e1e]/65 sm:text-base">{address.phone}</p>
           ) : null}
         </div>
-        <div className="flex flex-wrap gap-2 border-t border-gray-100 pt-4 lg:border-0 lg:pt-0">
+        <div className="flex flex-wrap gap-2 border-t border-[#ff6b00]/10 pt-4 lg:border-0 lg:pt-0">
           {!address.isDefaultShipping ? (
             <Button
               type="button"
               variant="outline"
               size="sm"
-              className="min-h-9 flex-1 sm:flex-initial"
+              className={`min-h-9 flex-1 sm:flex-initial ${PROFILE_OUTLINE_BTN}`}
               onClick={() => onSetDefault(address.id)}
               disabled={disabled}
             >
@@ -59,7 +60,7 @@ export function ProfileAddressCard({
             type="button"
             variant="outline"
             size="sm"
-            className="min-h-9 flex-1 sm:flex-initial"
+            className={`min-h-9 flex-1 sm:flex-initial ${PROFILE_OUTLINE_BTN}`}
             onClick={() => onEdit(address)}
             disabled={disabled}
           >
@@ -69,7 +70,7 @@ export function ProfileAddressCard({
             type="button"
             variant="outline"
             size="sm"
-            className="min-h-9 flex-1 text-red-600 hover:border-red-300 hover:text-red-700 sm:flex-initial"
+            className={`min-h-9 flex-1 text-red-600 hover:border-red-300 hover:text-red-700 sm:flex-initial ${PROFILE_OUTLINE_BTN}`}
             onClick={() => onDelete(address.id)}
             disabled={disabled}
           >

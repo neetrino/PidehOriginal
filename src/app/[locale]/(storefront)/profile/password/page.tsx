@@ -24,6 +24,7 @@ export default async function PasswordPage({ params }: PasswordPageProps) {
       <ChangePasswordForm
         locale={locale}
         labels={{
+          eyebrow: dictionary.profile.loyaltyEyebrow,
           title: dictionary.profile.password,
           currentPassword: copy.currentPassword,
           newPassword: copy.newPassword,

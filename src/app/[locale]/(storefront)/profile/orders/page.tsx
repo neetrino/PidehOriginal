@@ -1,11 +1,12 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AppLink } from "@/components/ui/AppLink";
 import { listCustomerOrders } from "@/features/orders/application/queries";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status";
 import { CustomerOrdersFilters } from "@/features/orders/ui/CustomerOrdersFilters";
 import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
+import { ProfilePageHeading } from "@/features/profile/ui/ProfilePageHeading";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -79,9 +80,10 @@ export default async function OrdersPage({
 
   return (
     <section className="profile-sheet-keep-frame space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-        {dictionary.profile.orders}
-      </h1>
+      <ProfilePageHeading
+        eyebrow={dictionary.profile.loyaltyEyebrow}
+        title={dictionary.profile.orders}
+      />
 
       <CustomerOrdersFilters
         total={total}
@@ -93,25 +95,29 @@ export default async function OrdersPage({
       <CustomerOrdersView locale={locale} orders={rows} copy={dictionary.admin} />
 
       {totalPages > 1 ? (
-        <nav className="flex items-center gap-3 text-sm text-gray-700">
+        <nav className="flex items-center gap-3 text-sm font-medium text-[#1e1e1e]/70">
           {filters.page > 1 ? (
-            <Link
+            <AppLink
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
-              className="font-medium hover:underline"
+              prefetchPolicy="intent"
+              className="text-[#ff6b00] hover:underline"
             >
-              Previous
-            </Link>
+              {dictionary.profile.pagePrev}
+            </AppLink>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {dictionary.profile.pageOf
+              .replace("{page}", String(filters.page))
+              .replace("{total}", String(totalPages))}
           </span>
           {filters.page < totalPages ? (
-            <Link
+            <AppLink
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
-              className="font-medium hover:underline"
+              prefetchPolicy="intent"
+              className="text-[#ff6b00] hover:underline"
             >
-              Next
-            </Link>
+              {dictionary.profile.pageNext}
+            </AppLink>
           ) : null}
         </nav>
       ) : null}

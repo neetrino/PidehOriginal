@@ -3,18 +3,21 @@
 import { useActionState, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import {
+  PROFILE_FIELD,
+  PROFILE_LABEL,
+  PROFILE_PANEL,
+} from "@/features/profile/ui/profile-ui-classes";
+import { ProfilePageHeading } from "@/features/profile/ui/ProfilePageHeading";
 import {
   deleteAccountAction,
   type DeleteAccountActionState,
 } from "@/features/auth/delete-account-action";
 
-const FIELD_CLASS =
-  "h-11 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
-
 type DeleteAccountFormProps = {
   locale: string;
   labels: {
+    eyebrow: string;
     title: string;
     description: string;
     pointOrders: string;
@@ -37,17 +40,14 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
   const [acknowledged, setAcknowledged] = useState(false);
 
   return (
-    <Card className="rounded-2xl border border-red-200 bg-red-50/30 p-5 shadow-none sm:p-7 lg:p-8">
-      <div className="mb-6 space-y-2 sm:mb-8">
-        <h1 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
-          {labels.title}
-        </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-gray-700">
-          {labels.description}
-        </p>
-      </div>
-
-      <ul className="mb-8 max-w-2xl list-disc space-y-2 pl-5 text-sm text-gray-600 sm:mb-10">
+    <div className="profile-sheet-keep-frame space-y-6">
+      <ProfilePageHeading
+        eyebrow={labels.eyebrow}
+        title={labels.title}
+        description={labels.description}
+      />
+      <div className={`${PROFILE_PANEL} border-red-200`}>
+      <ul className="mb-8 max-w-2xl list-disc space-y-2 pl-5 text-sm text-[#1e1e1e]/70 sm:mb-10">
         <li>{labels.pointOrders}</li>
         <li>{labels.pointLogin}</li>
         <li>{labels.pointData}</li>
@@ -57,7 +57,7 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
         action={formAction}
         className="mx-auto max-w-xl space-y-6 lg:mx-0 lg:max-w-2xl"
       >
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+        <label className={PROFILE_LABEL}>
           {labels.currentPassword}
           <input
             name="password"
@@ -66,7 +66,7 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             placeholder={labels.currentPasswordPlaceholder}
-            className={FIELD_CLASS}
+            className={PROFILE_FIELD}
             autoComplete="current-password"
           />
         </label>
@@ -80,7 +80,7 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
             checked={acknowledged}
             onChange={(event) => setAcknowledged(event.target.checked)}
           />
-          <span className="text-sm leading-snug text-gray-800">
+          <span className="text-sm leading-snug text-[#1e1e1e]">
             {labels.acknowledge}
           </span>
         </label>
@@ -102,6 +102,7 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
           </Button>
         </div>
       </form>
-    </Card>
+      </div>
+    </div>
   );
 }

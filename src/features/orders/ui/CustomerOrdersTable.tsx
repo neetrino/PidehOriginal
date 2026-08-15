@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
+import { PROFILE_PANEL } from "@/features/profile/ui/profile-ui-classes";
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
@@ -8,7 +8,6 @@ import {
 } from "@/features/admin/ui/status-badge";
 import {
   ADMIN_TABLE,
-  ADMIN_TABLE_CARD,
   ADMIN_TABLE_FOOTER_ROUNDED_B,
   ADMIN_TABLE_OUTER_SCROLL,
   ADMIN_TABLE_ROW,
@@ -43,7 +42,7 @@ export function CustomerOrdersTable({
   onOpenOrder,
 }: CustomerOrdersTableProps) {
   return (
-    <Card className={ADMIN_TABLE_CARD}>
+    <div className={`${PROFILE_PANEL} overflow-hidden p-0`}>
       <div className={ADMIN_TABLE_OUTER_SCROLL}>
         <table className={ADMIN_TABLE}>
           <thead className={ADMIN_TABLE_THEAD}>
@@ -62,7 +61,7 @@ export function CustomerOrdersTable({
                   <button
                     type="button"
                     onClick={() => onOpenOrder(order.orderNumber)}
-                    className="font-medium text-gray-900 hover:underline"
+                    className="font-bold text-[#ff6b00] hover:underline"
                   >
                     {order.orderNumber}
                   </button>
@@ -104,16 +103,16 @@ export function CustomerOrdersTable({
         </table>
       </div>
       {orders.length === 0 ? (
-        <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
+        <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-[#1e1e1e]/65`}>
           No orders match these filters.
         </p>
       ) : (
         <div className={ADMIN_TABLE_FOOTER_ROUNDED_B}>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-[#1e1e1e]/65">
             {orders.length} order{orders.length === 1 ? "" : "s"} on this page
           </p>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

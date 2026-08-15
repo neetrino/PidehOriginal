@@ -181,11 +181,11 @@ export function ProfileMobileHub({
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-4">
       <section
-        className="rounded-[var(--radius)] bg-white px-4 py-5 shadow-sm ring-1 ring-gray-200/70"
+        className="rounded-[var(--radius)] bg-[#fff8e7] px-4 py-5 shadow-sm ring-1 ring-[#ff6b00]/15"
         aria-label={dictionary.title}
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gray-900 text-base font-semibold text-white shadow-[0_0_0_3px_white]">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] text-base font-bold text-white shadow-[0_0_0_3px_#fff8e7]">
             {user.firstName.slice(0, 1).toUpperCase()}
             {user.lastName.slice(0, 1).toUpperCase()}
           </div>
@@ -201,7 +201,7 @@ export function ProfileMobileHub({
       </section>
 
       <nav
-        className="overflow-hidden rounded-[var(--radius)] bg-white py-1 shadow-sm ring-1 ring-gray-200/70"
+        className="overflow-hidden rounded-[var(--radius)] bg-white py-1 shadow-sm ring-1 ring-[#ff6b00]/12"
         aria-label={dictionary.title}
       >
         <div className="divide-y divide-gray-100">
@@ -213,7 +213,7 @@ export function ProfileMobileHub({
       <form action={logoutWithLocale}>
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2.5 rounded-[var(--radius)] bg-gray-900 py-3.5 text-base font-semibold text-white transition-opacity hover:opacity-90"
+          className="flex w-full items-center justify-center gap-2.5 rounded-[var(--radius)] bg-[#ff6b00] py-3.5 text-base font-semibold text-white transition hover:brightness-110"
         >
           <LogOut className="h-5 w-5 shrink-0" aria-hidden />
           {dictionary.logout}
