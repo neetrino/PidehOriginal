@@ -1,9 +1,11 @@
+import { pidehRasterUrl } from "@/lib/media/r2-public-asset-url";
+
 /** Static brand assets exported from Figma Pideh-Dev (node 1:76). */
 export const PIDEH_ASSETS = {
-  logo: "/brand/pideh/logo.png",
+  logo: pidehRasterUrl("logo"),
   footerLogo: "/brand/pideh/footer-logo.svg",
-  foodPide: "/brand/pideh/food-pide.png",
-  ctaPide: "/brand/pideh/cta-pide.png",
+  foodPide: pidehRasterUrl("food-pide"),
+  ctaPide: pidehRasterUrl("cta-pide"),
   ctaDotA: "/brand/pideh/cta-dot-a.svg",
   ctaDotB: "/brand/pideh/cta-dot-b.svg",
   ctaDotC: "/brand/pideh/cta-dot-c.svg",
@@ -13,7 +15,7 @@ export const PIDEH_ASSETS = {
   /** Optional Figma Kling export (51:133). Missing file → CSS float fallback. */
   heroVideoMp4: "/brand/pideh/hero-pide.mp4",
   heroVideoWebm: "/brand/pideh/hero-pide.webm",
-  categoryPide: "/brand/pideh/category-pide.png",
+  categoryPide: pidehRasterUrl("category-pide"),
   categoryArc: "/brand/pideh/category-arc.svg",
   waveYellow: "/brand/pideh/wave-yellow.svg",
   waveOrange: "/brand/pideh/wave-orange.svg",
@@ -22,10 +24,10 @@ export const PIDEH_ASSETS = {
   /** Figma Rectangle 7 (1:202) — yellow footer band, asset 1510×540 with frame overflow. */
   waveFooter: "/brand/pideh/wave-footer.svg",
   featureWave: "/brand/pideh/feature-wave.svg",
-  featureDelivery: "/brand/pideh/feature-delivery.png",
-  featureQuality: "/brand/pideh/feature-quality.png",
-  featureSupport: "/brand/pideh/feature-support.png",
-  featurePrep: "/brand/pideh/feature-prep.png",
+  featureDelivery: pidehRasterUrl("feature-delivery"),
+  featureQuality: pidehRasterUrl("feature-quality"),
+  featureSupport: pidehRasterUrl("feature-support"),
+  featurePrep: pidehRasterUrl("feature-prep"),
   arrowLeft: "/brand/pideh/arrow-left.svg",
   arrowRight: "/brand/pideh/arrow-right.svg",
   iconArrow: "/brand/pideh/icon-arrow.svg",

@@ -68,9 +68,18 @@ function buildImageRemotePatterns(): NonNullable<
   return patterns;
 }
 
+const r2PublicBase = (
+  process.env.R2_PUBLIC_BASE_URL ||
+  process.env.R2_PUBLIC_URL ||
+  ""
+).replace(/\/$/, "");
+
 const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
+  },
+  env: {
+    NEXT_PUBLIC_R2_PUBLIC_BASE_URL: r2PublicBase,
   },
   // Product/category/hero drawers upload images via Server Actions (up to 5MB each).
   experimental: {

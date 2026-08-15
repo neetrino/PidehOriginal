@@ -1,9 +1,11 @@
-export const ABOUT_HERO_IMAGE = "/brand/pideh/about-hero.png";
+import { pidehRasterUrl } from "@/lib/media/r2-public-asset-url";
+
+export const ABOUT_HERO_IMAGE = pidehRasterUrl("about-hero");
 
 export const ABOUT_GALLERY = [
-  { id: "stall", src: "/brand/pideh/about-slide-stall.png" },
-  { id: "pide", src: "/brand/pideh/about-slide-pide.png" },
-  { id: "kitchen", src: "/brand/pideh/about-slide-kitchen.png" },
-  { id: "terrace", src: "/brand/pideh/about-slide-terrace.png" },
-  { id: "spread", src: "/brand/pideh/about-slide-spread.png" },
+  { id: "stall", src: pidehRasterUrl("about-slide-stall") },
+  { id: "pide", src: pidehRasterUrl("about-slide-pide") },
+  { id: "kitchen", src: pidehRasterUrl("about-slide-kitchen") },
+  { id: "terrace", src: pidehRasterUrl("about-slide-terrace") },
+  { id: "spread", src: pidehRasterUrl("about-slide-spread") },
 ] as const;
