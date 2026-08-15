@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   useEffect,
   useId,
@@ -12,12 +11,12 @@ import {
 import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
 
-import { AppLink } from "@/components/ui/AppLink";
 import { catalogHref } from "@/features/products/application/catalog-search-params";
 import {
   searchHeaderProductsAction,
   type HeaderSearchProduct,
 } from "@/features/products/application/search-header-products-action";
+import { HeaderSearchResults } from "@/features/products/ui/HeaderSearchResults";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 
@@ -176,9 +175,9 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={labels.open}
-        className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition-colors duration-150 hover:text-gray-900"
+        className="relative inline-flex h-11 w-11 items-center justify-center rounded-full text-[#1e1e1e] transition-colors duration-150 hover:bg-[#ffd54a] hover:text-[#1e1e1e]"
       >
-        <Search className="h-5 w-5" aria-hidden="true" />
+        <Search className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
       </button>
 
       {mounted && rendered
@@ -191,17 +190,18 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
             >
               <button
                 type="button"
-                className={`absolute inset-0 cursor-pointer bg-black/40 ${backdropClass}`}
+                className={`absolute inset-0 cursor-pointer bg-[#1e1e1e]/45 ${backdropClass}`}
                 aria-label={labels.close}
                 onClick={closePopup}
               />
               <div
-                className={`relative z-[1] flex max-h-[min(70vh,560px)] w-full max-w-lg flex-col overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
+                className={`relative z-[1] flex max-h-[min(70vh,560px)] w-full max-w-lg flex-col overflow-hidden rounded-[28px] border-2 border-[#1e1e1e] bg-[#fff8e7] shadow-[8px_8px_0_#1e1e1e] ${panelClass}`}
                 onAnimationEnd={handlePanelAnimationEnd}
               >
-                <div className="flex items-center gap-2 border-b border-gray-100 px-4 py-3">
+                <div className="flex items-center gap-2 border-b-2 border-[#1e1e1e]/10 px-4 py-3">
                   <Search
-                    className="h-5 w-5 shrink-0 text-gray-400"
+                    className="h-5 w-5 shrink-0 text-[#ff6b00]"
+                    strokeWidth={2.25}
                     aria-hidden="true"
                   />
                   <label htmlFor={inputId} className="sr-only" id={titleId}>
@@ -215,107 +215,31 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder={labels.placeholder}
                     autoComplete="off"
-                    className="min-w-0 flex-1 bg-transparent text-base text-gray-900 outline-none placeholder:text-gray-400"
+                    className="min-w-0 flex-1 bg-transparent text-base font-semibold text-[#1e1e1e] outline-none placeholder:font-medium placeholder:text-[#1e1e1e]/35"
                   />
                   <button
                     type="button"
                     onClick={closePopup}
                     aria-label={labels.close}
-                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900"
+                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] text-white transition hover:bg-[#e85f00]"
                   >
-                    <X className="h-5 w-5" aria-hidden="true" />
+                    <X className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
                   </button>
                 </div>
 
-                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-                  {showIdle ? (
-                    <p className="px-5 py-8 text-center text-sm text-gray-500">
-                      {labels.idle}
-                    </p>
-                  ) : null}
-
-                  {pending && products.length === 0 ? (
-                    <div className="space-y-3 px-4 py-4" aria-hidden="true">
-                      {Array.from({ length: 4 }).map((_, index) => (
-                        <div
-                          key={index}
-                          className="flex animate-pulse items-center gap-3"
-                        >
-                          <div className="h-14 w-14 rounded-lg bg-gray-100" />
-                          <div className="flex-1 space-y-2">
-                            <div className="h-3 w-3/4 rounded bg-gray-100" />
-                            <div className="h-3 w-1/3 rounded bg-gray-100" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  {showEmpty ? (
-                    <p className="px-5 py-8 text-center text-sm text-gray-500">
-                      {labels.empty}
-                    </p>
-                  ) : null}
-
-                  {products.length > 0 ? (
-                    <ul
-                      className={`divide-y divide-gray-100 ${pending ? "opacity-70" : ""}`}
-                    >
-                      {products.map((product) => (
-                        <li key={product.id}>
-                          <AppLink
-                            href={product.href}
-                            prefetchPolicy="intent"
-                            onClick={closePopup}
-                            className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50"
-                          >
-                            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                              {product.imageUrl ? (
-                                <Image
-                                  src={product.imageUrl}
-                                  alt=""
-                                  fill
-                                  sizes="56px"
-                                  className="object-cover"
-                                />
-                              ) : null}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-medium text-gray-900">
-                                {product.title}
-                              </p>
-                              <p className="mt-0.5 text-sm text-gray-600">
-                                {product.compareAtFormatted ? (
-                                  <>
-                                    <span className="mr-2 text-gray-400 line-through">
-                                      {product.compareAtFormatted}
-                                    </span>
-                                    <span>{product.priceFormatted}</span>
-                                  </>
-                                ) : (
-                                  product.priceFormatted
-                                )}
-                              </p>
-                            </div>
-                          </AppLink>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </div>
-
-                {searchedQuery && total > products.length ? (
-                  <div className="border-t border-gray-100 px-4 py-3">
-                    <AppLink
-                      href={viewAllHref}
-                      prefetchPolicy="intent"
-                      onClick={closePopup}
-                      className="block text-center text-sm font-medium text-gray-900 transition-colors hover:text-gray-600"
-                    >
-                      {labels.viewAll}
-                    </AppLink>
-                  </div>
-                ) : null}
+                <HeaderSearchResults
+                  idleLabel={labels.idle}
+                  emptyLabel={labels.empty}
+                  viewAllLabel={labels.viewAll}
+                  showIdle={showIdle}
+                  showEmpty={showEmpty}
+                  pending={pending}
+                  products={products}
+                  searchedQuery={searchedQuery}
+                  total={total}
+                  viewAllHref={viewAllHref}
+                  onNavigate={closePopup}
+                />
               </div>
             </div>,
             document.body,
