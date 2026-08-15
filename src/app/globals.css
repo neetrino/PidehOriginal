@@ -167,15 +167,27 @@ body {
   background: var(--pideh-cream);
 }
 
+.storefront-shell:has(.pideh-login) {
+  background: var(--pideh-ink);
+}
+
+.storefront-shell:has(.pideh-login) .storefront-footer {
+  background: transparent;
+  position: relative;
+  z-index: 10;
+}
+
 .storefront-shell:has(.pideh-home) .storefront-main,
-.storefront-shell:has(.pideh-about) .storefront-main {
+.storefront-shell:has(.pideh-about) .storefront-main,
+.storefront-shell:has(.pideh-login) .storefront-main {
   max-width: none;
   padding: 0;
   padding-bottom: 0;
 }
 
 .storefront-shell:has(.pideh-home) .site-header,
-.storefront-shell:has(.pideh-about) .site-header {
+.storefront-shell:has(.pideh-about) .site-header,
+.storefront-shell:has(.pideh-login) .site-header {
   position: fixed;
   inset-inline: 0;
   top: 0;
@@ -196,7 +208,8 @@ body {
 
 @media (max-width: 767px) {
   .storefront-shell:has(.pideh-home) .storefront-main,
-  .storefront-shell:has(.pideh-about) .storefront-main {
+  .storefront-shell:has(.pideh-about) .storefront-main,
+  .storefront-shell:has(.pideh-login) .storefront-main {
     padding-bottom: 5.5rem;
   }
 }
