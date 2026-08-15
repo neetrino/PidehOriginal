@@ -52,13 +52,23 @@ function headerSearchLabels(
 }
 
 function isActiveHref(pathname: string, href: string): boolean {
-  if (pathname === href) {
+  const path = pathname.replace(/\/$/, "") || "/";
+  const target = href.replace(/\/$/, "") || "/";
+
+  if (path === target) {
     return true;
   }
-  if (href.endsWith("/products") && pathname.includes("/products")) {
+
+  const targetParts = target.split("/").filter(Boolean);
+  if (targetParts.length === 1) {
+    return false;
+  }
+
+  if (target.endsWith("/products") && path.includes("/products")) {
     return true;
   }
-  return pathname.startsWith(`${href}/`);
+
+  return path.startsWith(`${target}/`);
 }
 
 export function SiteHeaderMainNav({
@@ -107,6 +117,7 @@ export function SiteHeaderMainNav({
                 key={item.href}
                 href={item.href}
                 prefetchPolicy="intent"
+                aria-current={active ? "page" : undefined}
                 className={
                   active
                     ? "inline-flex h-12 items-center rounded-[72px] bg-[#ff6b00] px-6 text-base font-bold text-white"

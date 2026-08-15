@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 
 import { SiteHeaderMainNav } from "@/components/layout/SiteHeaderMainNav";
-import { SiteHeaderTopBar } from "@/components/layout/SiteHeaderTopBar";
 import { getCartItemCount } from "@/features/cart/cart";
 import { getWishlistCount } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -57,8 +56,8 @@ async function SiteHeaderMainNavAsync({
 }
 
 /**
- * Storefront chrome: top bar streams immediately; account/cart/wishlist
- * load in a Suspense island so page content is not blocked.
+ * Storefront chrome: account/cart/wishlist load in a Suspense island
+ * so page content is not blocked.
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
@@ -66,11 +65,6 @@ export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
       className="site-header sticky top-0 z-[80] shrink-0"
       data-site-header
     >
-      <SiteHeaderTopBar
-        locale={locale}
-        currency={currency}
-        dictionary={dictionary}
-      />
       <Suspense
         fallback={
           <header className="relative z-10 px-3 pt-3 md:px-6 md:pt-3.5 lg:px-10">

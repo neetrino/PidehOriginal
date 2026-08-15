@@ -10,6 +10,7 @@ import {
   ConfirmDialog,
 } from "@/components/ui/ConfirmDialog";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import {
   ADMIN_BADGE,
 } from "@/features/admin/ui/status-badge";
@@ -136,6 +137,7 @@ export function AdminUsersView({
 
   return (
     <section>
+      <AdminPageHeading className="mb-4" title={copy.users.breadcrumb} />
       <form method="get" className="mb-4 flex flex-wrap gap-3">
         <input
           name="q"

@@ -4,10 +4,17 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import {
   ConfirmDialog,
 } from "@/components/ui/ConfirmDialog";
+import {
+  PROFILE_FIELD,
+  PROFILE_LABEL,
+  PROFILE_OUTLINE_BTN,
+  PROFILE_PANEL,
+  PROFILE_PRIMARY_BTN,
+} from "@/features/profile/ui/profile-ui-classes";
+import { ProfilePageHeading } from "@/features/profile/ui/ProfilePageHeading";
 import {
   createCustomerAddressAction,
   deleteCustomerAddressAction,
@@ -16,9 +23,6 @@ import {
 } from "@/features/profile/application/manage-addresses";
 import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
 import { ProfileAddressCard } from "@/features/profile/ui/ProfileAddressCard";
-
-const FIELD_CLASS =
-  "h-11 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
 
 type AddressFormState = {
   line1: string;
@@ -31,6 +35,7 @@ type ProfileAddressesViewProps = {
   locale: string;
   addresses: CustomerAddressListItem[];
   labels: {
+    eyebrow: string;
     title: string;
     addNew: string;
     defaultBadge: string;
@@ -165,33 +170,31 @@ export function ProfileAddressesView({
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      <Card className="rounded-2xl border border-gray-200/80 p-5 shadow-none sm:p-7 lg:p-8">
-        <div className="mb-6 flex flex-col gap-4 border-b border-gray-100 pb-5 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
-          <h1 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
-            {labels.title}
-          </h1>
-          <Button
-            type="button"
-            variant="primary"
-            className="h-11 w-full shrink-0 sm:w-auto"
-            onClick={toggleForm}
-            disabled={isPending}
-          >
-            {showForm ? labels.cancel : `+ ${labels.addNew}`}
-          </Button>
-        </div>
+    <div className="profile-sheet-keep-frame space-y-6 sm:space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <ProfilePageHeading eyebrow={labels.eyebrow} title={labels.title} />
+        <Button
+          type="button"
+          variant="primary"
+          className={`h-11 w-full shrink-0 sm:w-auto ${PROFILE_PRIMARY_BTN}`}
+          onClick={toggleForm}
+          disabled={isPending}
+        >
+          {showForm ? labels.cancel : `+ ${labels.addNew}`}
+        </Button>
+      </div>
+      <div className={PROFILE_PANEL}>
 
         {showForm ? (
           <form
             onSubmit={onSave}
-            className="mb-8 space-y-5 rounded-2xl border border-dashed border-gray-300 bg-gray-50/50 p-4 sm:mb-10 sm:p-6"
+            className="mb-8 space-y-5 rounded-2xl border border-dashed border-[#ff6b00]/30 bg-[#fff8e7] p-4 sm:mb-10 sm:p-6"
           >
-            <h2 className="text-base font-semibold text-gray-900">
+            <h2 className="text-base font-semibold text-[#1e1e1e]">
               {editingId ? labels.formEditTitle : labels.formAddTitle}
             </h2>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
-              <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+              <label className={PROFILE_LABEL}>
                 {labels.line1}
                 <input
                   required
@@ -199,11 +202,11 @@ export function ProfileAddressesView({
                   onChange={(event) =>
                     setForm((prev) => ({ ...prev, line1: event.target.value }))
                   }
-                  className={FIELD_CLASS}
+                  className={PROFILE_FIELD}
                   autoComplete="street-address"
                 />
               </label>
-              <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+              <label className={PROFILE_LABEL}>
                 {labels.city}
                 <input
                   required
@@ -211,11 +214,11 @@ export function ProfileAddressesView({
                   onChange={(event) =>
                     setForm((prev) => ({ ...prev, city: event.target.value }))
                   }
-                  className={FIELD_CLASS}
+                  className={PROFILE_FIELD}
                   autoComplete="address-level2"
                 />
               </label>
-              <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700 sm:col-span-2">
+              <label className={`${PROFILE_LABEL} sm:col-span-2`}>
                 {labels.phone}
                 <input
                   required
@@ -225,7 +228,7 @@ export function ProfileAddressesView({
                     setForm((prev) => ({ ...prev, phone: event.target.value }))
                   }
                   placeholder={labels.phonePlaceholder}
-                  className={FIELD_CLASS}
+                  className={PROFILE_FIELD}
                   autoComplete="tel"
                 />
               </label>
@@ -240,15 +243,15 @@ export function ProfileAddressesView({
                     isDefault: event.target.checked,
                   }))
                 }
-                className="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                className="h-4 w-4 rounded border-gray-300 text-[#ff6b00] focus:ring-[#ff6b00]"
               />
-              <span className="text-sm text-gray-700">{labels.isDefault}</span>
+              <span className="text-sm text-[#1e1e1e]">{labels.isDefault}</span>
             </label>
             <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:gap-3">
               <Button
                 type="button"
                 variant="outline"
-                className="h-11 w-full sm:w-auto"
+                className={`h-11 w-full sm:w-auto ${PROFILE_OUTLINE_BTN}`}
                 onClick={() => {
                   setShowForm(false);
                   resetForm();
@@ -260,7 +263,7 @@ export function ProfileAddressesView({
               <Button
                 type="submit"
                 variant="primary"
-                className="h-11 w-full sm:w-auto"
+                className={`h-11 w-full sm:w-auto ${PROFILE_PRIMARY_BTN}`}
                 disabled={isPending}
               >
                 {isPending
@@ -303,12 +306,12 @@ export function ProfileAddressesView({
               />
             ))
           ) : (
-            <p className="py-12 text-center text-sm text-gray-500 sm:py-16">
+            <p className="rounded-2xl bg-[#fff8e7] py-12 text-center text-sm text-[#1e1e1e]/60 sm:py-16">
               {labels.noAddresses}
             </p>
           )}
         </div>
-      </Card>
+      </div>
 
       <ConfirmDialog
         open={pendingDeleteId !== null}

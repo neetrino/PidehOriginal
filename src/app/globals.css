@@ -163,13 +163,31 @@ body {
   background: var(--pideh-orange);
 }
 
-.storefront-shell:has(.pideh-home) .storefront-main {
+.storefront-shell:has(.pideh-about) {
+  background: var(--pideh-cream);
+}
+
+.storefront-shell:has(.pideh-login) {
+  background: var(--pideh-ink);
+}
+
+.storefront-shell:has(.pideh-login) .storefront-footer {
+  background: transparent;
+  position: relative;
+  z-index: 10;
+}
+
+.storefront-shell:has(.pideh-home) .storefront-main,
+.storefront-shell:has(.pideh-about) .storefront-main,
+.storefront-shell:has(.pideh-login) .storefront-main {
   max-width: none;
   padding: 0;
   padding-bottom: 0;
 }
 
-.storefront-shell:has(.pideh-home) .site-header {
+.storefront-shell:has(.pideh-home) .site-header,
+.storefront-shell:has(.pideh-about) .site-header,
+.storefront-shell:has(.pideh-login) .site-header {
   position: fixed;
   inset-inline: 0;
   top: 0;
@@ -177,12 +195,21 @@ body {
   background: transparent;
 }
 
-.storefront-shell:has(.pideh-home) .site-header [data-site-header-topbar] {
-  display: none;
+.storefront-shell:has(.pideh-about) .storefront-main {
+  position: relative;
+  z-index: 20;
+}
+
+.storefront-shell:has(.pideh-about) .storefront-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: -6rem;
 }
 
 @media (max-width: 767px) {
-  .storefront-shell:has(.pideh-home) .storefront-main {
+  .storefront-shell:has(.pideh-home) .storefront-main,
+  .storefront-shell:has(.pideh-about) .storefront-main,
+  .storefront-shell:has(.pideh-login) .storefront-main {
     padding-bottom: 5.5rem;
   }
 }
@@ -515,4 +542,23 @@ body {
   background: transparent;
   height: 4px;
   border: none;
+}
+
+.admin-sidebar-ticket-veil {
+  background-image:
+    repeating-linear-gradient(
+      -22deg,
+      transparent 0 13px,
+      rgb(255 213 74 / 0.07) 13px 14px
+    ),
+    radial-gradient(
+      130% 70% at 0% 100%,
+      rgb(255 107 0 / 0.42),
+      transparent 58%
+    ),
+    radial-gradient(
+      90% 45% at 110% -10%,
+      rgb(255 213 74 / 0.22),
+      transparent 52%
+    );
 }

@@ -26,6 +26,10 @@ type SideSheetProps = {
   closeVariant?: "circle" | "edge-tab";
   /** Soften backdrop (cart-style). */
   backdropBlur?: boolean;
+  /** Inner panel surface (default: white + side radius). */
+  panelInnerClassName?: string;
+  /** Extra classes for the circle close control. */
+  closeClassName?: string;
 };
 
 /**
@@ -42,6 +46,8 @@ export function SideSheet({
   zIndexClassName = "z-50",
   closeVariant = "circle",
   backdropBlur = false,
+  panelInnerClassName,
+  closeClassName = "",
 }: SideSheetProps) {
   const [mounted, setMounted] = useState(false);
   const [rendered, setRendered] = useState(false);
@@ -167,18 +173,20 @@ export function SideSheet({
           <button
             type="button"
             onClick={onClose}
-            className={`absolute top-5 ${closePosition} z-10 flex h-10 w-10 shrink-0 items-center justify-center bg-gray-900 text-white transition-colors hover:bg-black ${
+            className={`absolute top-5 ${closePosition} z-10 flex h-10 w-10 shrink-0 items-center justify-center text-white transition-colors ${
               isRight
                 ? "rounded-l-full rounded-r-none"
                 : "rounded-r-full rounded-l-none"
-            }`}
+            } ${closeClassName || "bg-gray-900 hover:bg-black"}`}
             aria-label="Close"
           >
             <X className="h-4 w-4" strokeWidth={2.5} />
           </button>
         )}
         <div
-          className={`flex h-full min-h-0 w-full flex-col overflow-hidden bg-white shadow-2xl ${panelRadius}`}
+          className={`flex h-full min-h-0 w-full flex-col overflow-hidden shadow-2xl ${
+            panelInnerClassName ?? `bg-white ${panelRadius}`
+          }`}
           onClick={(event) => event.stopPropagation()}
         >
           {displayChildren}

@@ -10,6 +10,7 @@ import {
   isAdminTabActive,
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
+import { AdminSidebarBackdrop } from "@/features/admin/ui/AdminSidebarBackdrop";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -49,7 +50,7 @@ export function AdminMenuDrawer({
         aria-expanded={open}
         aria-controls="admin-menu-drawer-panel"
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold uppercase tracking-wide text-gray-800 shadow-sm"
+        className="inline-flex items-center gap-2 rounded-full border-2 border-[#1e1e1e] bg-[#ffd54a] px-4 py-2 text-sm font-extrabold uppercase tracking-wide text-[#1e1e1e] shadow-[2px_2px_0_#1e1e1e]"
       >
         <svg
           className="h-4 w-4"
@@ -73,22 +74,25 @@ export function AdminMenuDrawer({
         ariaLabel={shell.adminMenuAria}
         side="left"
         panelClassName="w-1/2 min-w-[16rem] max-w-full"
+        panelInnerClassName="relative overflow-hidden bg-[#140a04] text-white"
+        closeClassName="bg-[#ff6b00] hover:bg-[#e85f00]"
       >
+        <AdminSidebarBackdrop />
         <div
           id="admin-menu-drawer-panel"
-          className="flex min-h-0 flex-1 flex-col"
+          className="relative z-10 flex min-h-0 flex-1 flex-col"
         >
-            <div className="border-b border-gray-200 px-4 py-4">
+            <div className="border-b border-white/10 px-4 py-4">
               <Link
                 href={`/${locale}`}
-                className="text-sm font-semibold text-gray-900"
+                className="text-sm font-extrabold tracking-wide text-white uppercase"
                 onClick={() => setOpen(false)}
               >
                 {shell.brandName}
               </Link>
             </div>
 
-            <nav className="flex-1 divide-y divide-gray-100 overflow-y-auto">
+            <nav className="flex-1 divide-y divide-white/10 overflow-y-auto">
               {tabs.map((tab) => {
                 if (
                   !isNestedVisible(
@@ -107,15 +111,15 @@ export function AdminMenuDrawer({
                   return (
                     <div
                       key={tab.id}
-                      className={`flex w-full ${isActive ? "bg-gray-900 text-white" : ""}`}
+                      className={`flex w-full ${isActive ? "bg-[#ff6b00] text-white" : ""}`}
                     >
                       <Link
                         href={tab.href}
                         onClick={() => setOpen(false)}
-                        className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-sm font-medium ${
+                        className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-sm font-bold ${
                           isActive
                             ? "text-white"
-                            : "text-gray-700 hover:bg-gray-50"
+                            : "text-white/70 hover:bg-white/10"
                         } ${tab.isSubCategory ? "pl-10" : ""}`}
                       >
                         <span className="shrink-0">{tab.icon}</span>
@@ -129,7 +133,7 @@ export function AdminMenuDrawer({
                         className={`shrink-0 border-l px-3 py-3 ${
                           isActive
                             ? "border-white/25 text-white"
-                            : "border-gray-200 text-gray-600"
+                            : "border-white/10 text-white/60"
                         }`}
                       >
                         <svg
@@ -156,12 +160,12 @@ export function AdminMenuDrawer({
                     key={tab.id}
                     href={tab.href}
                     onClick={() => setOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 text-sm font-medium ${
+                    className={`flex items-center gap-3 px-4 py-3 text-sm font-bold ${
                       tab.isSubCategory ? "pl-10" : ""
                     } ${
                       isActive
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-700 hover:bg-gray-50"
+                        ? "bg-[#ff6b00] text-white"
+                        : "text-white/70 hover:bg-white/10"
                     }`}
                   >
                     <span className="shrink-0">{tab.icon}</span>

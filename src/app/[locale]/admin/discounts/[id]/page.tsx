@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 
 import {
   ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import {
   getAdminPromotionById,
   listPromotionTargetOptions,
@@ -46,10 +46,10 @@ export default async function AdminDiscountDetailPage({
             {dict.admin.discounts.title}
           </Link>
         </p>
-        <h1 className={ADMIN_PAGE_TITLE}>Automatic discount</h1>
-        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
-          Used {promo.usedCount} times
-        </p>
+        <AdminPageHeading
+          title="Automatic discount"
+          description={`Used ${promo.usedCount} times`}
+        />
       </div>
 
       <PromotionForm

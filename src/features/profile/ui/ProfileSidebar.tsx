@@ -19,29 +19,26 @@ export function ProfileSidebar({
 
   return (
     <aside
-      className="flex w-full flex-col rounded-[var(--radius)] border border-gray-300/60 bg-gradient-to-b from-gray-100/95 to-gray-50/90 shadow-inner lg:h-full lg:min-h-0 lg:overflow-hidden"
+      className="flex w-full flex-col overflow-hidden rounded-[28px] border border-[#ff6b00]/15 bg-[#fff8e7] shadow-[0_14px_32px_rgba(30,30,30,0.08)] lg:h-full lg:min-h-0"
       aria-label={dictionary.title}
     >
-      <div className="shrink-0 border-b border-gray-300/50 bg-gray-50/50 p-4 sm:p-5">
+      <div className="shrink-0 border-b border-[#ff6b00]/12 bg-[#ffd54a]/35 p-5">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full bg-gray-900 text-xl font-semibold text-white shadow-md">
+          <div className="flex size-[4.5rem] items-center justify-center rounded-full bg-[#ff6b00] text-xl font-bold text-white shadow-[0_0_0_4px_#fff8e7,0_8px_20px_rgba(255,107,0,0.35)]">
             {user.firstName.slice(0, 1).toUpperCase()}
             {user.lastName.slice(0, 1).toUpperCase()}
           </div>
           <div className="space-y-0.5">
-            <p className="text-lg font-semibold tracking-tight text-gray-900">
+            <p className="font-display text-2xl leading-[0.9] text-[#1e1e1e] uppercase">
               {user.firstName}
             </p>
-            <p className="text-xs font-semibold tracking-wide text-gray-600">
+            <p className="text-xs font-bold tracking-wide text-[#1e1e1e]/60">
               {user.lastName}
             </p>
           </div>
         </div>
-
-        <div className="mt-5 flex flex-col gap-2">
-          <div className="rounded-[var(--radius)] border border-gray-200/60 bg-white/70 px-3.5 py-2.5 text-left text-xs font-medium break-words text-gray-700 shadow-sm sm:text-sm">
-            {user.email}
-          </div>
+        <div className="mt-5 rounded-2xl bg-white/80 px-3.5 py-2.5 text-left text-xs font-medium break-words text-[#1e1e1e]/75 sm:text-sm">
+          {user.email}
         </div>
       </div>
 

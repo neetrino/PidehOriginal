@@ -9,38 +9,38 @@ export const ADMIN_TABLE_STATE_INSET = "p-4 sm:p-5";
 
 /** Wrapper when the table should not scroll horizontally. */
 export const ADMIN_TABLE_OUTER_CLIP =
-  "w-full min-w-0 overflow-hidden rounded-t-lg";
+  "w-full min-w-0 overflow-hidden rounded-t-[18px]";
 
 /** Wrapper with horizontal scroll for wide tables. */
 export const ADMIN_TABLE_OUTER_SCROLL =
-  "w-full min-w-0 overflow-x-auto overflow-y-hidden rounded-t-lg";
+  "w-full min-w-0 overflow-x-auto overflow-y-hidden rounded-t-[18px]";
 
 export const ADMIN_TABLE =
   "w-full min-w-full table-auto border-collapse text-left text-sm";
 
-export const ADMIN_TABLE_THEAD = "border-b border-gray-200 bg-gray-50";
+export const ADMIN_TABLE_THEAD = "border-b-2 border-[#1e1e1e]/10 bg-[#fff8e7]";
 
 export const ADMIN_TABLE_TH_CHECK =
   "w-px whitespace-nowrap px-2 py-2.5 text-center align-middle";
 
 export const ADMIN_TABLE_TH =
-  "min-w-0 whitespace-nowrap px-3 py-2.5 text-left align-middle text-[11px] font-semibold uppercase leading-snug tracking-wide text-gray-500 sm:text-xs";
+  "min-w-0 whitespace-nowrap px-3 py-2.5 text-left align-middle text-[11px] font-extrabold uppercase leading-snug tracking-[0.12em] text-[#ff6b00] sm:text-xs";
 
 export const ADMIN_TABLE_TH_CENTER =
-  "min-w-0 whitespace-nowrap px-3 py-2.5 text-center align-middle text-[11px] font-semibold uppercase leading-snug tracking-wide text-gray-500 sm:text-xs";
+  "min-w-0 whitespace-nowrap px-3 py-2.5 text-center align-middle text-[11px] font-extrabold uppercase leading-snug tracking-[0.12em] text-[#ff6b00] sm:text-xs";
 
 export const ADMIN_TABLE_TBODY =
-  "divide-y divide-gray-200 bg-white [&_td]:align-middle";
+  "divide-y divide-[#1e1e1e]/10 bg-white [&_td]:align-middle";
 
-export const ADMIN_TABLE_ROW = "hover:bg-gray-50";
+export const ADMIN_TABLE_ROW = "hover:bg-[#ffd54a]/25";
 
 export const ADMIN_TABLE_TD_CHECK =
   "w-px whitespace-nowrap px-3 py-2.5 align-middle";
 
-export const ADMIN_TABLE_TD = "min-w-0 px-3 py-2.5 align-middle text-sm";
+export const ADMIN_TABLE_TD = "min-w-0 px-3 py-2.5 align-middle text-sm text-[#1e1e1e]";
 
 export const ADMIN_TABLE_TD_CENTER =
-  "min-w-0 px-3 py-2.5 align-middle text-center text-sm";
+  "min-w-0 px-3 py-2.5 align-middle text-center text-sm text-[#1e1e1e]";
 
 /** Equal-width centered metric columns (status / payment / total). */
 export const ADMIN_TABLE_TH_METRIC =
@@ -49,9 +49,11 @@ export const ADMIN_TABLE_TH_METRIC =
 export const ADMIN_TABLE_TD_METRIC =
   `${ADMIN_TABLE_TD_CENTER} w-40 min-w-40`;
 
-export const ADMIN_TABLE_CHECKBOX = "h-4 w-4 shrink-0 rounded border-gray-300";
+export const ADMIN_TABLE_CHECKBOX =
+  "h-4 w-4 shrink-0 rounded border-[#1e1e1e]/30 text-[#ff6b00]";
 
 /** Footer row(s) below the table (pagination, bulk actions) */
-export const ADMIN_TABLE_FOOTER = "border-t border-gray-200 px-4 py-3 sm:px-5";
+export const ADMIN_TABLE_FOOTER =
+  "border-t-2 border-[#1e1e1e]/10 px-4 py-3 sm:px-5";
 
-export const ADMIN_TABLE_FOOTER_ROUNDED_B = `${ADMIN_TABLE_FOOTER} rounded-b-lg`;
+export const ADMIN_TABLE_FOOTER_ROUNDED_B = `${ADMIN_TABLE_FOOTER} rounded-b-[18px]`;

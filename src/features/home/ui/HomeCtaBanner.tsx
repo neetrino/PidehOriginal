@@ -57,8 +57,8 @@ export function HomeCtaBanner({
   );
 
   return (
-    <div className="relative z-30 -mt-8 md:-mt-12">
-      <HomeCtaOrangeBand className="top-8 md:top-12" />
+    <div className="relative z-30 -mt-32 md:-mt-48">
+      <HomeCtaOrangeBand className="top-16 md:top-24" />
       {reduceMotion ? (
         <div className="relative z-10 px-4 pb-12 md:px-10 md:pb-16 lg:px-[100px]">
           {card}

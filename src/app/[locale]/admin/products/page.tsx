@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import {
   listAdminCategoryOptions,
   listAdminProducts,
@@ -115,6 +116,8 @@ export default async function AdminProductsPage({
 
   return (
     <section>
+      <AdminPageHeading className="mb-6" title={adminCopy.nav.products} />
+
       <AdminProductsFilters
         total={total}
         q={filters.q}

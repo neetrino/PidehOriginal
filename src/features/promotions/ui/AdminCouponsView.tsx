@@ -10,10 +10,7 @@ import {
   ConfirmDialog,
   deleteConfirmDescription,
 } from "@/components/ui/ConfirmDialog";
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -120,8 +117,10 @@ export function AdminCouponsView({ locale, coupons, copy }: AdminCouponsViewProp
     <section>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className={ADMIN_PAGE_TITLE}>{copy.coupons.title}</h1>
-          <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{copy.coupons.subtitle}</p>
+          <AdminPageHeading
+            title={copy.coupons.title}
+            description={copy.coupons.subtitle}
+          />
         </div>
         <Button
           type="button"

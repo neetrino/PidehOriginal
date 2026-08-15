@@ -5,10 +5,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import type { AdminHeroSlideListItem } from "@/features/hero/application/queries";
 import { HeroSlideControls } from "@/features/hero/ui/HeroSlideControls";
@@ -54,14 +53,17 @@ export function AdminHeroView({
   return (
     <section>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className={ADMIN_PAGE_TITLE}>{copy.hero.title}</h1>
-          <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
-            {slides.length === 1
+        <AdminPageHeading
+          title={copy.hero.title}
+          description={
+            slides.length === 1
               ? copy.hero.slideCount.replace("{count}", "1")
-              : copy.hero.slideCountPlural.replace("{count}", String(slides.length))}
-          </p>
-        </div>
+              : copy.hero.slideCountPlural.replace(
+                  "{count}",
+                  String(slides.length),
+                )
+          }
+        />
         <Button type="button" onClick={openCreate}>
           {copy.hero.createHeroSlide}
         </Button>

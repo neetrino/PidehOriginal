@@ -1,3 +1,6 @@
+"use client";
+
+import NumberFlow from "@number-flow/react";
 import {
   ClipboardList,
   DollarSign,
@@ -5,98 +8,81 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { Card } from "@/components/ui/Card";
+import { fadeUp } from "@/components/motion/presets";
+import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
-
-type MetricTone = "blue" | "green" | "purple";
 
 type MetricCard = {
   label: string;
-  value: string;
-  tone: MetricTone;
+  value: number;
+  format?: {
+    minimumFractionDigits: number;
+    maximumFractionDigits: number;
+  };
   icon: LucideIcon;
-};
-
-const TONE_CLASSES: Record<
-  MetricTone,
-  { card: string; iconWrap: string; icon: string; value: string }
-> = {
-  blue: {
-    card: "border-blue-100 bg-gradient-to-br from-blue-50 to-sky-50",
-    iconWrap: "bg-blue-100 text-blue-600",
-    icon: "text-blue-600",
-    value: "text-blue-700",
-  },
-  green: {
-    card: "border-emerald-100 bg-gradient-to-br from-emerald-50 to-green-50",
-    iconWrap: "bg-emerald-100 text-emerald-600",
-    icon: "text-emerald-600",
-    value: "text-emerald-600",
-  },
-  purple: {
-    card: "border-violet-100 bg-gradient-to-br from-violet-50 to-purple-50",
-    iconWrap: "bg-violet-100 text-violet-600",
-    icon: "text-violet-600",
-    value: "text-violet-700",
-  },
 };
 
 type AnalyticsMetricCardsProps = {
   orderCount: number;
-  revenueLabel: string;
+  revenueAmount: number;
   userCount: number;
   copy: Dictionary["admin"];
 };
 
 export function AnalyticsMetricCards({
   orderCount,
-  revenueLabel,
+  revenueAmount,
   userCount,
   copy,
 }: AnalyticsMetricCardsProps) {
   const metrics: MetricCard[] = [
     {
       label: copy.analytics.metrics.totalOrders,
-      value: String(orderCount),
-      tone: "blue",
+      value: orderCount,
       icon: ClipboardList,
     },
     {
       label: copy.analytics.metrics.totalRevenue,
-      value: revenueLabel,
-      tone: "green",
+      value: revenueAmount,
+      format: { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       icon: DollarSign,
     },
     {
       label: copy.analytics.metrics.totalUsers,
-      value: String(userCount),
-      tone: "purple",
+      value: userCount,
       icon: Users,
     },
   ];
 
   return (
-    <div className="mb-6 grid gap-4 sm:grid-cols-3">
+    <StaggerGroup className="mb-6 grid gap-4 sm:grid-cols-3">
       {metrics.map((metric) => {
-        const tone = TONE_CLASSES[metric.tone];
         const Icon = metric.icon;
         return (
-          <Card
-            key={metric.label}
-            className={`rounded-2xl border p-5 shadow-sm ${tone.card}`}
-          >
-            <div
-              className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${tone.iconWrap}`}
-            >
-              <Icon className={`h-5 w-5 ${tone.icon}`} aria-hidden />
+          <StaggerItem key={metric.label} variants={fadeUp}>
+            <div className="relative overflow-hidden rounded-[22px] border-2 border-[#1e1e1e] bg-white p-5 shadow-[4px_4px_0_#1e1e1e]">
+              <span
+                className="absolute inset-x-0 top-0 h-1.5 bg-[#ff6b00]"
+                aria-hidden="true"
+              />
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#ffd54a] text-[#1e1e1e]">
+                <Icon className="h-5 w-5" aria-hidden />
+              </div>
+              <p className="text-[11px] font-extrabold tracking-[0.16em] text-[#ff6b00] uppercase">
+                {metric.label}
+              </p>
+              <p className="mt-1 text-3xl font-bold tracking-tight text-[#1e1e1e]">
+                <NumberFlow
+                  value={metric.value}
+                  format={metric.format}
+                  respectMotionPreference
+                  transformTiming={{ duration: 700, easing: "ease-out" }}
+                />
+              </p>
             </div>
-            <p className="text-sm font-medium text-gray-600">{metric.label}</p>
-            <p className={`mt-1 text-3xl font-bold tracking-tight ${tone.value}`}>
-              {metric.value}
-            </p>
-          </Card>
+          </StaggerItem>
         );
       })}
-    </div>
+    </StaggerGroup>
   );
 }

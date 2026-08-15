@@ -28,6 +28,7 @@ export default async function PersonalInformationPage({
         lastName={user.lastName}
         email={user.email}
         labels={{
+          eyebrow: dictionary.profile.loyaltyEyebrow,
           title: dictionary.profile.personal,
           firstName: dictionary.auth.firstName,
           lastName: dictionary.auth.lastName,

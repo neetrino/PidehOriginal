@@ -1,3 +1,5 @@
+import { PROFILE_PANEL } from "@/features/profile/ui/profile-ui-classes";
+
 type ProfileComingSoonProps = {
   title: string;
   message: string;
@@ -5,11 +7,11 @@ type ProfileComingSoonProps = {
 
 export function ProfileComingSoon({ title, message }: ProfileComingSoonProps) {
   return (
-    <section className="rounded-2xl border border-gray-200/80 bg-white p-6 sm:p-8">
-      <h1 className="mb-3 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+    <section className={`${PROFILE_PANEL} profile-sheet-keep-frame`}>
+      <h1 className="font-display mb-3 text-3xl leading-[0.9] text-[#1e1e1e] uppercase sm:text-4xl">
         {title}
       </h1>
-      <p className="text-sm leading-relaxed text-gray-600 sm:text-base">
+      <p className="text-sm leading-relaxed text-[#1e1e1e]/65 sm:text-base">
         {message}
       </p>
     </section>

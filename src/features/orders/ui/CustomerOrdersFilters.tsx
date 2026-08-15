@@ -3,13 +3,13 @@
 import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 
-import { Card } from "@/components/ui/Card";
+import { PROFILE_PANEL } from "@/features/profile/ui/profile-ui-classes";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
 
 const FILTER_SEARCH =
-  "h-11 w-full min-w-0 shrink-0 rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-300 lg:flex-1 lg:shrink";
+  "h-11 w-full min-w-0 shrink-0 rounded-2xl border border-[#ff6b00]/20 bg-[#fff8e7] px-4 text-sm text-[#1e1e1e] outline-none transition placeholder:text-[#1e1e1e]/40 hover:border-[#ff6b00]/40 focus:border-[#ff6b00] lg:flex-1 lg:shrink";
 
 const ORDER_STATUS_FILTERS = [
   { label: "Pending", value: "PENDING" },
@@ -52,7 +52,7 @@ export function CustomerOrdersFilters({
   }
 
   return (
-    <Card className="mb-6 overflow-visible">
+    <div className={`${PROFILE_PANEL} mb-0 overflow-visible p-0`}>
       <form
         ref={formRef}
         method="get"
@@ -84,9 +84,9 @@ export function CustomerOrdersFilters({
           aria-label="Search orders"
         />
       </form>
-      <div className="border-t border-gray-200 px-4 py-3">
-        <p className="text-sm text-gray-600">Total orders: {total}</p>
+      <div className="border-t border-[#ff6b00]/12 px-4 py-3">
+        <p className="text-sm text-[#1e1e1e]/65">Total orders: {total}</p>
       </div>
-    </Card>
+    </div>
   );
 }

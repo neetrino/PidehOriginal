@@ -31,10 +31,10 @@ type NavItem = {
 
 function navClassName(active: boolean): string {
   const base =
-    "flex w-full items-center gap-3 rounded-md border-l-[3px] px-3 py-2 text-left text-sm font-medium transition-colors";
+    "flex w-full items-center gap-3 rounded-xl border-l-[3px] px-3 py-2 text-left text-sm font-medium transition-colors";
   return active
-    ? `${base} border-gray-900 bg-white/85 text-gray-900 shadow-sm`
-    : `${base} border-transparent text-gray-600 hover:bg-white/50 hover:text-gray-900`;
+    ? `${base} border-[#ff6b00] bg-white text-[#1e1e1e] shadow-sm`
+    : `${base} border-transparent text-[#1e1e1e]/65 hover:bg-white/70 hover:text-[#1e1e1e]`;
 }
 
 export function ProfileSidebarNav({
@@ -97,8 +97,8 @@ export function ProfileSidebarNav({
               <span
                 className={
                   active
-                    ? "flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-900 shadow-sm"
-                    : "flex h-8 w-8 items-center justify-center rounded-md bg-gray-100/80 text-gray-500"
+                    ? "flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff6b00] text-white shadow-sm"
+                    : "flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#ff6b00]"
                 }
               >
                 {item.icon}
@@ -109,13 +109,13 @@ export function ProfileSidebarNav({
         })}
       </nav>
 
-      <div className="mt-2 border-t border-gray-200/70 pt-2">
+      <div className="mt-2 border-t border-[#ff6b00]/12 pt-2">
         <form action={logoutAction}>
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-md border-l-[3px] border-transparent px-3 py-2 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+            className="flex w-full items-center gap-3 rounded-xl border-l-[3px] border-transparent px-3 py-2 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-red-50 text-red-500">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-500">
               <LogOut className="h-4 w-4" />
             </span>
             {dictionary.logout}

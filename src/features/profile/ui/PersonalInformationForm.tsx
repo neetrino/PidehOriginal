@@ -3,14 +3,18 @@
 import { useActionState, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import {
+  PROFILE_FIELD,
+  PROFILE_LABEL,
+  PROFILE_OUTLINE_BTN,
+  PROFILE_PANEL,
+  PROFILE_PRIMARY_BTN,
+} from "@/features/profile/ui/profile-ui-classes";
+import { ProfilePageHeading } from "@/features/profile/ui/ProfilePageHeading";
 import {
   updateProfileAction,
   type UpdateProfileActionState,
 } from "@/features/auth/update-profile-action";
-
-const FIELD_CLASS =
-  "h-11 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
 
 type PersonalInformationFormProps = {
   locale: string;
@@ -18,6 +22,7 @@ type PersonalInformationFormProps = {
   lastName: string;
   email: string;
   labels: {
+    eyebrow: string;
     title: string;
     firstName: string;
     lastName: string;
@@ -57,19 +62,15 @@ export function PersonalInformationForm({
   }
 
   return (
-    <Card className="rounded-2xl border border-gray-200/80 p-5 shadow-none sm:p-7 lg:p-8">
-      <div className="mb-8 border-b border-gray-100 pb-5 sm:mb-10 sm:pb-6">
-        <h1 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
-          {labels.title}
-        </h1>
-      </div>
-
+    <div className="profile-sheet-keep-frame space-y-6">
+      <ProfilePageHeading eyebrow={labels.eyebrow} title={labels.title} />
+      <div className={PROFILE_PANEL}>
       <form
         action={formAction}
         className="mx-auto max-w-xl space-y-6 lg:mx-0 lg:max-w-2xl"
       >
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+          <label className={PROFILE_LABEL}>
             {labels.firstName}
             <input
               name="firstName"
@@ -82,11 +83,11 @@ export function PersonalInformationForm({
                 }))
               }
               placeholder={labels.firstNamePlaceholder}
-              className={FIELD_CLASS}
+              className={PROFILE_FIELD}
               autoComplete="given-name"
             />
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+          <label className={PROFILE_LABEL}>
             {labels.lastName}
             <input
               name="lastName"
@@ -99,13 +100,13 @@ export function PersonalInformationForm({
                 }))
               }
               placeholder={labels.lastNamePlaceholder}
-              className={FIELD_CLASS}
+              className={PROFILE_FIELD}
               autoComplete="family-name"
             />
           </label>
         </div>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+        <label className={PROFILE_LABEL}>
           {labels.email}
           <input
             name="email"
@@ -116,7 +117,7 @@ export function PersonalInformationForm({
               setValues((prev) => ({ ...prev, email: event.target.value }))
             }
             placeholder={labels.emailPlaceholder}
-            className={FIELD_CLASS}
+            className={PROFILE_FIELD}
             autoComplete="email"
           />
         </label>
@@ -136,7 +137,7 @@ export function PersonalInformationForm({
           <Button
             type="button"
             variant="outline"
-            className="h-11 w-full sm:w-auto"
+            className={`h-11 w-full sm:w-auto ${PROFILE_OUTLINE_BTN}`}
             onClick={resetToSaved}
             disabled={isPending}
           >
@@ -145,13 +146,14 @@ export function PersonalInformationForm({
           <Button
             type="submit"
             variant="primary"
-            className="h-11 w-full sm:w-auto"
+            className={`h-11 w-full sm:w-auto ${PROFILE_PRIMARY_BTN}`}
             disabled={isPending}
           >
             {isPending ? labels.saving : labels.save}
           </Button>
         </div>
       </form>
-    </Card>
+      </div>
+    </div>
   );
 }

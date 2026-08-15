@@ -26,6 +26,7 @@ export default async function DeleteAccountPage({
       <DeleteAccountForm
         locale={locale}
         labels={{
+          eyebrow: dictionary.profile.loyaltyEyebrow,
           title: dictionary.profile.deleteAccount,
           description: copy.description,
           pointOrders: copy.pointOrders,

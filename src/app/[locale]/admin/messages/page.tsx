@@ -6,10 +6,9 @@ import { Card } from "@/components/ui/Card";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
   ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
+import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -90,10 +89,11 @@ export default async function AdminMessagesPage({
 
   return (
     <section>
-      <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>{t.title}</h1>
-        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{countLabel}</p>
-      </div>
+      <AdminPageHeading
+        className="mb-6"
+        title={t.title}
+        description={countLabel}
+      />
 
       <Card className="mb-6 p-4">
         <form method="get" className="flex flex-wrap items-end gap-3">

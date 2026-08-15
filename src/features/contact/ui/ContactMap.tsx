@@ -1,26 +1,102 @@
+"use client";
+
+import dynamic from "next/dynamic";
+import { useState } from "react";
+
+import type { ContactBranchId } from "@/features/contact/ui/contact-locations";
+
+const ContactMapCanvas = dynamic(
+  () =>
+    import("@/features/contact/ui/ContactMapCanvas").then((mod) => ({
+      default: mod.ContactMapCanvas,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[min(70vh,540px)] w-full animate-pulse bg-pideh-cream" />
+    ),
+  },
+);
+
 type ContactMapProps = {
   title: string;
+  primaryLabel: string;
+  secondaryLabel: string;
+  zoomInLabel: string;
+  zoomOutLabel: string;
 };
 
-const MAP_EMBED_SRC =
-  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048.1234567890123!2d44.5150!3d40.1812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x406aa2dab8fc8b5b%3A0x3d1479ab4e9b8c5e!2sAbovyan%20St%2C%20Yerevan%2C%20Armenia!5e0!3m2!1sen!2sam!4v1234567890123!5m2!1sen!2sam";
+export function ContactMap({
+  title,
+  primaryLabel,
+  secondaryLabel,
+  zoomInLabel,
+  zoomOutLabel,
+}: ContactMapProps) {
+  const [activeBranchId, setActiveBranchId] = useState<ContactBranchId | null>(
+    null,
+  );
 
-/** Below-the-fold map — lazy iframe, no client JS. */
-export function ContactMap({ title }: ContactMapProps) {
   return (
-    <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen">
-      <div className="h-[500px] w-full bg-gray-100">
-        <iframe
-          title={title}
-          src={MAP_EMBED_SRC}
-          width="100%"
-          height="100%"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          className="h-full w-full border-0"
-          allowFullScreen
-        />
+    <section className="relative z-0 px-4 pb-16 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="font-display text-3xl text-pideh-ink uppercase md:text-4xl">
+            {title}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            <BranchChip
+              label={primaryLabel}
+              selected={activeBranchId === "andranik"}
+              onSelect={() => setActiveBranchId("andranik")}
+            />
+            <BranchChip
+              label={secondaryLabel}
+              selected={activeBranchId === "koghbatsi"}
+              onSelect={() => setActiveBranchId("koghbatsi")}
+            />
+          </div>
+        </div>
+        <div className="relative">
+          <div
+            aria-hidden="true"
+            className="absolute inset-3 rotate-1 rounded-[36px] bg-pideh-yellow"
+          />
+          <div className="contact-map-shell relative overflow-hidden rounded-[32px] ring-4 ring-pideh-orange">
+            <ContactMapCanvas
+              primaryLabel={primaryLabel}
+              secondaryLabel={secondaryLabel}
+              zoomInLabel={zoomInLabel}
+              zoomOutLabel={zoomOutLabel}
+              activeBranchId={activeBranchId}
+            />
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+  );
+}
+
+function BranchChip({
+  label,
+  selected,
+  onSelect,
+}: {
+  label: string;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+        selected
+          ? "bg-pideh-orange text-white"
+          : "bg-white text-pideh-ink hover:bg-pideh-yellow"
+      }`}
+    >
+      {label}
+    </button>
   );
 }

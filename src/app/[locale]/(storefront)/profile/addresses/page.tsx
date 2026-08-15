@@ -26,6 +26,7 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
       locale={locale}
       addresses={addressRows}
       labels={{
+        eyebrow: dictionary.profile.loyaltyEyebrow,
         title: dictionary.profile.addresses,
         addNew: copy.addNew,
         defaultBadge: copy.defaultBadge,

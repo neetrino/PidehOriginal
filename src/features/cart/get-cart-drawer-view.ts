@@ -31,6 +31,10 @@ export type CartDrawerView = {
   subtotalFormatted: string;
   shippingFormatted: string;
   totalFormatted: string;
+  subtotalAmount: number;
+  shippingAmount: number;
+  totalAmount: number;
+  currency: Currency;
 };
 
 async function loadPrimaryProductImages(
@@ -66,19 +70,22 @@ async function loadPrimaryProductImages(
   return map;
 }
 
-function formatConvertedAmount(
+function convertDisplayAmount(
   baseAmountAmd: number,
   rate: string,
   currency: Currency,
   locale: Locale,
-): string {
+): { amount: number; formatted: string } {
   const converted = convertAmount(
     baseAmountAmd,
     rate,
     defaultCurrency,
     currency,
   );
-  return formatMoneyAmount(converted.amount, currency, locale);
+  return {
+    amount: Number(converted.amount),
+    formatted: formatMoneyAmount(converted.amount, currency, locale),
+  };
 }
 
 /** Builds storefront cart-drawer display data for the active cart. */
@@ -123,24 +130,24 @@ export async function getCartDrawerView(
       title: translation?.title ?? product.sku,
       quantity: item.quantity,
       imageUrl: images.get(product.id) ?? null,
-      unitPriceFormatted: formatConvertedAmount(
+      unitPriceFormatted: convertDisplayAmount(
         unitAmount,
         quote.rate,
         currency,
         locale,
-      ),
-      lineTotalFormatted: formatConvertedAmount(
+      ).formatted,
+      lineTotalFormatted: convertDisplayAmount(
         unitAmount * item.quantity,
         quote.rate,
         currency,
         locale,
-      ),
+      ).formatted,
       modifierSummary: parts.length > 0 ? parts.join(" · ") : null,
     });
     subtotalBase += item.quantity * unitAmount;
   }
 
-  const subtotalFormatted = formatConvertedAmount(
+  const subtotal = convertDisplayAmount(
     subtotalBase,
     quote.rate,
     currency,
@@ -150,8 +157,12 @@ export async function getCartDrawerView(
   return {
     itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
     items,
-    subtotalFormatted,
+    subtotalFormatted: subtotal.formatted,
     shippingFormatted: formatMoneyAmount(0, currency, locale),
-    totalFormatted: subtotalFormatted,
+    totalFormatted: subtotal.formatted,
+    subtotalAmount: subtotal.amount,
+    shippingAmount: 0,
+    totalAmount: subtotal.amount,
+    currency,
   };
 }

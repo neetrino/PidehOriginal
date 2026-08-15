@@ -43,6 +43,7 @@
   "exclude": [
     "node_modules",
     "tests/e2e",
-    ".next/dev"
+    ".next/dev",
+    "scripts"
   ]
 }
