@@ -177,10 +177,6 @@ body {
   background: transparent;
 }
 
-.storefront-shell:has(.pideh-home) .site-header [data-site-header-topbar] {
-  display: none;
-}
-
 @media (max-width: 767px) {
   .storefront-shell:has(.pideh-home) .storefront-main {
     padding-bottom: 5.5rem;

@@ -1,5 +1,8 @@
 {
   "title": "Կապ",
+  "hoursTitle": "Ժամեր",
+  "sending": "Ուղարկվում է…",
+  "ticketStamp": "Խոհանոցի տոմս",
   "subtitle": "Ուղարկեք հաղորդագրություն, և մենք կպատասխանենք։",
   "name": "Անուն",
   "email": "Էլ. փոստ",
@@ -27,5 +30,7 @@
   "hoursWeekdays": "Mon–Sun: 10:00 – 22:00",
   "hoursDelivery": "Delivery: 11:00 – 21:00",
   "hoursSaturday": "Շաբաթ՝ 11:00 - 15:00",
-  "mapTitle": "Խանութի գտնվելու վայրը"
+  "mapTitle": "Խանութի գտնվելու վայրը",
+  "mapZoomIn": "Մեծացնել քարտեզը",
+  "mapZoomOut": "Փոքրացնել քարտեզը"
 }

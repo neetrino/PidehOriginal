@@ -18,26 +18,36 @@ export default async function ContactPage({ params }: ContactPageProps) {
   }
 
   const dictionary = getDictionary(rawLocale);
+  const { contact } = dictionary;
 
   return (
-    <div className="-mx-4 -my-10 bg-white sm:-mx-6 lg:-mx-8">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-          <ContactInfo copy={dictionary.contact} />
+    <div className="-mx-4 -my-10 bg-[#fff8e7] sm:-mx-6 lg:-mx-8">
+      <section className="relative mx-auto max-w-7xl overflow-hidden px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <h1 className="sr-only">{contact.title}</h1>
+        <div className="relative grid grid-cols-1 items-start gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+          <ContactInfo copy={contact} />
           <ContactForm
             copy={{
-              name: dictionary.contact.name,
-              email: dictionary.contact.email,
-              phone: dictionary.contact.phone,
-              message: dictionary.contact.message,
-              submit: dictionary.contact.submit,
-              success: dictionary.contact.success,
-              error: dictionary.contact.error,
+              name: contact.name,
+              email: contact.email,
+              phone: contact.phone,
+              message: contact.message,
+              submit: contact.submit,
+              sending: contact.sending,
+              success: contact.success,
+              error: contact.error,
+              ticketStamp: contact.ticketStamp,
             }}
           />
         </div>
-      </div>
-      <ContactMap title={dictionary.contact.mapTitle} />
+      </section>
+      <ContactMap
+        title={contact.mapTitle}
+        primaryLabel={contact.storeAddress}
+        secondaryLabel={contact.storeAddressSecondary}
+        zoomInLabel={contact.mapZoomIn}
+        zoomOutLabel={contact.mapZoomOut}
+      />
     </div>
   );
 }
