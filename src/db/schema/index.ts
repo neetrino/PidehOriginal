@@ -63,6 +63,13 @@ export {
   outboxEvents,
 } from "@/db/schema/system";
 export {
+  groupOrderEvents,
+  groupOrderItemModifiers,
+  groupOrderItems,
+  groupOrderParticipants,
+  groupOrders,
+} from "@/db/schema/group-orders";
+export {
   CANONICAL_TABLE_COUNT,
   CANONICAL_TABLES,
   type CanonicalTable,

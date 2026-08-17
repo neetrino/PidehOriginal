@@ -3,9 +3,9 @@ import { describe, expect, it } from "vitest";
 import { CANONICAL_TABLE_COUNT, CANONICAL_TABLES } from "@/db/schema/tables";
 
 describe("canonical table inventory", () => {
-  it("contains exactly 29 unique application tables", () => {
-    expect(CANONICAL_TABLE_COUNT).toBe(29);
-    expect(new Set(CANONICAL_TABLES).size).toBe(29);
+  it("contains exactly 34 unique application tables", () => {
+    expect(CANONICAL_TABLE_COUNT).toBe(34);
+    expect(new Set(CANONICAL_TABLES).size).toBe(34);
     expect([...CANONICAL_TABLES]).toEqual([
       "users",
       "sessions",
@@ -36,6 +36,11 @@ describe("canonical table inventory", () => {
       "contact_messages",
       "audit_logs",
       "outbox_events",
+      "group_orders",
+      "group_order_participants",
+      "group_order_items",
+      "group_order_item_modifiers",
+      "group_order_events",
     ]);
   });
 });

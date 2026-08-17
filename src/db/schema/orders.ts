@@ -96,6 +96,8 @@ export const orders = pgTable(
     }),
     deliveryLabelSnapshot: text("delivery_label_snapshot"),
     deliveryEstimateSnapshot: text("delivery_estimate_snapshot"),
+    /** Source group order when this order was created from a group session. */
+    groupOrderId: uuid("group_order_id"),
     idempotencyScopeHash: text("idempotency_scope_hash").notNull(),
     idempotencyKeyHash: text("idempotency_key_hash").notNull(),
     requestFingerprint: text("request_fingerprint").notNull(),
@@ -153,11 +155,15 @@ export const orderItems = pgTable(
     taxAmount: integer("tax_amount").notNull().default(0),
     lineTotalAmount: integer("line_total_amount").notNull(),
     currency: text("currency").notNull().default("AMD"),
+    /** Group-order participant who selected this line (nullable for solo orders). */
+    groupOrderParticipantId: uuid("group_order_participant_id"),
+    participantNameSnapshot: text("participant_name_snapshot"),
     createdAt: createdAtColumn(),
   },
   (table) => [
     index("order_items_order_idx").on(table.orderId),
     index("order_items_product_idx").on(table.productId),
+    index("order_items_group_participant_idx").on(table.groupOrderParticipantId),
     check("order_items_qty_chk", sql`${table.quantity} > 0`),
   ],
 );
@@ -204,6 +210,8 @@ export const payments = pgTable(
     currency: text("currency").notNull().default("AMD"),
     status: paymentStatusEnum("status").notNull().default("PENDING"),
     attemptNumber: integer("attempt_number").notNull().default(1),
+    /** Split group-order payment owner (nullable for solo / organizer-pays-all). */
+    groupOrderParticipantId: uuid("group_order_participant_id"),
     metadata: jsonb("metadata").$type<Record<string, unknown>>(),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
@@ -214,6 +222,7 @@ export const payments = pgTable(
       table.providerReference,
       table.status,
     ),
+    index("payments_group_participant_idx").on(table.groupOrderParticipantId),
     check("payments_amount_chk", sql`${table.amount} >= 0`),
     check("payments_attempt_chk", sql`${table.attemptNumber} > 0`),
   ],

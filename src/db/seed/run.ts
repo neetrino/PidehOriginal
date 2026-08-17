@@ -3,6 +3,12 @@ import { drizzle } from "drizzle-orm/neon-http";
 
 import { hashPassword } from "@/lib/auth/password";
 import * as schema from "@/db/schema";
+import {
+  seedCatalogProducts,
+  seedPideCategory,
+  seedProductCategoryLinks,
+  seedProductMedia,
+} from "@/db/seed/catalog";
 import { getSeedEnv } from "@/db/seed/env";
 import { seedIds } from "@/db/seed/ids";
 
@@ -72,31 +78,11 @@ async function seed(): Promise<void> {
 
   await db
     .insert(schema.categories)
-    .values({
-      id: seedIds.categoryApparel,
-      translations: {
-        hy: {
-          title: "Apparel",
-          slug: "hagust",
-          description: "Core apparel category",
-        },
-        en: {
-          title: "Apparel",
-          slug: "apparel",
-          description: "Core apparel category",
-        },
-        ru: {
-          title: "Odezhda",
-          slug: "odezhda",
-          description: "Core apparel category",
-        },
-      },
-      sortOrder: 1,
-      status: "ACTIVE",
-    })
+    .values(seedPideCategory)
     .onConflictDoUpdate({
       target: schema.categories.id,
       set: {
+        translations: seedPideCategory.translations,
         status: "ACTIVE",
         updatedAt: now,
       },
@@ -104,61 +90,7 @@ async function seed(): Promise<void> {
 
   await db
     .insert(schema.products)
-    .values([
-      {
-        id: seedIds.productTee,
-        sku: "WS-TEE-001",
-        translations: {
-          hy: {
-            title: "White Tee",
-            slug: "white-tee",
-            description: "Classic white t-shirt",
-          },
-          en: {
-            title: "White Tee",
-            slug: "white-tee",
-            description: "Classic white t-shirt",
-          },
-          ru: {
-            title: "White Tee",
-            slug: "white-tee",
-            description: "Classic white t-shirt",
-          },
-        },
-        priceAmount: 12000,
-        compareAtAmount: 15000,
-        stockOnHand: 50,
-        lowStockThreshold: 5,
-        status: "ACTIVE",
-        isFeatured: true,
-      },
-      {
-        id: seedIds.productHoodie,
-        sku: "WS-HOODIE-001",
-        translations: {
-          hy: {
-            title: "Studio Hoodie",
-            slug: "studio-hoodie",
-            description: "Soft studio hoodie",
-          },
-          en: {
-            title: "Studio Hoodie",
-            slug: "studio-hoodie",
-            description: "Soft studio hoodie",
-          },
-          ru: {
-            title: "Studio Hoodie",
-            slug: "studio-hoodie",
-            description: "Soft studio hoodie",
-          },
-        },
-        priceAmount: 28000,
-        stockOnHand: 25,
-        lowStockThreshold: 3,
-        status: "ACTIVE",
-        isFeatured: true,
-      },
-    ])
+    .values([...seedCatalogProducts])
     .onConflictDoUpdate({
       target: schema.products.id,
       set: {
@@ -169,23 +101,20 @@ async function seed(): Promise<void> {
 
   await db
     .insert(schema.productCategories)
-    .values([
-      {
-        id: seedIds.productCategoryTee,
-        productId: seedIds.productTee,
-        categoryId: seedIds.categoryApparel,
-        isPrimary: true,
-        sortOrder: 1,
-      },
-      {
-        id: seedIds.productCategoryHoodie,
-        productId: seedIds.productHoodie,
-        categoryId: seedIds.categoryApparel,
-        isPrimary: true,
-        sortOrder: 2,
-      },
-    ])
+    .values([...seedProductCategoryLinks])
     .onConflictDoNothing({ target: schema.productCategories.id });
+
+  await db
+    .insert(schema.mediaAssets)
+    .values(seedProductMedia)
+    .onConflictDoUpdate({
+      target: schema.mediaAssets.id,
+      set: {
+        uploadStatus: "READY",
+        isPrimary: true,
+        updatedAt: now,
+      },
+    });
 
   await db
     .insert(schema.deliveryRules)
@@ -338,12 +267,12 @@ async function seed(): Promise<void> {
     .insert(schema.appMeta)
     .values({
       key: "seed.version",
-      value: "1",
+      value: "2",
     })
     .onConflictDoUpdate({
       target: schema.appMeta.key,
       set: {
-        value: "1",
+        value: "2",
         updatedAt: now,
       },
     });
@@ -354,7 +283,7 @@ async function seed(): Promise<void> {
       message: "seed.complete",
       adminEmail: env.SEED_ADMIN_EMAIL.toLowerCase(),
       customerEmail: customerEmail.toLowerCase(),
-      products: ["WS-TEE-001", "WS-HOODIE-001"],
+      products: seedCatalogProducts.map((product) => product.sku),
       coupon: "WELCOME10",
     }),
   );

@@ -4,7 +4,7 @@ import { Minus, Plus } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 import { MultiSelectDropdown } from "@/components/ui/MultiSelectDropdown";
-import { addToCart } from "@/features/cart/cart";
+import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
 import type { ProductModifierChoice } from "@/features/products/types";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
@@ -76,9 +76,13 @@ export function ProductPurchaseControls({
     setError(null);
     startTransition(async () => {
       try {
-        await addToCart(productId, quantity, {
+        const result = await addProductToActiveCart(productId, quantity, {
           modifierIds: [...additionIds, ...exceptionIds],
         });
+        if (!result.ok) {
+          setError(result.error);
+          return;
+        }
         setMessage(labels.added);
       } catch {
         setError(labels.error);

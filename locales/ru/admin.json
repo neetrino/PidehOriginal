@@ -2,6 +2,7 @@
   "nav": {
     "dashboard": "Панель управления",
     "orders": "Заказы",
+    "groupOrders": "Групповые заказы",
     "products": "Товары",
     "categories": "Категории",
     "delivery": "Доставка",

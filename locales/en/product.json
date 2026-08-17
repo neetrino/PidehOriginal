@@ -30,6 +30,7 @@
   "savingReview": "Saving…",
   "cancelReview": "Cancel",
   "reviewPending": "Thanks — your review is pending moderation.",
+  "reviewSaveError": "Unable to save review.",
   "alreadyReviewed": "You already submitted a review for this product.",
   "reviewsUnlock": "Reviews unlock after a delivered purchase.",
   "signIn": "Sign in",

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { RatingStars } from "@/features/products/ui/ProductReviewRating";
@@ -17,6 +18,7 @@ type ReviewFormLabels = {
   submitting: string;
   cancel: string;
   pending: string;
+  saveError: string;
 };
 
 type ReviewFormProps = {
@@ -39,6 +41,7 @@ export function ReviewForm({
   initialRating = 0,
   initialComment = "",
 }: ReviewFormProps) {
+  const router = useRouter();
   const isEdit = Boolean(reviewId);
   const [rating, setRating] = useState(initialRating);
   const [commentDraft, setCommentDraft] = useState(initialComment);
@@ -69,23 +72,28 @@ export function ReviewForm({
         }
         setError(null);
         startTransition(async () => {
-          const result =
-            isEdit && reviewId
-              ? await updateReviewAction(locale, {
-                  reviewId,
-                  rating,
-                  comment,
-                })
-              : await submitReviewAction(locale, {
-                  productId,
-                  rating,
-                  comment,
-                });
-          if (!result.ok) {
-            setError(result.error.message);
-            return;
+          try {
+            const result =
+              isEdit && reviewId
+                ? await updateReviewAction(locale, {
+                    reviewId,
+                    rating,
+                    comment,
+                  })
+                : await submitReviewAction(locale, {
+                    productId,
+                    rating,
+                    comment,
+                  });
+            if (!result.ok) {
+              setError(result.error.message);
+              return;
+            }
+            setDone(true);
+            router.refresh();
+          } catch {
+            setError(labels.saveError);
           }
-          setDone(true);
         });
       }}
     >

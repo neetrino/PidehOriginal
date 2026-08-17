@@ -12,6 +12,7 @@ describe("getDictionary", () => {
     expect(dictionary.contact.title).toBe("Contact");
     expect(dictionary.cartDrawer.title).toBe("Shopping Cart");
     expect(dictionary.checkout.title).toBe("Checkout");
+    expect(dictionary.groupOrder.createButton).toBe("Group order");
   });
 
   it("loads Armenian and Russian namespaces", () => {
