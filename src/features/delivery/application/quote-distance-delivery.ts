@@ -8,10 +8,14 @@ import {
   calculateDistanceDeliveryFee,
   formatDistanceKmLabel,
 } from "@/features/delivery/domain/distance-fee";
-import { quoteDistanceDeliverySchema } from "@/features/delivery/schemas";
+import {
+  quoteDistanceDeliverySchema,
+  type DeliveryDestinationPoint,
+} from "@/features/delivery/schemas";
 import {
   geocodeAddress,
   getDrivingDistanceMeters,
+  type GeocodeResult,
 } from "@/lib/maps/google-maps";
 import { logger } from "@/lib/observability/logger";
 
@@ -31,13 +35,17 @@ export type QuoteDistanceDeliveryResult =
 
 /**
  * Quotes delivery fee for a destination address using store origin + AMD/km.
- * Used by checkout preview and order create (authoritative path).
+ * Prefer map pin coordinates when available — re-geocoding vague labels
+ * often resolves to the wrong place.
  */
 export async function quoteDistanceDelivery(
   destinationAddress: string,
+  destinationPoint?: DeliveryDestinationPoint | null,
 ): Promise<QuoteDistanceDeliveryResult> {
   const parsed = quoteDistanceDeliverySchema.safeParse({
     line1: destinationAddress,
+    lat: destinationPoint?.lat,
+    lng: destinationPoint?.lng,
   });
   if (!parsed.success) {
     return { ok: false, error: "Enter a delivery address." };
@@ -59,7 +67,12 @@ export async function quoteDistanceDelivery(
   }
 
   try {
-    const destination = await geocodeAddress(parsed.data.line1);
+    const destination = await resolveDestination(
+      parsed.data.line1,
+      parsed.data.lat != null && parsed.data.lng != null
+        ? { lat: parsed.data.lat, lng: parsed.data.lng }
+        : null,
+    );
     const distance = await getDrivingDistanceMeters(
       { lat: settings.originLat, lng: settings.originLng },
       destination.location,
@@ -95,9 +108,25 @@ export async function quoteDistanceDelivery(
   }
 }
 
+async function resolveDestination(
+  line1: string,
+  point: DeliveryDestinationPoint | null,
+): Promise<GeocodeResult> {
+  if (point) {
+    return {
+      formattedAddress: line1,
+      location: point,
+      city: null,
+      countryCode: null,
+    };
+  }
+  return geocodeAddress(line1);
+}
+
 /** Server action wrapper for checkout UI debounce quoting. */
 export async function quoteDistanceDeliveryAction(
   line1: string,
+  destinationPoint?: DeliveryDestinationPoint | null,
 ): Promise<QuoteDistanceDeliveryResult> {
-  return quoteDistanceDelivery(line1);
+  return quoteDistanceDelivery(line1, destinationPoint);
 }

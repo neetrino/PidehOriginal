@@ -5,6 +5,8 @@ import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
+import { getActiveGroupOrderBanner } from "@/features/group-orders/application/active-banner";
+import { ActiveGroupOrderBanner } from "@/features/group-orders/ui/ActiveGroupOrderBanner";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {
@@ -33,6 +35,7 @@ export default async function StorefrontLayout({
   const currency = parseCurrencyCookie(
     cookieStore.get(CURRENCY_COOKIE_NAME)?.value,
   );
+  const activeGroupOrder = await getActiveGroupOrderBanner();
 
   return (
     <div className="storefront-shell flex min-h-dvh flex-1 flex-col bg-[#fff8e7]">
@@ -41,6 +44,14 @@ export default async function StorefrontLayout({
         currency={currency}
         dictionary={dictionary}
       />
+      {activeGroupOrder ? (
+        <ActiveGroupOrderBanner
+          locale={locale}
+          labels={dictionary.groupOrder}
+          organizerDisplayName={activeGroupOrder.organizerDisplayName}
+          inviteToken={activeGroupOrder.inviteToken}
+        />
+      ) : null}
       <main className="storefront-main mx-auto w-full max-w-7xl flex-1 px-4 py-10 pb-24 sm:px-6 md:pb-10 lg:px-8">
         <MaintenanceGate>{children}</MaintenanceGate>
       </main>

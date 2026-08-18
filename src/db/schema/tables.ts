@@ -32,6 +32,11 @@ export const CANONICAL_TABLES = [
   "contact_messages",
   "audit_logs",
   "outbox_events",
+  "group_orders",
+  "group_order_participants",
+  "group_order_items",
+  "group_order_item_modifiers",
+  "group_order_events",
 ] as const;
 
 export type CanonicalTable = (typeof CANONICAL_TABLES)[number];

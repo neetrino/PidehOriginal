@@ -16,6 +16,7 @@ import {
 } from "@/features/reviews/schemas/reviews";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale, type Locale } from "@/lib/i18n/config";
+import { logger } from "@/lib/observability/logger";
 import { err, ok, type Result } from "@/lib/result";
 
 /** Owner updates rating/comment; edited reviews return to pending moderation. */
@@ -114,6 +115,9 @@ export async function updateReviewAction(
       case "PRODUCT_NOT_FOUND":
         return err("PRODUCT_NOT_FOUND", "Product not found.");
       default:
+        logger.error("review_update_failed", {
+          code,
+        });
         return err("REVIEW_UPDATE_FAILED", "Unable to update review.");
     }
   }

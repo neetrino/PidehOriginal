@@ -2,6 +2,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "orders": "Orders",
+    "groupOrders": "Group orders",
     "products": "Products",
     "categories": "Categories",
     "delivery": "Delivery",

@@ -26,7 +26,10 @@ type AddressMapPickerProps = {
   addressValue: string;
   disabled?: boolean;
   labels: AddressMapPickerLabels;
-  onAddressSelected: (address: string) => void;
+  onAddressSelected: (
+    address: string,
+    point: { lat: number; lng: number },
+  ) => void;
 };
 
 type PickedPoint = {
@@ -161,7 +164,10 @@ export function AddressMapPicker({
 
   function onConfirm(): void {
     if (!picked || resolving) return;
-    onAddressSelected(picked.formattedAddress);
+    onAddressSelected(picked.formattedAddress, {
+      lat: picked.lat,
+      lng: picked.lng,
+    });
     setExiting(true);
   }
 

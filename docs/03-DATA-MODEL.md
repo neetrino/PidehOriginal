@@ -2,9 +2,9 @@
 
 **Database.** PostgreSQL (Neon)
 **ORM/migrations.** Drizzle ORM / Drizzle Kit
-**Կարգավիճակ.** Canonical 29-table schema migrated; idempotent seed available (`pnpm db:seed`)
-**Canonical table count.** 29
-**Վերջին թարմացում.** 2026-07-23
+**Կարգավիճակ.** Canonical 34-table schema migrated; idempotent seed available (`pnpm db:seed`)
+**Canonical table count.** 34
+**Վերջին թարմացում.** 2026-08-17
 
 ## 1. Սխեմայի նպատակը
 
@@ -29,7 +29,7 @@
 - Financial, stock և audit records-ը hard delete չեն ընդունում։
 - Flexible JSONB-ը միշտ Zod schema/version ունի և business-critical relational կապերը չի փոխարինում։
 
-## 3. Canonical 29-table inventory
+## 3. Canonical 34-table inventory
 
 | # | Table | Domain | Նշանակություն |
 |---:|---|---|---|
@@ -62,6 +62,11 @@
 | 27 | `contact_messages` | Support | Contact inbox |
 | 28 | `audit_logs` | Security | Immutable admin/security audit |
 | 29 | `outbox_events` | Reliability | Reliable post-commit email/provider/cache work |
+| 30 | `group_orders` | Group orders | Shared invite session, payment mode, delivery snapshot |
+| 31 | `group_order_participants` | Group orders | Organizer/guest participants, shares, payment status |
+| 32 | `group_order_items` | Group orders | Per-participant merchandise lines |
+| 33 | `group_order_item_modifiers` | Group orders | Modifier snapshots on group lines |
+| 34 | `group_order_events` | Group orders | Group-session audit trail |
 
 ### Count assumptions
 
@@ -260,12 +265,13 @@ Composite unique `(promotion_id, user_id)` allowlist։ Zero rows նշանակո�
 | Delivery | nullable rule ID + label/estimate/price snapshot |
 | Idempotency | checkout scope hash + idempotency key hash + request fingerprint UNIQUE |
 | Context | locale, correlation ID |
+| Group order | nullable `group_order_id` when the order was created from a group session |
 
 Order JSON snapshots-ը versioned Zod schema ունեն։ Client total/stock/promotion/delivery տվյալները authoritative չեն։
 
 ### 10.2 `order_items`
 
-Order, nullable product reference, product title/SKU/image/attributes snapshots, quantity, unit base/display amounts, compare-at, discount/tax/line totals և currency context։ Unit amount-ը ներառում է selected addition prices։ Product update/archive-ից հետո պատմական order-ը նույնն է մնում։
+Order, nullable product reference, product title/SKU/image/attributes snapshots, quantity, unit base/display amounts, compare-at, discount/tax/line totals և currency context։ Unit amount-ը ներառում է selected addition prices։ Product update/archive-ից հետո պատմական order-ը նույնն է մնում։ Group-order lines-ը կարող են ունենալ nullable `group_order_participant_id` և `participant_name_snapshot`։
 
 ### 10.3 `order_item_modifiers`
 
@@ -281,7 +287,11 @@ Immutable per-line snapshots՝ kind, name, unit price (0 for exceptions)։ Libra
 
 ### 10.5 `payments`
 
-Order, provider/method, provider reference, requested amount/currency, current status, attempt number, safe metadata և timestamps։ Մեկ order-ը կարող է ունենալ COD row կամ բազմաթիվ online attempts։ Card/secret/full sensitive payload չի պահվում։
+Order, provider/method, provider reference, requested amount/currency, current status, attempt number, safe metadata և timestamps։ Մեկ order-ը կարող է ունենալ COD row կամ բազմաթիվ online attempts։ Card/secret/full sensitive payload չի պահվում։ Split group-order payments-ը կարող են ունենալ nullable `group_order_participant_id`։
+
+### 10.6 Group orders
+
+`group_orders` holds the invite session (opaque `invite_token`, payment mode, spend limit, delivery snapshot, linked `order_id`). Participants, items, item modifiers, and events are separate tables so guest/user ownership, per-person shares, and audit stay relational. Final checkout still writes a standard `orders` row.
 
 ## 11. Reviews և support
 
@@ -376,7 +386,7 @@ Actual indexes-ը validate են արվում representative data-ի `EXPLAIN (AN
 
 ## 18. Migration և seed acceptance criteria
 
-- [x] Fresh migration-ը ստեղծում է ճիշտ 25 application table։
+- [x] Fresh migration-ը ստեղծում է ճիշտ 34 application table։
 - [x] Յուրաքանչյուր FK ունի explicit delete behavior։
 - [ ] JSONB schemas/versioning և locale expression indexes tested են։
 - [ ] Money/range/exactly-one-owner/target constraints tested են։

@@ -9,6 +9,7 @@ import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import { AppLink } from "@/components/ui/AppLink";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
+import { GroupOrderHeaderButton } from "@/features/group-orders/ui/GroupOrderHeaderButton";
 import { HeaderSearch } from "@/features/products/ui/HeaderSearch";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -131,6 +132,15 @@ export function SiteHeaderMainNav({
         </nav>
 
         <div className="flex items-center gap-2 md:gap-3.5">
+          <GroupOrderHeaderButton
+            locale={locale}
+            labels={dictionary.groupOrder}
+            defaultName={
+              user
+                ? [user.firstName, user.lastName].filter(Boolean).join(" ")
+                : ""
+            }
+          />
           <div className="hidden items-center gap-2 md:flex">
             <LocaleCurrencySwitcher
               locale={locale}

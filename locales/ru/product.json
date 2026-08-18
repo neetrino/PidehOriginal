@@ -30,6 +30,7 @@
   "savingReview": "Сохраняем…",
   "cancelReview": "Отмена",
   "reviewPending": "Спасибо — ваш отзыв ожидает модерации.",
+  "reviewSaveError": "Не удалось сохранить отзыв.",
   "alreadyReviewed": "Вы уже оставили отзыв на этот товар.",
   "reviewsUnlock": "Отзывы доступны после доставки заказа.",
   "signIn": "Войти",

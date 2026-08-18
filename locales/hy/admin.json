@@ -2,6 +2,7 @@
   "nav": {
     "dashboard": "Կառավարման վահանակ",
     "orders": "Պատվերներ",
+    "groupOrders": "Խմբային պատվերներ",
     "products": "Ապրանքներ",
     "categories": "Կատեգորիաներ",
     "delivery": "Առաքում",

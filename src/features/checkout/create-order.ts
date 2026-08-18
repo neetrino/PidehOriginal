@@ -29,6 +29,8 @@ import {
   type CheckoutInput,
 } from "@/features/checkout/schemas";
 import { toPaymentRecord } from "@/features/checkout/domain/payment-methods";
+import { resolveGroupOrderCheckoutContext } from "@/features/checkout/application/group-order-checkout-context";
+import { completeGroupOrderAfterStandardCheckout } from "@/features/group-orders/application/complete-after-checkout";
 import {
   quoteDistanceDelivery,
   type DistanceDeliveryQuote,
@@ -104,13 +106,30 @@ export async function createOrderAction(
   let cashChangeAmount: number | undefined;
   let cashChangeImageKey: string | undefined;
   const deliverySettings = await getDeliverySettings();
+  const groupCheckout = await resolveGroupOrderCheckoutContext();
 
   if (input.shippingMethod === "delivery") {
-    const quoted = await quoteDistanceDelivery(input.line1 ?? "");
-    if (!quoted.ok) {
-      return { ok: false, error: quoted.error };
+    if (
+      groupCheckout.active &&
+      groupCheckout.deliveryAmount >= 0 &&
+      groupCheckout.deliveryAddress
+    ) {
+      deliveryQuote = {
+        distanceMeters: 0,
+        distanceLabel: groupCheckout.deliveryDistanceLabel ?? "group-order",
+        pricePerKmAmount: 0,
+        deliveryAmount: groupCheckout.deliveryAmount,
+        destinationFormattedAddress: groupCheckout.deliveryAddress,
+        city: null,
+        countryCode: null,
+      };
+    } else {
+      const quoted = await quoteDistanceDelivery(input.line1 ?? "");
+      if (!quoted.ok) {
+        return { ok: false, error: quoted.error };
+      }
+      deliveryQuote = quoted.quote;
     }
-    deliveryQuote = quoted.quote;
 
     const selectedSlot = {
       date: input.scheduledDeliveryDate ?? "",
@@ -441,6 +460,7 @@ export async function createOrderAction(
         requestFingerprint: fingerprint,
         locale: input.locale,
         placedAt: now,
+        groupOrderId: groupCheckout.active ? groupCheckout.groupOrderId : null,
       });
 
       for (const line of lineSnapshots) {
@@ -499,11 +519,19 @@ export async function createOrderAction(
 
       const payment = await getProviders().payment.createPayment({
         orderId,
-        amount: BigInt(totalAmount),
+        amount: BigInt(
+          groupCheckout.active && groupCheckout.splitOthersPrepaid
+            ? groupCheckout.organizerPayableAmount
+            : totalAmount,
+        ),
         currency: defaultCurrency,
         idempotencyKey: input.idempotencyKey,
       });
       const paymentRecord = toPaymentRecord(input.paymentMethod);
+      const organizerParticipantId = groupCheckout.active
+        ? (groupCheckout.participants.find((p) => p.role === "ORGANIZER")?.id ??
+          null)
+        : null;
 
       await tx.insert(payments).values({
         id: createId(),
@@ -511,10 +539,14 @@ export async function createOrderAction(
         provider: paymentRecord.provider,
         method: paymentRecord.method,
         providerReference: payment.providerReference,
-        amount: totalAmount,
+        amount:
+          groupCheckout.active && groupCheckout.splitOthersPrepaid
+            ? groupCheckout.organizerPayableAmount
+            : totalAmount,
         currency: defaultCurrency,
         status: "PENDING",
         attemptNumber: 1,
+        groupOrderParticipantId: organizerParticipantId,
       });
 
       await tx.insert(orderEvents).values({
@@ -533,6 +565,12 @@ export async function createOrderAction(
         .update(carts)
         .set({ status: "CONVERTED", updatedAt: now })
         .where(eq(carts.id, cart.id));
+
+      await completeGroupOrderAfterStandardCheckout({
+        orderId,
+        orderNumber: number,
+        tx,
+      });
 
       return number;
     });

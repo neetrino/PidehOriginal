@@ -3,8 +3,12 @@ import {
   RatingStars,
 } from "@/features/products/ui/ProductReviewRating";
 import { ProductWriteReviewCta } from "@/features/products/ui/ProductWriteReviewCta";
-import type { ProductReviewsView } from "@/features/reviews/application/queries";
+import type {
+  ProductReviewsView,
+  PublicReview,
+} from "@/features/reviews/application/queries";
 import { buildReviewAggregate } from "@/features/reviews/domain/review-rules";
+import { OwnerReviewCard } from "@/features/reviews/ui/OwnerReviewCard";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -21,6 +25,36 @@ function formatAverage(average: number): string {
   return average.toFixed(1);
 }
 
+function ownerCardLabels(labels: Dictionary["product"]) {
+  return {
+    editReview: labels.editReview,
+    editReviewTitle: labels.editReviewTitle,
+    ratingLabel: labels.ratingLabel,
+    yourReviewLabel: labels.yourReviewLabel,
+    reviewPlaceholder: labels.reviewPlaceholder,
+    saveReview: labels.saveReview,
+    savingReview: labels.savingReview,
+    cancelReview: labels.cancelReview,
+    reviewPending: labels.reviewPending,
+    reviewSaveError: labels.reviewSaveError,
+    alreadyReviewed: labels.alreadyReviewed,
+  };
+}
+
+function PublicReviewItem({ review }: { review: PublicReview }) {
+  return (
+    <li className="w-full rounded-lg border border-gray-200 bg-white p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="text-sm font-medium text-gray-900">{review.authorName}</p>
+        <RatingStars average={review.rating} size="sm" />
+      </div>
+      {review.comment ? (
+        <p className="mt-2 text-sm text-gray-600">{review.comment}</p>
+      ) : null}
+    </li>
+  );
+}
+
 export function ProductReviewsSection({
   locale,
   productId,
@@ -30,9 +64,6 @@ export function ProductReviewsSection({
   labels,
 }: ProductReviewsSectionProps) {
   const { reviews, viewerReview } = reviewsView;
-
-  // Public aggregate is approved-only; fold the viewer's pending/rejected
-  // rating into the PDP summary so their submission updates the header.
   const ratings = reviews.map((review) => review.rating);
   if (viewerReview && viewerReview.moderationStatus !== "APPROVED") {
     ratings.push(viewerReview.rating);
@@ -61,23 +92,30 @@ export function ProductReviewsSection({
 
       {reviews.length > 0 ? (
         <ul className="flex w-full flex-col gap-3">
-          {reviews.map((review) => (
-            <li
-              key={review.id}
-              className="w-full rounded-lg border border-gray-200 bg-white p-4"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-medium text-gray-900">
-                  {review.authorName}
-                </p>
-                <RatingStars average={review.rating} size="sm" />
-              </div>
-              {review.comment ? (
-                <p className="mt-2 text-sm text-gray-600">{review.comment}</p>
-              ) : null}
-            </li>
-          ))}
+          {reviews.map((review) =>
+            viewerReview && review.id === viewerReview.id ? (
+              <li key={review.id}>
+                <OwnerReviewCard
+                  locale={locale}
+                  productId={productId}
+                  review={viewerReview}
+                  labels={ownerCardLabels(labels)}
+                />
+              </li>
+            ) : (
+              <PublicReviewItem key={review.id} review={review} />
+            ),
+          )}
         </ul>
+      ) : null}
+
+      {viewerReview && viewerReview.moderationStatus !== "APPROVED" ? (
+        <OwnerReviewCard
+          locale={locale}
+          productId={productId}
+          review={viewerReview}
+          labels={ownerCardLabels(labels)}
+        />
       ) : null}
 
       <ProductWriteReviewCta
@@ -86,26 +124,20 @@ export function ProductReviewsSection({
         productSlug={productSlug}
         canSubmit={reviewsView.canSubmit}
         isSignedIn={isSignedIn}
-        existingReviewId={reviewsView.existingReviewId}
-        viewerReview={reviewsView.viewerReview}
+        hasExistingReview={reviewsView.existingReviewId != null}
         showEmptyPrompt={isEmpty}
         labels={{
           writeReview: labels.writeReview,
           writeReviewTitle: labels.writeReviewTitle,
-          editReview: labels.editReview,
-          editReviewTitle: labels.editReviewTitle,
           ratingLabel: labels.ratingLabel,
           yourReviewLabel: labels.yourReviewLabel,
           reviewPlaceholder: labels.reviewPlaceholder,
           submitReview: labels.submitReview,
           submittingReview: labels.submittingReview,
-          saveReview: labels.saveReview,
-          savingReview: labels.savingReview,
           cancelReview: labels.cancelReview,
           reviewPending: labels.reviewPending,
+          reviewSaveError: labels.reviewSaveError,
           emptyPrompt: labels.emptyPrompt,
-          alreadyReviewed: labels.alreadyReviewed,
-          reviewsUnlock: labels.reviewsUnlock,
           signIn: labels.signIn,
           signInToReview: labels.signInToReview,
         }}

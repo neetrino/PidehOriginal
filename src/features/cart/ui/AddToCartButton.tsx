@@ -5,7 +5,7 @@ import { ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { addToCart } from "@/features/cart/cart";
+import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
 
 type AddToCartButtonProps = {
   productId: string;
@@ -34,7 +34,11 @@ export function AddToCartButton({
 
     startTransition(async () => {
       try {
-        await addToCart(productId, 1);
+        const result = await addProductToActiveCart(productId, 1);
+        if (!result.ok) {
+          setJustAdded(false);
+          return;
+        }
         setJustAdded(true);
         router.refresh();
         window.setTimeout(() => setJustAdded(false), 1500);

@@ -98,11 +98,18 @@ export type DeliverySettingsInput = z.infer<typeof deliverySettingsSchema>;
 
 export const quoteDistanceDeliverySchema = z.object({
   line1: z.string().trim().min(3).max(300),
+  lat: z.number().finite().min(-90).max(90).optional(),
+  lng: z.number().finite().min(-180).max(180).optional(),
 });
 
 export type QuoteDistanceDeliveryInput = z.infer<
   typeof quoteDistanceDeliverySchema
 >;
+
+export type DeliveryDestinationPoint = {
+  lat: number;
+  lng: number;
+};
 
 /** @deprecated City-based rules; kept for historical order FK rows. */
 export const deliveryLocationSchema = z.object({

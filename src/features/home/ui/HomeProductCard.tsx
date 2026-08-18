@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, type MouseEvent } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
-import { addToCart } from "@/features/cart/cart";
+import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -58,7 +58,11 @@ export function HomeProductCard({
 
     startTransition(async () => {
       try {
-        await addToCart(productId, 1);
+        const result = await addProductToActiveCart(productId, 1);
+        if (!result.ok) {
+          setJustAdded(false);
+          return;
+        }
         setJustAdded(true);
         router.refresh();
         window.setTimeout(() => setJustAdded(false), 1500);
