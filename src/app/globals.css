@@ -200,6 +200,11 @@ body {
   z-index: 20;
 }
 
+.storefront-shell:has(.pideh-home) .storefront-footer {
+  background: var(--pideh-orange);
+  padding-top: 6rem;
+}
+
 .storefront-shell:has(.pideh-about) .storefront-footer {
   position: relative;
   z-index: 1;
