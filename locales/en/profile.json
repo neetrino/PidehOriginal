@@ -2,6 +2,8 @@
   "title": "My profile",
   "dashboard": "Dashboard",
   "orders": "Orders",
+  "bonuses": "My bonuses",
+  "giftCards": "My gift cards",
   "personal": "Personal information",
   "addresses": "Addresses",
   "password": "Change password",
@@ -64,5 +66,56 @@
     "acknowledge": "I understand that this action cannot be undone.",
     "submit": "Delete account",
     "deleting": "Deleting…"
+  },
+  "bonusesPage": {
+    "available": "Available balance",
+    "totalEarned": "Total earned",
+    "totalRedeemed": "Total redeemed",
+    "history": "Bonus history",
+    "empty": "No bonus activity yet.",
+    "order": "Order",
+    "expires": "Expires {date}",
+    "noExpiry": "No expiry",
+    "types": {
+      "EARN": "Earned",
+      "REDEEM": "Redeemed",
+      "REVERSAL_EARN": "Earn reversed",
+      "REVERSAL_REDEEM": "Redeem reversed",
+      "EXPIRE": "Expired"
+    }
+  },
+  "giftCardsPage": {
+    "buy": "Buy gift card",
+    "empty": "No gift cards yet.",
+    "history": "Usage history",
+    "status": "Status",
+    "balance": "Balance",
+    "initial": "Initial value",
+    "recipient": "Recipient",
+    "expires": "Expires",
+    "statuses": {
+      "PENDING_PAYMENT": "Pending payment",
+      "ACTIVE": "Active",
+      "USED": "Used",
+      "EXPIRED": "Expired",
+      "DISABLED": "Disabled"
+    }
+  },
+  "giftCardsBuyPage": {
+    "title": "Buy a gift card",
+    "description": "Purchase a digital gift card and send it by email after payment is confirmed.",
+    "amount": "Gift card value",
+    "customAmount": "Custom",
+    "recipientName": "Recipient name",
+    "recipientEmail": "Recipient email",
+    "recipientPhone": "Recipient phone",
+    "purchaserName": "Sender name",
+    "message": "Message",
+    "sendDate": "Send date",
+    "paymentMethod": "Payment method",
+    "cashOnDelivery": "Cash on delivery",
+    "submit": "Place purchase",
+    "submitting": "Submitting…",
+    "successPending": "Purchase created. The gift card is active and the code was emailed to the recipient."
   }
 }

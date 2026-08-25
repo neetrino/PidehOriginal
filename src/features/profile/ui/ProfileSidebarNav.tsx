@@ -3,11 +3,13 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import {
+  Gift,
   LayoutDashboard,
   Lock,
   LogOut,
   MapPin,
   Package,
+  Sparkles,
   Trash2,
   User,
 } from "lucide-react";
@@ -55,6 +57,16 @@ export function ProfileSidebarNav({
       href: `/${locale}/profile/orders`,
       label: dictionary.orders,
       icon: <Package className="h-4 w-4" />,
+    },
+    {
+      href: `/${locale}/profile/bonuses`,
+      label: dictionary.bonuses,
+      icon: <Sparkles className="h-4 w-4" />,
+    },
+    {
+      href: `/${locale}/profile/gift-cards`,
+      label: dictionary.giftCards,
+      icon: <Gift className="h-4 w-4" />,
     },
     {
       href: `/${locale}/profile/personal-information`,

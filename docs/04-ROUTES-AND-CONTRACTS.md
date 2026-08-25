@@ -54,6 +54,9 @@
 | `/[locale]/profile` | Dashboard metrics/recent orders |
 | `/[locale]/profile/orders` | Paginated orders |
 | `/[locale]/profile/orders/[orderNumber]` | Optional deep-link detail; drawer կարող է intercept route օգտագործել |
+| `/[locale]/profile/bonuses` | Bonus balance + ledger |
+| `/[locale]/profile/gift-cards` | Owned/received gift cards |
+| `/[locale]/profile/gift-cards/buy` | Purchase gift card (COD activate + email) |
 | `/[locale]/profile/personal-information` | Profile edit |
 | `/[locale]/profile/addresses` | Address CRUD |
 | `/[locale]/profile/change-password` | Re-authenticated password change |
@@ -67,12 +70,15 @@
 |---|---|
 | `/[locale]/admin` | Dashboard |
 | `/[locale]/admin/hero` | Hero slide management |
+| `/[locale]/admin/popups` | Storefront promo popup CMS |
 | `/[locale]/admin/orders` | Order list/bulk actions |
 | `/[locale]/admin/orders/[orderNumber]` | Detail/deep-link drawer |
 | `/[locale]/admin/products` | Product list/create/edit drawer routes |
 | `/[locale]/admin/products/[id]` | Product editor/deep link |
 | `/[locale]/admin/categories` | Category hierarchy CRUD |
 | `/[locale]/admin/coupons` | Coupon CRUD |
+| `/[locale]/admin/gift-cards` | Gift card list/create/activate/disable/resend |
+| `/[locale]/admin/gift-cards/[id]` | Gift card detail + ledger |
 | `/[locale]/admin/discounts` | Category/product discount management |
 | `/[locale]/admin/users` | User/role/status management |
 | `/[locale]/admin/messages` | Contact inbox |

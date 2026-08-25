@@ -262,8 +262,9 @@ async function resolveMapPoint(
   onUpdate({
     resolving: false,
     picked: {
-      lat: result.lat,
-      lng: result.lng,
+      // Prefer the user-dropped pin; reverse-geocode may snap away from it.
+      lat,
+      lng,
       formattedAddress: result.formattedAddress,
     },
   });

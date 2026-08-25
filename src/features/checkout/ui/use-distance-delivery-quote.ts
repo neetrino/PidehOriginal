@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { quoteDistanceDeliveryAction } from "@/features/delivery/application/quote-distance-delivery";
+import type { DeliveryDestinationPoint } from "@/features/delivery/schemas";
 
 const ADDRESS_QUOTE_DEBOUNCE_MS = 600;
 
@@ -15,8 +16,12 @@ export type DeliveryQuoteState = {
 
 /**
  * Debounced distance-delivery quote for the checkout address field.
+ * When `destinationPoint` is set (map pin), distance uses those coordinates.
  */
-export function useDistanceDeliveryQuote(line1: string): DeliveryQuoteState {
+export function useDistanceDeliveryQuote(
+  line1: string,
+  destinationPoint: DeliveryDestinationPoint | null = null,
+): DeliveryQuoteState {
   const [deliveryAmount, setDeliveryAmount] = useState(0);
   const [distanceLabel, setDistanceLabel] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -32,10 +37,15 @@ export function useDistanceDeliveryQuote(line1: string): DeliveryQuoteState {
       return;
     }
 
+    const point =
+      destinationPoint != null
+        ? { lat: destinationPoint.lat, lng: destinationPoint.lng }
+        : null;
+
     let cancelled = false;
     const timer = window.setTimeout(() => {
       setPending(true);
-      void quoteDistanceDeliveryAction(trimmed).then((result) => {
+      void quoteDistanceDeliveryAction(trimmed, point).then((result) => {
         if (cancelled) return;
         setPending(false);
         if (!result.ok) {
@@ -54,7 +64,7 @@ export function useDistanceDeliveryQuote(line1: string): DeliveryQuoteState {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [line1]);
+  }, [line1, destinationPoint?.lat, destinationPoint?.lng]);
 
   return { deliveryAmount, distanceLabel, pending, error };
 }

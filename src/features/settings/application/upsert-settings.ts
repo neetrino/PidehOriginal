@@ -97,6 +97,23 @@ const upsertSchema = z.discriminatedUnion("key", [
       rub: positiveRateSchema,
     }),
   }),
+  z.object({
+    key: z.literal("store.bonuses"),
+    value: z.object({
+      accrualPercent: z.number().int().min(1).max(100),
+      maxRedeemPercent: z.number().int().min(1).max(100),
+      expiryDays: z.number().int().min(1).max(3650).nullable(),
+    }),
+  }),
+  z.object({
+    key: z.literal("store.giftCards"),
+    value: z.object({
+      presets: z.array(z.number().int().min(1).max(100_000_000)).min(1).max(10),
+      minAmount: z.number().int().min(1).max(100_000_000),
+      maxAmount: z.number().int().min(1).max(100_000_000),
+      defaultExpiryDays: z.number().int().min(1).max(3650).nullable(),
+    }),
+  }),
 ]);
 
 export type UpsertStoreSettingInput = z.infer<typeof upsertSchema>;

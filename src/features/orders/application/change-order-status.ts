@@ -12,6 +12,8 @@ import {
   stockMovements,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { applyBonusSideEffectsOnStatusChange } from "@/features/bonuses/application/apply-order-status-bonuses";
+import { applyGiftCardSideEffectsOnStatusChange } from "@/features/gift-cards/application/apply-order-status-gift-cards";
 import {
   canTransitionOrderStatus,
   isOrderStatus,
@@ -159,6 +161,36 @@ export async function changeOrderStatusAction(
           });
         }
       }
+
+      await applyBonusSideEffectsOnStatusChange({
+        tx,
+        order: {
+          id: locked.id,
+          userId: locked.userId,
+          groupOrderId: locked.groupOrderId,
+          subtotalAmount: locked.subtotalAmount,
+          discountAmount: locked.discountAmount,
+          bonusRedeemedAmount: locked.bonusRedeemedAmount,
+          bonusEarnedAmount: locked.bonusEarnedAmount,
+          giftCardAmount: locked.giftCardAmount,
+        },
+        fromStatus,
+        toStatus,
+        actorUserId: actor.id,
+        correlationId,
+      });
+
+      await applyGiftCardSideEffectsOnStatusChange({
+        tx,
+        order: {
+          id: locked.id,
+          giftCardId: locked.giftCardId,
+          giftCardAmount: locked.giftCardAmount,
+        },
+        toStatus,
+        actorUserId: actor.id,
+        correlationId,
+      });
 
       await tx.insert(auditLogs).values({
         id: createId(),

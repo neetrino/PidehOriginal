@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveGroupOrderBanner } from "@/features/group-orders/application/active-banner";
 import { ActiveGroupOrderBanner } from "@/features/group-orders/ui/ActiveGroupOrderBanner";
+import { PromoPopupIsland } from "@/features/popups/ui/PromoPopupIsland";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {
@@ -61,6 +62,7 @@ export default async function StorefrontLayout({
         currency={currency}
         dictionary={dictionary}
       />
+      <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />
     </div>
   );
 }

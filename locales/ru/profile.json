@@ -2,6 +2,8 @@
   "title": "Мой профиль",
   "dashboard": "Панель",
   "orders": "Заказы",
+  "bonuses": "Мои бонусы",
+  "giftCards": "Мои подарочные карты",
   "personal": "Личные данные",
   "addresses": "Адреса",
   "password": "Сменить пароль",
@@ -64,5 +66,56 @@
     "acknowledge": "Я понимаю, что это действие нельзя отменить.",
     "submit": "Удалить аккаунт",
     "deleting": "Удаление…"
+  },
+  "bonusesPage": {
+    "available": "Доступный баланс",
+    "totalEarned": "Всего начислено",
+    "totalRedeemed": "Всего использовано",
+    "history": "История бонусов",
+    "empty": "Истории бонусов пока нет.",
+    "order": "Заказ",
+    "expires": "До {date}",
+    "noExpiry": "Без срока",
+    "types": {
+      "EARN": "Начисление",
+      "REDEEM": "Списание",
+      "REVERSAL_EARN": "Отмена начисления",
+      "REVERSAL_REDEEM": "Возврат списания",
+      "EXPIRE": "Истечение"
+    }
+  },
+  "giftCardsPage": {
+    "buy": "Купить карту",
+    "empty": "Подарочных карт пока нет.",
+    "history": "История использования",
+    "status": "Статус",
+    "balance": "Баланс",
+    "initial": "Номинал",
+    "recipient": "Получатель",
+    "expires": "Срок",
+    "statuses": {
+      "PENDING_PAYMENT": "Ожидает оплаты",
+      "ACTIVE": "Активна",
+      "USED": "Использована",
+      "EXPIRED": "Истекла",
+      "DISABLED": "Отключена"
+    }
+  },
+  "giftCardsBuyPage": {
+    "title": "Купить подарочную карту",
+    "description": "Купите цифровую подарочную карту и отправьте её по email после подтверждения оплаты.",
+    "amount": "Номинал",
+    "customAmount": "Другая сумма",
+    "recipientName": "Имя получателя",
+    "recipientEmail": "Email получателя",
+    "recipientPhone": "Телефон получателя",
+    "purchaserName": "Имя отправителя",
+    "message": "Сообщение",
+    "sendDate": "Дата отправки",
+    "paymentMethod": "Способ оплаты",
+    "cashOnDelivery": "Наличными при доставке",
+    "submit": "Оформить покупку",
+    "submitting": "Отправка…",
+    "successPending": "Покупка создана. Карта активна, код отправлен получателю на email."
   }
 }
