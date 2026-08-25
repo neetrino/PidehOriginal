@@ -1,0 +1,500 @@
+[
+  {
+    "name": "2 мяса пиде",
+    "description": "Пиде с двумя видами мяса, зеленым перцем и помидорами черри",
+    "price": 950,
+    "image": "/images/2-myasa-pide-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "2 вида мяса",
+      "Зеленый перец",
+      "Помидоры черри",
+      "Сыр"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Барбекю соус",
+    "description": "Пикантный соус барбекю",
+    "price": 300,
+    "image": "/images/BBQ-sauce-Pideh-Photoroom.png",
+    "category": "Соусы",
+    "ingredients": [
+      "Томатная паста",
+      "Сахар",
+      "Уксус",
+      "Специи"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Горчица",
+    "description": "Острая горчица",
+    "price": 300,
+    "image": "/images/Mustard-sauce-Pideh-Photoroom.png",
+    "category": "Соусы",
+    "ingredients": [
+      "Горчичные зерна",
+      "Уксус",
+      "Соль",
+      "Специи"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Грибное пиде",
+    "description": "Пиде с жареными грибами и зеленью",
+    "price": 750,
+    "image": "/images/gribnoe-pide-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Жареные грибы",
+      "Зелень",
+      "Сыр"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Кавказский пиде",
+    "description": "Пиде с белым сыром, зеленью и помидорами черри",
+    "price": 750,
+    "image": "/images/caucasus-cheese-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Белый сыр",
+      "Зелень",
+      "Помидоры черри"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Картофель фри",
+    "description": "Хрустящий картофель фри",
+    "price": 500,
+    "image": "/images/kartofel-fri-Photoroom.png",
+    "category": "Снэк",
+    "ingredients": [
+      "Картофель",
+      "Масло",
+      "Соль"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Кетчуп",
+    "description": "Классический томатный кетчуп",
+    "price": 300,
+    "image": "/images/Ketchup-Pideh-Photoroom.png",
+    "category": "Соусы",
+    "ingredients": [
+      "Томатная паста",
+      "Сахар",
+      "Уксус",
+      "Специи"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Классическое сырное пиде",
+    "description": "Традиционное пиде с расплавленным сыром и помидорами черри",
+    "price": 700,
+    "image": "/images/classic-chees-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Сыр",
+      "Помидоры черри"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Кока-Кола",
+    "description": "Газированный напиток Кока-Кола",
+    "price": 500,
+    "image": "/images/cola-sprite-fanta-Photoroom.png",
+    "category": "Напитки",
+    "ingredients": [
+      "Вода",
+      "Сахар",
+      "Кофеин"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Коктейль соус",
+    "description": "Классический коктейльный соус",
+    "price": 300,
+    "image": "/images/Cocktail-sauce-Pideh-Photoroom.png",
+    "category": "Соусы",
+    "ingredients": [
+      "Майонез",
+      "Кетчуп",
+      "Коньяк",
+      "Специи"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Комбо «Мы вдвоем»",
+    "description": "2 пиде (пепперони + 2 мяса) + 2 напитка Tan",
+    "price": 2900,
+    "image": "/images/kombo-my-vdvoyom-Photoroom.png",
+    "category": "Комбо",
+    "ingredients": [
+      "Пиде пепперони",
+      "Пиде 2 мяса",
+      "2 напитка Tan"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Комбо «Мы голодны»",
+    "description": "2 пиде с бастурмой + 2 куриные легкие пиде + картофель фри + кока-кола",
+    "price": 4900,
+    "image": "/images/kombo-my-golodny-Photoroom.png",
+    "category": "Комбо",
+    "ingredients": [
+      "2 пиде с бастурмой",
+      "2 куриные легкие пиде",
+      "Картофель фри",
+      "Кока-кола"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Комбо «Мы очень голодны»",
+    "description": "4 пиде пепперони + 4 классических сырных пиде + картофель фри + куриный попкорн",
+    "price": 7900,
+    "image": "/images/kombo-my-ochen-golodny-Photoroom.png",
+    "category": "Комбо",
+    "ingredients": [
+      "4 пиде пепперони",
+      "4 классических сырных пиде",
+      "Картофель фри",
+      "Куриный попкорн"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Комбо «Я один»",
+    "description": "Пиде с беконом + картофель фри + напиток Tan",
+    "price": 1700,
+    "image": "/images/kombo-ya-odin-Photoroom.png",
+    "category": "Комбо",
+    "ingredients": [
+      "Пиде с беконом",
+      "Картофель фри",
+      "Напиток Tan"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Куриные легкие пиде",
+    "description": "Пиде с курицей, сладким перцем и помидорами черри",
+    "price": 800,
+    "image": "/images/kurinye-legkie-pide-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Курица",
+      "Сладкий перец",
+      "Помидоры черри",
+      "Сыр"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Куриный попкорн",
+    "description": "Хрустящие кусочки курицы в панировке",
+    "price": 600,
+    "image": "/images/kurinyy-popkorn-Photoroom.png",
+    "category": "Снэк",
+    "ingredients": [
+      "Курица",
+      "Панировка",
+      "Специи"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Майонез",
+    "description": "Классический майонез",
+    "price": 300,
+    "image": "/images/Mayonnaise-Pideh-Photoroom.png",
+    "category": "Соусы",
+    "ingredients": [
+      "Яичный желток",
+      "Масло",
+      "Уксус",
+      "Горчица"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Минеральная вода",
+    "description": "Бутилированная минеральная вода",
+    "price": 300,
+    "image": "/images/jur0000-Photoroom.png",
+    "category": "Напитки",
+    "ingredients": [
+      "Минеральная вода"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Овощное пиде",
+    "description": "Пиде с грибами, зеленым луком и помидорами черри",
+    "price": 800,
+    "image": "/images/ovoshchnoe-pide-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Грибы",
+      "Зеленый лук",
+      "Помидоры черри",
+      "Сыр"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Пепперони пиде",
+    "description": "Пиде с пепперони, сыром и зеленым перцем",
+    "price": 950,
+    "image": "/images/pepperoni-pide-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Пепперони",
+      "Сыр",
+      "Зеленый перец"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Пиде Blue Pear",
+    "description": "Пиде с грушами и легким соусом",
+    "price": 700,
+    "image": "/images/pide-blue-pear-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Груши",
+      "Легкий соус",
+      "Сыр"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Пиде с бастурмой",
+    "description": "Пиде с бастурмой, сыром и зеленым перцем",
+    "price": 950,
+    "image": "/images/pide-s-basturmoj-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Бастурма",
+      "Сыр",
+      "Зеленый перец"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Пиде с беконом",
+    "description": "Пиде с хрустящим беконом, сыром и маринованными огурцами",
+    "price": 950,
+    "image": "/images/pide-s-bekonom-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Бекон",
+      "Сыр",
+      "Маринованные огурцы"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Пиде с говядиной",
+    "description": "Пиде с фаршем из говядины, зеленью и помидорами черри",
+    "price": 950,
+    "image": "/images/pide-s-govyadinoj-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Говяжий фарш",
+      "Зелень",
+      "Помидоры черри",
+      "Сыр"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Пиде с пхали",
+    "description": "Пиде с грузинской овощной пастой пхали и кинзой",
+    "price": 700,
+    "image": "/images/pide-s-phali-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Пхали",
+      "Кинза",
+      "Сыр"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Пиде Хот Дог",
+    "description": "Пиде с сосисками, сыром и маринованными огурцами",
+    "price": 700,
+    "image": "/images/pide-hot-dog-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Сосиски",
+      "Сыр",
+      "Маринованные огурцы"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Сладкий пиде",
+    "description": "Десертное пиде с шоколадными конфетами и сладким соусом",
+    "price": 750,
+    "image": "/images/sladkiy-pide-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Шоколадные конфеты",
+      "Сладкий соус"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Сок (ассорти)",
+    "description": "Сок в ассортименте",
+    "price": 600,
+    "image": "/images/juice-Photoroom.png",
+    "category": "Напитки",
+    "ingredients": [
+      "Фруктовый сок"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Спрайт",
+    "description": "Газированный напиток Спрайт",
+    "price": 500,
+    "image": "/images/cola-sprite-fanta-Photoroom.png",
+    "category": "Напитки",
+    "ingredients": [
+      "Вода",
+      "Сахар",
+      "Лимонный сок"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Сырный соус",
+    "description": "Сливочный сырный соус",
+    "price": 300,
+    "image": "/images/caucasus-cheese-Photoroom.png",
+    "category": "Соусы",
+    "ingredients": [
+      "Сыр",
+      "Сливки",
+      "Масло",
+      "Специи"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Тан",
+    "description": "Традиционный армянский напиток Тан",
+    "price": 400,
+    "image": "/images/tan-Photoroom.png",
+    "category": "Напитки",
+    "ingredients": [
+      "Мацони",
+      "Вода",
+      "Соль"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Фанта",
+    "description": "Газированный напиток Фанта",
+    "price": 500,
+    "image": "/images/cola-sprite-fanta-Photoroom.png",
+    "category": "Напитки",
+    "ingredients": [
+      "Вода",
+      "Сахар",
+      "Апельсиновый сок"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Чесночный соус",
+    "description": "Ароматный чесночный соус с зеленью",
+    "price": 300,
+    "image": "/images/Garlic-sauce-Pideh-Photoroom.png",
+    "category": "Соусы",
+    "ingredients": [
+      "Чеснок",
+      "Майонез",
+      "Зелень",
+      "Лимонный сок"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  },
+  {
+    "name": "Шпинат пиде",
+    "description": "Пиде со шпинатом, сыром и помидорами черри",
+    "price": 900,
+    "image": "/images/shpinat-Photoroom.png",
+    "category": "Пиде",
+    "ingredients": [
+      "Тесто",
+      "Шпинат",
+      "Сыр",
+      "Помидоры черри"
+    ],
+    "isAvailable": true,
+    "source": "buy.am"
+  }
+]
