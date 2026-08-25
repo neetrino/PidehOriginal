@@ -2,12 +2,16 @@ import { notFound } from "next/navigation";
 
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import { getCartWithItems } from "@/features/cart/cart";
+import { getUserBonusBalance } from "@/features/bonuses/application/queries";
 import { getCheckoutOrderProducts } from "@/features/checkout/application/get-checkout-order-products";
 import { CheckoutForm } from "@/features/checkout/ui/CheckoutForm";
 import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
 import { listActiveCashChangeDenominations } from "@/features/delivery/domain/cash-change";
 import { getDefaultShippingAddress } from "@/features/profile/application/address-queries";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import {
+  getStoreBonusSettings,
+} from "@/features/settings/application/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -25,22 +29,25 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliverySettings] = await Promise.all([
+  const [user, { items }, deliverySettings, bonusSettings] = await Promise.all([
     getCurrentUser(),
     getCartWithItems(),
     getDeliverySettings(),
+    getStoreBonusSettings(),
   ]);
-  const [defaultAddress, prices, orderProducts] = await Promise.all([
-    user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
-    resolveProductPrices(
-      items.map(({ product }) => ({
-        id: product.id,
-        priceAmount: product.priceAmount,
-        compareAtAmount: product.compareAtAmount,
-      })),
-    ),
-    getCheckoutOrderProducts(rawLocale, items),
-  ]);
+  const [defaultAddress, prices, orderProducts, bonusAvailableBalance] =
+    await Promise.all([
+      user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
+      resolveProductPrices(
+        items.map(({ product }) => ({
+          id: product.id,
+          priceAmount: product.priceAmount,
+          compareAtAmount: product.compareAtAmount,
+        })),
+      ),
+      getCheckoutOrderProducts(rawLocale, items),
+      user ? getUserBonusBalance(user.id) : Promise.resolve(null),
+    ]);
   const subtotal = items.reduce((sum, { item, product, modifiers }) => {
     const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
     return sum + item.quantity * cartLineUnitAmount(base, modifiers);
@@ -74,6 +81,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       subtotalAmount={subtotal}
       deliverySchedule={deliverySettings.schedule}
       cashChangeOptions={cashChangeOptions}
+      bonusAvailableBalance={bonusAvailableBalance}
+      bonusMaxRedeemPercent={bonusSettings.maxRedeemPercent}
       labels={{
         title: copy.title,
         productsInOrder: copy.productsInOrder,
@@ -124,6 +133,15 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         couponPlaceholder: copy.coupon.placeholder,
         couponApply: copy.coupon.apply,
         couponApplying: copy.coupon.applying,
+        giftCardTitle: copy.giftCard.title,
+        giftCardPlaceholder: copy.giftCard.placeholder,
+        giftCardApply: copy.giftCard.apply,
+        giftCardApplying: copy.giftCard.applying,
+        giftCardInitial: copy.giftCard.initial,
+        giftCardUsed: copy.giftCard.used,
+        giftCardRemaining: copy.giftCard.remaining,
+        giftCardPayable: copy.giftCard.payable,
+        giftCardApplied: copy.giftCard.applied,
         discount: copy.summary.discount,
         subtotal: copy.summary.subtotal,
         shipping: copy.summary.shipping,
@@ -133,6 +151,12 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         processing: copy.buttons.processing,
         continueShopping: copy.buttons.continueShopping,
         cartEmpty: copy.errors.cartEmpty,
+        bonusTitle: copy.bonus.title,
+        bonusAvailable: copy.bonus.available,
+        bonusUse: copy.bonus.use,
+        bonusAmount: copy.bonus.amount,
+        bonusUseMax: copy.bonus.useMax,
+        bonusApplied: copy.bonus.applied,
       }}
     />
   );

@@ -12,6 +12,8 @@ import {
   stockMovements,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { applyBonusSideEffectsOnStatusChange } from "@/features/bonuses/application/apply-order-status-bonuses";
+import { applyGiftCardSideEffectsOnStatusChange } from "@/features/gift-cards/application/apply-order-status-gift-cards";
 import {
   canTransitionOrderStatus,
   isOrderStatus,
@@ -122,6 +124,36 @@ export async function bulkChangeOrderStatusAction(
           actorUserId: actor.id,
           isCustomerVisible: true,
           payload: { source: "bulk" },
+        });
+
+        await applyBonusSideEffectsOnStatusChange({
+          tx,
+          order: {
+            id: existing.id,
+            userId: existing.userId,
+            groupOrderId: existing.groupOrderId,
+            subtotalAmount: existing.subtotalAmount,
+            discountAmount: existing.discountAmount,
+            bonusRedeemedAmount: existing.bonusRedeemedAmount,
+            bonusEarnedAmount: existing.bonusEarnedAmount,
+            giftCardAmount: existing.giftCardAmount,
+          },
+          fromStatus: existing.status,
+          toStatus,
+          actorUserId: actor.id,
+          correlationId: existing.orderNumber,
+        });
+
+        await applyGiftCardSideEffectsOnStatusChange({
+          tx,
+          order: {
+            id: existing.id,
+            giftCardId: existing.giftCardId,
+            giftCardAmount: existing.giftCardAmount,
+          },
+          toStatus,
+          actorUserId: actor.id,
+          correlationId: existing.orderNumber,
         });
 
         await tx.insert(auditLogs).values({

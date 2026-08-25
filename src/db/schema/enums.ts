@@ -32,6 +32,7 @@ export const mediaRoleEnum = pgEnum("media_role", [
   "HERO_DESKTOP",
   "HERO_MOBILE",
   "BRANDING",
+  "POPUP",
 ]);
 
 export const stockMovementReasonEnum = pgEnum("stock_movement_reason", [
@@ -40,6 +41,29 @@ export const stockMovementReasonEnum = pgEnum("stock_movement_reason", [
   "RETURN",
   "ADMIN_ADJUSTMENT",
   "IMPORT",
+]);
+
+export const bonusTransactionTypeEnum = pgEnum("bonus_transaction_type", [
+  "EARN",
+  "REDEEM",
+  "REVERSAL_EARN",
+  "REVERSAL_REDEEM",
+  "EXPIRE",
+]);
+
+export const giftCardStatusEnum = pgEnum("gift_card_status", [
+  "PENDING_PAYMENT",
+  "ACTIVE",
+  "USED",
+  "EXPIRED",
+  "DISABLED",
+]);
+
+export const giftCardTransactionTypeEnum = pgEnum("gift_card_transaction_type", [
+  "ISSUE",
+  "REDEEM",
+  "REVERSAL",
+  "ADJUST",
 ]);
 
 export const blogPostStatusEnum = pgEnum("blog_post_status", [

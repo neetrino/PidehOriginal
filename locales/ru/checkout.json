@@ -97,5 +97,24 @@
     "total": "Итого: {amount}",
     "continueShopping": "Продолжить покупки",
     "viewOrders": "Мои заказы"
+  },
+  "giftCard": {
+    "title": "Код подарочной карты",
+    "placeholder": "PID-XXXX-XXXX",
+    "apply": "Применить",
+    "applying": "Применение…",
+    "initial": "Номинал карты",
+    "used": "Списывается с карты",
+    "remaining": "Остаток",
+    "payable": "К оплате",
+    "applied": "Подарочная карта"
+  },
+  "bonus": {
+    "title": "Бонусный баланс",
+    "available": "Доступно: {amount}",
+    "use": "Использовать бонусы",
+    "amount": "Количество бонусов",
+    "useMax": "Максимум",
+    "applied": "Бонусы"
   }
 }

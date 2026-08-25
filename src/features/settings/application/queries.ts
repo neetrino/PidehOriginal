@@ -6,12 +6,16 @@ import { cache } from "react";
 import { getDb } from "@/db/client";
 import { storeSettings } from "@/db/schema";
 import {
+  parseBonusSettings,
   parseFxRates,
+  parseGiftCardSettings,
   parseGlobalDiscount,
   parseIdentity,
   parseMaintenance,
   parseRevenueStatuses,
   parseStacking,
+  type BonusSettings,
+  type GiftCardSettings,
   type StoreFxRates,
   type StoreGlobalDiscount,
   type StoreIdentity,
@@ -63,25 +67,48 @@ export const getStoreFxRates = cache(async (): Promise<StoreFxRates> => {
   return parseFxRates(await getSettingValue("store.fxRates"));
 });
 
+export const getStoreBonusSettings = cache(async (): Promise<BonusSettings> => {
+  return parseBonusSettings(await getSettingValue("store.bonuses"));
+});
+
+export const getStoreGiftCardSettings = cache(
+  async (): Promise<GiftCardSettings> => {
+    return parseGiftCardSettings(await getSettingValue("store.giftCards"));
+  },
+);
+
 export async function getAllStoreSettings(): Promise<{
   identity: StoreIdentity;
   maintenance: StoreMaintenance;
   stacking: StoreStacking;
   revenue: StoreRevenue;
   fxRates: StoreFxRates;
+  bonuses: BonusSettings;
+  giftCards: GiftCardSettings;
   branding: Record<string, unknown>;
   social: Record<string, unknown>;
 }> {
-  const [identity, maintenance, stacking, revenue, fxRates, branding, social] =
-    await Promise.all([
-      getStoreIdentity(),
-      getStoreMaintenance(),
-      getStoreStacking(),
-      getStoreRevenue(),
-      getStoreFxRates(),
-      getSettingValue("store.branding"),
-      getSettingValue("store.social"),
-    ]);
+  const [
+    identity,
+    maintenance,
+    stacking,
+    revenue,
+    fxRates,
+    bonuses,
+    giftCards,
+    branding,
+    social,
+  ] = await Promise.all([
+    getStoreIdentity(),
+    getStoreMaintenance(),
+    getStoreStacking(),
+    getStoreRevenue(),
+    getStoreFxRates(),
+    getStoreBonusSettings(),
+    getStoreGiftCardSettings(),
+    getSettingValue("store.branding"),
+    getSettingValue("store.social"),
+  ]);
 
   return {
     identity,
@@ -89,6 +116,8 @@ export async function getAllStoreSettings(): Promise<{
     stacking,
     revenue,
     fxRates,
+    bonuses,
+    giftCards,
     branding: branding ?? {},
     social: social ?? {},
   };

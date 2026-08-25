@@ -97,5 +97,24 @@
     "total": "Ընդամենը՝ {amount}",
     "continueShopping": "Շարունակել գնումները",
     "viewOrders": "Դիտել պատվերները"
+  },
+  "giftCard": {
+    "title": "Gift Card կոդ",
+    "placeholder": "PID-XXXX-XXXX",
+    "apply": "Կիրառել",
+    "applying": "Կիրառվում է…",
+    "initial": "Gift Card-ի արժեք",
+    "used": "Օգտագործվում է",
+    "remaining": "Մնացորդ",
+    "payable": "Վճարման ենթակա",
+    "applied": "Gift Card"
+  },
+  "bonus": {
+    "title": "Բոնուսային բալանս",
+    "available": "Հասանելի՝ {amount}",
+    "use": "Օգտագործել բոնուսները",
+    "amount": "Օգտագործվող բոնուսներ",
+    "useMax": "Առավելագույնը",
+    "applied": "Բոնուսներ"
   }
 }

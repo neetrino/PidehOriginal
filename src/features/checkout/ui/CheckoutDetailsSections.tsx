@@ -67,6 +67,10 @@ type CheckoutDetailsSectionsProps = {
   onCashChangeAmountChange: (amount: number) => void;
   line1: string;
   onLine1Change: (value: string) => void;
+  onMapAddressSelected: (
+    address: string,
+    point: { lat: number; lng: number },
+  ) => void;
   deliveryQuotePending: boolean;
   deliveryQuoteError: string | null;
   deliveryQuoteHint: string | null;
@@ -91,6 +95,7 @@ export function CheckoutDetailsSections({
   onCashChangeAmountChange,
   line1,
   onLine1Change,
+  onMapAddressSelected,
   deliveryQuotePending,
   deliveryQuoteError,
   deliveryQuoteHint,
@@ -187,7 +192,7 @@ export function CheckoutDetailsSections({
               <AddressMapPicker
                 addressValue={line1}
                 disabled={pending}
-                onAddressSelected={onLine1Change}
+                onAddressSelected={onMapAddressSelected}
                 labels={{
                   openMap: labels.openMap,
                   title: labels.mapTitle,

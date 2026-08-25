@@ -12,6 +12,9 @@ export const checkoutSchema = z
     paymentMethod: z.enum(CHECKOUT_PAYMENT_METHODS),
     city: z.string().trim().max(80).optional(),
     line1: z.string().trim().max(300).optional(),
+    /** Map pin coordinates — preferred over re-geocoding line1 for distance. */
+    deliveryLat: z.number().finite().min(-90).max(90).optional(),
+    deliveryLng: z.number().finite().min(-180).max(180).optional(),
     line2: z.string().trim().max(160).optional(),
     floor: z.string().trim().max(20).optional(),
     intercomCode: z.string().trim().max(40).optional(),
@@ -33,6 +36,10 @@ export const checkoutSchema = z
     idempotencyKey: z.string().trim().min(8).max(128),
     locale: z.enum(["hy", "en", "ru"]),
     couponCode: z.string().trim().max(64).optional(),
+    /** Bonus points to redeem; ignored for guests. */
+    bonusRedeemAmount: z.coerce.number().int().min(0).max(100_000_000).optional(),
+    /** Gift card code to redeem at checkout. */
+    giftCardCode: z.string().trim().max(64).optional(),
   })
   .superRefine((value, ctx) => {
     if (!value.line1?.trim() || value.line1.trim().length < 3) {

@@ -1,7 +1,9 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   index,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -35,6 +37,8 @@ export const users = pgTable(
     phone: text("phone"),
     role: userRoleEnum("role").notNull().default("CUSTOMER"),
     status: userStatusEnum("status").notNull().default("ACTIVE"),
+    /** Available loyalty bonus points (1 point = 1 AMD). Never negative. */
+    bonusBalance: integer("bonus_balance").notNull().default(0),
     termsAcceptedAt: timestamp("terms_accepted_at", {
       withTimezone: true,
       mode: "date",
@@ -55,6 +59,7 @@ export const users = pgTable(
     uniqueIndex("users_email_uidx").on(table.email),
     index("users_role_status_idx").on(table.role, table.status),
     index("users_created_at_idx").on(table.createdAt),
+    check("users_bonus_balance_nonneg_chk", sql`${table.bonusBalance} >= 0`),
   ],
 );
 
