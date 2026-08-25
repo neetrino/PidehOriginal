@@ -11,6 +11,7 @@ import { getDefaultShippingAddress } from "@/features/profile/application/addres
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import {
   getStoreBonusSettings,
+  getStoreIdentity,
 } from "@/features/settings/application/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
@@ -29,12 +30,14 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliverySettings, bonusSettings] = await Promise.all([
-    getCurrentUser(),
-    getCartWithItems(),
-    getDeliverySettings(),
-    getStoreBonusSettings(),
-  ]);
+  const [user, { items }, deliverySettings, bonusSettings, storeIdentity] =
+    await Promise.all([
+      getCurrentUser(),
+      getCartWithItems(),
+      getDeliverySettings(),
+      getStoreBonusSettings(),
+      getStoreIdentity(),
+    ]);
   const [defaultAddress, prices, orderProducts, bonusAvailableBalance] =
     await Promise.all([
       user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
@@ -63,6 +66,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       : null,
   }));
 
+  const storePickupAddress =
+    deliverySettings.originAddress.trim() || storeIdentity.name || null;
+
   return (
     <CheckoutForm
       locale={rawLocale}
@@ -81,6 +87,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       subtotalAmount={subtotal}
       deliverySchedule={deliverySettings.schedule}
       cashChangeOptions={cashChangeOptions}
+      storePickupAddress={storePickupAddress}
       bonusAvailableBalance={bonusAvailableBalance}
       bonusMaxRedeemPercent={bonusSettings.maxRedeemPercent}
       labels={{
@@ -90,6 +97,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         itemsMany: copy.itemsMany,
         removeItem: copy.removeItem,
         contactInformation: copy.contactInformation,
+        shippingMethod: copy.shippingMethod,
         shippingAddress: copy.shippingAddress,
         paymentMethod: copy.paymentMethod,
         orderSummary: copy.orderSummary,
@@ -157,6 +165,12 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         bonusAmount: copy.bonus.amount,
         bonusUseMax: copy.bonus.useMax,
         bonusApplied: copy.bonus.applied,
+        storePickup: copy.shipping.storePickup,
+        storePickupDescription: copy.shipping.storePickupDescription,
+        deliveryOption: copy.shipping.delivery,
+        deliveryOptionDescription: copy.shipping.deliveryDescription,
+        freePickup: copy.shipping.freePickup,
+        pickupStoreHint: copy.shipping.pickupStoreHint,
       }}
     />
   );
