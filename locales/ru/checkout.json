@@ -54,6 +54,7 @@
   "shipping": {
     "storePickup": "Самовывоз",
     "storePickupDescription": "Заберите заказ в магазине (Бесплатно)",
+    "pickupStoreHint": "Заказ можно забрать в магазине.",
     "delivery": "Доставка",
     "deliveryDescription": "Доставим заказ по вашему адресу. Цена зависит от расстояния.",
     "freePickup": "Бесплатно (Самовывоз)",

@@ -54,6 +54,7 @@
   "shipping": {
     "storePickup": "Ինքնաառաքում",
     "storePickupDescription": "Վերցրեք պատվերը խանութից (Անվճար)",
+    "pickupStoreHint": "Պատվերը կարող եք վերցնել խանութից։",
     "delivery": "Առաքում",
     "deliveryDescription": "Կառաքենք ձեր հասցեով։ Գինը հաշվվում է հեռավորությամբ։",
     "freePickup": "Անվճար (Ինքնաառաքում)",

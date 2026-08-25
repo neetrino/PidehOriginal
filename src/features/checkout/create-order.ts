@@ -31,7 +31,9 @@ import {
   type CheckoutInput,
 } from "@/features/checkout/schemas";
 import { toPaymentRecord } from "@/features/checkout/domain/payment-methods";
+import { STORE_PICKUP_LABEL } from "@/features/checkout/domain/shipping-methods";
 import { resolveGroupOrderCheckoutContext } from "@/features/checkout/application/group-order-checkout-context";
+import { getStoreIdentity } from "@/features/settings/application/queries";
 import { redeemBonusesForOrder } from "@/features/bonuses/application/bonus-ledger";
 import {
   bonusEligibleMerchandiseAmount,
@@ -121,8 +123,11 @@ export async function createOrderAction(
   let deliverySlotSnapshot: string | null = null;
   let cashChangeAmount: number | undefined;
   let cashChangeImageKey: string | undefined;
-  const deliverySettings = await getDeliverySettings();
-  const groupCheckout = await resolveGroupOrderCheckoutContext();
+  const [deliverySettings, storeIdentity, groupCheckout] = await Promise.all([
+    getDeliverySettings(),
+    getStoreIdentity(),
+    resolveGroupOrderCheckoutContext(),
+  ]);
 
   if (input.shippingMethod === "delivery") {
     if (
@@ -244,6 +249,11 @@ export async function createOrderAction(
         return existing.orderNumber;
       }
 
+      const pickupLine1 =
+        deliverySettings.originAddress.trim() ||
+        storeIdentity.name ||
+        "Store pickup";
+
       const address = {
         recipientFirstName: input.firstName,
         recipientLastName: input.lastName,
@@ -254,9 +264,11 @@ export async function createOrderAction(
         city:
           deliveryQuote?.city?.trim() || input.city?.trim() || "Yerevan",
         line1:
-          deliveryQuote?.destinationFormattedAddress ||
-          input.line1?.trim() ||
-          "",
+          input.shippingMethod === "pickup"
+            ? pickupLine1
+            : deliveryQuote?.destinationFormattedAddress ||
+              input.line1?.trim() ||
+              "",
         line2: input.line2,
         postalCode: input.postalCode,
         ...(input.shippingMethod === "delivery"
@@ -273,7 +285,12 @@ export async function createOrderAction(
                   }
                 : {}),
             }
-          : {}),
+          : cashChangeAmount != null
+            ? {
+                cashChangeAmount,
+                cashChangeImageKey,
+              }
+            : {}),
       };
 
       let subtotal = 0;
@@ -553,18 +570,23 @@ export async function createOrderAction(
         promotionValueSnapshot: appliedPromotion?.discountValue ?? null,
         promotionDiscountAmount: appliedPromotion ? discountAmount : null,
         deliveryRuleId: null,
-        deliveryLabelSnapshot: deliveryQuote
-          ? `Distance delivery (${deliveryQuote.distanceLabel})`
-          : "Delivery",
+        deliveryLabelSnapshot:
+          input.shippingMethod === "pickup"
+            ? STORE_PICKUP_LABEL
+            : deliveryQuote
+              ? `Distance delivery (${deliveryQuote.distanceLabel})`
+              : "Delivery",
         deliveryEstimateSnapshot:
-          [
-            deliveryQuote
-              ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
-              : null,
-            deliverySlotSnapshot,
-          ]
-            .filter(Boolean)
-            .join(" · ") || null,
+          input.shippingMethod === "pickup"
+            ? storeIdentity.name
+            : [
+                deliveryQuote
+                  ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
+                  : null,
+                deliverySlotSnapshot,
+              ]
+                .filter(Boolean)
+                .join(" · ") || null,
         idempotencyScopeHash: scopeHash,
         idempotencyKeyHash: keyHash,
         requestFingerprint: fingerprint,

@@ -4,8 +4,10 @@ import { Card } from "@/components/ui/Card";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import type { CheckoutShippingMethod } from "@/features/checkout/domain/shipping-methods";
 import { CashChangePicker } from "@/features/checkout/ui/CashChangePicker";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
+import { CheckoutShippingMethods } from "@/features/checkout/ui/CheckoutShippingMethods";
 import { DeliverySlotPicker } from "@/features/checkout/ui/DeliverySlotPicker";
 import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
 import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
@@ -17,6 +19,7 @@ const FIELD_CLASS =
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
+  shippingMethod: string;
   shippingAddress: string;
   paymentMethod: string;
   firstName: string;
@@ -46,6 +49,7 @@ type CheckoutDetailsLabels = {
   cashChangeTitle: string;
   cashChangeHint: string;
   cashChangeAria: string;
+  pickupStoreHint: string;
 };
 
 type PaymentOption = {
@@ -55,10 +59,20 @@ type PaymentOption = {
   logoSrc: string | null;
 };
 
+type ShippingOption = {
+  id: CheckoutShippingMethod;
+  name: string;
+  description: string;
+};
+
 type CheckoutDetailsSectionsProps = {
   labels: CheckoutDetailsLabels;
   locale: Locale;
   pending: boolean;
+  shippingMethod: CheckoutShippingMethod;
+  onShippingMethodChange: (method: CheckoutShippingMethod) => void;
+  shippingOptions: ShippingOption[];
+  storePickupAddress: string | null;
   deliverySchedule: DeliveryScheduleSettings;
   deliverySlot: SelectedDeliverySlot | null;
   onDeliverySlotChange: (value: SelectedDeliverySlot | null) => void;
@@ -87,6 +101,10 @@ export function CheckoutDetailsSections({
   labels,
   locale,
   pending,
+  shippingMethod,
+  onShippingMethodChange,
+  shippingOptions,
+  storePickupAddress,
   deliverySchedule,
   deliverySlot,
   onDeliverySlotChange,
@@ -107,6 +125,8 @@ export function CheckoutDetailsSections({
   defaultEmail,
   defaultPhone,
 }: CheckoutDetailsSectionsProps) {
+  const isDelivery = shippingMethod === "delivery";
+
   return (
     <div className="space-y-6 lg:col-span-2">
       <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
@@ -167,78 +187,96 @@ export function CheckoutDetailsSections({
         </div>
       </Card>
 
+      <CheckoutShippingMethods
+        title={labels.shippingMethod}
+        options={shippingOptions}
+        value={shippingMethod}
+        onChange={onShippingMethodChange}
+        disabled={pending}
+      />
+
       <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
         <h2 className="mb-6 text-xl font-semibold text-gray-900">
           {labels.shippingAddress}
         </h2>
         <div className="space-y-4">
-          <div className="space-y-1.5">
-            <span className="text-sm font-medium text-gray-700">
-              {labels.address}
-            </span>
-            <div className="flex items-start gap-2">
-              <div className="min-w-0 flex-1">
-                <AddressAutocomplete
-                  name="line1"
-                  required
-                  value={line1}
-                  onValueChange={onLine1Change}
-                  placeholder={labels.addressPlaceholder}
-                  disabled={pending}
-                  className={FIELD_CLASS}
-                  languageCode={locale}
-                />
+          {isDelivery ? (
+            <>
+              <div className="space-y-1.5">
+                <span className="text-sm font-medium text-gray-700">
+                  {labels.address}
+                </span>
+                <div className="flex items-start gap-2">
+                  <div className="min-w-0 flex-1">
+                    <AddressAutocomplete
+                      name="line1"
+                      required
+                      value={line1}
+                      onValueChange={onLine1Change}
+                      placeholder={labels.addressPlaceholder}
+                      disabled={pending}
+                      className={FIELD_CLASS}
+                      languageCode={locale}
+                    />
+                  </div>
+                  <AddressMapPicker
+                    addressValue={line1}
+                    disabled={pending}
+                    onAddressSelected={onMapAddressSelected}
+                    labels={{
+                      openMap: labels.openMap,
+                      title: labels.mapTitle,
+                      hint: labels.mapHint,
+                      confirm: labels.mapConfirm,
+                      cancel: labels.mapCancel,
+                      resolving: labels.mapResolving,
+                    }}
+                  />
+                </div>
               </div>
-              <AddressMapPicker
-                addressValue={line1}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+                  {labels.floor}
+                  <input
+                    name="floor"
+                    disabled={pending}
+                    placeholder={labels.floorPlaceholder}
+                    className={FIELD_CLASS}
+                  />
+                </label>
+                <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+                  {labels.intercomCode}
+                  <input
+                    name="intercomCode"
+                    disabled={pending}
+                    placeholder={labels.intercomCodePlaceholder}
+                    className={FIELD_CLASS}
+                  />
+                </label>
+              </div>
+              <DeliverySlotPicker
+                schedule={deliverySchedule}
+                selected={deliverySlot}
+                onChange={onDeliverySlotChange}
                 disabled={pending}
-                onAddressSelected={onMapAddressSelected}
+                locale={locale}
                 labels={{
-                  openMap: labels.openMap,
-                  title: labels.mapTitle,
-                  hint: labels.mapHint,
-                  confirm: labels.mapConfirm,
-                  cancel: labels.mapCancel,
-                  resolving: labels.mapResolving,
+                  title: labels.scheduleTitle,
+                  pickDate: labels.schedulePickDate,
+                  pickTime: labels.schedulePickTime,
+                  noSlots: labels.scheduleNoSlots,
+                  prevMonth: labels.schedulePrevMonth,
+                  nextMonth: labels.scheduleNextMonth,
                 }}
               />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              {labels.floor}
-              <input
-                name="floor"
-                disabled={pending}
-                placeholder={labels.floorPlaceholder}
-                className={FIELD_CLASS}
-              />
-            </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              {labels.intercomCode}
-              <input
-                name="intercomCode"
-                disabled={pending}
-                placeholder={labels.intercomCodePlaceholder}
-                className={FIELD_CLASS}
-              />
-            </label>
-          </div>
-          <DeliverySlotPicker
-            schedule={deliverySchedule}
-            selected={deliverySlot}
-            onChange={onDeliverySlotChange}
-            disabled={pending}
-            locale={locale}
-            labels={{
-              title: labels.scheduleTitle,
-              pickDate: labels.schedulePickDate,
-              pickTime: labels.schedulePickTime,
-              noSlots: labels.scheduleNoSlots,
-              prevMonth: labels.schedulePrevMonth,
-              nextMonth: labels.scheduleNextMonth,
-            }}
-          />
+            </>
+          ) : (
+            <p className="text-sm text-gray-600">
+              {storePickupAddress
+                ? `${labels.pickupStoreHint} ${storePickupAddress}`
+                : labels.pickupStoreHint}
+            </p>
+          )}
           {paymentMethod === "cash_on_delivery" ? (
             <CashChangePicker
               options={cashChangeOptions}
@@ -254,15 +292,18 @@ export function CheckoutDetailsSections({
             />
           ) : null}
         </div>
-        {deliveryQuotePending ? (
+        {isDelivery && deliveryQuotePending ? (
           <p className="mt-2 text-sm text-gray-500">
             {labels.calculatingDelivery}
           </p>
         ) : null}
-        {deliveryQuoteError ? (
+        {isDelivery && deliveryQuoteError ? (
           <p className="mt-2 text-sm text-red-700">{deliveryQuoteError}</p>
         ) : null}
-        {!deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
+        {isDelivery &&
+        !deliveryQuotePending &&
+        !deliveryQuoteError &&
+        deliveryQuoteHint ? (
           <p className="mt-2 text-sm text-gray-600">{deliveryQuoteHint}</p>
         ) : null}
       </Card>

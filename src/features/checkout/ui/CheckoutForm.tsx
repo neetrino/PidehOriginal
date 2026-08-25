@@ -9,6 +9,7 @@ import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order
 import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
 import { createOrderAction } from "@/features/checkout/create-order";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import type { CheckoutShippingMethod } from "@/features/checkout/domain/shipping-methods";
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
@@ -32,6 +33,7 @@ type CheckoutLabels = {
   itemsMany: string;
   removeItem: string;
   contactInformation: string;
+  shippingMethod: string;
   shippingAddress: string;
   paymentMethod: string;
   orderSummary: string;
@@ -99,6 +101,12 @@ type CheckoutLabels = {
   bonusAmount: string;
   bonusUseMax: string;
   bonusApplied: string;
+  storePickup: string;
+  storePickupDescription: string;
+  deliveryOption: string;
+  deliveryOptionDescription: string;
+  freePickup: string;
+  pickupStoreHint: string;
 };
 
 type CheckoutFormProps = {
@@ -114,6 +122,7 @@ type CheckoutFormProps = {
   subtotalAmount: number;
   deliverySchedule: DeliveryScheduleSettings;
   cashChangeOptions: CashChangeDenominationView[];
+  storePickupAddress: string | null;
   hasItems: boolean;
   bonusAvailableBalance: number | null;
   bonusMaxRedeemPercent: number;
@@ -132,12 +141,15 @@ export function CheckoutForm({
   subtotalAmount,
   deliverySchedule,
   cashChangeOptions,
+  storePickupAddress,
   hasItems,
   bonusAvailableBalance,
   bonusMaxRedeemPercent,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
+  const [shippingMethod, setShippingMethod] =
+    useState<CheckoutShippingMethod>("delivery");
   const [line1, setLine1] = useState(defaultLine1);
   const [deliveryPoint, setDeliveryPoint] = useState<{
     lat: number;
@@ -147,7 +159,10 @@ export function CheckoutForm({
     null,
   );
   const [cashChangeAmount, setCashChangeAmount] = useState<number | null>(null);
-  const deliveryQuote = useDistanceDeliveryQuote(line1, deliveryPoint);
+  const deliveryQuote = useDistanceDeliveryQuote(
+    shippingMethod === "delivery" ? line1 : "",
+    shippingMethod === "delivery" ? deliveryPoint : null,
+  );
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod>("cash_on_delivery");
   const [error, setError] = useState<string | null>(null);
@@ -166,6 +181,27 @@ export function CheckoutForm({
   const [pending, startTransition] = useTransition();
   const [applyingCoupon, startApplyCoupon] = useTransition();
   const [applyingGiftCard, startApplyGiftCard] = useTransition();
+
+  const shippingOptions = useMemo(
+    () => [
+      {
+        id: "delivery" as const,
+        name: labels.deliveryOption,
+        description: labels.deliveryOptionDescription,
+      },
+      {
+        id: "pickup" as const,
+        name: labels.storePickup,
+        description: labels.storePickupDescription,
+      },
+    ],
+    [
+      labels.deliveryOption,
+      labels.deliveryOptionDescription,
+      labels.storePickup,
+      labels.storePickupDescription,
+    ],
+  );
 
   const paymentOptions = useMemo(
     () => [
@@ -202,7 +238,8 @@ export function CheckoutForm({
     return formatMoneyAmount(amount, "AMD", locale);
   }
 
-  const shippingAmount = deliveryQuote.deliveryAmount;
+  const isPickup = shippingMethod === "pickup";
+  const shippingAmount = isPickup ? 0 : deliveryQuote.deliveryAmount;
   const merchandiseAfterDiscount = Math.max(0, subtotalAmount - discountAmount);
   const maxBonusRedeem =
     bonusAvailableBalance == null
@@ -222,16 +259,18 @@ export function CheckoutForm({
     : 0;
   const totalAmount = Math.max(0, payableBeforeGiftCard - giftCardRedeem);
 
-  const shippingFormatted = deliveryQuote.pending
-    ? labels.calculatingDelivery
-    : deliveryQuote.error
-      ? labels.enterDeliveryAddress
-      : deliveryQuote.distanceLabel
-        ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
-        : labels.enterDeliveryAddress;
+  const shippingFormatted = isPickup
+    ? labels.freePickup
+    : deliveryQuote.pending
+      ? labels.calculatingDelivery
+      : deliveryQuote.error
+        ? labels.enterDeliveryAddress
+        : deliveryQuote.distanceLabel
+          ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
+          : labels.enterDeliveryAddress;
 
   const deliveryQuoteHint =
-    deliveryQuote.distanceLabel && !deliveryQuote.error
+    !isPickup && deliveryQuote.distanceLabel && !deliveryQuote.error
       ? `${deliveryQuote.distanceLabel} · ${formatMoney(shippingAmount)}`
       : null;
 
@@ -332,18 +371,20 @@ export function CheckoutForm({
     const data = new FormData(event.currentTarget);
     setError(null);
 
-    if (
-      deliveryQuote.pending ||
-      deliveryQuote.error ||
-      !deliveryQuote.distanceLabel
-    ) {
-      setError(labels.enterDeliveryAddress);
-      return;
-    }
+    if (shippingMethod === "delivery") {
+      if (
+        deliveryQuote.pending ||
+        deliveryQuote.error ||
+        !deliveryQuote.distanceLabel
+      ) {
+        setError(labels.enterDeliveryAddress);
+        return;
+      }
 
-    if (!deliverySlot) {
-      setError(labels.selectDeliverySlot);
-      return;
+      if (!deliverySlot) {
+        setError(labels.selectDeliverySlot);
+        return;
+      }
     }
 
     if (
@@ -363,16 +404,27 @@ export function CheckoutForm({
         lastName: String(data.get("lastName") ?? ""),
         contactEmail: String(data.get("contactEmail") ?? ""),
         contactPhone: String(data.get("contactPhone") ?? ""),
-        shippingMethod: "delivery",
+        shippingMethod,
         paymentMethod,
-        line1,
-        deliveryLat: deliveryPoint?.lat,
-        deliveryLng: deliveryPoint?.lng,
-        floor: String(data.get("floor") ?? ""),
-        intercomCode: String(data.get("intercomCode") ?? ""),
-        scheduledDeliveryDate: deliverySlot.date,
-        scheduledDeliveryStart: deliverySlot.startTime,
-        scheduledDeliveryEnd: deliverySlot.endTime,
+        line1: shippingMethod === "delivery" ? line1 : undefined,
+        deliveryLat:
+          shippingMethod === "delivery" ? deliveryPoint?.lat : undefined,
+        deliveryLng:
+          shippingMethod === "delivery" ? deliveryPoint?.lng : undefined,
+        floor:
+          shippingMethod === "delivery"
+            ? String(data.get("floor") ?? "")
+            : undefined,
+        intercomCode:
+          shippingMethod === "delivery"
+            ? String(data.get("intercomCode") ?? "")
+            : undefined,
+        scheduledDeliveryDate:
+          shippingMethod === "delivery" ? deliverySlot?.date : undefined,
+        scheduledDeliveryStart:
+          shippingMethod === "delivery" ? deliverySlot?.startTime : undefined,
+        scheduledDeliveryEnd:
+          shippingMethod === "delivery" ? deliverySlot?.endTime : undefined,
         cashChangeAmount:
           paymentMethod === "cash_on_delivery"
             ? (cashChangeAmount ?? undefined)
@@ -411,6 +463,18 @@ export function CheckoutForm({
             labels={labels}
             locale={locale}
             pending={pending}
+            shippingMethod={shippingMethod}
+            onShippingMethodChange={(method) => {
+              setShippingMethod(method);
+              setError(null);
+              setGiftCardPreview(null);
+              if (method === "pickup") {
+                setDeliverySlot(null);
+                setDeliveryPoint(null);
+              }
+            }}
+            shippingOptions={shippingOptions}
+            storePickupAddress={storePickupAddress}
             deliverySchedule={deliverySchedule}
             deliverySlot={deliverySlot}
             onDeliverySlotChange={setDeliverySlot}

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { STORE_PICKUP_LABEL } from "@/features/checkout/domain/shipping-methods";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 import { getStoreIdentity } from "@/features/settings/application/queries";
 import {
@@ -88,7 +89,7 @@ export function toAdminOrderDetailView(
   storeName: string,
 ): AdminOrderDetailView {
   const { order, items, payments } = detail;
-  const isPickup = order.deliveryLabelSnapshot === "Store pickup";
+  const isPickup = order.deliveryLabelSnapshot === STORE_PICKUP_LABEL;
   const latestPayment = payments[0] ?? null;
 
   return {
