@@ -2,6 +2,8 @@
   "title": "Իմ պրոֆիլը",
   "dashboard": "Վահանակ",
   "orders": "Պատվերներ",
+  "bonuses": "Իմ բոնուսները",
+  "giftCards": "Իմ Gift Card-երը",
   "personal": "Անձնական տվյալներ",
   "addresses": "Հասցեներ",
   "password": "Փոխել գաղտնաբառը",
@@ -64,5 +66,56 @@
     "acknowledge": "Հասկանում եմ, որ այս գործողությունը հնարավոր չէ հետ շրջել։",
     "submit": "Ջնջել հաշիվը",
     "deleting": "Ջնջվում է…"
+  },
+  "bonusesPage": {
+    "available": "Հասանելի բալանս",
+    "totalEarned": "Ընդհանուր կուտակված",
+    "totalRedeemed": "Ընդհանուր օգտագործված",
+    "history": "Բոնուսների շարժ",
+    "empty": "Բոնուսների շարժ դեռ չկա։",
+    "order": "Պատվեր",
+    "expires": "Ավարտ՝ {date}",
+    "noExpiry": "Առանց ժամկետի",
+    "types": {
+      "EARN": "Կուտակում",
+      "REDEEM": "Օգտագործում",
+      "REVERSAL_EARN": "Կուտակման վերադարձ",
+      "REVERSAL_REDEEM": "Օգտագործման վերադարձ",
+      "EXPIRE": "Ժամկետի ավարտ"
+    }
+  },
+  "giftCardsPage": {
+    "buy": "Գնել Gift Card",
+    "empty": "Gift Card դեռ չկա։",
+    "history": "Օգտագործման պատմություն",
+    "status": "Կարգավիճակ",
+    "balance": "Մնացորդ",
+    "initial": "Սկզբնական արժեք",
+    "recipient": "Ստացող",
+    "expires": "Ավարտ",
+    "statuses": {
+      "PENDING_PAYMENT": "Սպասում է վճարման",
+      "ACTIVE": "Ակտիվ",
+      "USED": "Օգտագործված",
+      "EXPIRED": "Ժամկետանց",
+      "DISABLED": "Անջատված"
+    }
+  },
+  "giftCardsBuyPage": {
+    "title": "Գնել Gift Card",
+    "description": "Գնեք թվային Gift Card և ուղարկեք email-ով վճարման հաստատումից հետո։",
+    "amount": "Gift Card-ի արժեք",
+    "customAmount": "Այլ գումար",
+    "recipientName": "Ստացողի անուն",
+    "recipientEmail": "Ստացողի email",
+    "recipientPhone": "Ստացողի հեռախոս",
+    "purchaserName": "Ուղարկողի անուն",
+    "message": "Հաղորդագրություն",
+    "sendDate": "Ուղարկման ամսաթիվ",
+    "paymentMethod": "Վճարման եղանակ",
+    "cashOnDelivery": "Կանխիկ առաքման ժամանակ",
+    "submit": "Գրանցել գնումը",
+    "submitting": "Ուղարկվում է…",
+    "successPending": "Գնումը գրանցվեց։ Gift Card-ը ակտիվ է, կոդը ուղարկվել է ստացողի email-ին։"
   }
 }

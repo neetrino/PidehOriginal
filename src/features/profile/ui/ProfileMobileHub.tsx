@@ -4,11 +4,13 @@ import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import {
   ChevronRight,
+  Gift,
   LayoutDashboard,
   Lock,
   LogOut,
   MapPin,
   Package,
+  Sparkles,
   Trash2,
   User,
 } from "lucide-react";
@@ -68,6 +70,18 @@ export function ProfileMobileHub({
       href: `/${locale}/profile/orders`,
       label: dictionary.orders,
       icon: <Package className="h-5 w-5" />,
+      iconTheme: "amber",
+    },
+    {
+      href: `/${locale}/profile/bonuses`,
+      label: dictionary.bonuses,
+      icon: <Sparkles className="h-5 w-5" />,
+      iconTheme: "sky",
+    },
+    {
+      href: `/${locale}/profile/gift-cards`,
+      label: dictionary.giftCards,
+      icon: <Gift className="h-5 w-5" />,
       iconTheme: "amber",
     },
     {

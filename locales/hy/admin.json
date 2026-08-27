@@ -8,9 +8,11 @@
     "delivery": "Առաքում",
     "discounts": "Զեղչեր",
     "coupons": "Կուպոններ",
+    "giftCards": "Gift Card-եր",
     "users": "Օգտատերեր",
     "analytics": "Վերլուծություն",
     "hero": "Հերոս",
+    "popups": "Popup-ներ",
     "blog": "Բլոգ",
     "messages": "Հաղորդագրություններ",
     "settings": "Կարգավորումներ"
@@ -83,7 +85,8 @@
       "category": "կատեգորիան",
       "promoCode": "պրոմո կոդը",
       "slide": "սլայդը",
-      "post": "հրապարակումը"
+      "post": "հրապարակումը",
+      "popup": "popup-ը"
     },
     "selectedProduct": "ընտրված ապրանքը",
     "selectedProducts": "{count} ընտրված ապրանք"
@@ -701,6 +704,37 @@
       "edit": "Խմբագրել"
     }
   },
+  "popups": {
+    "title": "Popup-ներ",
+    "count": "{count} popup",
+    "countPlural": "{count} popup",
+    "createPopup": "Ստեղծել popup",
+    "listHeading": "Popup-ներ ({count})",
+    "noImage": "Պատկեր չկա",
+    "active": "ԱԿՏԻՎ",
+    "inactive": "ԱՆԱԿՏԻՎ",
+    "empty": "Դեռևս popup-ներ չկան։",
+    "editAria": "Խմբագրել {title}",
+    "deleteAria": "Ջնջել {title}",
+    "activateAria": "Ակտիվացնել popup-ը",
+    "deactivateAria": "Ապաակտիվացնել popup-ը",
+    "drawer": {
+      "createTitle": "Ստեղծել popup",
+      "editTitle": "Խմբագրել popup-ը",
+      "createAria": "Ստեղծել popup",
+      "editAria": "Խմբագրել popup-ը",
+      "title": "Վերնագիր",
+      "linkUrl": "Հղում (ոչ պարտադիր)",
+      "linkUrlPlaceholder": "/hy/products կամ https://…",
+      "linkUrlHint": "Նկարի վրա սեղմելիս բացվող հասցե։",
+      "uploadImage": "Վերբեռնել պատկեր",
+      "uploadImageButton": "+ Վերբեռնել պատկեր",
+      "changeImage": "Փոխել պատկերը",
+      "remove": "Հեռացնել",
+      "create": "Ստեղծել",
+      "edit": "Խմբագրել"
+    }
+  },
   "blog": {
     "title": "Բլոգ",
     "addPost": "Ավելացնել հրապարակում",
@@ -811,6 +845,44 @@
       "rubPerAmd": "RUB՝ 1 AMD-ի դիմաց",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Պահպանել փոխարժեքները"
+    }
+  },
+  "giftCards": {
+    "title": "Gift Card-եր",
+    "subtitle": "Ստեղծեք, որոնեք, ակտիվացրեք և անջատեք թվային Gift Card-երը։",
+    "add": "Ստեղծել Gift Card",
+    "empty": "Gift Card դեռ չկա։",
+    "history": "Օգտագործման պատմություն",
+    "activate": "Ակտիվացնել",
+    "searchPlaceholder": "Որոնել ըստ կոդի, գնորդի կամ ստացողի",
+    "statuses": {
+      "PENDING_PAYMENT": "Սպասում է վճարման",
+      "ACTIVE": "Ակտիվ",
+      "USED": "Օգտագործված",
+      "EXPIRED": "Ժամկետանց",
+      "DISABLED": "Անջատված"
+    },
+    "table": {
+      "code": "Կոդ",
+      "balance": "Մնացորդ",
+      "status": "Կարգավիճակ",
+      "recipient": "Ստացող",
+      "purchaser": "Գնորդ",
+      "copyAria": "Պատճենել {code}",
+      "resendAria": "Կրկին ուղարկել email",
+      "disableAria": "Անջատել Gift Card"
+    },
+    "drawer": {
+      "newTitle": "Նոր Gift Card",
+      "newAria": "Նոր Gift Card",
+      "amount": "Գումար (AMD)",
+      "recipientName": "Ստացողի անուն",
+      "recipientEmail": "Ստացողի email",
+      "recipientPhone": "Ստացողի հեռախոս",
+      "purchaserName": "Գնորդի / ուղարկողի անուն",
+      "message": "Հաղորդագրություն",
+      "expiresOptional": "Ավարտ (ըստ ցանկության)",
+      "sendEmail": "Ուղարկել email ակտիվացումից հետո"
     }
   }
 }

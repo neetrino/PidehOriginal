@@ -17,6 +17,8 @@ import {
   products,
   promotions,
   stockMovements,
+  users,
+  giftCards,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
 import {
@@ -29,7 +31,22 @@ import {
   type CheckoutInput,
 } from "@/features/checkout/schemas";
 import { toPaymentRecord } from "@/features/checkout/domain/payment-methods";
+import { STORE_PICKUP_LABEL } from "@/features/checkout/domain/shipping-methods";
 import { resolveGroupOrderCheckoutContext } from "@/features/checkout/application/group-order-checkout-context";
+import { getStoreIdentity } from "@/features/settings/application/queries";
+import { redeemBonusesForOrder } from "@/features/bonuses/application/bonus-ledger";
+import {
+  bonusEligibleMerchandiseAmount,
+  calculateMaxRedeemAmount,
+  clampBonusRedeemRequest,
+} from "@/features/bonuses/domain/bonus-rules";
+import { redeemGiftCardForOrder } from "@/features/gift-cards/application/gift-card-ledger";
+import {
+  calculateGiftCardRedeemAmount,
+  giftCardRedeemErrorMessage,
+  isGiftCardRedeemable,
+  normalizeGiftCardCode,
+} from "@/features/gift-cards/domain/gift-card-rules";
 import { completeGroupOrderAfterStandardCheckout } from "@/features/group-orders/application/complete-after-checkout";
 import {
   quoteDistanceDelivery,
@@ -55,6 +72,7 @@ import {
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { getStoreBonusSettings } from "@/features/settings/application/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { createId } from "@/lib/id";
@@ -105,8 +123,11 @@ export async function createOrderAction(
   let deliverySlotSnapshot: string | null = null;
   let cashChangeAmount: number | undefined;
   let cashChangeImageKey: string | undefined;
-  const deliverySettings = await getDeliverySettings();
-  const groupCheckout = await resolveGroupOrderCheckoutContext();
+  const [deliverySettings, storeIdentity, groupCheckout] = await Promise.all([
+    getDeliverySettings(),
+    getStoreIdentity(),
+    resolveGroupOrderCheckoutContext(),
+  ]);
 
   if (input.shippingMethod === "delivery") {
     if (
@@ -124,7 +145,12 @@ export async function createOrderAction(
         countryCode: null,
       };
     } else {
-      const quoted = await quoteDistanceDelivery(input.line1 ?? "");
+      const quoted = await quoteDistanceDelivery(
+        input.line1 ?? "",
+        input.deliveryLat != null && input.deliveryLng != null
+          ? { lat: input.deliveryLat, lng: input.deliveryLng }
+          : null,
+      );
       if (!quoted.ok) {
         return { ok: false, error: quoted.error };
       }
@@ -198,6 +224,10 @@ export async function createOrderAction(
           ? input.scheduledDeliveryStart
           : null,
       cashChangeAmount: cashChangeAmount ?? null,
+      bonusRedeemAmount: input.bonusRedeemAmount ?? 0,
+      giftCardCode: input.giftCardCode
+        ? normalizeGiftCardCode(input.giftCardCode)
+        : null,
     }),
   );
 
@@ -219,6 +249,11 @@ export async function createOrderAction(
         return existing.orderNumber;
       }
 
+      const pickupLine1 =
+        deliverySettings.originAddress.trim() ||
+        storeIdentity.name ||
+        "Store pickup";
+
       const address = {
         recipientFirstName: input.firstName,
         recipientLastName: input.lastName,
@@ -229,9 +264,11 @@ export async function createOrderAction(
         city:
           deliveryQuote?.city?.trim() || input.city?.trim() || "Yerevan",
         line1:
-          deliveryQuote?.destinationFormattedAddress ||
-          input.line1?.trim() ||
-          "",
+          input.shippingMethod === "pickup"
+            ? pickupLine1
+            : deliveryQuote?.destinationFormattedAddress ||
+              input.line1?.trim() ||
+              "",
         line2: input.line2,
         postalCode: input.postalCode,
         ...(input.shippingMethod === "delivery"
@@ -248,7 +285,12 @@ export async function createOrderAction(
                   }
                 : {}),
             }
-          : {}),
+          : cashChangeAmount != null
+            ? {
+                cashChangeAmount,
+                cashChangeImageKey,
+              }
+            : {}),
       };
 
       let subtotal = 0;
@@ -402,7 +444,87 @@ export async function createOrderAction(
           .where(eq(promotions.id, coupon.id));
       }
 
-      const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryAmount;
+      const merchandiseAfterDiscount = bonusEligibleMerchandiseAmount(
+        subtotal,
+        discountAmount,
+      );
+      let bonusRedeemedAmount = 0;
+      if (user?.id && (input.bonusRedeemAmount ?? 0) > 0) {
+        const bonusSettings = await getStoreBonusSettings();
+        const [lockedCustomer] = await tx
+          .select({
+            id: users.id,
+            bonusBalance: users.bonusBalance,
+          })
+          .from(users)
+          .where(eq(users.id, user.id))
+          .for("update")
+          .limit(1);
+
+        if (!lockedCustomer) {
+          throw new Error("Unable to apply bonuses.");
+        }
+
+        const maxRedeem = calculateMaxRedeemAmount({
+          eligibleMerchandiseAmount: merchandiseAfterDiscount,
+          availableBalance: lockedCustomer.bonusBalance,
+          maxRedeemPercent: bonusSettings.maxRedeemPercent,
+        });
+        bonusRedeemedAmount = clampBonusRedeemRequest(
+          input.bonusRedeemAmount ?? 0,
+          maxRedeem,
+        );
+      } else if ((input.bonusRedeemAmount ?? 0) > 0 && !user?.id) {
+        throw new Error("Bonuses are available for registered customers only.");
+      }
+
+      const payableBeforeGiftCard =
+        Math.max(0, merchandiseAfterDiscount - bonusRedeemedAmount) +
+        deliveryAmount;
+
+      let giftCardId: string | null = null;
+      let giftCardCodeSnapshot: string | null = null;
+      let giftCardAmount = 0;
+      if (input.giftCardCode?.trim()) {
+        const code = normalizeGiftCardCode(input.giftCardCode);
+        const [card] = await tx
+          .select()
+          .from(giftCards)
+          .where(eq(giftCards.code, code))
+          .for("update")
+          .limit(1);
+
+        if (
+          !card ||
+          !isGiftCardRedeemable({
+            status: card.status,
+            balanceAmount: card.balanceAmount,
+            expiresAt: card.expiresAt,
+          })
+        ) {
+          throw new Error(
+            giftCardRedeemErrorMessage({
+              found: Boolean(card),
+              status: card?.status,
+              balanceAmount: card?.balanceAmount,
+              expiresAt: card?.expiresAt ?? null,
+            }),
+          );
+        }
+
+        giftCardAmount = calculateGiftCardRedeemAmount({
+          balanceAmount: card.balanceAmount,
+          payableBeforeGiftCard,
+        });
+        if (giftCardAmount <= 0) {
+          throw new Error("Gift card cannot be applied to this order.");
+        }
+
+        giftCardId = card.id;
+        giftCardCodeSnapshot = card.code;
+      }
+
+      const totalAmount = Math.max(0, payableBeforeGiftCard - giftCardAmount);
       const orderId = createId();
       await tx.execute(
         sql`select pg_advisory_xact_lock(${ORDER_NUMBER_LOCK_KEY})`,
@@ -434,6 +556,11 @@ export async function createOrderAction(
         discountAmount,
         taxAmount: 0,
         deliveryAmount,
+        bonusRedeemedAmount,
+        bonusEarnedAmount: 0,
+        giftCardId,
+        giftCardCodeSnapshot,
+        giftCardAmount,
         totalAmount,
         shippingAddress: address,
         billingAddress: address,
@@ -443,18 +570,23 @@ export async function createOrderAction(
         promotionValueSnapshot: appliedPromotion?.discountValue ?? null,
         promotionDiscountAmount: appliedPromotion ? discountAmount : null,
         deliveryRuleId: null,
-        deliveryLabelSnapshot: deliveryQuote
-          ? `Distance delivery (${deliveryQuote.distanceLabel})`
-          : "Delivery",
+        deliveryLabelSnapshot:
+          input.shippingMethod === "pickup"
+            ? STORE_PICKUP_LABEL
+            : deliveryQuote
+              ? `Distance delivery (${deliveryQuote.distanceLabel})`
+              : "Delivery",
         deliveryEstimateSnapshot:
-          [
-            deliveryQuote
-              ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
-              : null,
-            deliverySlotSnapshot,
-          ]
-            .filter(Boolean)
-            .join(" · ") || null,
+          input.shippingMethod === "pickup"
+            ? storeIdentity.name
+            : [
+                deliveryQuote
+                  ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
+                  : null,
+                deliverySlotSnapshot,
+              ]
+                .filter(Boolean)
+                .join(" · ") || null,
         idempotencyScopeHash: scopeHash,
         idempotencyKeyHash: keyHash,
         requestFingerprint: fingerprint,
@@ -462,6 +594,26 @@ export async function createOrderAction(
         placedAt: now,
         groupOrderId: groupCheckout.active ? groupCheckout.groupOrderId : null,
       });
+
+      if (user?.id && bonusRedeemedAmount > 0) {
+        await redeemBonusesForOrder({
+          tx,
+          userId: user.id,
+          orderId,
+          amount: bonusRedeemedAmount,
+          correlationId: number,
+        });
+      }
+
+      if (giftCardId && giftCardAmount > 0) {
+        await redeemGiftCardForOrder({
+          tx,
+          giftCardId,
+          orderId,
+          amount: giftCardAmount,
+          correlationId: number,
+        });
+      }
 
       for (const line of lineSnapshots) {
         const orderItemId = createId();

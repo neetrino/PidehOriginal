@@ -8,9 +8,11 @@
     "delivery": "Доставка",
     "discounts": "Скидки",
     "coupons": "Купоны",
+    "giftCards": "Подарочные карты",
     "users": "Пользователи",
     "analytics": "Аналитика",
     "hero": "Баннеры",
+    "popups": "Popup",
     "blog": "Блог",
     "messages": "Сообщения",
     "settings": "Настройки"
@@ -83,7 +85,8 @@
       "category": "категорию",
       "promoCode": "промокод",
       "slide": "слайд",
-      "post": "публикацию"
+      "post": "публикацию",
+      "popup": "popup"
     },
     "selectedProduct": "выбранный товар",
     "selectedProducts": "{count} выбранных товаров"
@@ -701,6 +704,37 @@
       "edit": "Редактировать"
     }
   },
+  "popups": {
+    "title": "Popup",
+    "count": "{count} popup",
+    "countPlural": "{count} popup",
+    "createPopup": "Создать popup",
+    "listHeading": "Popup ({count})",
+    "noImage": "Нет изображения",
+    "active": "АКТИВЕН",
+    "inactive": "НЕАКТИВЕН",
+    "empty": "Popup пока нет.",
+    "editAria": "Редактировать {title}",
+    "deleteAria": "Удалить {title}",
+    "activateAria": "Активировать popup",
+    "deactivateAria": "Деактивировать popup",
+    "drawer": {
+      "createTitle": "Создать popup",
+      "editTitle": "Редактировать popup",
+      "createAria": "Создать popup",
+      "editAria": "Редактировать popup",
+      "title": "Заголовок",
+      "linkUrl": "Ссылка (необязательно)",
+      "linkUrlPlaceholder": "/ru/products или https://…",
+      "linkUrlHint": "Адрес, открываемый при клике по изображению.",
+      "uploadImage": "Загрузить изображение",
+      "uploadImageButton": "+ Загрузить изображение",
+      "changeImage": "Изменить изображение",
+      "remove": "Убрать",
+      "create": "Создать",
+      "edit": "Редактировать"
+    }
+  },
   "blog": {
     "title": "Блог",
     "addPost": "Добавить публикацию",
@@ -811,6 +845,44 @@
       "rubPerAmd": "RUB за 1 AMD",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Сохранить курсы валют"
+    }
+  },
+  "giftCards": {
+    "title": "Подарочные карты",
+    "subtitle": "Выпускайте, ищите, активируйте и отключайте цифровые подарочные карты.",
+    "add": "Создать карту",
+    "empty": "Подарочных карт пока нет.",
+    "history": "История использования",
+    "activate": "Активировать",
+    "searchPlaceholder": "Поиск по коду, покупателю или получателю",
+    "statuses": {
+      "PENDING_PAYMENT": "Ожидает оплаты",
+      "ACTIVE": "Активна",
+      "USED": "Использована",
+      "EXPIRED": "Истекла",
+      "DISABLED": "Отключена"
+    },
+    "table": {
+      "code": "Код",
+      "balance": "Баланс",
+      "status": "Статус",
+      "recipient": "Получатель",
+      "purchaser": "Покупатель",
+      "copyAria": "Копировать {code}",
+      "resendAria": "Отправить email снова",
+      "disableAria": "Отключить карту"
+    },
+    "drawer": {
+      "newTitle": "Новая подарочная карта",
+      "newAria": "Новая подарочная карта",
+      "amount": "Сумма (AMD)",
+      "recipientName": "Имя получателя",
+      "recipientEmail": "Email получателя",
+      "recipientPhone": "Телефон получателя",
+      "purchaserName": "Имя покупателя / отправителя",
+      "message": "Сообщение",
+      "expiresOptional": "Срок (необязательно)",
+      "sendEmail": "Отправить email после активации"
     }
   }
 }

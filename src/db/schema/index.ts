@@ -7,6 +7,11 @@ export {
   type TranslationsJson,
 } from "@/db/schema/catalog";
 export { stockMovements } from "@/db/schema/inventory";
+export { bonusTransactions } from "@/db/schema/bonuses";
+export {
+  giftCardTransactions,
+  giftCards,
+} from "@/db/schema/gift-cards";
 export {
   addresses,
   sessions,
@@ -46,6 +51,7 @@ export {
   mediaAssets,
   storeSettings,
 } from "@/db/schema/media";
+export { storePopups } from "@/db/schema/popups";
 export {
   orderEvents,
   orderItems,

@@ -33,8 +33,9 @@ export async function reverseGeocodeAddressAction(
     return {
       ok: true,
       formattedAddress: result.formattedAddress,
-      lat: result.location.lat,
-      lng: result.location.lng,
+      // Keep the dropped pin — Google's snapped location can shift the fee.
+      lat: parsed.data.lat,
+      lng: parsed.data.lng,
     };
   } catch (error) {
     logger.warn("delivery.reverse_geocode_failed", {

@@ -54,6 +54,7 @@
   "shipping": {
     "storePickup": "Store Pickup",
     "storePickupDescription": "Pick up your order from our store (Free)",
+    "pickupStoreHint": "You can pick up your order at our store.",
     "delivery": "Delivery",
     "deliveryDescription": "We will deliver your order to your address. Price is based on distance.",
     "freePickup": "Free (Store Pickup)",
@@ -97,5 +98,24 @@
     "total": "Total: {amount}",
     "continueShopping": "Continue shopping",
     "viewOrders": "View orders"
+  },
+  "giftCard": {
+    "title": "Gift card code",
+    "placeholder": "PID-XXXX-XXXX",
+    "apply": "Apply",
+    "applying": "Applying…",
+    "initial": "Gift card value",
+    "used": "Using from gift card",
+    "remaining": "Remaining balance",
+    "payable": "Amount due",
+    "applied": "Gift card"
+  },
+  "bonus": {
+    "title": "Bonus balance",
+    "available": "Available: {amount}",
+    "use": "Use bonuses",
+    "amount": "Bonus points to use",
+    "useMax": "Use max",
+    "applied": "Bonuses"
   }
 }

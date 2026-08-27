@@ -8,9 +8,11 @@
     "delivery": "Delivery",
     "discounts": "Discounts",
     "coupons": "Coupons",
+    "giftCards": "Gift cards",
     "users": "Users",
     "analytics": "Analytics",
     "hero": "Hero",
+    "popups": "Popups",
     "blog": "Blog",
     "messages": "Messages",
     "settings": "Settings"
@@ -83,7 +85,8 @@
       "category": "category",
       "promoCode": "promo code",
       "slide": "slide",
-      "post": "post"
+      "post": "post",
+      "popup": "popup"
     },
     "selectedProduct": "selected product",
     "selectedProducts": "{count} selected products"
@@ -701,6 +704,37 @@
       "edit": "Edit"
     }
   },
+  "popups": {
+    "title": "Popups",
+    "count": "{count} popup",
+    "countPlural": "{count} popups",
+    "createPopup": "Create popup",
+    "listHeading": "Popups ({count})",
+    "noImage": "No image",
+    "active": "ACTIVE",
+    "inactive": "INACTIVE",
+    "empty": "No popups yet.",
+    "editAria": "Edit {title}",
+    "deleteAria": "Delete {title}",
+    "activateAria": "Activate popup",
+    "deactivateAria": "Deactivate popup",
+    "drawer": {
+      "createTitle": "Create popup",
+      "editTitle": "Edit popup",
+      "createAria": "Create popup",
+      "editAria": "Edit popup",
+      "title": "Title",
+      "linkUrl": "Link (optional)",
+      "linkUrlPlaceholder": "/en/products or https://…",
+      "linkUrlHint": "URL opened when the image is clicked.",
+      "uploadImage": "Upload image",
+      "uploadImageButton": "+ Upload image",
+      "changeImage": "Change image",
+      "remove": "Remove",
+      "create": "Create",
+      "edit": "Edit"
+    }
+  },
   "blog": {
     "title": "Blog",
     "addPost": "Add Post",
@@ -811,6 +845,44 @@
       "rubPerAmd": "RUB per 1 AMD",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Save exchange rates"
+    }
+  },
+  "giftCards": {
+    "title": "Gift cards",
+    "subtitle": "Issue, search, activate, and disable digital gift cards.",
+    "add": "Create gift card",
+    "empty": "No gift cards yet.",
+    "history": "Usage history",
+    "activate": "Activate",
+    "searchPlaceholder": "Search by code, purchaser, or recipient",
+    "statuses": {
+      "PENDING_PAYMENT": "Pending payment",
+      "ACTIVE": "Active",
+      "USED": "Used",
+      "EXPIRED": "Expired",
+      "DISABLED": "Disabled"
+    },
+    "table": {
+      "code": "Code",
+      "balance": "Balance",
+      "status": "Status",
+      "recipient": "Recipient",
+      "purchaser": "Purchaser",
+      "copyAria": "Copy {code}",
+      "resendAria": "Resend email",
+      "disableAria": "Disable gift card"
+    },
+    "drawer": {
+      "newTitle": "New gift card",
+      "newAria": "New gift card",
+      "amount": "Amount (AMD)",
+      "recipientName": "Recipient name",
+      "recipientEmail": "Recipient email",
+      "recipientPhone": "Recipient phone",
+      "purchaserName": "Purchaser / sender name",
+      "message": "Message",
+      "expiresOptional": "Expires (optional)",
+      "sendEmail": "Send email after activation"
     }
   }
 }

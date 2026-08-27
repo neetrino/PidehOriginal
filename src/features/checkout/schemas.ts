@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { CHECKOUT_PAYMENT_METHODS } from "@/features/checkout/domain/payment-methods";
+import { CHECKOUT_SHIPPING_METHODS } from "@/features/checkout/domain/shipping-methods";
 
 export const checkoutSchema = z
   .object({
@@ -8,10 +9,13 @@ export const checkoutSchema = z
     lastName: z.string().trim().min(1).max(80),
     contactEmail: z.string().trim().email().max(254),
     contactPhone: z.string().trim().min(5).max(40),
-    shippingMethod: z.literal("delivery"),
+    shippingMethod: z.enum(CHECKOUT_SHIPPING_METHODS),
     paymentMethod: z.enum(CHECKOUT_PAYMENT_METHODS),
     city: z.string().trim().max(80).optional(),
     line1: z.string().trim().max(300).optional(),
+    /** Map pin coordinates — preferred over re-geocoding line1 for distance. */
+    deliveryLat: z.number().finite().min(-90).max(90).optional(),
+    deliveryLng: z.number().finite().min(-180).max(180).optional(),
     line2: z.string().trim().max(160).optional(),
     floor: z.string().trim().max(20).optional(),
     intercomCode: z.string().trim().max(40).optional(),
@@ -33,8 +37,16 @@ export const checkoutSchema = z
     idempotencyKey: z.string().trim().min(8).max(128),
     locale: z.enum(["hy", "en", "ru"]),
     couponCode: z.string().trim().max(64).optional(),
+    /** Bonus points to redeem; ignored for guests. */
+    bonusRedeemAmount: z.coerce.number().int().min(0).max(100_000_000).optional(),
+    /** Gift card code to redeem at checkout. */
+    giftCardCode: z.string().trim().max(64).optional(),
   })
   .superRefine((value, ctx) => {
+    if (value.shippingMethod !== "delivery") {
+      return;
+    }
+
     if (!value.line1?.trim() || value.line1.trim().length < 3) {
       ctx.addIssue({
         code: "custom",

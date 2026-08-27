@@ -1,9 +1,20 @@
+import {
+  DEFAULT_BONUS_SETTINGS,
+  type BonusSettings,
+} from "@/features/bonuses/domain/bonus-rules";
+import {
+  DEFAULT_GIFT_CARD_SETTINGS,
+  type GiftCardSettings,
+} from "@/features/gift-cards/domain/gift-card-rules";
 import { ORDER_STATUSES, type OrderStatus } from "@/features/orders/domain/order-status";
 import { DEFAULT_RATES_FROM_AMD } from "@/lib/fx/default-rates";
 import {
   normalizeRateDecimalString,
   parseRateToFixed,
 } from "@/lib/money/convert";
+
+export type { BonusSettings, GiftCardSettings };
+export { DEFAULT_BONUS_SETTINGS, DEFAULT_GIFT_CARD_SETTINGS };
 
 export const STORE_SETTING_KEYS = [
   "store.identity",
@@ -15,6 +26,8 @@ export const STORE_SETTING_KEYS = [
   "store.globalDiscount",
   "store.fxRates",
   "store.delivery",
+  "store.bonuses",
+  "store.giftCards",
 ] as const;
 
 export type StoreSettingKey = (typeof STORE_SETTING_KEYS)[number];
@@ -192,4 +205,97 @@ export function parseFxRates(value: unknown): StoreFxRates {
       ? normalizeRateDecimalString(record.rub)
       : DEFAULT_FX_RATES.rub,
   };
+}
+
+function parsePercentInRange(
+  value: unknown,
+  fallback: number,
+  min: number,
+  max: number,
+): number {
+  const percentage = typeof value === "number" ? value : Number(value);
+  if (!Number.isInteger(percentage) || percentage < min || percentage > max) {
+    return fallback;
+  }
+  return percentage;
+}
+
+export function parseBonusSettings(value: unknown): BonusSettings {
+  if (!value || typeof value !== "object") {
+    return { ...DEFAULT_BONUS_SETTINGS };
+  }
+
+  const record = value as Record<string, unknown>;
+  const expiryRaw = record.expiryDays;
+  let expiryDays: number | null = DEFAULT_BONUS_SETTINGS.expiryDays;
+  if (expiryRaw === null || expiryRaw === undefined || expiryRaw === "") {
+    expiryDays = null;
+  } else {
+    const days = typeof expiryRaw === "number" ? expiryRaw : Number(expiryRaw);
+    expiryDays =
+      Number.isInteger(days) && days > 0 && days <= 3650 ? days : null;
+  }
+
+  return {
+    accrualPercent: parsePercentInRange(
+      record.accrualPercent,
+      DEFAULT_BONUS_SETTINGS.accrualPercent,
+      1,
+      100,
+    ),
+    maxRedeemPercent: parsePercentInRange(
+      record.maxRedeemPercent,
+      DEFAULT_BONUS_SETTINGS.maxRedeemPercent,
+      1,
+      100,
+    ),
+    expiryDays,
+  };
+}
+
+export function parseGiftCardSettings(value: unknown): GiftCardSettings {
+  if (!value || typeof value !== "object") {
+    return {
+      presets: [...DEFAULT_GIFT_CARD_SETTINGS.presets],
+      minAmount: DEFAULT_GIFT_CARD_SETTINGS.minAmount,
+      maxAmount: DEFAULT_GIFT_CARD_SETTINGS.maxAmount,
+      defaultExpiryDays: DEFAULT_GIFT_CARD_SETTINGS.defaultExpiryDays,
+    };
+  }
+
+  const record = value as Record<string, unknown>;
+  const presetsRaw = record.presets;
+  const presets =
+    Array.isArray(presetsRaw) &&
+    presetsRaw.every(
+      (item) => Number.isInteger(item) && (item as number) > 0,
+    )
+      ? (presetsRaw as number[])
+      : [...DEFAULT_GIFT_CARD_SETTINGS.presets];
+
+  const minAmount = parsePercentInRange(
+    record.minAmount,
+    DEFAULT_GIFT_CARD_SETTINGS.minAmount,
+    1,
+    100_000_000,
+  );
+  const maxAmount = parsePercentInRange(
+    record.maxAmount,
+    DEFAULT_GIFT_CARD_SETTINGS.maxAmount,
+    minAmount,
+    100_000_000,
+  );
+
+  const expiryRaw = record.defaultExpiryDays;
+  let defaultExpiryDays: number | null =
+    DEFAULT_GIFT_CARD_SETTINGS.defaultExpiryDays;
+  if (expiryRaw === null || expiryRaw === undefined || expiryRaw === "") {
+    defaultExpiryDays = null;
+  } else {
+    const days = typeof expiryRaw === "number" ? expiryRaw : Number(expiryRaw);
+    defaultExpiryDays =
+      Number.isInteger(days) && days > 0 && days <= 3650 ? days : null;
+  }
+
+  return { presets, minAmount, maxAmount, defaultExpiryDays };
 }

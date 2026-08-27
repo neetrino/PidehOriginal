@@ -19,6 +19,7 @@ import {
   updatedAtColumn,
 } from "@/db/schema/columns";
 import { mediaRoleEnum, mediaUploadStatusEnum } from "@/db/schema/enums";
+import { storePopups } from "@/db/schema/popups";
 
 export const mediaAssets = pgTable(
   "media_assets",
@@ -52,6 +53,9 @@ export const mediaAssets = pgTable(
     blogPostId: uuid("blog_post_id").references(() => blogPosts.id, {
       onDelete: "restrict",
     }),
+    popupId: uuid("popup_id").references(() => storePopups.id, {
+      onDelete: "restrict",
+    }),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
@@ -61,6 +65,7 @@ export const mediaAssets = pgTable(
     index("media_assets_category_idx").on(table.categoryId),
     index("media_assets_hero_idx").on(table.heroSlideId),
     index("media_assets_blog_idx").on(table.blogPostId),
+    index("media_assets_popup_idx").on(table.popupId),
     uniqueIndex("media_assets_product_primary_uidx")
       .on(table.productId)
       .where(sql`${table.productId} IS NOT NULL AND ${table.isPrimary} = true`),
@@ -79,6 +84,9 @@ export const mediaAssets = pgTable(
       .where(
         sql`${table.blogPostId} IS NOT NULL AND ${table.role} = 'COVER'`,
       ),
+    uniqueIndex("media_assets_popup_uidx")
+      .on(table.popupId)
+      .where(sql`${table.popupId} IS NOT NULL AND ${table.role} = 'POPUP'`),
     check(
       "media_assets_owner_chk",
       sql`(
@@ -86,13 +94,15 @@ export const mediaAssets = pgTable(
           AND ${table.productId} IS NULL
           AND ${table.categoryId} IS NULL
           AND ${table.heroSlideId} IS NULL
-          AND ${table.blogPostId} IS NULL)
+          AND ${table.blogPostId} IS NULL
+          AND ${table.popupId} IS NULL)
         OR (${table.role} = 'BRANDING' AND ${table.purpose} IS NOT NULL)
         OR (
           (${table.productId} IS NOT NULL)::int
           + (${table.categoryId} IS NOT NULL)::int
           + (${table.heroSlideId} IS NOT NULL)::int
           + (${table.blogPostId} IS NOT NULL)::int
+          + (${table.popupId} IS NOT NULL)::int
         ) = 1
       )`,
     ),
