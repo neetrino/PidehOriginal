@@ -28,15 +28,15 @@ export function GroupOrderPaymentOption({
   const Icon = icon === "user" ? User : Users;
 
   const cardClass = selected
-    ? "border-transparent bg-white"
-    : "border-[#1e1e1e]/10 bg-white hover:border-[#1e1e1e]/20";
+    ? "border-transparent bg-white shadow-[3px_3px_0_rgba(255,107,0,0.25)]"
+    : "border-pideh-ink/10 bg-white/80 hover:border-pideh-orange/40";
 
   return (
     <label className={`relative block cursor-pointer rounded-[18px] border p-4 transition-colors ${cardClass}`}>
       {selected ? (
         <motion.span
           layoutId="create-group-payment-frame"
-          className="pointer-events-none absolute inset-0 rounded-[18px] border-2 border-pideh-ink"
+          className="pointer-events-none absolute inset-0 rounded-[18px] border-2 border-pideh-orange"
           transition={reduceMotion ? { duration: 0 } : OPTION_SPRING}
         />
       ) : null}
@@ -49,7 +49,7 @@ export function GroupOrderPaymentOption({
       />
       <span className="relative flex items-start gap-3">
         <Icon
-          className={`mt-0.5 h-5 w-5 shrink-0 ${selected ? "text-pideh-ink" : "text-pideh-muted"}`}
+          className={`mt-0.5 h-5 w-5 shrink-0 ${selected ? "text-pideh-orange" : "text-pideh-muted"}`}
           aria-hidden
         />
         <span className="min-w-0 flex-1">
@@ -103,14 +103,14 @@ function RadioMark({
   return (
     <span
       className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-        selected ? "border-pideh-ink" : "border-[#1e1e1e]/25"
+        selected ? "border-pideh-orange" : "border-pideh-ink/25"
       }`}
       aria-hidden
     >
       {selected ? (
         <motion.span
           layoutId="create-group-payment-dot"
-          className="h-2.5 w-2.5 rounded-full bg-pideh-ink"
+          className="h-2.5 w-2.5 rounded-full bg-pideh-orange"
           transition={reduceMotion ? { duration: 0 } : OPTION_SPRING}
         />
       ) : null}

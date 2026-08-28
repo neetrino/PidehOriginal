@@ -10,6 +10,7 @@ import {
   PUBLIC_CACHE_REVALIDATE_SECONDS,
 } from "@/lib/cache/tags";
 import { mediaPublicUrl } from "@/lib/media/public-url";
+import { logger } from "@/lib/observability/logger";
 
 export type AdminPopupListItem = {
   id: string;
@@ -78,29 +79,37 @@ export async function listAdminPopups(): Promise<AdminPopupListItem[]> {
 }
 
 async function loadActiveStorefrontPopup(): Promise<StorefrontPopup | null> {
-  const [row] = await getDb()
-    .select()
-    .from(storePopups)
-    .where(eq(storePopups.isActive, true))
-    .orderBy(asc(storePopups.createdAt))
-    .limit(1);
+  try {
+    const [row] = await getDb()
+      .select()
+      .from(storePopups)
+      .where(eq(storePopups.isActive, true))
+      .orderBy(asc(storePopups.createdAt))
+      .limit(1);
 
-  if (!row) {
-    return null;
+    if (!row) {
+      return null;
+    }
+
+    const images = await loadPopupImageUrls([row.id]);
+    const imageUrl = images.get(row.id);
+    if (!imageUrl) {
+      return null;
+    }
+
+    return {
+      id: row.id,
+      title: row.title,
+      linkUrl: row.linkUrl,
+      imageUrl,
+    };
+  } catch (error: unknown) {
+    if (isUndefinedRelationError(error)) {
+      logger.warn("popups.store_popups_missing");
+      return null;
+    }
+    throw error;
   }
-
-  const images = await loadPopupImageUrls([row.id]);
-  const imageUrl = images.get(row.id);
-  if (!imageUrl) {
-    return null;
-  }
-
-  return {
-    id: row.id,
-    title: row.title,
-    linkUrl: row.linkUrl,
-    imageUrl,
-  };
 }
 
 /** Active popup for storefront overlay (null when none or missing image). */
@@ -113,4 +122,24 @@ export async function getActiveStorefrontPopup(): Promise<StorefrontPopup | null
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
     },
   )();
+}
+
+function isUndefinedRelationError(error: unknown): boolean {
+  let current: unknown = error;
+  for (let depth = 0; depth < 5; depth += 1) {
+    if (
+      typeof current === "object" &&
+      current !== null &&
+      "code" in current &&
+      current.code === "42P01"
+    ) {
+      return true;
+    }
+    if (typeof current === "object" && current !== null && "cause" in current) {
+      current = current.cause;
+      continue;
+    }
+    return false;
+  }
+  return false;
 }

@@ -114,7 +114,15 @@ export const getCurrentSession = cache(
     }
 
     const [result] = await getDb()
-      .select({ session: sessions, user: users })
+      .select({
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        phone: users.phone,
+        role: users.role,
+        status: users.status,
+      })
       .from(sessions)
       .innerJoin(users, eq(sessions.userId, users.id))
       .where(
@@ -125,11 +133,7 @@ export const getCurrentSession = cache(
       )
       .limit(1);
 
-    if (!result) {
-      return null;
-    }
-
-    return result.user;
+    return result ?? null;
   },
 );
 

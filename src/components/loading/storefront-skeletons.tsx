@@ -24,19 +24,46 @@ export function CatalogGridSkeleton() {
   );
 }
 
-export function ProductDetailSkeleton() {
+export function ShopCatalogSkeleton() {
   return (
     <div
-      className={`${pulse} grid gap-8 lg:grid-cols-2`}
+      className={`${pulse} space-y-8 px-4 pt-8 pb-24 md:px-[66px]`}
       aria-busy="true"
       aria-live="polite"
     >
-      <Block className="aspect-square w-full rounded-lg" />
-      <div className="space-y-4">
-        <Block className="h-8 w-3/4" />
-        <Block className="h-5 w-1/3" />
-        <Block className="h-24 w-full" />
-        <Block className="h-12 w-40 rounded-full" />
+      <Block className="h-4 w-28 rounded-full bg-white/70" />
+      <Block className="h-16 w-48 rounded-lg bg-white/70" />
+      <div className="flex gap-2.5 overflow-hidden">
+        <Block className="h-14 w-36 shrink-0 rounded-[40px] bg-white/70" />
+        <Block className="h-14 w-44 shrink-0 rounded-[40px] bg-white/70" />
+        <Block className="h-14 w-40 shrink-0 rounded-[40px] bg-white/70" />
+        <Block className="h-14 w-44 shrink-0 rounded-[40px] bg-white/70" />
+      </div>
+      <div className="flex flex-wrap gap-[13px]">
+        <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
+        <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
+        <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
+        <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
+      </div>
+    </div>
+  );
+}
+
+export function ProductDetailSkeleton() {
+  return (
+    <div
+      className={`${pulse} px-3 pt-6 sm:px-6 lg:px-10`}
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <div className="mx-auto grid w-full max-w-[1311px] gap-8 lg:grid-cols-2">
+        <Block className="min-h-[280px] w-full rounded-[24px] bg-[#fff3e0] sm:min-h-[380px] lg:min-h-[500px]" />
+        <div className="space-y-4 rounded-[30px] bg-[#fff8f0] p-6">
+          <Block className="h-12 w-3/4 bg-[#ffd9b3]" />
+          <Block className="h-5 w-1/3 bg-[#ffd9b3]" />
+          <Block className="h-24 w-full bg-[#ffd9b3]" />
+          <Block className="h-12 w-full rounded-full bg-[#ffd9b3]" />
+        </div>
       </div>
     </div>
   );

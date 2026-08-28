@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
 
+import { revalidateCartPaths } from "@/features/cart/cart";
 import { getDb } from "@/db/client";
 import {
   groupOrderItems,
@@ -127,6 +128,7 @@ export async function addGroupOrderItem(input: {
     actorParticipantId: participant.id,
     payload: { action: "add", productId: input.productId },
   });
+  await revalidateCartPaths();
 
   return { ok: true };
 }
@@ -166,6 +168,7 @@ export async function updateGroupOrderItemQuantity(input: {
   if (input.quantity < 1) {
     await db.delete(groupOrderItems).where(eq(groupOrderItems.id, item.id));
     await recalculateGroupOrderMoney(db, groupOrder.id);
+    await revalidateCartPaths();
     return { ok: true };
   }
 
@@ -194,6 +197,7 @@ export async function updateGroupOrderItemQuantity(input: {
     .where(eq(groupOrderItems.id, item.id));
 
   await recalculateGroupOrderMoney(db, groupOrder.id);
+  await revalidateCartPaths();
   return { ok: true };
 }
 

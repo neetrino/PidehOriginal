@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import { SiteHeaderMainNav } from "@/components/layout/SiteHeaderMainNav";
-import { getCartItemCount } from "@/features/cart/cart";
+import { getStorefrontCartItemCount } from "@/features/cart/get-cart-drawer-view";
 import { getWishlistCount } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -38,7 +38,7 @@ async function SiteHeaderMainNavAsync({
 
   const [user, cartItemCount, wishlistCount] = await Promise.all([
     getCurrentUser(),
-    getCartItemCount(),
+    getStorefrontCartItemCount(),
     getWishlistCount(),
   ]);
 

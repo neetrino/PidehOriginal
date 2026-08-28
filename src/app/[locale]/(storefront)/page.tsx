@@ -130,6 +130,9 @@ export default async function HomePage({ params }: HomePageProps) {
         emptyLabel={dictionary.home.emptyFeatured}
         wishlistLabel={dictionary.nav.wishlist}
         orderLabel={dictionary.home.orderCta}
+        outOfStockLabel={dictionary.product.outOfStock}
+        ratingLabel={dictionary.product.cardRating}
+        prepTimeLabel={dictionary.product.prepTime}
         isSignedIn={Boolean(user)}
         products={featuredCards}
       />

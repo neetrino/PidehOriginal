@@ -10,6 +10,10 @@ import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-
 import { CartDrawerEmpty } from "@/features/cart/ui/CartDrawerEmpty";
 import { CartDrawerItems } from "@/features/cart/ui/CartDrawerItems";
 import { CartDrawerTotals } from "@/features/cart/ui/CartDrawerTotals";
+import {
+  removeGroupOrderItemAction,
+  updateGroupOrderItemQuantityAction,
+} from "@/features/group-orders/actions";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -52,15 +56,14 @@ export function CartDrawer({
   const [loadingView, setLoadingView] = useState(false);
   const [pending, startTransition] = useTransition();
   const labels = dictionary.cartDrawer;
-  const badgeCount = view?.itemCount ?? itemCount;
+  const badgeCount = open && view ? view.itemCount : itemCount;
   const hasItems = Boolean(view && view.items.length > 0);
   const displayCurrency = view?.currency ?? currency;
 
-  function prefetchDrawerView(): void {
-    if (view || loadingView || open) {
-      return;
+  function loadView(showPlaceholder: boolean): void {
+    if (showPlaceholder) {
+      setLoadingView(true);
     }
-    setLoadingView(true);
     startTransition(async () => {
       const next = await loadCartDrawerViewAction(locale, currency);
       setView(next);
@@ -68,16 +71,16 @@ export function CartDrawer({
     });
   }
 
+  function prefetchDrawerView(): void {
+    if (view || loadingView || open) {
+      return;
+    }
+    loadView(true);
+  }
+
   function openDrawer(): void {
     setOpen(true);
-    if (!view) {
-      setLoadingView(true);
-      startTransition(async () => {
-        const next = await loadCartDrawerViewAction(locale, currency);
-        setView(next);
-        setLoadingView(false);
-      });
-    }
+    loadView(!view);
   }
 
   function closeDrawer(): void {
@@ -86,14 +89,29 @@ export function CartDrawer({
 
   function changeQuantity(itemId: string, quantity: number): void {
     startTransition(async () => {
-      await updateQuantity(itemId, quantity);
+      if (view?.source === "group" && view.groupInviteToken) {
+        await updateGroupOrderItemQuantityAction({
+          inviteToken: view.groupInviteToken,
+          itemId,
+          quantity: Math.max(0, quantity),
+        });
+      } else {
+        await updateQuantity(itemId, quantity);
+      }
       setView(await loadCartDrawerViewAction(locale, currency));
     });
   }
 
   function removeCartItem(itemId: string): void {
     startTransition(async () => {
-      await removeItem(itemId);
+      if (view?.source === "group" && view.groupInviteToken) {
+        await removeGroupOrderItemAction({
+          inviteToken: view.groupInviteToken,
+          itemId,
+        });
+      } else {
+        await removeItem(itemId);
+      }
       setView(await loadCartDrawerViewAction(locale, currency));
     });
   }

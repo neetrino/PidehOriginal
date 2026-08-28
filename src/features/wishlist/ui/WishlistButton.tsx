@@ -1,6 +1,7 @@
 "use client";
 
 import type { MouseEvent } from "react";
+import Image from "next/image";
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -16,7 +17,25 @@ type WishlistButtonProps = {
   label: string;
   className?: string;
   size?: "sm" | "md";
+  emptyIconSrc?: string;
+  emptyIconWidth?: number;
+  emptyIconHeight?: number;
 };
+
+function wishlistHeartClass(
+  inWishlist: boolean,
+  usesFigmaIcon: boolean,
+  iconClass: string,
+): string {
+  const sizeClass = usesFigmaIcon ? "" : iconClass;
+  if (!inWishlist) {
+    return `${sizeClass} fill-transparent text-current`.trim();
+  }
+  if (usesFigmaIcon) {
+    return `${sizeClass} fill-[#ff6b00] text-[#ff6b00]`.trim();
+  }
+  return `${sizeClass} fill-red-500 text-red-500`;
+}
 
 export function WishlistButton({
   locale,
@@ -26,6 +45,9 @@ export function WishlistButton({
   label,
   className = "",
   size = "md",
+  emptyIconSrc,
+  emptyIconWidth = 34,
+  emptyIconHeight = 34,
 }: WishlistButtonProps) {
   const router = useRouter();
   const [inWishlist, setInWishlist] = useState(initialInWishlist);
@@ -69,14 +91,29 @@ export function WishlistButton({
       aria-pressed={inWishlist}
       className={`inline-flex items-center justify-center rounded-full transition disabled:opacity-60 ${className}`}
     >
-      <Heart
-        className={`${iconClass} ${
-          inWishlist
-            ? "fill-red-500 text-red-500"
-            : "fill-transparent text-gray-700"
-        }`}
-        aria-hidden
-      />
+      {emptyIconSrc && !inWishlist ? (
+        <Image
+          src={emptyIconSrc}
+          alt=""
+          width={emptyIconWidth}
+          height={emptyIconHeight}
+          aria-hidden
+        />
+      ) : (
+        <Heart
+          className={wishlistHeartClass(
+            inWishlist,
+            Boolean(emptyIconSrc),
+            iconClass,
+          )}
+          style={
+            emptyIconSrc
+              ? { width: emptyIconWidth, height: emptyIconHeight }
+              : undefined
+          }
+          aria-hidden
+        />
+      )}
     </button>
   );
 }

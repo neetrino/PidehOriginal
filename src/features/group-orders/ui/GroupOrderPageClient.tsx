@@ -2,20 +2,25 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition, useEffect } from "react";
+import {
+  useMemo,
+  useState,
+  useTransition,
+  useEffect,
+  type ReactNode,
+} from "react";
 import {
   Copy,
-  Lock,
   Share2,
   Trash2,
   Users,
   X,
 } from "lucide-react";
 
+import { PidehPillButton } from "@/components/brand/PidehPillButton";
 import { AppLink } from "@/components/ui/AppLink";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
-import { Button } from "@/components/ui/Button";
 import {
   cancelGroupOrderAction,
   joinGroupOrderAction,
@@ -39,6 +44,35 @@ type GroupOrderPageClientProps = {
   inviteToken: string;
   needsJoin: boolean;
 };
+
+const GROUP_CARD =
+  "rounded-[26px] border-2 border-pideh-ink/10 bg-white p-5 shadow-[0px_12px_14px_rgba(31,20,8,0.08)]";
+
+const INPUT_CLASS =
+  "w-full rounded-full border-2 border-pideh-ink/10 bg-pideh-cream px-4 py-2.5 text-sm font-medium text-pideh-ink outline-none transition focus:border-pideh-orange focus:ring-2 focus:ring-pideh-orange/30";
+
+function GhostPillButton({
+  children,
+  onClick,
+  disabled,
+  className = "",
+}: {
+  children: ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-full border-2 border-pideh-ink/15 bg-white px-4 py-2.5 text-sm font-bold text-pideh-ink transition hover:border-pideh-orange hover:text-pideh-orange disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
 
 function paymentLabel(
   status: string,
@@ -110,7 +144,7 @@ export function GroupOrderPageClient({
   if (!view) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <p className="text-lg font-semibold text-gray-900">{labels.notFound}</p>
+        <p className="text-lg font-extrabold text-pideh-ink">{labels.notFound}</p>
       </div>
     );
   }
@@ -182,58 +216,63 @@ export function GroupOrderPageClient({
   }
 
   return (
-    <div className={`mx-auto max-w-2xl px-4 py-8 ${pending ? "opacity-70" : ""}`}>
-      <div className="mb-6 flex items-start justify-between gap-3">
+    <div className={`mx-auto max-w-2xl px-4 py-8 md:py-10 ${pending ? "opacity-70" : ""}`}>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <p className="text-[11px] font-bold tracking-[0.22em] text-pideh-orange uppercase">
+            {labels.status}
+          </p>
+          <h1 className="font-display mt-2 text-[clamp(2.25rem,6vw,3.25rem)] leading-[0.9] text-pideh-ink uppercase">
             {labels.manageTitle}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {labels.status}: {view.status}
-          </p>
+          <span className="mt-3 inline-flex rounded-full bg-pideh-orange/12 px-3 py-1 text-xs font-bold tracking-wide text-pideh-orange uppercase">
+            {view.status}
+          </span>
         </div>
         <AppLink
           href={`/${locale}/products`}
           prefetchPolicy="intent"
-          className="text-sm font-medium text-gray-700 underline-offset-2 hover:underline"
+          className="text-sm font-bold text-pideh-orange underline-offset-4 hover:underline"
         >
           {labels.browseMenu}
         </AppLink>
       </div>
 
-      <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-4">
-        <p className="text-sm font-medium text-gray-700">{labels.inviteLink}</p>
-        <p className="mt-1 truncate text-xs text-gray-500">{inviteUrl}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Button type="button" size="sm" variant="secondary" onClick={copyLink}>
-            <Copy className="mr-1.5 h-4 w-4" />
+      <section className={`mb-5 ${GROUP_CARD}`}>
+        <p className="text-sm font-extrabold text-pideh-ink">{labels.inviteLink}</p>
+        <p className="mt-2 truncate rounded-full bg-pideh-cream px-4 py-2.5 text-xs font-medium text-pideh-muted">
+          {inviteUrl}
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <GhostPillButton onClick={() => void copyLink()}>
+            <Copy className="h-4 w-4" />
             {copied ? labels.copied : labels.copyLink}
-          </Button>
-          <Button type="button" size="sm" variant="secondary" onClick={shareLink}>
-            <Share2 className="mr-1.5 h-4 w-4" />
+          </GhostPillButton>
+          <GhostPillButton onClick={() => void shareLink()}>
+            <Share2 className="h-4 w-4" />
             {labels.share}
-          </Button>
+          </GhostPillButton>
         </div>
       </section>
 
-      <section className="mb-6 space-y-2 rounded-2xl border border-gray-200 bg-white p-4 text-sm">
-        <div className="flex items-center gap-2 text-gray-800">
-          <Users className="h-4 w-4" />
+      <section className={`mb-5 space-y-3 ${GROUP_CARD} text-sm`}>
+        <div className="flex items-center gap-2 font-semibold text-pideh-ink">
+          <Users className="h-4 w-4 text-pideh-orange" />
           {view.paymentMode === "ORGANIZER_PAYS_ALL"
             ? labels.payingOrganizer.replace("{name}", view.organizerDisplayName)
             : labels.payingSplit}
         </div>
-        <p className="text-gray-600">
+        <p className="text-pideh-muted">
           {view.spendLimitFormatted
             ? labels.limitLabel.replace("{amount}", view.spendLimitFormatted)
             : labels.noLimit}
         </p>
-        <p className="text-gray-600">
+        <p className="text-pideh-muted">
           {view.deliveryAddress
             ? `${labels.deliveryAddressLabel}: ${view.deliveryAddress}`
             : labels.noDeliveryAddress}
         </p>
-        <p className="text-gray-600">
+        <p className="text-pideh-muted">
           {labels.delivery}: {view.deliveryFormatted}
           {view.deliveryDistanceLabel
             ? ` · ${view.deliveryDistanceLabel}`
@@ -242,34 +281,34 @@ export function GroupOrderPageClient({
         {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
         view.currentParticipantId &&
         currentParticipant ? (
-          <p className="text-gray-600">
+          <p className="text-pideh-muted">
             {labels.yourDeliveryShare}:{" "}
             {currentParticipant.deliveryShareFormatted}
           </p>
         ) : null}
-        <p className="font-semibold text-gray-900">
-          {labels.total}: {view.grandTotalFormatted}
+        <p className="pt-1 text-lg font-extrabold text-pideh-ink">
+          {labels.total}: <span className="text-pideh-orange">{view.grandTotalFormatted}</span>
         </p>
       </section>
 
       {isOrganizer && canEdit ? (
-        <section className="mb-6 space-y-5 rounded-2xl border border-gray-200 bg-white p-4">
-          <h2 className="text-base font-semibold text-gray-900">
+        <section className={`mb-5 space-y-5 ${GROUP_CARD}`}>
+          <h2 className="text-base font-extrabold text-pideh-ink">
             {labels.settingsTitle}
           </h2>
 
           <div className="space-y-2">
             <label className="block">
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-bold text-pideh-ink">
                 {labels.spendLimitFieldLabel}
               </span>
-              <span className="mt-0.5 block text-xs leading-relaxed text-gray-500">
+              <span className="mt-0.5 block text-xs leading-relaxed text-pideh-muted">
                 {labels.spendLimitFieldHint}
               </span>
             </label>
             <div className="flex flex-wrap gap-2">
-              <div className="flex min-w-[8rem] flex-1 items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2">
-                <span className="text-sm text-gray-500" aria-hidden>
+              <div className="flex min-w-[8rem] flex-1 items-center gap-2 rounded-full border-2 border-pideh-ink/10 bg-pideh-cream px-4 py-2">
+                <span className="text-sm font-bold text-pideh-orange" aria-hidden>
                   ֏
                 </span>
                 <input
@@ -278,13 +317,10 @@ export function GroupOrderPageClient({
                   inputMode="numeric"
                   placeholder={labels.spendLimitPlaceholder}
                   aria-label={labels.spendLimitFieldLabel}
-                  className="w-full bg-transparent text-sm text-gray-900 outline-none"
+                  className="w-full bg-transparent text-sm font-medium text-pideh-ink outline-none"
                 />
               </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="secondary"
+              <GhostPillButton
                 onClick={() =>
                   run(async () =>
                     updateSpendLimitAction({
@@ -297,16 +333,16 @@ export function GroupOrderPageClient({
                 }
               >
                 {labels.saveLimit}
-              </Button>
+              </GhostPillButton>
             </div>
           </div>
 
-          <div className="space-y-2 border-t border-gray-100 pt-4">
+          <div className="space-y-2 border-t border-pideh-orange/15 pt-4">
             <label className="block">
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-bold text-pideh-ink">
                 {labels.deliveryFieldLabel}
               </span>
-              <span className="mt-0.5 block text-xs leading-relaxed text-gray-500">
+              <span className="mt-0.5 block text-xs leading-relaxed text-pideh-muted">
                 {labels.deliveryFieldHint}
               </span>
             </label>
@@ -320,7 +356,7 @@ export function GroupOrderPageClient({
                   }}
                   placeholder={labels.deliveryAddressPlaceholder}
                   languageCode={locale}
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-gray-400"
+                  className={INPUT_CLASS}
                 />
               </div>
               <AddressMapPicker
@@ -340,13 +376,13 @@ export function GroupOrderPageClient({
                 }}
               />
             </div>
-            <p className="text-xs leading-relaxed text-gray-500">
+            <p className="text-xs leading-relaxed text-pideh-muted">
               {view.paymentMode === "SPLIT_PER_PARTICIPANT"
                 ? labels.deliverySplitHint
                 : labels.deliveryOrganizerPaysHint}
             </p>
             {view.deliveryAmount > 0 ? (
-              <p className="text-sm font-medium text-emerald-700">
+              <p className="text-sm font-bold text-pideh-orange">
                 {labels.deliveryQuoteReady
                   .replace("{amount}", view.deliveryFormatted)
                   .replace(
@@ -355,10 +391,7 @@ export function GroupOrderPageClient({
                   )}
               </p>
             ) : null}
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
+            <GhostPillButton
               disabled={pending || deliveryAddress.trim().length < 3}
               onClick={() =>
                 run(async () =>
@@ -372,17 +405,14 @@ export function GroupOrderPageClient({
               }
             >
               {labels.calculateDelivery}
-            </Button>
+            </GhostPillButton>
           </div>
 
-          <div className="space-y-2 border-t border-gray-100 pt-4">
-            <p className="text-xs leading-relaxed text-gray-500">
+          <div className="space-y-2 border-t border-pideh-orange/15 pt-4">
+            <p className="text-xs leading-relaxed text-pideh-muted">
               {labels.closeJoinsHint}
             </p>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
+            <GhostPillButton
               className="w-full sm:w-auto"
               onClick={() =>
                 run(async () =>
@@ -394,32 +424,32 @@ export function GroupOrderPageClient({
               }
             >
               {view.joinsClosed ? labels.openJoins : labels.closeJoins}
-            </Button>
+            </GhostPillButton>
           </div>
         </section>
       ) : null}
 
       <section className="mb-6">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">
+        <h2 className="mb-3 text-lg font-extrabold text-pideh-ink">
           {labels.participants}
         </h2>
         <ul className="space-y-4">
           {view.participants.map((participant) => (
             <li
               key={participant.id}
-              className="rounded-2xl border border-gray-200 bg-white p-4"
+              className={GROUP_CARD}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-extrabold text-pideh-ink">
                     {participant.displayName}
                     {participant.role === "ORGANIZER" ? (
-                      <span className="ml-2 text-xs font-normal text-gray-500">
+                      <span className="ml-2 text-xs font-bold text-pideh-orange">
                         ({labels.organizer})
                       </span>
                     ) : null}
                   </p>
-                  <p className="mt-0.5 text-sm text-gray-600">
+                  <p className="mt-0.5 text-sm text-pideh-muted">
                     {participant.subtotalFormatted} ·{" "}
                     {paymentLabel(participant.paymentStatus, labels, {
                       paysAtCheckout:
@@ -432,17 +462,17 @@ export function GroupOrderPageClient({
                     })}
                   </p>
                   {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
-                    <p className="mt-0.5 text-xs text-gray-500">
+                    <p className="mt-0.5 text-xs text-pideh-muted">
                       {labels.deliveryShare}:{" "}
                       {participant.deliveryShareFormatted} · {labels.total}:{" "}
                       {participant.finalAmountFormatted}
                     </p>
                   ) : null}
                   <p
-                    className={`mt-1 inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${
                       participant.itemsReady
-                        ? "bg-emerald-50 text-emerald-700"
-                        : "bg-amber-50 text-amber-800"
+                        ? "bg-pideh-orange/12 text-pideh-orange"
+                        : "bg-pideh-yellow/50 text-pideh-ink"
                     }`}
                   >
                     {participant.itemsReady ? labels.ready : labels.notReady}
@@ -453,7 +483,7 @@ export function GroupOrderPageClient({
                 canEdit ? (
                   <button
                     type="button"
-                    className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600"
+                    className="rounded-full p-2 text-pideh-muted transition hover:bg-red-50 hover:text-red-600"
                     aria-label={labels.removeParticipant}
                     onClick={() =>
                       run(async () =>
@@ -470,15 +500,15 @@ export function GroupOrderPageClient({
               </div>
 
               {participant.items.length === 0 ? (
-                <p className="mt-3 text-sm text-gray-400">{labels.emptyItems}</p>
+                <p className="mt-3 text-sm text-pideh-muted">{labels.emptyItems}</p>
               ) : (
                 <ul className="mt-3 space-y-2">
                   {participant.items.map((item) => (
                     <li
                       key={item.id}
-                      className="flex items-center gap-3 rounded-xl bg-gray-50 p-2"
+                      className="flex items-center gap-3 rounded-[18px] bg-pideh-cream p-2"
                     >
-                      <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-white">
+                      <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-white">
                         {item.imageUrl ? (
                           <Image
                             src={item.imageUrl}
@@ -490,10 +520,10 @@ export function GroupOrderPageClient({
                         ) : null}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900">
+                        <p className="truncate text-sm font-bold text-pideh-ink">
                           {item.title} × {item.quantity}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs font-medium text-pideh-muted">
                           {item.lineTotalFormatted}
                         </p>
                       </div>
@@ -502,7 +532,7 @@ export function GroupOrderPageClient({
                       canEdit ? (
                         <button
                           type="button"
-                          className="rounded-full p-1.5 text-gray-400 hover:bg-white hover:text-gray-700"
+                          className="rounded-full p-1.5 text-pideh-muted transition hover:bg-white hover:text-pideh-ink"
                           aria-label={labels.removeItem}
                           onClick={() =>
                             run(async () =>
@@ -526,30 +556,30 @@ export function GroupOrderPageClient({
       </section>
 
       {error ? (
-        <p className="mb-4 text-sm text-red-600" role="alert">
+        <p className="mb-4 text-sm font-semibold text-red-600" role="alert">
           {error}
         </p>
       ) : null}
 
-      <div className="sticky bottom-4 space-y-2">
+      <div className="sticky bottom-4 space-y-3">
         {canEdit && view.currentParticipantId ? (
           iAmReady ? (
             <div
-              className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center"
+              className="rounded-[22px] border-2 border-pideh-orange/25 bg-white px-4 py-3 text-center shadow-[0px_8px_16px_rgba(31,20,8,0.08)]"
               role="status"
             >
-              <p className="text-sm font-semibold text-emerald-800">
+              <p className="text-sm font-extrabold text-pideh-orange">
                 {labels.itemsReadyDone}
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-emerald-700/90">
+              <p className="mt-1 text-xs leading-relaxed text-pideh-muted">
                 {labels.itemsReadyDoneHint}
               </p>
             </div>
           ) : (
-            <Button
-              type="button"
-              className="w-full rounded-full"
+            <PidehPillButton
+              label={labels.itemsReady}
               disabled={pending}
+              className="w-full"
               onClick={() => {
                 setError(null);
                 startTransition(async () => {
@@ -572,31 +602,27 @@ export function GroupOrderPageClient({
                   router.refresh();
                 });
               }}
-            >
-              {labels.itemsReady}
-            </Button>
+            />
           )
         ) : null}
 
         {isOrganizer && canEdit ? (
-          <Button
-            type="button"
-            className="w-full rounded-full"
+          <PidehPillButton
+            label={labels.lockAndContinue}
+            tone="dark"
             disabled={pending}
+            className="w-full"
             onClick={() =>
               run(async () => lockGroupOrderAction({ inviteToken }))
             }
-          >
-            <Lock className="mr-2 h-4 w-4" />
-            {labels.lockAndContinue}
-          </Button>
+          />
         ) : null}
 
         {isOrganizer && view.status === "CHECKOUT" ? (
-          <Button
-            type="button"
-            className="w-full rounded-full"
+          <PidehPillButton
+            label={labels.goToCheckout}
             disabled={pending}
+            className="w-full"
             onClick={() => {
               setError(null);
               startTransition(async () => {
@@ -610,9 +636,7 @@ export function GroupOrderPageClient({
                 router.push(`/${locale}/checkout`);
               });
             }}
-          >
-            {labels.goToCheckout}
-          </Button>
+          />
         ) : null}
 
         {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
@@ -623,19 +647,17 @@ export function GroupOrderPageClient({
         currentParticipant.finalAmount > 0 &&
         currentParticipant.paymentStatus !== "PAID" &&
         currentParticipant.paymentStatus !== "MARKED_RECEIVED" ? (
-          <Button
-            type="button"
-            className="w-full rounded-full"
-            disabled={pending}
-            onClick={() =>
-              router.push(`/${locale}/group-orders/${inviteToken}/pay`)
-            }
-          >
-            {labels.payWithCard.replace(
+          <PidehPillButton
+            label={labels.payWithCard.replace(
               "{amount}",
               currentParticipant.finalAmountFormatted,
             )}
-          </Button>
+            disabled={pending}
+            className="w-full"
+            onClick={() =>
+              router.push(`/${locale}/group-orders/${inviteToken}/pay`)
+            }
+          />
         ) : null}
 
         {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
@@ -645,13 +667,13 @@ export function GroupOrderPageClient({
         currentParticipant &&
         (currentParticipant.paymentStatus === "PAID" ||
           currentParticipant.paymentStatus === "MARKED_RECEIVED") ? (
-          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm text-emerald-900">
+          <p className="rounded-[22px] border-2 border-pideh-orange/25 bg-white px-4 py-3 text-center text-sm font-semibold text-pideh-ink">
             {labels.payYouPaid}
           </p>
         ) : null}
 
         {isOrganizer && view.status === "AWAITING_PAYMENTS" ? (
-          <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-950">
+          <p className="rounded-[22px] border-2 border-pideh-yellow bg-pideh-yellow/40 px-4 py-3 text-center text-sm font-semibold text-pideh-ink">
             {labels.statusAwaitingCardPayments}
           </p>
         ) : null}
@@ -661,16 +683,15 @@ export function GroupOrderPageClient({
         view.status !== "COMPLETED" &&
         view.status !== "PAID" &&
         view.status !== "PREPARING" ? (
-          <Button
+          <button
             type="button"
-            variant="danger"
-            className="w-full rounded-full"
+            className="w-full rounded-full border-2 border-red-400/50 bg-white px-6 py-3 text-base font-bold text-red-600 transition hover:bg-red-50"
             onClick={() =>
               run(async () => cancelGroupOrderAction({ inviteToken }))
             }
           >
             {labels.cancelOrder}
-          </Button>
+          </button>
         ) : null}
       </div>
     </div>
@@ -696,15 +717,17 @@ function JoinPanel({
 }) {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md items-center px-4 py-10">
-      <div className="w-full rounded-3xl border border-gray-200 bg-white p-6 shadow-lg">
-        <h1 className="text-xl font-bold text-gray-900">
-          {labels.joinTitle.replace("{name}", view.organizerDisplayName)}
-        </h1>
-        <p className="mt-2 text-sm text-gray-500">{labels.joinDescription}</p>
-
-        <div className="mt-5 space-y-3 text-sm text-gray-800">
-          <p className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+      <div className="w-full overflow-hidden rounded-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-[8px_8px_0_#1e1e1e]">
+        <div className="border-b-2 border-pideh-ink/10 bg-pideh-yellow/35 px-6 py-5">
+          <h1 className="text-xl font-extrabold text-pideh-ink">
+            {labels.joinTitle.replace("{name}", view.organizerDisplayName)}
+          </h1>
+          <p className="mt-2 text-sm text-pideh-muted">{labels.joinDescription}</p>
+        </div>
+        <div className="px-6 py-5">
+        <div className="space-y-3 text-sm text-pideh-ink">
+          <p className="flex items-center gap-2 font-semibold">
+            <Users className="h-4 w-4 text-pideh-orange" />
             {view.paymentMode === "ORGANIZER_PAYS_ALL"
               ? labels.payingOrganizer.replace(
                   "{name}",
@@ -712,7 +735,7 @@ function JoinPanel({
                 )
               : labels.payingSplit}
           </p>
-          <p>
+          <p className="text-pideh-muted">
             {view.spendLimitFormatted
               ? labels.limitLabel.replace("{amount}", view.spendLimitFormatted)
               : labels.noLimit}
@@ -720,32 +743,30 @@ function JoinPanel({
         </div>
 
         <label className="mt-5 block">
-          <span className="mb-1.5 block text-sm font-medium text-gray-700">
+          <span className="mb-1.5 block text-sm font-bold text-pideh-ink">
             {labels.joinNameLabel}
           </span>
           <input
             value={joinName}
             onChange={(e) => setJoinName(e.target.value)}
             placeholder={labels.joinNamePlaceholder}
-            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-gray-400"
+            className={INPUT_CLASS}
           />
         </label>
 
         {error ? (
-          <p className="mt-3 text-sm text-red-600" role="alert">
+          <p className="mt-3 text-sm font-semibold text-red-600" role="alert">
             {error}
           </p>
         ) : null}
 
-        <Button
-          type="button"
-          className="mt-5 w-full rounded-full"
-          size="lg"
+        <PidehPillButton
+          label={labels.join}
           disabled={pending || !joinName.trim()}
+          className="mt-5 w-full"
           onClick={onJoin}
-        >
-          {labels.join}
-        </Button>
+        />
+        </div>
       </div>
     </div>
   );

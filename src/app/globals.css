@@ -136,11 +136,49 @@ body {
   animation: pideh-hero-cta-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
 }
 
+/* Button 7 gleam sweep (Figma Rectangle 2 on Button 7 / 154:1491) */
+@keyframes pideh-pill-gleam {
+  0%,
+  18% {
+    left: -53px;
+  }
+  72% {
+    left: calc(100% + 80px);
+  }
+  72.01%,
+  100% {
+    left: -53px;
+  }
+}
+
+.pideh-pill--gleam-hover:hover:not(:disabled) .pideh-pill-gleam {
+  animation: pideh-pill-gleam 1.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* Product photo hover — Figma 1:102 crop/rotate lives on the card leaf */
+.pideh-product-photo-pose {
+  transform-origin: center center;
+  transition: transform 0.45s ease-out;
+}
+
+.group:hover .pideh-product-photo-pose {
+  transform: scale(1.06);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pideh-hero-title-line1,
   .pideh-hero-title-line2,
-  .pideh-hero-cta {
+  .pideh-hero-cta,
+  .pideh-pill--gleam-hover:hover:not(:disabled) .pideh-pill-gleam {
     animation: none;
+  }
+
+  .pideh-product-photo-pose {
+    transition: none;
+  }
+
+  .group:hover .pideh-product-photo-pose {
+    transform: none;
   }
 
   .pideh-hero-media {
@@ -177,9 +215,19 @@ body {
   z-index: 10;
 }
 
+.storefront-shell:has(.pideh-shop) {
+  background: #ffcf48;
+}
+
+.storefront-shell:has(.pideh-pdp) {
+  background: #ff6b00;
+}
+
 .storefront-shell:has(.pideh-home) .storefront-main,
 .storefront-shell:has(.pideh-about) .storefront-main,
-.storefront-shell:has(.pideh-login) .storefront-main {
+.storefront-shell:has(.pideh-login) .storefront-main,
+.storefront-shell:has(.pideh-shop) .storefront-main,
+.storefront-shell:has(.pideh-pdp) .storefront-main {
   max-width: none;
   padding: 0;
   padding-bottom: 0;
@@ -211,10 +259,20 @@ body {
   margin-top: -6rem;
 }
 
+.storefront-shell:has(.pideh-shop) .storefront-footer {
+  background: #ffcf48;
+}
+
+.storefront-shell:has(.pideh-pdp) .storefront-footer {
+  background: #ff6b00;
+}
+
 @media (max-width: 767px) {
   .storefront-shell:has(.pideh-home) .storefront-main,
   .storefront-shell:has(.pideh-about) .storefront-main,
-  .storefront-shell:has(.pideh-login) .storefront-main {
+  .storefront-shell:has(.pideh-login) .storefront-main,
+  .storefront-shell:has(.pideh-shop) .storefront-main,
+  .storefront-shell:has(.pideh-pdp) .storefront-main {
     padding-bottom: 5.5rem;
   }
 }
