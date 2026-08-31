@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
+import { MultiSelectDropdown } from "@/components/ui/MultiSelectDropdown";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
@@ -15,7 +15,10 @@ import {
   createPromotionAction,
   updatePromotionAction,
 } from "@/features/promotions/application/upsert-promotion";
-import type { AdminPromotionListItem } from "@/features/promotions/application/queries";
+import type {
+  AdminPromotionListItem,
+  CouponUserOption,
+} from "@/features/promotions/application/queries";
 import type { DiscountType } from "@/features/promotions/domain/promotion-rules";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -28,6 +31,7 @@ type CouponDrawerCoupon = Pick<
   | "totalUsageLimit"
   | "endsAt"
   | "isActive"
+  | "userIds"
 >;
 
 type CouponDrawerCopy = {
@@ -40,6 +44,7 @@ type CouponDrawerProps = {
   open: boolean;
   onClose: () => void;
   coupon?: CouponDrawerCoupon | null;
+  userOptions: CouponUserOption[];
   copy: CouponDrawerCopy;
 };
 
@@ -55,6 +60,7 @@ export function CouponDrawer({
   open,
   onClose,
   coupon = null,
+  userOptions,
   copy,
 }: CouponDrawerProps) {
   const router = useRouter();
@@ -66,6 +72,7 @@ export function CouponDrawer({
   const [value, setValue] = useState("10");
   const [quantity, setQuantity] = useState("1");
   const [expiresAt, setExpiresAt] = useState("");
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -83,6 +90,7 @@ export function CouponDrawer({
         coupon.totalUsageLimit != null ? String(coupon.totalUsageLimit) : "",
       );
       setExpiresAt(toDateTimeLocal(coupon.endsAt));
+      setSelectedUserIds(coupon.userIds);
       setError(null);
     } else {
       setName("");
@@ -91,6 +99,7 @@ export function CouponDrawer({
       setValue("10");
       setQuantity("1");
       setExpiresAt("");
+      setSelectedUserIds([]);
       setError(null);
     }
   }, [open, coupon]);
@@ -100,7 +109,7 @@ export function CouponDrawer({
       open={open}
       onClose={onClose}
       ariaLabel={isEdit ? copy.drawer.editAria : copy.drawer.newAria}
-      panelClassName="w-full max-w-md"
+      panelClassName="w-full sm:w-1/2"
     >
       <div className="border-b border-gray-200 px-5 py-4">
         <h2 className="text-lg font-semibold text-gray-900">
@@ -134,6 +143,7 @@ export function CouponDrawer({
             isActive: coupon?.isActive ?? true,
             startsAt: null,
             endsAt: expiresAt ? new Date(expiresAt) : null,
+            userIds: selectedUserIds,
           };
 
           startTransition(async () => {
@@ -235,18 +245,24 @@ export function CouponDrawer({
             </label>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 px-4 py-3">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  {copy.drawer.selectUsers}
-                </p>
-                <p className="mt-0.5 text-sm text-gray-500">
-                  {copy.drawer.allUsersCanUse}
-                </p>
-              </div>
-              <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-gray-400" />
-            </div>
+          <div>
+            <span className={ADMIN_LABEL}>{copy.drawer.selectUsers}</span>
+            <MultiSelectDropdown
+              ariaLabel={copy.drawer.selectUsers}
+              options={userOptions.map((user) => ({
+                label: user.label,
+                value: user.id,
+                hint: user.email,
+              }))}
+              values={selectedUserIds}
+              emptyLabel={copy.drawer.allUsersCanUse}
+              searchPlaceholder={copy.drawer.searchUsers}
+              noResultsLabel={copy.drawer.noUsersFound}
+              disabled={isPending || userOptions.length === 0}
+              placement="bottom"
+              className="mt-1"
+              onValuesChange={setSelectedUserIds}
+            />
           </div>
 
           {error ? <p className="text-sm text-red-700">{error}</p> : null}

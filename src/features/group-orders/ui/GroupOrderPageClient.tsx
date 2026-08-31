@@ -7,6 +7,7 @@ import {
   useState,
   useTransition,
   useEffect,
+  useRef,
   type ReactNode,
 } from "react";
 import {
@@ -24,6 +25,8 @@ import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import {
   cancelGroupOrderAction,
   joinGroupOrderAction,
+  leaveGroupOrderSessionAction,
+  loadGroupOrderDetailAction,
   lockGroupOrderAction,
   markItemsReadyAction,
   prepareGroupOrderCheckoutAction,
@@ -34,11 +37,14 @@ import {
   updateSpendLimitAction,
 } from "@/features/group-orders/actions";
 import type { GroupOrderDetailView } from "@/features/group-orders/application/queries";
+import { alertGroupOrderCancelledOnce } from "@/features/group-orders/ui/alert-group-order-cancelled";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import type { Currency } from "@/lib/money/currency";
 
 type GroupOrderPageClientProps = {
   locale: Locale;
+  currency: Currency;
   labels: Dictionary["groupOrder"];
   initialView: GroupOrderDetailView | null;
   inviteToken: string;
@@ -47,6 +53,8 @@ type GroupOrderPageClientProps = {
 
 const GROUP_CARD =
   "rounded-[26px] border-2 border-pideh-ink/10 bg-white p-5 shadow-[0px_12px_14px_rgba(31,20,8,0.08)]";
+
+const GROUP_ORDER_POLL_MS = 8_000;
 
 const INPUT_CLASS =
   "w-full rounded-full border-2 border-pideh-ink/10 bg-pideh-cream px-4 py-2.5 text-sm font-medium text-pideh-ink outline-none transition focus:border-pideh-orange focus:ring-2 focus:ring-pideh-orange/30";
@@ -100,6 +108,7 @@ function paymentLabel(
 
 export function GroupOrderPageClient({
   locale,
+  currency,
   labels,
   initialView,
   inviteToken,
@@ -121,6 +130,7 @@ export function GroupOrderPageClient({
     lat: number;
     lng: number;
   } | null>(null);
+  const cancelledHandledRef = useRef(false);
 
   useEffect(() => {
     setView(initialView);
@@ -128,6 +138,47 @@ export function GroupOrderPageClient({
     setDeliveryAddress(initialView?.deliveryAddress ?? "");
     setDeliveryPoint(null);
   }, [initialView]);
+
+  useEffect(() => {
+    if (view?.status !== "CANCELLED" || cancelledHandledRef.current) {
+      return;
+    }
+    cancelledHandledRef.current = true;
+    alertGroupOrderCancelledOnce(inviteToken, labels.cancelledAlert);
+    startTransition(async () => {
+      await leaveGroupOrderSessionAction();
+      router.refresh();
+    });
+  }, [view?.status, labels.cancelledAlert, inviteToken, router]);
+
+  useEffect(() => {
+    if (!view) return;
+    if (
+      view.status === "CANCELLED" ||
+      view.status === "COMPLETED" ||
+      view.status === "EXPIRED"
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+    const timer = window.setInterval(() => {
+      void (async () => {
+        const detail = await loadGroupOrderDetailAction(
+          inviteToken,
+          locale,
+          currency,
+        );
+        if (cancelled || !detail) return;
+        setView(detail);
+      })();
+    }, GROUP_ORDER_POLL_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [view?.status, inviteToken, locale, currency]);
 
   const inviteUrl = useMemo(() => {
     if (typeof window === "undefined" || !view) return view?.invitePath ?? "";
@@ -145,6 +196,23 @@ export function GroupOrderPageClient({
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
         <p className="text-lg font-extrabold text-pideh-ink">{labels.notFound}</p>
+      </div>
+    );
+  }
+
+  if (view.status === "CANCELLED") {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-16 text-center">
+        <p className="text-lg font-extrabold text-pideh-ink">
+          {labels.cancelledAlert}
+        </p>
+        <AppLink
+          href={`/${locale}`}
+          prefetchPolicy="intent"
+          className="mt-6 inline-flex rounded-full bg-pideh-orange px-5 py-2.5 text-sm font-bold text-white"
+        >
+          {labels.browseMenu}
+        </AppLink>
       </div>
     );
   }
@@ -286,9 +354,26 @@ export function GroupOrderPageClient({
             {currentParticipant.deliveryShareFormatted}
           </p>
         ) : null}
-        <p className="pt-1 text-lg font-extrabold text-pideh-ink">
-          {labels.total}: <span className="text-pideh-orange">{view.grandTotalFormatted}</span>
-        </p>
+        {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
+        view.currentParticipantId &&
+        currentParticipant ? (
+          <>
+            <p className="pt-1 text-lg font-extrabold text-pideh-ink">
+              {labels.yourShare}:{" "}
+              <span className="text-pideh-orange">
+                {currentParticipant.finalAmountFormatted}
+              </span>
+            </p>
+            <p className="text-sm text-pideh-muted">
+              {labels.total}: {view.grandTotalFormatted}
+            </p>
+          </>
+        ) : (
+          <p className="pt-1 text-lg font-extrabold text-pideh-ink">
+            {labels.total}:{" "}
+            <span className="text-pideh-orange">{view.grandTotalFormatted}</span>
+          </p>
+        )}
       </section>
 
       {isOrganizer && canEdit ? (

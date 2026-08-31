@@ -1,12 +1,19 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, ilike, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, type SQL } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { categories, products, promotions } from "@/db/schema";
+import {
+  categories,
+  products,
+  promotionUsers,
+  promotions,
+  users,
+} from "@/db/schema";
 import type { AdminPromotionsFilter } from "@/features/promotions/schemas/admin-promotions";
 
 const PAGE_SIZE = 20;
+const USER_OPTIONS_LIMIT = 200;
 
 export type AdminPromotionListItem = {
   id: string;
@@ -22,6 +29,14 @@ export type AdminPromotionListItem = {
   endsAt: Date | null;
   productId: string | null;
   categoryId: string | null;
+  /** Allowlisted user IDs; empty means unrestricted. */
+  userIds: string[];
+};
+
+export type CouponUserOption = {
+  id: string;
+  label: string;
+  email: string;
 };
 
 /** Lists promotions for the admin coupons/discounts surface. */
@@ -76,8 +91,15 @@ export async function listAdminPromotions(
     getDb().select({ value: count() }).from(promotions).where(where),
   ]);
 
+  const userIdsByPromotion = await listPromotionUserIds(
+    rows.map((row) => row.id),
+  );
+
   return {
-    rows,
+    rows: rows.map((row) => ({
+      ...row,
+      userIds: userIdsByPromotion.get(row.id) ?? [],
+    })),
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
   };
@@ -92,6 +114,96 @@ export async function getAdminPromotionById(id: string) {
     .limit(1);
 
   return row ?? null;
+}
+
+/** Allowlisted user IDs for the given promotions (empty = unrestricted). */
+export async function listPromotionUserIds(
+  promotionIds: string[],
+): Promise<Map<string, string[]>> {
+  const map = new Map<string, string[]>();
+  if (promotionIds.length === 0) return map;
+
+  const rows = await getDb()
+    .select({
+      promotionId: promotionUsers.promotionId,
+      userId: promotionUsers.userId,
+    })
+    .from(promotionUsers)
+    .where(inArray(promotionUsers.promotionId, promotionIds));
+
+  for (const row of rows) {
+    const existing = map.get(row.promotionId);
+    if (existing) {
+      existing.push(row.userId);
+    } else {
+      map.set(row.promotionId, [row.userId]);
+    }
+  }
+
+  return map;
+}
+
+/**
+ * Active users for coupon allowlist multi-select.
+ * Always includes any already-selected IDs so edits stay consistent.
+ */
+export async function listCouponUserOptions(
+  includeUserIds: readonly string[] = [],
+): Promise<CouponUserOption[]> {
+  const activeRows = await getDb()
+    .select({
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+    })
+    .from(users)
+    .where(eq(users.status, "ACTIVE"))
+    .orderBy(asc(users.firstName), asc(users.lastName), asc(users.email))
+    .limit(USER_OPTIONS_LIMIT);
+
+  const byId = new Map(
+    activeRows.map((row) => [
+      row.id,
+      {
+        id: row.id,
+        email: row.email,
+        label: formatUserOptionLabel(row.firstName, row.lastName, row.email),
+      } satisfies CouponUserOption,
+    ]),
+  );
+
+  const missingIds = includeUserIds.filter((id) => !byId.has(id));
+  if (missingIds.length > 0) {
+    const extraRows = await getDb()
+      .select({
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+      })
+      .from(users)
+      .where(inArray(users.id, [...missingIds]));
+
+    for (const row of extraRows) {
+      byId.set(row.id, {
+        id: row.id,
+        email: row.email,
+        label: formatUserOptionLabel(row.firstName, row.lastName, row.email),
+      });
+    }
+  }
+
+  return [...byId.values()].sort((a, b) => a.label.localeCompare(b.label));
+}
+
+function formatUserOptionLabel(
+  firstName: string,
+  lastName: string,
+  email: string,
+): string {
+  const name = `${firstName} ${lastName}`.trim();
+  return name.length > 0 ? `${name} (${email})` : email;
 }
 
 /** Product/category options for automatic discount targeting. */

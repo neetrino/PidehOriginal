@@ -82,7 +82,9 @@
     "discount": "Discount",
     "shipping": "Shipping",
     "tax": "Tax",
-    "total": "Total"
+    "total": "Total",
+    "participantsPrepaid": "Already paid by participants",
+    "yourShare": "Your share"
   },
   "buttons": {
     "placeOrder": "Place Order",
@@ -96,6 +98,7 @@
     "title": "Order confirmed",
     "body": "Order {orderNumber} was placed successfully. Your cart has been cleared.",
     "total": "Total: {amount}",
+    "amountPaid": "You paid: {amount}",
     "continueShopping": "Continue shopping",
     "viewOrders": "View orders"
   },

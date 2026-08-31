@@ -144,6 +144,29 @@ export function giftCardLedgerTargetNet(input: {
   return -input.giftCardAmount;
 }
 
+/**
+ * Gift cards are recipient-bound: only the named recipient account may redeem.
+ * Match by linked user id, otherwise by normalized recipient email.
+ */
+export function isGiftCardRecipientActor(input: {
+  actor: { id: string; email: string } | null;
+  recipientUserId: string | null;
+  recipientEmail: string;
+}): boolean {
+  if (!input.actor) {
+    return false;
+  }
+  if (
+    input.recipientUserId != null &&
+    input.actor.id === input.recipientUserId
+  ) {
+    return true;
+  }
+  const actorEmail = input.actor.email.trim().toLowerCase();
+  const recipientEmail = input.recipientEmail.trim().toLowerCase();
+  return actorEmail.length > 0 && actorEmail === recipientEmail;
+}
+
 /** User-facing reason when a gift card cannot be applied at checkout. */
 export function giftCardRedeemErrorMessage(input: {
   found: boolean;
@@ -151,7 +174,14 @@ export function giftCardRedeemErrorMessage(input: {
   balanceAmount?: number;
   expiresAt?: Date | null;
   now?: Date;
+  recipientDenied?: "unauthenticated" | "mismatch";
 }): string {
+  if (input.recipientDenied === "unauthenticated") {
+    return "Sign in with the recipient account to use this gift card.";
+  }
+  if (input.recipientDenied === "mismatch") {
+    return "This gift card can only be used by the recipient.";
+  }
   if (!input.found || input.status == null) {
     return "Gift card code was not found.";
   }

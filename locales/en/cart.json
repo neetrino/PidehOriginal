@@ -11,6 +11,8 @@
   "shipping": "Shipping",
   "total": "Total",
   "checkout": "Proceed to checkout",
+  "groupOrder": "Group order",
+  "groupOrderEyebrow": "Group order",
   "close": "Close cart",
   "removeItem": "Remove item",
   "decreaseQuantity": "Decrease quantity",

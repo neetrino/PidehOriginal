@@ -57,6 +57,8 @@ export const upsertPromotionSchema = z.object({
   }, z.boolean()),
   startsAt: z.preprocess(emptyToNull, z.coerce.date().nullable()),
   endsAt: z.preprocess(emptyToNull, z.coerce.date().nullable()),
+  /** Empty = all users; non-empty = allowlist via `promotion_users`. */
+  userIds: z.array(z.string().uuid()).max(200).default([]),
 });
 
 export type UpsertPromotionInput = z.infer<typeof upsertPromotionSchema>;

@@ -6,10 +6,13 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
+import { alertIfSpendLimitExceeded } from "@/features/group-orders/ui/alert-spend-limit-exceeded";
+import type { Locale } from "@/lib/i18n/config";
 
 type AddToCartButtonProps = {
   productId: string;
   label: string;
+  locale: Locale;
   disabled?: boolean;
   className?: string;
   size?: "sm" | "md";
@@ -18,6 +21,7 @@ type AddToCartButtonProps = {
 export function AddToCartButton({
   productId,
   label,
+  locale,
   disabled = false,
   className = "",
   size = "md",
@@ -36,6 +40,7 @@ export function AddToCartButton({
       try {
         const result = await addProductToActiveCart(productId, 1);
         if (!result.ok) {
+          alertIfSpendLimitExceeded(locale, result);
           setJustAdded(false);
           return;
         }

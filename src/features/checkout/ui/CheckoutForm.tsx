@@ -91,6 +91,8 @@ type CheckoutLabels = {
   shipping: string;
   tax: string;
   total: string;
+  participantsPrepaid: string;
+  yourShare: string;
   placeOrder: string;
   processing: string;
   continueShopping: string;
@@ -126,6 +128,16 @@ type CheckoutFormProps = {
   hasItems: boolean;
   bonusAvailableBalance: number | null;
   bonusMaxRedeemPercent: number;
+  /**
+   * SPLIT group checkout: other members prepaid on the group page;
+   * organizer is charged only `organizerPayableAmount`.
+   */
+  groupOrderCheckout?: {
+    splitOthersPrepaid: boolean;
+    organizerPayableAmount: number;
+    othersPrepaidAmount: number;
+    lockedDeliveryAmount: number | null;
+  } | null;
 };
 
 export function CheckoutForm({
@@ -145,6 +157,7 @@ export function CheckoutForm({
   hasItems,
   bonusAvailableBalance,
   bonusMaxRedeemPercent,
+  groupOrderCheckout = null,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
@@ -239,7 +252,12 @@ export function CheckoutForm({
   }
 
   const isPickup = shippingMethod === "pickup";
-  const shippingAmount = isPickup ? 0 : deliveryQuote.deliveryAmount;
+  const lockedDelivery = groupOrderCheckout?.lockedDeliveryAmount;
+  const shippingAmount = isPickup
+    ? 0
+    : lockedDelivery != null
+      ? lockedDelivery
+      : deliveryQuote.deliveryAmount;
   const merchandiseAfterDiscount = Math.max(0, subtotalAmount - discountAmount);
   const maxBonusRedeem =
     bonusAvailableBalance == null
@@ -257,17 +275,24 @@ export function CheckoutForm({
   const giftCardRedeem = giftCardPreview
     ? Math.min(giftCardPreview.redeemAmount, payableBeforeGiftCard)
     : 0;
-  const totalAmount = Math.max(0, payableBeforeGiftCard - giftCardRedeem);
+  const cartComputedTotal = Math.max(0, payableBeforeGiftCard - giftCardRedeem);
+  const splitPrepaid = Boolean(groupOrderCheckout?.splitOthersPrepaid);
+  const othersPrepaidAmount = groupOrderCheckout?.othersPrepaidAmount ?? 0;
+  const amountDue = splitPrepaid
+    ? (groupOrderCheckout?.organizerPayableAmount ?? 0)
+    : cartComputedTotal;
 
   const shippingFormatted = isPickup
     ? labels.freePickup
-    : deliveryQuote.pending
-      ? labels.calculatingDelivery
-      : deliveryQuote.error
-        ? labels.enterDeliveryAddress
-        : deliveryQuote.distanceLabel
-          ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
-          : labels.enterDeliveryAddress;
+    : lockedDelivery != null
+      ? formatMoney(shippingAmount)
+      : deliveryQuote.pending
+        ? labels.calculatingDelivery
+        : deliveryQuote.error
+          ? labels.enterDeliveryAddress
+          : deliveryQuote.distanceLabel
+            ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
+            : labels.enterDeliveryAddress;
 
   const deliveryQuoteHint =
     !isPickup && deliveryQuote.distanceLabel && !deliveryQuote.error
@@ -526,14 +551,22 @@ export function CheckoutForm({
             subtotalLabel={labels.subtotal}
             shippingLabel={labels.shipping}
             taxLabel={labels.tax}
-            totalLabel={labels.total}
+            totalLabel={splitPrepaid ? labels.yourShare : labels.total}
+            participantsPrepaidLabel={
+              splitPrepaid ? labels.participantsPrepaid : undefined
+            }
+            participantsPrepaidFormatted={
+              splitPrepaid && othersPrepaidAmount > 0
+                ? formatMoney(othersPrepaidAmount)
+                : null
+            }
             subtotalFormatted={formatMoney(subtotalAmount)}
             shippingFormatted={shippingFormatted}
             taxFormatted={formatMoney(0)}
             discountFormatted={
               discountAmount > 0 ? formatMoney(discountAmount) : null
             }
-            totalFormatted={formatMoney(totalAmount)}
+            totalFormatted={formatMoney(amountDue)}
             couponDraft={couponDraft}
             onCouponDraftChange={onCouponDraftChange}
             onApplyCoupon={onApplyCoupon}
@@ -552,7 +585,7 @@ export function CheckoutForm({
                     redeemAmount: giftCardRedeem,
                     remainingBalance:
                       giftCardPreview.balanceAmount - giftCardRedeem,
-                    payableAfter: totalAmount,
+                    payableAfter: amountDue,
                   }
                 : null
             }
