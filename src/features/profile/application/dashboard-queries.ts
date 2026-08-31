@@ -4,6 +4,7 @@ import { count, desc, eq, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import { orders } from "@/db/schema";
+import { customerFacingOrderAmountSql } from "@/features/orders/application/customer-facing-order-amount-sql";
 
 const RECENT_ORDERS_LIMIT = 5;
 
@@ -26,6 +27,7 @@ export type ProfileRecentOrder = {
 export async function getProfileDashboardStats(
   userId: string,
 ): Promise<ProfileDashboardStats> {
+  const customerAmount = customerFacingOrderAmountSql();
   const [row] = await getDb()
     .select({
       totalOrders: count(),
@@ -39,7 +41,7 @@ export async function getProfileDashboardStats(
       `.mapWith(Number),
       totalSpent: sql<number>`
         coalesce(
-          sum(${orders.totalAmount}) filter (
+          sum(${customerAmount}) filter (
             where ${orders.status}::text not in ('CANCELLED', 'REFUNDED')
           ),
           0
@@ -67,7 +69,7 @@ export async function listRecentProfileOrders(
       id: orders.id,
       orderNumber: orders.orderNumber,
       status: orders.status,
-      totalAmount: orders.totalAmount,
+      totalAmount: customerFacingOrderAmountSql(),
       placedAt: orders.placedAt,
     })
     .from(orders)

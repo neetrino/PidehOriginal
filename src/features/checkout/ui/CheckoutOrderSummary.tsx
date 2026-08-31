@@ -23,6 +23,8 @@ type CheckoutOrderSummaryProps = {
   shippingLabel: string;
   taxLabel: string;
   totalLabel: string;
+  participantsPrepaidLabel?: string;
+  participantsPrepaidFormatted?: string | null;
   subtotalFormatted: string;
   shippingFormatted: string;
   taxFormatted: string;
@@ -91,6 +93,8 @@ export function CheckoutOrderSummary({
   shippingLabel,
   taxLabel,
   totalLabel,
+  participantsPrepaidLabel,
+  participantsPrepaidFormatted,
   subtotalFormatted,
   shippingFormatted,
   taxFormatted,
@@ -304,6 +308,14 @@ export function CheckoutOrderSummary({
             <span>{shippingLabel}</span>
             <span className="text-right">{shippingFormatted}</span>
           </div>
+          {participantsPrepaidFormatted && participantsPrepaidLabel ? (
+            <div className="flex justify-between text-gray-600">
+              <span>{participantsPrepaidLabel}</span>
+              <span className="text-emerald-700">
+                -{participantsPrepaidFormatted}
+              </span>
+            </div>
+          ) : null}
           <div className="flex justify-between text-gray-600">
             <span>{taxLabel}</span>
             <span>{taxFormatted}</span>

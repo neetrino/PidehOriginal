@@ -82,7 +82,9 @@
     "discount": "Զեղչ",
     "shipping": "Առաքում",
     "tax": "Հարկ",
-    "total": "Ընդամենը"
+    "total": "Ընդամենը",
+    "participantsPrepaid": "Մասնակիցների կողմից արդեն վճարված",
+    "yourShare": "Ձեր մասը"
   },
   "buttons": {
     "placeOrder": "Պատվիրել",
@@ -96,6 +98,7 @@
     "title": "Պատվերը հաստատված է",
     "body": "Պատվեր {orderNumber}-ը հաջողությամբ տեղադրվել է։ Զամբյուղը մաքրվել է։",
     "total": "Ընդամենը՝ {amount}",
+    "amountPaid": "Դուք վճարել եք՝ {amount}",
     "continueShopping": "Շարունակել գնումները",
     "viewOrders": "Դիտել պատվերները"
   },

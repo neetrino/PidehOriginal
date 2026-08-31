@@ -40,16 +40,20 @@ import {
   updateGroupOrderItemQuantitySchema,
   updateSpendLimitSchema,
 } from "@/features/group-orders/schemas";
-import { clearGroupOrderSession } from "@/features/group-orders/session";
+import {
+  clearGroupOrderSession,
+  peekGroupOrderSession,
+} from "@/features/group-orders/session";
 import { markParticipantPaid } from "@/features/group-orders/application/manage";
 import { prepareGroupOrderCheckout } from "@/features/group-orders/application/prepare-checkout";
 import { completeParticipantCardPayment } from "@/features/group-orders/application/participant-payment";
+import { resolveActiveGroupOrderSession } from "@/features/group-orders/application/active-banner";
 import { requireAdmin } from "@/lib/auth/policies";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { getDb } from "@/db/client";
-import { groupOrders } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { groupOrderParticipants, groupOrders } from "@/db/schema";
+import { and, eq } from "drizzle-orm";
 import { appendGroupOrderEvent } from "@/features/group-orders/application/money";
 import { canTransitionGroupOrderStatus } from "@/features/group-orders/domain/status";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -178,10 +182,56 @@ export async function loadGroupOrderDetailAction(
   return getGroupOrderDetailByInvite({ inviteToken, locale, currency });
 }
 
-export async function leaveGroupOrderSessionAction() {
+/**
+ * Leaves the active group-order browser session.
+ * When the organizer leaves, the group order is cancelled for everyone.
+ */
+export async function leaveGroupOrderSessionAction(): Promise<{
+  ok: true;
+  cancelled: boolean;
+}> {
+  const session = await peekGroupOrderSession();
+  let cancelled = false;
+
+  if (session.inviteToken && session.participantId) {
+    const [participant] = await getDb()
+      .select({
+        role: groupOrderParticipants.role,
+        groupOrderId: groupOrderParticipants.groupOrderId,
+      })
+      .from(groupOrderParticipants)
+      .innerJoin(
+        groupOrders,
+        eq(groupOrderParticipants.groupOrderId, groupOrders.id),
+      )
+      .where(
+        and(
+          eq(groupOrders.inviteToken, session.inviteToken),
+          eq(groupOrderParticipants.id, session.participantId),
+          eq(groupOrderParticipants.status, "ACTIVE"),
+        ),
+      )
+      .limit(1);
+
+    if (participant?.role === "ORGANIZER") {
+      const result = await cancelGroupOrder({
+        inviteToken: session.inviteToken,
+      });
+      cancelled = result.ok;
+      if (result.ok) {
+        revalidateGroupOrder(session.inviteToken);
+      }
+    }
+  }
+
   await clearGroupOrderSession();
   revalidatePath("/", "layout");
-  return { ok: true as const };
+  return { ok: true as const, cancelled };
+}
+
+/** Pollable session status for cancelled/ended group-order notices. */
+export async function checkActiveGroupOrderSessionAction() {
+  return resolveActiveGroupOrderSession();
 }
 
 export async function listAdminGroupOrdersAction(locale: Locale) {

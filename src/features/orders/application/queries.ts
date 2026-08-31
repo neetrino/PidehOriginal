@@ -24,6 +24,7 @@ import {
   products,
   users,
 } from "@/db/schema";
+import { customerFacingOrderAmountSql } from "@/features/orders/application/customer-facing-order-amount-sql";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status";
 import { getStoreRevenue } from "@/features/settings/application/queries";
@@ -164,7 +165,8 @@ export async function listCustomerOrders(
         paymentStatus: orders.paymentStatus,
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
-        totalAmount: orders.totalAmount,
+        /** Own group-order share when applicable; admin list keeps raw total. */
+        totalAmount: customerFacingOrderAmountSql(),
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,

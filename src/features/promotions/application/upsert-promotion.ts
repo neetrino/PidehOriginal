@@ -1,10 +1,10 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-import { auditLogs, promotions } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
+import { auditLogs, promotionUsers, promotions, users } from "@/db/schema";
+import { withTransaction, type DbTransaction } from "@/db/transaction";
 import {
   normalizePromotionCode,
   promotionRuleErrorMessage,
@@ -54,6 +54,40 @@ function revalidatePromotionPaths(locale: string, id?: string): void {
   invalidateProductsCache({ allProductDetails: true });
 }
 
+/** Replaces the allowlist; empty `userIds` clears all rows (unrestricted). */
+async function syncPromotionUsers(
+  tx: DbTransaction,
+  promotionId: string,
+  userIds: readonly string[],
+): Promise<void> {
+  const uniqueIds = [...new Set(userIds)];
+
+  if (uniqueIds.length > 0) {
+    const existingUsers = await tx
+      .select({ id: users.id })
+      .from(users)
+      .where(inArray(users.id, uniqueIds));
+
+    if (existingUsers.length !== uniqueIds.length) {
+      throw new Error("INVALID_USER_IDS");
+    }
+  }
+
+  await tx
+    .delete(promotionUsers)
+    .where(eq(promotionUsers.promotionId, promotionId));
+
+  if (uniqueIds.length === 0) return;
+
+  await tx.insert(promotionUsers).values(
+    uniqueIds.map((userId) => ({
+      id: createId(),
+      promotionId,
+      userId,
+    })),
+  );
+}
+
 /** Creates a coupon or automatic promotion with domain validation and audit. */
 export async function createPromotionAction(
   locale: string,
@@ -100,6 +134,10 @@ export async function createPromotionAction(
         allowStacking: parsed.data.allowStacking,
       });
 
+      if (parsed.data.kind === "COUPON") {
+        await syncPromotionUsers(tx, id, parsed.data.userIds);
+      }
+
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
@@ -112,6 +150,7 @@ export async function createPromotionAction(
           discountType: parsed.data.discountType,
           discountValue: parsed.data.discountValue,
           isActive: parsed.data.isActive,
+          userIds: parsed.data.kind === "COUPON" ? parsed.data.userIds : [],
         },
         correlationId,
         context: { createdAt: now.toISOString() },
@@ -122,6 +161,9 @@ export async function createPromotionAction(
     return ok({ id });
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
+    if (message === "INVALID_USER_IDS") {
+      return err("INVALID_USER_IDS", "One or more selected users are invalid.");
+    }
     if (message.includes("promotions_code_uidx") || message.includes("unique")) {
       return err("CODE_TAKEN", "That coupon code is already in use.");
     }
@@ -192,6 +234,10 @@ export async function updatePromotionAction(
         })
         .where(eq(promotions.id, promotionId));
 
+      if (parsed.data.kind === "COUPON") {
+        await syncPromotionUsers(tx, promotionId, parsed.data.userIds);
+      }
+
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
@@ -207,6 +253,7 @@ export async function updatePromotionAction(
           code: ruleInput.code,
           discountValue: parsed.data.discountValue,
           isActive: parsed.data.isActive,
+          userIds: parsed.data.kind === "COUPON" ? parsed.data.userIds : [],
         },
         correlationId,
       });
@@ -221,6 +268,9 @@ export async function updatePromotionAction(
     }
     if (code === "KIND_LOCKED") {
       return err("KIND_LOCKED", "Promotion kind cannot be changed.");
+    }
+    if (code === "INVALID_USER_IDS") {
+      return err("INVALID_USER_IDS", "One or more selected users are invalid.");
     }
     const message = error instanceof Error ? error.message : "";
     if (message.includes("promotions_code_uidx") || message.includes("unique")) {
@@ -391,6 +441,21 @@ export async function duplicatePromotionAction(
         priority: existing.priority,
         allowStacking: existing.allowStacking,
       });
+
+      const sourceUsers = await tx
+        .select({ userId: promotionUsers.userId })
+        .from(promotionUsers)
+        .where(eq(promotionUsers.promotionId, promotionId));
+
+      if (sourceUsers.length > 0) {
+        await tx.insert(promotionUsers).values(
+          sourceUsers.map((row) => ({
+            id: createId(),
+            promotionId: id,
+            userId: row.userId,
+          })),
+        );
+      }
 
       await tx.insert(auditLogs).values({
         id: createId(),

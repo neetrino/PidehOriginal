@@ -23,7 +23,21 @@ import { assertParticipantAccess } from "@/features/group-orders/application/acc
 
 export type GroupOrderMutationResult =
   | { ok: true }
-  | { ok: false; error: string };
+  | {
+      ok: false;
+      error: string;
+      code?: "SPEND_LIMIT_EXCEEDED";
+      limitAmount?: number;
+    };
+
+function spendLimitExceededResult(limitAmount: number): GroupOrderMutationResult {
+  return {
+    ok: false,
+    error: `Spend limit is ${limitAmount} ֏.`,
+    code: "SPEND_LIMIT_EXCEEDED",
+    limitAmount,
+  };
+}
 
 export async function addGroupOrderItem(input: {
   inviteToken: string;
@@ -82,10 +96,7 @@ export async function addGroupOrderItem(input: {
 
     const limit = checkSpendLimit(nextSubtotal, groupOrder.spendLimitAmount);
     if (!limit.ok) {
-      return {
-        ok: false,
-        error: `Spend limit is ${limit.limitAmount} ֏.`,
-      };
+      return spendLimitExceededResult(limit.limitAmount);
     }
 
     await db
@@ -101,10 +112,7 @@ export async function addGroupOrderItem(input: {
     nextSubtotal = participant.subtotalAmount + pricing.lineTotalAmount;
     const limit = checkSpendLimit(nextSubtotal, groupOrder.spendLimitAmount);
     if (!limit.ok) {
-      return {
-        ok: false,
-        error: `Spend limit is ${limit.limitAmount} ֏.`,
-      };
+      return spendLimitExceededResult(limit.limitAmount);
     }
 
     const itemId = createId();
@@ -184,7 +192,7 @@ export async function updateGroupOrderItemQuantity(input: {
     owner.subtotalAmount - item.lineTotalAmount + lineTotal;
   const limit = checkSpendLimit(nextSubtotal, groupOrder.spendLimitAmount);
   if (!limit.ok) {
-    return { ok: false, error: `Spend limit is ${limit.limitAmount} ֏.` };
+    return spendLimitExceededResult(limit.limitAmount);
   }
 
   await db

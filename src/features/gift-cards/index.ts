@@ -34,6 +34,7 @@ export {
   calculateGiftCardRedeemAmount,
   giftCardLedgerTargetNet,
   giftCardRedeemErrorMessage,
+  isGiftCardRecipientActor,
   isGiftCardRedeemable,
   isValidGiftCardAmount,
   normalizeGiftCardCode,

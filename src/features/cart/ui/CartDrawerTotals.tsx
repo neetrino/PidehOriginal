@@ -3,15 +3,14 @@
 import { AppLink } from "@/components/ui/AppLink";
 import { CartMoneyFlow } from "@/features/cart/ui/CartMoneyFlow";
 import type { Currency } from "@/lib/money/currency";
-import type { Locale } from "@/lib/i18n/config";
 
 type CartDrawerTotalsProps = {
-  locale: Locale;
   currency: Currency;
   subtotalLabel: string;
   shippingLabel: string;
   totalLabel: string;
   checkoutLabel: string;
+  checkoutHref: string;
   subtotalAmount: number;
   shippingAmount: number;
   totalAmount: number;
@@ -20,12 +19,12 @@ type CartDrawerTotalsProps = {
 };
 
 export function CartDrawerTotals({
-  locale,
   currency,
   subtotalLabel,
   shippingLabel,
   totalLabel,
   checkoutLabel,
+  checkoutHref,
   subtotalAmount,
   shippingAmount,
   totalAmount,
@@ -56,7 +55,7 @@ export function CartDrawerTotals({
       </dl>
       {hasItems ? (
         <AppLink
-          href={`/${locale}/checkout`}
+          href={checkoutHref}
           prefetchPolicy="intent"
           className="mt-5 flex min-h-[52px] w-full items-center justify-center rounded-full bg-[#ff6b00] px-4 text-sm font-bold text-white transition hover:brightness-110"
           onClick={onCheckout}

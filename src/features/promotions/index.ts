@@ -28,7 +28,9 @@ export {
 export {
   getAdminPromotionById,
   listAdminPromotions,
+  listCouponUserOptions,
   listPromotionTargetOptions,
+  listPromotionUserIds,
 } from "@/features/promotions/application/queries";
 export {
   normalizePromotionCode,
@@ -38,6 +40,11 @@ export {
   type PromotionKind,
   type DiscountType,
 } from "@/features/promotions/domain/promotion-rules";
+export {
+  evaluateCouponDiscount,
+  isCouponUserEligible,
+  couponDiscountErrorMessage,
+} from "@/features/promotions/domain/evaluate-coupon";
 export {
   adminPromotionsFilterSchema,
   upsertPromotionSchema,

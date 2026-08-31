@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { ShoppingCart } from "lucide-react";
 
 import { SideSheet } from "@/components/ui/SideSheet";
@@ -14,6 +14,7 @@ import {
   removeGroupOrderItemAction,
   updateGroupOrderItemQuantityAction,
 } from "@/features/group-orders/actions";
+import { alertIfSpendLimitExceeded } from "@/features/group-orders/ui/alert-spend-limit-exceeded";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -55,7 +56,9 @@ export function CartDrawer({
   const [view, setView] = useState<CartDrawerView | null>(null);
   const [loadingView, setLoadingView] = useState(false);
   const [pending, startTransition] = useTransition();
+  const syncedItemCountRef = useRef(itemCount);
   const labels = dictionary.cartDrawer;
+  const isGroupSource = view?.source === "group";
   const badgeCount = open && view ? view.itemCount : itemCount;
   const hasItems = Boolean(view && view.items.length > 0);
   const displayCurrency = view?.currency ?? currency;
@@ -67,9 +70,24 @@ export function CartDrawer({
     startTransition(async () => {
       const next = await loadCartDrawerViewAction(locale, currency);
       setView(next);
+      syncedItemCountRef.current = next.itemCount;
       setLoadingView(false);
     });
   }
+
+  useEffect(() => {
+    if (!open) {
+      syncedItemCountRef.current = itemCount;
+      return;
+    }
+    if (syncedItemCountRef.current === itemCount) {
+      return;
+    }
+    syncedItemCountRef.current = itemCount;
+    loadView(false);
+    // Reload only when the header badge count changes while the drawer is open.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: itemCount/open drive sync
+  }, [itemCount, open, locale, currency]);
 
   function prefetchDrawerView(): void {
     if (view || loadingView || open) {
@@ -90,15 +108,21 @@ export function CartDrawer({
   function changeQuantity(itemId: string, quantity: number): void {
     startTransition(async () => {
       if (view?.source === "group" && view.groupInviteToken) {
-        await updateGroupOrderItemQuantityAction({
+        const result = await updateGroupOrderItemQuantityAction({
           inviteToken: view.groupInviteToken,
           itemId,
           quantity: Math.max(0, quantity),
         });
+        if (!result.ok) {
+          alertIfSpendLimitExceeded(locale, result);
+          return;
+        }
       } else {
         await updateQuantity(itemId, quantity);
       }
-      setView(await loadCartDrawerViewAction(locale, currency));
+      const next = await loadCartDrawerViewAction(locale, currency);
+      setView(next);
+      syncedItemCountRef.current = next.itemCount;
     });
   }
 
@@ -112,7 +136,9 @@ export function CartDrawer({
       } else {
         await removeItem(itemId);
       }
-      setView(await loadCartDrawerViewAction(locale, currency));
+      const next = await loadCartDrawerViewAction(locale, currency);
+      setView(next);
+      syncedItemCountRef.current = next.itemCount;
     });
   }
 
@@ -121,7 +147,7 @@ export function CartDrawer({
       <SideSheet
         open={open}
         onClose={closeDrawer}
-        ariaLabel={labels.title}
+        ariaLabel={isGroupSource ? labels.groupOrder : labels.title}
         panelClassName="w-[87%] max-w-[420px]"
         panelInnerClassName="rounded-l-[28px] bg-[#fff8e7]"
         closeClassName="bg-[#ff6b00] hover:bg-[#e85f00]"
@@ -130,10 +156,10 @@ export function CartDrawer({
       >
         <div className="border-b border-[#ff6b00]/15 px-6 py-5">
           <p className="text-[11px] font-bold tracking-[0.22em] text-[#ff6b00] uppercase">
-            {labels.ticketEyebrow}
+            {isGroupSource ? labels.groupOrderEyebrow : labels.ticketEyebrow}
           </p>
           <h2 className="font-display mt-1 text-3xl leading-[0.9] text-[#1e1e1e] uppercase">
-            {labels.title}
+            {isGroupSource ? labels.groupOrder : labels.title}
           </h2>
           {hasItems ? (
             <p className="mt-2 text-sm text-[#1e1e1e]/55">
@@ -174,12 +200,12 @@ export function CartDrawer({
         </div>
 
         <CartDrawerTotals
-          locale={locale}
           currency={displayCurrency}
           subtotalLabel={labels.subtotal}
           shippingLabel={labels.shipping}
           totalLabel={labels.total}
-          checkoutLabel={labels.checkout}
+          checkoutLabel={isGroupSource ? labels.groupOrder : labels.checkout}
+          checkoutHref={view?.checkoutHref ?? `/${locale}/checkout`}
           subtotalAmount={view?.subtotalAmount ?? 0}
           shippingAmount={view?.shippingAmount ?? 0}
           totalAmount={view?.totalAmount ?? 0}

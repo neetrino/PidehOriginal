@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 
 import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
+import { alertIfSpendLimitExceeded } from "@/features/group-orders/ui/alert-spend-limit-exceeded";
 import type { ProductModifierChoice } from "@/features/products/types";
 import {
   formatPdpAmount,
@@ -85,6 +86,9 @@ export function useProductConfigurator({
           modifierIds: [...additionIds, ...exceptionIds],
         });
         if (!result.ok) {
+          if (alertIfSpendLimitExceeded(locale, result)) {
+            return;
+          }
           setError(result.error);
           return;
         }

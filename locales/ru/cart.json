@@ -11,6 +11,8 @@
   "shipping": "Доставка",
   "total": "Итого",
   "checkout": "Перейти к оформлению",
+  "groupOrder": "Групповой заказ",
+  "groupOrderEyebrow": "Групповой заказ",
   "close": "Закрыть корзину",
   "removeItem": "Удалить товар",
   "decreaseQuantity": "Уменьшить количество",

@@ -15,6 +15,7 @@ import {
   orders,
   payments,
   products,
+  promotionUsers,
   promotions,
   stockMovements,
   users,
@@ -44,6 +45,7 @@ import { redeemGiftCardForOrder } from "@/features/gift-cards/application/gift-c
 import {
   calculateGiftCardRedeemAmount,
   giftCardRedeemErrorMessage,
+  isGiftCardRecipientActor,
   isGiftCardRedeemable,
   normalizeGiftCardCode,
 } from "@/features/gift-cards/domain/gift-card-rules";
@@ -69,6 +71,7 @@ import {
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
+  isCouponUserEligible,
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
@@ -432,6 +435,19 @@ export async function createOrderAction(
           );
         }
 
+        const allowlistRows = await tx
+          .select({ userId: promotionUsers.userId })
+          .from(promotionUsers)
+          .where(eq(promotionUsers.promotionId, coupon.id));
+        if (
+          !isCouponUserEligible(
+            allowlistRows.map((row) => row.userId),
+            user?.id,
+          )
+        ) {
+          throw new Error(couponDiscountErrorMessage("USER_NOT_ELIGIBLE"));
+        }
+
         discountAmount = evaluated.discountAmount;
         appliedPromotion = coupon;
 
@@ -512,6 +528,27 @@ export async function createOrderAction(
           );
         }
 
+        const redeemActor = user
+          ? { id: user.id, email: user.email }
+          : null;
+        if (
+          !isGiftCardRecipientActor({
+            actor: redeemActor,
+            recipientUserId: card.recipientUserId,
+            recipientEmail: card.recipientEmail,
+          })
+        ) {
+          throw new Error(
+            giftCardRedeemErrorMessage({
+              found: true,
+              status: card.status,
+              balanceAmount: card.balanceAmount,
+              expiresAt: card.expiresAt,
+              recipientDenied: redeemActor ? "mismatch" : "unauthenticated",
+            }),
+          );
+        }
+
         giftCardAmount = calculateGiftCardRedeemAmount({
           balanceAmount: card.balanceAmount,
           payableBeforeGiftCard,
@@ -522,6 +559,18 @@ export async function createOrderAction(
 
         giftCardId = card.id;
         giftCardCodeSnapshot = card.code;
+
+        if (user?.id && card.recipientUserId == null) {
+          await tx
+            .update(giftCards)
+            .set({ recipientUserId: user.id, updatedAt: new Date() })
+            .where(
+              and(
+                eq(giftCards.id, card.id),
+                sql`${giftCards.recipientUserId} is null`,
+              ),
+            );
+        }
       }
 
       const totalAmount = Math.max(0, payableBeforeGiftCard - giftCardAmount);

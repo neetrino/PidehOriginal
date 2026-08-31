@@ -4,15 +4,17 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "@/db/client";
-import { promotions } from "@/db/schema";
+import { promotionUsers, promotions } from "@/db/schema";
 import { getCartWithItems } from "@/features/cart/cart";
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
+  isCouponUserEligible,
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { getCurrentUser } from "@/lib/auth/session";
 
 const previewCouponSchema = z.object({
   couponCode: z.string().trim().min(1).max(64),
@@ -60,8 +62,27 @@ export async function previewCouponAction(
     .limit(1);
 
   const evaluated = evaluateCouponDiscount(coupon, subtotal);
-  if (!evaluated.ok) {
-    return { ok: false, error: couponDiscountErrorMessage(evaluated.error) };
+  if (!evaluated.ok || !coupon) {
+    return {
+      ok: false,
+      error: couponDiscountErrorMessage(
+        evaluated.ok ? "INVALID_OR_INACTIVE" : evaluated.error,
+      ),
+    };
+  }
+
+  const allowlistRows = await getDb()
+    .select({ userId: promotionUsers.userId })
+    .from(promotionUsers)
+    .where(eq(promotionUsers.promotionId, coupon.id));
+  const user = await getCurrentUser();
+  if (
+    !isCouponUserEligible(
+      allowlistRows.map((row) => row.userId),
+      user?.id,
+    )
+  ) {
+    return { ok: false, error: couponDiscountErrorMessage("USER_NOT_ELIGIBLE") };
   }
 
   return {

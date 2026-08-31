@@ -126,6 +126,7 @@ export function PromotionForm({
             endsAt: String(formData.get("endsAt") ?? "")
               ? new Date(String(formData.get("endsAt")))
               : null,
+            userIds: [],
           };
 
           startTransition(async () => {

@@ -11,8 +11,13 @@ describe("getDictionary", () => {
     expect(dictionary.home.title).toBe("Pideh");
     expect(dictionary.contact.title).toBe("Contact");
     expect(dictionary.cartDrawer.title).toBe("Shopping Cart");
+    expect(dictionary.cartDrawer.groupOrder).toBe("Group order");
     expect(dictionary.checkout.title).toBe("Checkout");
     expect(dictionary.groupOrder.createButton).toBe("Group order");
+    expect(dictionary.groupOrder.cancelledAlert).toBe(
+      "The group order was cancelled because the group owner left.",
+    );
+    expect(dictionary.groupOrder.spendLimitExceededAlert).toContain("{amount}");
   });
 
   it("loads Armenian and Russian namespaces", () => {

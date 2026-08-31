@@ -8,6 +8,7 @@ import { useState, useTransition, type MouseEvent } from "react";
 import { PidehPillButton } from "@/components/brand/PidehPillButton";
 import { AppLink } from "@/components/ui/AppLink";
 import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
+import { alertIfSpendLimitExceeded } from "@/features/group-orders/ui/alert-spend-limit-exceeded";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
@@ -124,6 +125,7 @@ export function HomeProductCard({
       try {
         const result = await addProductToActiveCart(productId, 1);
         if (!result.ok) {
+          alertIfSpendLimitExceeded(locale, result);
           setJustAdded(false);
           return;
         }

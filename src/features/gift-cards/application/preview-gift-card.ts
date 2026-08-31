@@ -19,10 +19,11 @@ import { resolveProductPrices } from "@/features/promotions/application/resolve-
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
+  isCouponUserEligible,
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { getDb } from "@/db/client";
-import { promotions } from "@/db/schema";
+import { promotionUsers, promotions } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getStoreBonusSettings } from "@/features/settings/application/queries";
@@ -65,6 +66,7 @@ export async function previewGiftCardAction(
   }, 0);
 
   let discountAmount = 0;
+  const user = await getCurrentUser();
   if (parsed.data.couponCode?.trim()) {
     const code = normalizePromotionCode(parsed.data.couponCode);
     const [coupon] = await getDb()
@@ -73,10 +75,27 @@ export async function previewGiftCardAction(
       .where(and(eq(promotions.kind, "COUPON"), eq(promotions.code, code)))
       .limit(1);
     const evaluated = evaluateCouponDiscount(coupon, subtotal);
-    if (!evaluated.ok) {
+    if (!evaluated.ok || !coupon) {
       return {
         ok: false,
-        error: couponDiscountErrorMessage(evaluated.error),
+        error: couponDiscountErrorMessage(
+          evaluated.ok ? "INVALID_OR_INACTIVE" : evaluated.error,
+        ),
+      };
+    }
+    const allowlistRows = await getDb()
+      .select({ userId: promotionUsers.userId })
+      .from(promotionUsers)
+      .where(eq(promotionUsers.promotionId, coupon.id));
+    if (
+      !isCouponUserEligible(
+        allowlistRows.map((row) => row.userId),
+        user?.id,
+      )
+    ) {
+      return {
+        ok: false,
+        error: couponDiscountErrorMessage("USER_NOT_ELIGIBLE"),
       };
     }
     discountAmount = evaluated.discountAmount;
@@ -88,7 +107,6 @@ export async function previewGiftCardAction(
   );
 
   let bonusRedeemedAmount = 0;
-  const user = await getCurrentUser();
   if (user && (parsed.data.bonusRedeemAmount ?? 0) > 0) {
     const settings = await getStoreBonusSettings();
     const balance = await getUserBonusBalance(user.id);
@@ -108,7 +126,10 @@ export async function previewGiftCardAction(
     Math.max(0, merchandiseAfterDiscount - bonusRedeemedAmount) +
     deliveryAmount;
 
-  const evaluated = await evaluateGiftCardForRedeem(parsed.data.giftCardCode);
+  const evaluated = await evaluateGiftCardForRedeem(
+    parsed.data.giftCardCode,
+    user ? { id: user.id, email: user.email } : null,
+  );
   if (!evaluated.ok) {
     return { ok: false, error: evaluated.error };
   }

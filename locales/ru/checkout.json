@@ -82,7 +82,9 @@
     "discount": "Скидка",
     "shipping": "Доставка",
     "tax": "Налог",
-    "total": "Итого"
+    "total": "Итого",
+    "participantsPrepaid": "Уже оплачено участниками",
+    "yourShare": "Ваша доля"
   },
   "buttons": {
     "placeOrder": "Оформить заказ",
@@ -96,6 +98,7 @@
     "title": "Заказ подтверждён",
     "body": "Заказ {orderNumber} успешно оформлен. Корзина очищена.",
     "total": "Итого: {amount}",
+    "amountPaid": "Вы оплатили: {amount}",
     "continueShopping": "Продолжить покупки",
     "viewOrders": "Мои заказы"
   },
