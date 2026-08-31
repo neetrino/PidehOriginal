@@ -38,7 +38,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
 
   return (
     <div className="mt-auto hidden md:block">
-    <footer className="storefront-footer relative -mt-10 overflow-hidden bg-[#ff6b00] pt-24">
+    <footer className="storefront-footer relative -mt-10 overflow-hidden">
       <div className="relative w-full">
         <div
           aria-hidden="true"

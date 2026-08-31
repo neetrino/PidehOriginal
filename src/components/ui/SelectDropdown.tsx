@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 
 export const DROPDOWN_ANIMATION_MS = 280;
@@ -22,6 +22,8 @@ type SelectDropdownProps = {
   onValueChange: (value: string) => void;
   /** Wait for close animation before calling onValueChange. Default true. */
   deferChange?: boolean;
+  /** Replaces the default trigger button contents and chrome. */
+  trigger?: ReactNode;
 };
 
 export function SelectDropdown({
@@ -34,6 +36,7 @@ export function SelectDropdown({
   disabled = false,
   onValueChange,
   deferChange = true,
+  trigger,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const [elevated, setElevated] = useState(false);
@@ -108,18 +111,26 @@ export function SelectDropdown({
       <button
         type="button"
         disabled={disabled}
-        className="flex h-11 w-full items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+        className={
+          trigger
+            ? "w-full rounded-[30px] outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b00] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            : "flex h-11 w-full items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+        }
         aria-label={ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
         onClick={() => setOpen((current) => !current)}
       >
-        <span className="min-w-0 truncate">{selectedLabel}</span>
-        <ChevronDown
-          className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
-          aria-hidden
-        />
+        {trigger ?? (
+          <>
+            <span className="min-w-0 truncate">{selectedLabel}</span>
+            <ChevronDown
+              className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
+              aria-hidden
+            />
+          </>
+        )}
       </button>
 
       <div

@@ -1,5 +1,9 @@
 import { ProductDetailSkeleton } from "@/components/loading/storefront-skeletons";
 
 export default function ProductDetailLoading() {
-  return <ProductDetailSkeleton />;
+  return (
+    <div className="pideh-pdp">
+      <ProductDetailSkeleton />
+    </div>
+  );
 }

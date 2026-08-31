@@ -26,6 +26,9 @@ type HomeFeaturedProductsProps = {
   emptyLabel: string;
   wishlistLabel: string;
   orderLabel: string;
+  outOfStockLabel: string;
+  ratingLabel: string;
+  prepTimeLabel: string;
   isSignedIn: boolean;
   products: readonly FeaturedItem[];
 };
@@ -41,11 +44,14 @@ export function HomeFeaturedProducts({
   emptyLabel,
   wishlistLabel,
   orderLabel,
+  outOfStockLabel,
+  ratingLabel,
+  prepTimeLabel,
   isSignedIn,
   products,
 }: HomeFeaturedProductsProps) {
   return (
-    <section className="relative z-10 overflow-x-clip overflow-y-visible bg-[#ffcf48]">
+    <section className="relative z-10 overflow-visible bg-[#ff6b00]">
       {/* Wavy orange starts at this section — does not overlap categories */}
       <HomeOrangeWave />
 
@@ -76,11 +82,15 @@ export function HomeFeaturedProducts({
           <p className="text-white/90">{emptyLabel}</p>
         ) : (
           <StaggerGroup
-            className="flex flex-wrap justify-center gap-[13px]"
+            className="flex flex-wrap justify-center gap-[13px] overflow-visible"
             stagger={0.14}
           >
             {products.slice(0, 4).map((product, index) => (
-              <StaggerItem key={product.id} variants={cardShelf}>
+              <StaggerItem
+                key={product.id}
+                variants={cardShelf}
+                className="relative z-0 w-[325px] max-w-full shrink-0 overflow-visible hover:z-50"
+              >
                 <HomeProductCard
                   href={product.href}
                   title={product.title}
@@ -96,6 +106,9 @@ export function HomeFeaturedProducts({
                   isSignedIn={isSignedIn}
                   wishlistLabel={wishlistLabel}
                   orderLabel={orderLabel}
+                  outOfStockLabel={outOfStockLabel}
+                  ratingLabel={ratingLabel}
+                  prepTimeLabel={prepTimeLabel}
                 />
               </StaggerItem>
             ))}

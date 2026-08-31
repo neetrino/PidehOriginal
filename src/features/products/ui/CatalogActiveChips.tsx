@@ -25,6 +25,7 @@ type CatalogActiveChipsProps = {
   filters: CatalogFilters;
   categories: CategoryOption[];
   labels: CatalogChipLabels;
+  omitCategory?: boolean;
 };
 
 export function CatalogActiveChips({
@@ -32,6 +33,7 @@ export function CatalogActiveChips({
   filters,
   categories,
   labels,
+  omitCategory = false,
 }: CatalogActiveChipsProps) {
   const chips: Array<{ key: string; label: string; href: string }> = [];
 
@@ -43,7 +45,7 @@ export function CatalogActiveChips({
     });
   }
 
-  if (filters.category) {
+  if (filters.category && !omitCategory) {
     const title =
       categories.find((category) => category.slug === filters.category)
         ?.title ?? filters.category;

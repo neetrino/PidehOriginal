@@ -1,192 +1,98 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import Image from "next/image";
 
-import { MultiSelectDropdown } from "@/components/ui/MultiSelectDropdown";
-import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
-import type { ProductModifierChoice } from "@/features/products/types";
-import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
-import type { Locale } from "@/lib/i18n/config";
+import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+
+export type ProductPurchaseLabels = {
+  quantity: string;
+  decreaseQuantity: string;
+  increaseQuantity: string;
+  addToCart: string;
+  adding: string;
+  outOfStock: string;
+  added: string;
+  error: string;
+  resetSelection: string;
+  orderSummary: string;
+  basePrice: string;
+  total: string;
+};
 
 type ProductPurchaseControlsProps = {
-  locale: Locale;
-  productId: string;
-  stockOnHand: number;
-  basePriceAmount: number;
-  additions: ProductModifierChoice[];
-  exceptions: ProductModifierChoice[];
-  inWishlist: boolean;
-  isSignedIn: boolean;
-  wishlistLabel: string;
-  labels: {
-    quantity: string;
-    decreaseQuantity: string;
-    increaseQuantity: string;
-    addToCart: string;
-    adding: string;
-    outOfStock: string;
-    added: string;
-    error: string;
-    additions: string;
-    exceptions: string;
-    additionsEmpty: string;
-    exceptionsEmpty: string;
-  };
+  quantity: number;
+  maxQty: number;
+  disabled: boolean;
+  pending: boolean;
+  unitPriceFormatted: string;
+  totalFormatted: string;
+  compareAtTotalFormatted: string | null;
+  onQuantityChange: (next: number) => void;
+  onReset: () => void;
+  onAdd: () => void;
+  labels: ProductPurchaseLabels;
+  message: string | null;
+  error: string | null;
 };
 
 export function ProductPurchaseControls({
-  locale,
-  productId,
-  stockOnHand,
-  basePriceAmount,
-  additions = [],
-  exceptions = [],
-  inWishlist,
-  isSignedIn,
-  wishlistLabel,
+  quantity,
+  maxQty,
+  disabled,
+  pending,
+  unitPriceFormatted,
+  totalFormatted,
+  compareAtTotalFormatted,
+  onQuantityChange,
+  onReset,
+  onAdd,
   labels,
+  message,
+  error,
 }: ProductPurchaseControlsProps) {
-  const maxQty = Math.max(stockOnHand, 0);
-  const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
-  const [additionIds, setAdditionIds] = useState<string[]>([]);
-  const [exceptionIds, setExceptionIds] = useState<string[]>([]);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
-  const disabled = maxQty < 1;
-
-  const additionExtras = useMemo(() => {
-    const byId = new Map(additions.map((row) => [row.id, row.priceAmount]));
-    return additionIds.reduce((sum, id) => sum + (byId.get(id) ?? 0), 0);
-  }, [additionIds, additions]);
-
-  const unitPreview = basePriceAmount + additionExtras;
-
-  function changeQuantity(next: number): void {
-    if (disabled) return;
-    setQuantity(Math.min(Math.max(1, next), maxQty));
-    setMessage(null);
-    setError(null);
-  }
-
-  function handleAdd(): void {
-    if (disabled || quantity < 1) return;
-    setMessage(null);
-    setError(null);
-    startTransition(async () => {
-      try {
-        const result = await addProductToActiveCart(productId, quantity, {
-          modifierIds: [...additionIds, ...exceptionIds],
-        });
-        if (!result.ok) {
-          setError(result.error);
-          return;
-        }
-        setMessage(labels.added);
-      } catch {
-        setError(labels.error);
-      }
-    });
-  }
+  const addLabel = disabled
+    ? labels.outOfStock
+    : pending
+      ? labels.adding
+      : labels.addToCart;
 
   return (
-    <div className="mt-auto flex flex-col gap-3 pt-2">
-      {additions.length > 0 ? (
-        <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-gray-700">
-            {labels.additions}
-          </span>
-          <MultiSelectDropdown
-            ariaLabel={labels.additions}
-            emptyLabel={labels.additionsEmpty}
-            values={additionIds}
-            disabled={disabled || pending}
-            onValuesChange={setAdditionIds}
-            options={additions.map((row) => ({
-              value: row.id,
-              label: row.name,
-              hint: `+${row.priceAmount} AMD`,
-            }))}
-          />
-        </label>
-      ) : null}
-
-      {exceptions.length > 0 ? (
-        <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-gray-700">
-            {labels.exceptions}
-          </span>
-          <MultiSelectDropdown
-            ariaLabel={labels.exceptions}
-            emptyLabel={labels.exceptionsEmpty}
-            values={exceptionIds}
-            disabled={disabled || pending}
-            onValuesChange={setExceptionIds}
-            options={exceptions.map((row) => ({
-              value: row.id,
-              label: row.name,
-            }))}
-          />
-        </label>
-      ) : null}
-
-      {additionExtras > 0 ? (
-        <p className="text-sm text-gray-600">
-          {unitPreview} AMD × {Math.max(quantity, 1)}
-        </p>
-      ) : null}
-
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="inline-flex items-center rounded-lg border border-gray-200 bg-white">
-          <button
-            type="button"
-            aria-label={labels.decreaseQuantity}
-            disabled={disabled || quantity <= 1 || pending}
-            onClick={() => changeQuantity(quantity - 1)}
-            className="flex h-11 w-11 items-center justify-center text-gray-700 transition hover:bg-gray-50 disabled:opacity-40"
-          >
-            <Minus className="h-4 w-4" aria-hidden />
-          </button>
-          <span
-            className="min-w-10 text-center text-base font-semibold text-gray-900"
-            aria-live="polite"
-          >
-            {quantity}
-          </span>
-          <button
-            type="button"
-            aria-label={labels.increaseQuantity}
-            disabled={disabled || quantity >= maxQty || pending}
-            onClick={() => changeQuantity(quantity + 1)}
-            className="flex h-11 w-11 items-center justify-center text-gray-700 transition hover:bg-gray-50 disabled:opacity-40"
-          >
-            <Plus className="h-4 w-4" aria-hidden />
-          </button>
-        </div>
-
+    <div className="flex w-full flex-col gap-[22px] border-t border-[rgba(255,107,0,0.46)] pt-5">
+      <div className="flex w-full flex-wrap items-end justify-between gap-4">
+        <QtyRow
+          quantity={quantity}
+          maxQty={maxQty}
+          disabled={disabled || pending}
+          labels={labels}
+          onQuantityChange={onQuantityChange}
+          onReset={onReset}
+        />
         <button
           type="button"
           disabled={disabled || pending}
-          onClick={handleAdd}
-          className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-gray-900 px-6 text-base font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:min-w-[12rem]"
+          onClick={onAdd}
+          className="inline-flex min-h-[52px] w-full items-center justify-center gap-3 rounded-[66px] bg-[#ff6900] py-4 pr-2 pl-[18px] text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[347px] sm:shrink-0"
         >
-          {disabled
-            ? labels.outOfStock
-            : pending
-              ? labels.adding
-              : labels.addToCart}
+          <Image
+            src={PIDEH_ASSETS.pdpCart}
+            alt=""
+            width={26}
+            height={26}
+            className="size-[26px] shrink-0"
+          />
+          <span className="text-sm leading-5 font-semibold">{addLabel}</span>
+          <span className="text-base leading-5 font-black whitespace-nowrap">
+            {totalFormatted}
+          </span>
         </button>
-
-        <WishlistButton
-          locale={locale}
-          productId={productId}
-          initialInWishlist={inWishlist}
-          isSignedIn={isSignedIn}
-          label={wishlistLabel}
-          className="h-11 w-11 border border-gray-200 bg-white hover:bg-gray-50"
-        />
       </div>
+
+      <OrderSummary
+        labels={labels}
+        unitPriceFormatted={unitPriceFormatted}
+        totalFormatted={totalFormatted}
+        compareAtTotalFormatted={compareAtTotalFormatted}
+      />
 
       {message ? (
         <p className="text-sm text-green-700" role="status">
@@ -198,6 +104,127 @@ export function ProductPurchaseControls({
           {error}
         </p>
       ) : null}
+    </div>
+  );
+}
+
+function QtyRow({
+  quantity,
+  maxQty,
+  disabled,
+  labels,
+  onQuantityChange,
+  onReset,
+}: {
+  quantity: number;
+  maxQty: number;
+  disabled: boolean;
+  labels: ProductPurchaseLabels;
+  onQuantityChange: (next: number) => void;
+  onReset: () => void;
+}) {
+  return (
+    <div className="flex items-end gap-2">
+      <button
+        type="button"
+        aria-label={labels.resetSelection}
+        disabled={disabled}
+        onClick={onReset}
+        className="mb-0.5 inline-flex size-11 items-center justify-center rounded-full bg-[rgba(255,107,0,0.19)] transition hover:brightness-95 disabled:opacity-40"
+      >
+        <Image
+          src={PIDEH_ASSETS.pdpTrash}
+          alt=""
+          width={28}
+          height={28}
+          className="size-7"
+        />
+      </button>
+      <div
+        className="inline-flex items-center gap-3 rounded-full bg-[#ff6900] px-2 py-1.5"
+        aria-label={labels.quantity}
+      >
+        <button
+          type="button"
+          aria-label={labels.decreaseQuantity}
+          disabled={disabled || quantity <= 1}
+          onClick={() => onQuantityChange(quantity - 1)}
+          className="flex size-8 items-center justify-center rounded-full bg-white/45 disabled:opacity-40"
+        >
+          <Image
+            src={PIDEH_ASSETS.pdpQtyMinus}
+            alt=""
+            width={14}
+            height={14}
+            className="size-[14px]"
+          />
+        </button>
+        <span
+          className="w-6 text-center text-base leading-6 font-bold text-white"
+          aria-live="polite"
+        >
+          {quantity}
+        </span>
+        <button
+          type="button"
+          aria-label={labels.increaseQuantity}
+          disabled={disabled || quantity >= maxQty}
+          onClick={() => onQuantityChange(quantity + 1)}
+          className="flex size-8 items-center justify-center rounded-full bg-white disabled:opacity-40"
+        >
+          <Image
+            src={PIDEH_ASSETS.pdpQtyPlus}
+            alt=""
+            width={14}
+            height={14}
+            className="size-[14px]"
+          />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function OrderSummary({
+  labels,
+  unitPriceFormatted,
+  totalFormatted,
+  compareAtTotalFormatted,
+}: {
+  labels: ProductPurchaseLabels;
+  unitPriceFormatted: string;
+  totalFormatted: string;
+  compareAtTotalFormatted: string | null;
+}) {
+  return (
+    <div className="flex w-full flex-col">
+      <p className="text-xs leading-4 font-semibold tracking-[0.6px] text-[#6b7280] uppercase">
+        {labels.orderSummary}
+      </p>
+      <div className="flex flex-col gap-4 pt-3">
+        <div className="flex items-start justify-between text-sm leading-5 text-[#6b7280]">
+          <span>{labels.basePrice}</span>
+          <span className="font-medium">{unitPriceFormatted}</span>
+        </div>
+        <div className="py-1">
+          <div className="h-px w-full rounded-[70px] bg-[rgba(255,107,0,0.23)]" />
+        </div>
+        <div className="flex items-start justify-between gap-3">
+          <span className="text-base leading-6 font-bold text-[#1e1e1e]">
+            {labels.total}
+          </span>
+          <div className="flex flex-col items-end justify-center">
+            <span className="text-[30px] leading-9 font-black text-[#ff6900]">
+              {totalFormatted}
+            </span>
+            {compareAtTotalFormatted ? (
+              <span className="text-base leading-6 text-[#99a1af] line-through">
+                {compareAtTotalFormatted}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

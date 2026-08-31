@@ -6,7 +6,6 @@ import { getEnv } from "@/config/env";
 import { getProductDetailBySlug } from "@/features/products/queries";
 import { ProductDetailView } from "@/features/products/ui/ProductDetailView";
 import { ProductRelatedSection } from "@/features/products/ui/ProductRelatedSection";
-import { ProductReviewsIsland } from "@/features/products/ui/ProductReviewsIsland";
 import { isProductInWishlist } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -56,7 +55,7 @@ function buildProductJsonLd(input: {
 function SectionFallback() {
   return (
     <div
-      className="h-40 animate-pulse rounded-lg bg-gray-100"
+      className="h-40 animate-pulse rounded-[24px] bg-white/20"
       aria-hidden="true"
     />
   );
@@ -114,10 +113,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   ]);
   const formatPrice = await createDisplayPriceFormatter(locale, currency);
   const price = formatPrice(product.priceAmount);
-  const compareAt =
-    product.compareAtAmount != null
-      ? formatPrice(product.compareAtAmount)
-      : null;
 
   const jsonLd = buildProductJsonLd({
     locale,
@@ -133,38 +128,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const isSignedIn = Boolean(user);
 
   return (
-    <ProductDetailView
-      locale={locale}
-      product={product}
-      priceFormatted={price.formatted}
-      compareAtFormatted={compareAt?.formatted ?? null}
-      isSignedIn={isSignedIn}
-      inWishlist={inWishlist}
-      dictionary={dictionary}
-      jsonLd={jsonLd}
-      relatedSlot={
-        <Suspense fallback={<SectionFallback />}>
-          <ProductRelatedSection
-            locale={locale}
-            productId={product.id}
-            currency={currency}
-            isSignedIn={isSignedIn}
-            dictionary={dictionary}
-          />
-        </Suspense>
-      }
-      reviewsSlot={
-        <Suspense fallback={<SectionFallback />}>
-          <ProductReviewsIsland
-            locale={locale}
-            productId={product.id}
-            productSlug={product.translation.slug}
-            userId={user?.id}
-            isSignedIn={isSignedIn}
-            dictionary={dictionary}
-          />
-        </Suspense>
-      }
-    />
+    <div className="pideh-pdp">
+      <ProductDetailView
+        locale={locale}
+        currency={currency}
+        fxRate={price.rate}
+        product={product}
+        isSignedIn={isSignedIn}
+        inWishlist={inWishlist}
+        dictionary={dictionary}
+        jsonLd={jsonLd}
+        relatedSlot={
+          <Suspense fallback={<SectionFallback />}>
+            <ProductRelatedSection
+              locale={locale}
+              productId={product.id}
+              currency={currency}
+              isSignedIn={isSignedIn}
+              dictionary={dictionary}
+            />
+          </Suspense>
+        }
+      />
+    </div>
   );
 }

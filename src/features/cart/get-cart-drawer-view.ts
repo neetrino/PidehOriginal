@@ -2,7 +2,7 @@ import "server-only";
 
 import { and, asc, eq, inArray, or } from "drizzle-orm";
 
-import { getCartWithItems } from "@/features/cart/cart";
+import { getCartItemCount, getCartWithItems } from "@/features/cart/cart";
 import { getDb } from "@/db/client";
 import { mediaAssets } from "@/db/schema";
 import { sumAdditionPrices } from "@/features/products/domain/modifier-selection";
@@ -26,6 +26,9 @@ export type CartDrawerItemView = {
 };
 
 export type CartDrawerView = {
+  source: "cart" | "group";
+  groupInviteToken: string | null;
+  checkoutHref: string;
   itemCount: number;
   items: CartDrawerItemView[];
   subtotalFormatted: string;
@@ -88,11 +91,31 @@ function convertDisplayAmount(
   };
 }
 
+/** Header/mobile badge — group-order session takes precedence over personal cart. */
+export async function getStorefrontCartItemCount(): Promise<number> {
+  const { getActiveGroupSessionItemCount } = await import(
+    "@/features/group-orders/application/active-session-cart"
+  );
+  const groupCount = await getActiveGroupSessionItemCount();
+  if (groupCount != null) {
+    return groupCount;
+  }
+  return getCartItemCount();
+}
+
 /** Builds storefront cart-drawer display data for the active cart. */
 export async function getCartDrawerView(
   locale: Locale,
   currency: Currency,
 ): Promise<CartDrawerView> {
+  const { getActiveGroupSessionCartView } = await import(
+    "@/features/group-orders/application/active-session-cart"
+  );
+  const groupView = await getActiveGroupSessionCartView(locale, currency);
+  if (groupView) {
+    return groupView;
+  }
+
   const { items: rows } = await getCartWithItems();
   const [images, quote, prices] = await Promise.all([
     loadPrimaryProductImages(rows.map(({ product }) => product.id)),
@@ -155,6 +178,9 @@ export async function getCartDrawerView(
   );
 
   return {
+    source: "cart",
+    groupInviteToken: null,
+    checkoutHref: `/${locale}/checkout`,
     itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
     items,
     subtotalFormatted: subtotal.formatted,

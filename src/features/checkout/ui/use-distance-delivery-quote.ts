@@ -27,6 +27,9 @@ export function useDistanceDeliveryQuote(
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const destLat = destinationPoint?.lat ?? null;
+  const destLng = destinationPoint?.lng ?? null;
+
   useEffect(() => {
     const trimmed = line1.trim();
     if (trimmed.length < 3) {
@@ -38,9 +41,7 @@ export function useDistanceDeliveryQuote(
     }
 
     const point =
-      destinationPoint != null
-        ? { lat: destinationPoint.lat, lng: destinationPoint.lng }
-        : null;
+      destLat != null && destLng != null ? { lat: destLat, lng: destLng } : null;
 
     let cancelled = false;
     const timer = window.setTimeout(() => {
@@ -64,7 +65,7 @@ export function useDistanceDeliveryQuote(
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [line1, destinationPoint?.lat, destinationPoint?.lng]);
+  }, [line1, destLat, destLng]);
 
   return { deliveryAmount, distanceLabel, pending, error };
 }
