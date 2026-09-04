@@ -15,6 +15,11 @@ type IconDropdownProps = {
   menuPlacement?: "bottom" | "top";
   /** Open on pointer hover (click still toggles; needed for touch). */
   openOnHover?: boolean;
+  /**
+   * `brand` — Pideh cream panel, ink border, offset shadow (storefront).
+   * Default keeps the neutral white panel.
+   */
+  tone?: "default" | "brand";
 };
 
 const DEFAULT_TRIGGER_CLASS =
@@ -27,6 +32,7 @@ export function IconDropdown({
   triggerClassName,
   menuPlacement = "bottom",
   openOnHover = false,
+  tone = "default",
 }: IconDropdownProps) {
   const [open, setOpen] = useState(false);
   const [elevated, setElevated] = useState(false);
@@ -124,12 +130,22 @@ export function IconDropdown({
         style={{ transitionDuration: `${DROPDOWN_ANIMATION_MS}ms` }}
         aria-hidden={!open}
       >
-        <div className="min-h-0 overflow-hidden">
+        <div
+          className={
+            tone === "brand"
+              ? "min-h-0 overflow-hidden pr-2 pb-2"
+              : "min-h-0 overflow-hidden"
+          }
+        >
           <div
             id={menuId}
             role="menu"
             aria-label={label}
-            className="w-full overflow-hidden rounded-2xl border border-gray-100 bg-white py-1"
+            className={
+              tone === "brand"
+                ? "w-full min-w-[168px] overflow-hidden rounded-[20px] border-2 border-[#1e1e1e] bg-[#fff8e7] p-1.5 shadow-[5px_5px_0_#1e1e1e]"
+                : "w-full overflow-hidden rounded-2xl border border-gray-100 bg-white py-1 shadow-lg"
+            }
           >
             <div
               className="flex w-full flex-col"

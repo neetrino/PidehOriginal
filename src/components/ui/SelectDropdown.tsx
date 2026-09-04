@@ -24,6 +24,11 @@ type SelectDropdownProps = {
   deferChange?: boolean;
   /** Replaces the default trigger button contents and chrome. */
   trigger?: ReactNode;
+  /**
+   * `brand` — Pideh cream panel, ink border, offset shadow (storefront).
+   * Default keeps the neutral admin/forms chrome.
+   */
+  tone?: "default" | "brand";
 };
 
 export function SelectDropdown({
@@ -37,12 +42,14 @@ export function SelectDropdown({
   onValueChange,
   deferChange = true,
   trigger,
+  tone = "default",
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const [elevated, setElevated] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const pendingChangeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listId = useId();
+  const isBrand = tone === "brand";
 
   const selectedLabel =
     options.find((option) => option.value === value)?.label ??
@@ -134,7 +141,9 @@ export function SelectDropdown({
       </button>
 
       <div
-        className={`absolute top-[calc(100%+0.5rem)] left-0 z-[100] grid w-full transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`absolute top-[calc(100%+0.5rem)] z-[100] grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isBrand ? "left-0 w-max min-w-full" : "left-0 w-full"
+        } ${
           open
             ? "translate-y-0 grid-rows-[1fr] opacity-100"
             : "pointer-events-none -translate-y-1 grid-rows-[0fr] opacity-0"
@@ -142,17 +151,28 @@ export function SelectDropdown({
         style={{ transitionDuration: `${DROPDOWN_ANIMATION_MS}ms` }}
         aria-hidden={!open}
       >
-        <div className="min-h-0 overflow-hidden">
+        <div
+          className={
+            isBrand
+              ? "min-h-0 overflow-hidden pr-2 pb-2"
+              : "min-h-0 overflow-hidden"
+          }
+        >
           <div
             id={listId}
             role="listbox"
             aria-label={ariaLabel}
-            className="max-h-72 overflow-y-auto rounded-2xl border border-gray-100 bg-white py-2"
+            className={
+              isBrand
+                ? "max-h-72 overflow-y-auto rounded-[20px] border-2 border-[#1e1e1e] bg-[#fff8e7] p-1.5 shadow-[5px_5px_0_#1e1e1e]"
+                : "max-h-72 overflow-y-auto rounded-2xl border border-gray-100 bg-white py-2 shadow-lg"
+            }
           >
             {allLabel !== undefined ? (
               <SelectDropdownOptionRow
                 label={allLabel}
                 selected={value === ""}
+                tone={tone}
                 onSelect={() => selectValue("")}
               />
             ) : null}
@@ -161,6 +181,7 @@ export function SelectDropdown({
                 key={option.value}
                 label={option.label}
                 selected={value === option.value}
+                tone={tone}
                 onSelect={() => selectValue(option.value)}
               />
             ))}
@@ -175,26 +196,40 @@ type SelectDropdownOptionRowProps = {
   label: string;
   selected: boolean;
   onSelect: () => void;
+  tone?: "default" | "brand";
 };
 
 export function SelectDropdownOptionRow({
   label,
   selected,
   onSelect,
+  tone = "default",
 }: SelectDropdownOptionRowProps) {
+  const isBrand = tone === "brand";
+
   return (
     <button
       type="button"
       role="option"
       aria-selected={selected}
-      className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-800 hover:bg-gray-50"
+      className={
+        isBrand
+          ? selected
+            ? "flex w-full items-center gap-3 rounded-[14px] px-3 py-2.5 text-left text-sm font-semibold whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12"
+            : "flex w-full items-center gap-3 rounded-[14px] px-3 py-2.5 text-left text-sm font-medium whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12"
+          : "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-800 hover:bg-gray-50"
+      }
       onClick={onSelect}
     >
       <span
         className={
           selected
-            ? "flex h-4 w-4 shrink-0 items-center justify-center rounded border border-gray-900 bg-gray-900 text-white"
-            : "flex h-4 w-4 shrink-0 rounded border border-gray-300 bg-white"
+            ? isBrand
+              ? "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 border-[#1e1e1e] bg-[#ff6b00] text-white"
+              : "flex h-4 w-4 shrink-0 items-center justify-center rounded border border-gray-900 bg-gray-900 text-white"
+            : isBrand
+              ? "flex h-[18px] w-[18px] shrink-0 rounded-[5px] border-2 border-[#1e1e1e]/35 bg-white"
+              : "flex h-4 w-4 shrink-0 rounded border border-gray-300 bg-white"
         }
         aria-hidden
       >
@@ -210,7 +245,7 @@ export function SelectDropdownOptionRow({
           </svg>
         ) : null}
       </span>
-      <span className="min-w-0 truncate">{label}</span>
+      <span className={isBrand ? "shrink-0" : "min-w-0 truncate"}>{label}</span>
     </button>
   );
 }
