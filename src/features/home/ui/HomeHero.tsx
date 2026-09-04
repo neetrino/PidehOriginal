@@ -19,7 +19,6 @@ type HomeHeroProps = {
   slides: StorefrontHeroSlide[];
   fallbackTitle: string;
   fallbackTitleAccent: string;
-  fallbackSubtitle: string;
   fallbackCtaLabel: string;
   fallbackCtaHref: string;
 };
@@ -34,7 +33,6 @@ export function HomeHero({
   slides,
   fallbackTitle,
   fallbackTitleAccent,
-  fallbackSubtitle,
   fallbackCtaLabel,
   fallbackCtaHref,
 }: HomeHeroProps) {
@@ -62,7 +60,6 @@ export function HomeHero({
   }, [slides.length, reduceMotion]);
 
   const title = active?.copy.title ?? fallbackTitle;
-  const subtitle = active?.copy.subtitle ?? fallbackSubtitle;
   const ctaLabel = active?.copy.buttonLabel ?? fallbackCtaLabel;
   const ctaHref = active?.copy.buttonUrl ?? fallbackCtaHref;
   const heroImage =
@@ -77,46 +74,26 @@ export function HomeHero({
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[863px] overflow-hidden bg-[#ff6b00] pt-[100px] pb-28 md:pb-36"
+      className="relative min-h-[863px] overflow-x-clip overflow-y-visible bg-pideh-orange pt-[100px] pb-28 md:pb-36"
     >
-      <motion.div
-        aria-hidden="true"
-        className="mix-blend-figma-linear-burn pointer-events-none absolute inset-x-0 top-0 z-[1] h-[863px] w-full bg-[#ff6b00]"
-        initial={reduceMotion ? false : { opacity: 0 }}
-        animate={{ opacity: 0.1 }}
-        transition={{ duration: 0.9 }}
-      />
-
       <div className="relative z-10 mx-auto flex max-w-[1440px] flex-col items-center px-4 text-center">
         <motion.div
-          className="relative w-full max-w-[872px] pt-2 md:min-h-[520px] md:pt-4"
+          className="relative w-full max-w-[1100px] overflow-visible pt-6 md:min-h-[520px] md:pt-8"
           style={reduceMotion ? undefined : { y: mediaY }}
         >
           <motion.div
-            className="relative"
+            className="relative overflow-visible"
             initial={reduceMotion ? false : { scale: 0.92, rotate: -2 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={springSoft}
           >
-          <HomeHeroTitle line1={line1} line2={line2} />
-          <HomeHeroMedia imageSrc={heroImage} />
+            <HomeHeroTitle line1={line1} line2={line2} />
+            <HomeHeroMedia imageSrc={heroImage} />
           </motion.div>
         </motion.div>
 
-        {subtitle ? (
-          <motion.p
-            key={subtitle}
-            className="relative z-30 mt-4 max-w-xl text-base leading-relaxed text-white/90 md:text-lg"
-            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ...springSoft, delay: 0.35 }}
-          >
-            {subtitle}
-          </motion.p>
-        ) : null}
-
         <motion.div
-          className="pideh-hero-cta relative z-30 mt-10 md:mt-14"
+          className="pideh-hero-cta relative z-30 mt-44 md:mt-64"
           initial={reduceMotion ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...springSoft, delay: 0.45 }}

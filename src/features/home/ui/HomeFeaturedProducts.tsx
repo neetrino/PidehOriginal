@@ -51,11 +51,19 @@ export function HomeFeaturedProducts({
   products,
 }: HomeFeaturedProductsProps) {
   return (
-    <section className="relative z-10 overflow-visible bg-[#ff6b00]">
-      {/* Wavy orange starts at this section — does not overlap categories */}
+    <section className="relative z-10 overflow-visible bg-transparent">
+      {/*
+        Shell is orange on home. In wave valleys the SVG is transparent above the
+        crest, so shell showed as a flat orange shelf. Yellow underlay matches
+        categories and hides that shelf — wave path itself is untouched.
+      */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[min(42vw,420px)] bg-[#ffcf48]"
+      />
       <HomeOrangeWave />
 
-      <div className="relative z-10 mx-auto max-w-[1440px] px-4 pt-28 pb-16 md:px-[51px] md:pt-[280px] md:pb-20">
+      <div className="relative z-[1] mx-auto max-w-[1440px] px-4 pt-24 pb-16 md:px-[51px] md:pt-[240px] md:pb-20">
         <div className="mb-10 flex flex-col gap-6 md:mb-[113px] md:flex-row md:items-end md:justify-between">
           <RevealOnView variants={titleSweep}>
             <h2
@@ -82,14 +90,14 @@ export function HomeFeaturedProducts({
           <p className="text-white/90">{emptyLabel}</p>
         ) : (
           <StaggerGroup
-            className="flex flex-wrap justify-center gap-[13px] overflow-visible"
+            className="grid grid-cols-2 gap-[13px] overflow-visible lg:grid-cols-4"
             stagger={0.14}
           >
             {products.slice(0, 4).map((product, index) => (
               <StaggerItem
                 key={product.id}
                 variants={cardShelf}
-                className="relative z-0 w-[325px] max-w-full shrink-0 overflow-visible hover:z-50"
+                className="relative z-0 min-w-0 w-full overflow-visible hover:z-50"
               >
                 <HomeProductCard
                   href={product.href}

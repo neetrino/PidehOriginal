@@ -67,6 +67,7 @@ export function ShopSortButton({ locale, filters, labels }: ShopSortButtonProps)
         options={options}
         onValueChange={navigateSort}
         deferChange={false}
+        tone="brand"
         trigger={
           <span className="inline-flex h-[53px] min-w-[162px] items-center justify-center gap-px rounded-[30px] bg-[#ff6900] px-3 py-1.5 text-sm font-bold text-white transition duration-200 hover:scale-[1.04] hover:brightness-105">
             <Image

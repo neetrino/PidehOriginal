@@ -155,14 +155,19 @@ body {
   animation: pideh-pill-gleam 1.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
-/* Product photo hover — Figma 1:102 crop/rotate lives on the card leaf */
+/* Product photo hover — Figma Product (165:452): image scales + tilts, card stays put */
 .pideh-product-photo-pose {
-  transform-origin: center center;
-  transition: transform 0.45s ease-out;
+  transform-origin: 42% 48%;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
 .group:hover .pideh-product-photo-pose {
-  transform: scale(1.06);
+  transform: translate(3%, -5%) scale(1.28) rotate(8deg);
+}
+
+.group:hover .pideh-product-photo-frame {
+  z-index: 60;
 }
 
 @media (prefers-reduced-motion: reduce) {

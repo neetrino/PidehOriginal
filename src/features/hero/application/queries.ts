@@ -169,7 +169,7 @@ export async function listActiveHeroSlides(
 ): Promise<StorefrontHeroSlide[]> {
   return unstable_cache(
     async () => loadActiveHeroSlides(locale),
-    ["active-hero-slides", locale],
+    ["active-hero-slides", locale, "cta-i18n-v1"],
     {
       tags: [CACHE_TAGS.hero],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
