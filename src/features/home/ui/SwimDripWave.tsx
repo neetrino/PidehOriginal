@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  animate,
-  motion,
-  useInView,
-  useMotionValue,
-  useReducedMotion,
-  useTransform,
-} from "motion/react";
-import { useEffect, useRef } from "react";
+import { animate, useInView, useReducedMotion } from "motion/react";
+import { useEffect, useMemo, useRef } from "react";
 
 import type { DripWaveSpec } from "@/features/home/ui/wave-paths";
 
@@ -22,10 +15,21 @@ const PATH_TOKEN = /[A-Za-z]|-?\d*\.?\d+(?:e[-+]?\d+)?/g;
 const CREST_NUMBER_COUNT = 44;
 const SWELL_SPREAD = 0.42;
 const ROLL_AMPLITUDE = 14;
+/** Cap path rebuilds — full SVG `d` morphs are expensive. */
+const MIN_FRAME_MS = 32;
 
-function tokenizePath(d: string): readonly string[] {
-  return d.match(PATH_TOKEN) ?? [];
-}
+type CrestSlot = {
+  tokenIndex: number;
+  targetY: number;
+  nx: number;
+};
+
+type CompiledCrest = {
+  tokens: string[];
+  slots: CrestSlot[];
+};
+
+const compiledCache = new Map<string, CompiledCrest>();
 
 function viewBoxWidth(viewBox: string): number {
   const width = Number(viewBox.split(" ")[2]);
@@ -56,23 +60,21 @@ function swellY(
   return horizon + (targetY - horizon) * swell + roll;
 }
 
-/**
- * Straight full-width crest at `progress=0`, then a left-to-right ocean swell.
- */
-function oceanCrestPath(
-  full: string,
-  horizon: number,
-  width: number,
-  progress: number,
-): string {
-  const tokens = tokenizePath(full);
-  const parts: string[] = [];
+function compileCrestPath(full: string, width: number): CompiledCrest {
+  const cacheKey = `${width}|${full}`;
+  const cached = compiledCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  const tokens = full.match(PATH_TOKEN) ?? [];
+  const slots: CrestSlot[] = [];
   let numbersSeen = 0;
   let pendingX: number | null = null;
 
-  for (const token of tokens) {
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index] ?? "";
     if (/^[A-Za-z]$/.test(token)) {
-      parts.push(token);
       continue;
     }
 
@@ -81,75 +83,120 @@ function oceanCrestPath(
     const isStartY = numbersSeen === 56;
 
     if (isCrestY || isStartY) {
-      const nx = clamp01((pendingX ?? 0) / width);
-      parts.push(String(swellY(numeric, nx, horizon, progress)));
+      slots.push({
+        tokenIndex: index,
+        targetY: numeric,
+        nx: clamp01((pendingX ?? 0) / width),
+      });
       pendingX = null;
     } else {
       pendingX = numeric;
-      parts.push(token);
     }
     numbersSeen += 1;
   }
 
-  return parts.join(" ");
+  const compiled = { tokens, slots };
+  compiledCache.set(cacheKey, compiled);
+  return compiled;
+}
+
+function buildCrestPath(
+  compiled: CompiledCrest,
+  horizon: number,
+  progress: number,
+): string {
+  if (progress >= 1) {
+    // Final frame uses original token strings (already in compiled.tokens).
+    const finalTokens = compiled.tokens.slice();
+    for (const slot of compiled.slots) {
+      finalTokens[slot.tokenIndex] = String(slot.targetY);
+    }
+    return finalTokens.join(" ");
+  }
+
+  const tokens = compiled.tokens.slice();
+  for (const slot of compiled.slots) {
+    tokens[slot.tokenIndex] = String(
+      swellY(slot.targetY, slot.nx, horizon, progress),
+    );
+  }
+  return tokens.join(" ");
 }
 
 /**
- * Straight full-bleed edge until first scroll into view, then the swell plays once and stays.
+ * Straight full-bleed edge until the band scrolls into view, then the swell
+ * plays once and stays. Path morphing updates the DOM directly (throttled)
+ * so React/Motion does not rebuild SVG props every frame.
  */
 export function SwimDripWave({ spec, className = "" }: SwimDripWaveProps) {
   const reduceMotion = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.2 });
-  const gather = useMotionValue(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const inView = useInView(rootRef, {
+    once: true,
+    amount: 0.15,
+    margin: "0px 0px 20% 0px",
+  });
   const width = viewBoxWidth(spec.viewBox);
+  const compiled = useMemo(
+    () => compileCrestPath(spec.full, width),
+    [spec.full, width],
+  );
+  const flatPath = useMemo(
+    () => buildCrestPath(compiled, spec.horizon, 0),
+    [compiled, spec.horizon],
+  );
 
   useEffect(() => {
-    if (!inView) {
+    if (reduceMotion || !inView) {
       return;
     }
 
-    const controls = animate(gather, 1, {
-      duration: 12,
-      ease: [0.12, 0.7, 0.2, 1],
+    const pathEl = pathRef.current;
+    if (!pathEl) {
+      return;
+    }
+
+    let lastPaint = 0;
+    const controls = animate(0, 1, {
+      duration: 4,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (progress) => {
+        const now = performance.now();
+        if (progress < 1 && now - lastPaint < MIN_FRAME_MS) {
+          return;
+        }
+        lastPaint = now;
+        pathEl.setAttribute(
+          "d",
+          buildCrestPath(compiled, spec.horizon, clamp01(progress)),
+        );
+      },
+      onComplete: () => {
+        pathEl.setAttribute("d", spec.full);
+      },
     });
 
     return () => {
       controls.stop();
     };
-  }, [gather, inView]);
-
-  const d = useTransform(gather, (value) =>
-    oceanCrestPath(spec.full, spec.horizon, width, clamp01(value)),
-  );
-
-  if (reduceMotion) {
-    return (
-      <div ref={ref} className={`size-full ${className}`}>
-        <svg
-          aria-hidden="true"
-          className="block size-full max-w-none overflow-visible"
-          viewBox={spec.viewBox}
-          fill="none"
-          preserveAspectRatio="none"
-        >
-          <path d={spec.full} fill={spec.fill} />
-        </svg>
-      </div>
-    );
-  }
+  }, [compiled, inView, reduceMotion, spec.full, spec.horizon]);
 
   return (
-    <div ref={ref} className={`size-full ${className}`}>
-      <motion.svg
+    <div ref={rootRef} className={`size-full ${className}`}>
+      <svg
         aria-hidden="true"
         className="block size-full max-w-none overflow-visible"
         viewBox={spec.viewBox}
         fill="none"
         preserveAspectRatio="none"
       >
-        <motion.path d={d} fill={spec.fill} />
-      </motion.svg>
+        <path
+          ref={pathRef}
+          d={reduceMotion ? spec.full : flatPath}
+          fill={spec.fill}
+        />
+      </svg>
     </div>
   );
 }

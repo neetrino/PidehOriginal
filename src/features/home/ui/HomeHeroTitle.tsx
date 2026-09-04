@@ -9,8 +9,8 @@ type HomeHeroTitleProps = {
 };
 
 const TITLE_STYLE = {
-  fontSize: "clamp(3.5rem, 14.9vw, 215px)",
-  lineHeight: 0.73,
+  fontSize: "clamp(3.5rem, 12vw, 215px)",
+  lineHeight: 0.85,
   letterSpacing: 0,
 } as const;
 
@@ -26,7 +26,10 @@ function HeroTitleLine({
   const reduceMotion = useReducedMotion();
 
   return (
-    <span className={`${className} block w-full overflow-hidden`} style={TITLE_STYLE}>
+    <span
+      className={`${className} block w-full overflow-hidden pt-[0.18em] pb-[0.1em]`}
+      style={TITLE_STYLE}
+    >
       <motion.span
         key={text}
         className="block"
@@ -41,7 +44,7 @@ function HeroTitleLine({
 }
 
 /**
- * Figma Component 1 (51:179) — Pricehigh Black, 215px / leading 0.73.
+ * Figma Component 1 (51:179) — Pricehigh Black, 215px / leading ~0.73–0.85.
  * Uses `display: contents` so line z-indexes interleave with the pide media sibling.
  */
 export function HomeHeroTitle({
@@ -50,7 +53,9 @@ export function HomeHeroTitle({
   className = "",
 }: HomeHeroTitleProps) {
   return (
-    <h1 className={`font-display contents text-center whitespace-nowrap ${className}`}>
+    <h1
+      className={`font-display contents text-center whitespace-nowrap ${className}`}
+    >
       <HeroTitleLine
         text={line1}
         className="pideh-hero-title-line1 relative z-[1] text-white"

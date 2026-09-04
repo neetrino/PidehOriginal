@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type MouseEvent } from "react";
 
@@ -41,7 +40,8 @@ type ProductCardPhotoProps = {
 };
 
 /**
- * Figma Product photo (1:102 / 15:355) — 180px frame, cropped leaf, 117.65° pose.
+ * Figma Product photo (1:102 / 15:355 / hover 165:452) — 180px frame,
+ * cropped leaf at 117.65°. Card hover scales + tilts this leaf (not the box).
  */
 function ProductCardPhoto({
   href,
@@ -50,7 +50,7 @@ function ProductCardPhoto({
   priority,
 }: ProductCardPhotoProps) {
   return (
-    <div className="relative h-[180px] w-full shrink-0 overflow-visible rounded-[30px]">
+    <div className="pideh-product-photo-frame relative z-20 h-[180px] w-full shrink-0 overflow-visible rounded-[30px]">
       <AppLink
         href={href}
         prefetchPolicy={priority ? "intent" : "auto"}
@@ -109,7 +109,6 @@ export function HomeProductCard({
   className = "",
 }: HomeProductCardProps) {
   const router = useRouter();
-  const reduceMotion = useReducedMotion();
   const [pending, startTransition] = useTransition();
   const [justAdded, setJustAdded] = useState(false);
 
@@ -137,13 +136,11 @@ export function HomeProductCard({
   }
 
   return (
-    <motion.div
-      className={`group relative z-0 w-full max-w-[325px] overflow-visible hover:z-50 ${className}`}
-      whileHover={reduceMotion ? undefined : { y: -6 }}
-      transition={{ type: "spring", stiffness: 280, damping: 22 }}
+    <div
+      className={`group relative z-0 w-full max-w-full overflow-visible hover:z-50 ${className}`}
     >
       <article className="flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
-        <div className="relative z-30 w-full">
+        <div className="relative z-30 w-full overflow-visible">
           <ProductCardPhoto
             href={href}
             title={title}
@@ -212,6 +209,6 @@ export function HomeProductCard({
           />
         </div>
       </article>
-    </motion.div>
+    </div>
   );
 }

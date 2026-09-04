@@ -149,19 +149,19 @@ async function seed(): Promise<void> {
         hy: {
           title: "White Shop",
           subtitle: "New collection",
-          buttonLabel: "Browse",
+          buttonLabel: "Դիտել",
           buttonUrl: "/hy/products",
         },
         en: {
           title: "White Shop",
           subtitle: "New collection",
-          buttonLabel: "Shop now",
+          buttonLabel: "Browse",
           buttonUrl: "/en/products",
         },
         ru: {
           title: "White Shop",
           subtitle: "New collection",
-          buttonLabel: "Browse",
+          buttonLabel: "Смотреть",
           buttonUrl: "/ru/products",
         },
       },
@@ -171,6 +171,26 @@ async function seed(): Promise<void> {
     .onConflictDoUpdate({
       target: schema.heroSlides.id,
       set: {
+        translations: {
+          hy: {
+            title: "White Shop",
+            subtitle: "New collection",
+            buttonLabel: "Դիտել",
+            buttonUrl: "/hy/products",
+          },
+          en: {
+            title: "White Shop",
+            subtitle: "New collection",
+            buttonLabel: "Browse",
+            buttonUrl: "/en/products",
+          },
+          ru: {
+            title: "White Shop",
+            subtitle: "New collection",
+            buttonLabel: "Смотреть",
+            buttonUrl: "/ru/products",
+          },
+        },
         isActive: true,
         updatedAt: now,
       },

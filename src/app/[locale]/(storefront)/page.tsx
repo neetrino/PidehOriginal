@@ -103,7 +103,6 @@ export default async function HomePage({ params }: HomePageProps) {
         slides={heroSlides}
         fallbackTitle={dictionary.home.heroTitleLine1}
         fallbackTitleAccent={dictionary.home.heroTitleLine2}
-        fallbackSubtitle={dictionary.home.subtitle}
         fallbackCtaLabel={dictionary.home.viewAllMenu}
         fallbackCtaHref={`/${locale}/products`}
       />
