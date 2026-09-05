@@ -13,10 +13,32 @@ const pricehigh = localFont({
   display: "swap",
 });
 
+/**
+ * Figma “Montserrat arm” (Vahan Hovhannisyan) — SIL OFL.
+ * Open source package ships Bold; mapped to 700 + 900 for Black labels.
+ * @see https://greghub.github.io/montserrat-arm/
+ */
+const montserratArm = localFont({
+  src: [
+    {
+      path: "../fonts/MontserratArm-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../fonts/MontserratArm-Bold.ttf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  variable: "--font-montserrat-arm",
+  display: "swap",
+});
+
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 const notoArmenian = Noto_Sans_Armenian({
@@ -46,7 +68,7 @@ export default function RootLayout({
   return (
     <html lang="hy" className="h-full" suppressHydrationWarning>
       <body
-        className={`${pricehigh.variable} ${montserrat.variable} ${notoArmenian.variable} ${geistMono.variable} flex min-h-dvh flex-col overflow-x-hidden antialiased`}
+        className={`${pricehigh.variable} ${montserratArm.variable} ${montserrat.variable} ${notoArmenian.variable} ${geistMono.variable} flex min-h-dvh flex-col overflow-x-hidden antialiased`}
       >
         {children}
       </body>

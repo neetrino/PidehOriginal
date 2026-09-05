@@ -34,7 +34,8 @@
   --color-pideh-slate: var(--pideh-slate);
   --color-pideh-muted: var(--pideh-muted);
   --color-pideh-cream: var(--pideh-cream);
-  --font-sans: var(--font-montserrat), var(--font-noto-armenian), ui-sans-serif, sans-serif;
+  --font-sans: var(--font-montserrat-arm), var(--font-montserrat),
+    var(--font-noto-armenian), ui-sans-serif, sans-serif;
   --font-display: var(--font-pricehigh), var(--font-noto-armenian), var(--font-montserrat),
     ui-sans-serif, sans-serif;
   --font-mono: var(--font-geist-mono);
@@ -50,8 +51,8 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-montserrat), var(--font-noto-armenian), ui-sans-serif,
-    sans-serif;
+  font-family: var(--font-montserrat-arm), var(--font-montserrat),
+    var(--font-noto-armenian), ui-sans-serif, sans-serif;
 }
 
 .font-display {
@@ -60,6 +61,12 @@ body {
   font-weight: 900;
   letter-spacing: 0;
   line-height: 0.73;
+}
+
+/** Figma “Montserrat arm” Black — feature labels (266:455–266:458). */
+.font-montserrat-arm {
+  font-family: var(--font-montserrat-arm), var(--font-noto-armenian),
+    var(--font-montserrat), ui-sans-serif, sans-serif;
 }
 
 /* Hero entrance + pide float (approximates Figma Kling video 51:133) */
@@ -278,7 +285,22 @@ body {
   .storefront-shell:has(.pideh-login) .storefront-main,
   .storefront-shell:has(.pideh-shop) .storefront-main,
   .storefront-shell:has(.pideh-pdp) .storefront-main {
-    padding-bottom: 5.5rem;
+    /* Room for fixed Figma nav dock (~240px) + safe area */
+    padding-bottom: 12rem;
+  }
+
+  /* Mobile home: dock clearance lives on .pideh-home-mobile (see MobileHome). */
+  .storefront-shell:has(.pideh-home-mobile) .storefront-main {
+    padding-bottom: 0;
+  }
+
+  /* Figma mobile home (259:369) uses in-page chrome instead of site header. */
+  .storefront-shell:has(.pideh-home-mobile) .site-header {
+    display: none;
+  }
+
+  .storefront-shell:has(.pideh-home-mobile) .storefront-footer {
+    display: none;
   }
 }
 

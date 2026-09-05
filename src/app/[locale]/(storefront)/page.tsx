@@ -11,6 +11,7 @@ import {
 } from "@/features/home/ui/HomeFeatures";
 import { HomeHero } from "@/features/home/ui/HomeHero";
 import { HomeReviews } from "@/features/home/ui/HomeReviews";
+import { MobileHome } from "@/features/home/ui/mobile/MobileHome";
 import {
   getFeaturedProducts,
   type CatalogProduct,
@@ -97,73 +98,87 @@ export default async function HomePage({ params }: HomePageProps) {
     support: dictionary.home.features.supportTitle,
   } as const;
 
+  const categoryCards = categories.map((category) => ({
+    id: category.id,
+    title: category.title,
+    href: `/${locale}/products?category=${encodeURIComponent(category.slug)}`,
+    imageUrl: category.imageUrl,
+  }));
+
   return (
     <div className="pideh-home">
-      <HomeHero
-        slides={heroSlides}
-        fallbackTitle={dictionary.home.heroTitleLine1}
-        fallbackTitleAccent={dictionary.home.heroTitleLine2}
-        fallbackCtaLabel={dictionary.home.viewAllMenu}
-        fallbackCtaHref={`/${locale}/products`}
-      />
-
-      <HomeCategories
-        title={dictionary.home.categoriesTitle}
-        viewAllLabel={dictionary.home.viewAllMenu}
-        viewAllHref={`/${locale}/products`}
-        typesLabel={dictionary.home.categoryTypes}
-        demoCategoryTitle={dictionary.home.categoryDemoTitle}
-        categories={categories.map((category) => ({
-          id: category.id,
-          title: category.title,
-          href: `/${locale}/products?category=${encodeURIComponent(category.slug)}`,
-          imageUrl: category.imageUrl,
-        }))}
-      />
-
-      <HomeFeaturedProducts
+      <MobileHome
         locale={locale}
-        title={dictionary.home.featuredTitle}
-        viewAllLabel={dictionary.home.viewAllMenu}
-        viewAllHref={`/${locale}/products`}
-        emptyLabel={dictionary.home.emptyFeatured}
-        wishlistLabel={dictionary.nav.wishlist}
-        orderLabel={dictionary.home.orderCta}
-        outOfStockLabel={dictionary.product.outOfStock}
+        dictionary={dictionary}
+        categories={categoryCards}
+        products={featuredCards}
+        isSignedIn={Boolean(user)}
         ratingLabel={dictionary.product.cardRating}
         prepTimeLabel={dictionary.product.prepTime}
-        isSignedIn={Boolean(user)}
-        products={featuredCards}
       />
 
-      <HomeFeatures
-        titleLine1={dictionary.home.whyUsTitleLine1}
-        titleLine2={dictionary.home.whyUsTitleLine2}
-        viewAllLabel={dictionary.home.viewAllMenu}
-        viewAllHref={`/${locale}/products`}
-        items={HOME_FEATURE_VISUALS.map((visual) => ({
-          title: featureTitles[visual.key],
-          imageSrc: visual.imageSrc,
-          imageBox: visual.imageBox,
-          imageCrop: visual.imageCrop,
-          labelBox: visual.labelBox,
-        }))}
-      />
+      <div className="hidden md:block">
+        <HomeHero
+          slides={heroSlides}
+          fallbackTitle={dictionary.home.heroTitleLine1}
+          fallbackTitleAccent={dictionary.home.heroTitleLine2}
+          fallbackCtaLabel={dictionary.home.viewAllMenu}
+          fallbackCtaHref={`/${locale}/products`}
+        />
 
-      <HomeReviews
-        title={dictionary.home.reviewsTitle}
-        viewAllLabel={dictionary.home.viewAllMenu}
-        viewAllHref={`/${locale}/products`}
-        reviews={dictionary.home.reviews}
-      />
+        <HomeCategories
+          title={dictionary.home.categoriesTitle}
+          viewAllLabel={dictionary.home.viewAllMenu}
+          viewAllHref={`/${locale}/products`}
+          typesLabel={dictionary.home.categoryTypes}
+          demoCategoryTitle={dictionary.home.categoryDemoTitle}
+          categories={categoryCards}
+        />
 
-      <HomeCtaBanner
-        titleLine1={dictionary.home.ctaTitleLine1}
-        titleLine2={dictionary.home.ctaTitleLine2}
-        description={dictionary.home.ctaDescription}
-        ctaLabel={dictionary.home.orderCta}
-        ctaHref={`/${locale}/products`}
-      />
+        <HomeFeaturedProducts
+          locale={locale}
+          title={dictionary.home.featuredTitle}
+          viewAllLabel={dictionary.home.viewAllMenu}
+          viewAllHref={`/${locale}/products`}
+          emptyLabel={dictionary.home.emptyFeatured}
+          wishlistLabel={dictionary.nav.wishlist}
+          orderLabel={dictionary.home.orderCta}
+          outOfStockLabel={dictionary.product.outOfStock}
+          ratingLabel={dictionary.product.cardRating}
+          prepTimeLabel={dictionary.product.prepTime}
+          isSignedIn={Boolean(user)}
+          products={featuredCards}
+        />
+
+        <HomeFeatures
+          titleLine1={dictionary.home.whyUsTitleLine1}
+          titleLine2={dictionary.home.whyUsTitleLine2}
+          viewAllLabel={dictionary.home.viewAllMenu}
+          viewAllHref={`/${locale}/products`}
+          items={HOME_FEATURE_VISUALS.map((visual) => ({
+            title: featureTitles[visual.key],
+            imageSrc: visual.imageSrc,
+            imageBox: visual.imageBox,
+            imageCrop: visual.imageCrop,
+            labelBox: visual.labelBox,
+          }))}
+        />
+
+        <HomeReviews
+          title={dictionary.home.reviewsTitle}
+          viewAllLabel={dictionary.home.viewAllMenu}
+          viewAllHref={`/${locale}/products`}
+          reviews={dictionary.home.reviews}
+        />
+
+        <HomeCtaBanner
+          titleLine1={dictionary.home.ctaTitleLine1}
+          titleLine2={dictionary.home.ctaTitleLine2}
+          description={dictionary.home.ctaDescription}
+          ctaLabel={dictionary.home.orderCta}
+          ctaHref={`/${locale}/products`}
+        />
+      </div>
     </div>
   );
 }
