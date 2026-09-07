@@ -744,7 +744,20 @@
       "thisMonth": "This Month",
       "customRange": "Custom Range"
     },
+    "snapshots": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "month": "Month",
+      "total": "Total",
+      "orders": "{count} orders",
+      "avgOrder": "{amount} avg order",
+      "changeAria": "Change {value}"
+    },
     "metrics": {
+      "income": "Income",
+      "orders": "Orders",
+      "avgCheck": "Average check",
+      "customersInRange": "Customers in range",
       "totalOrders": "Total Orders",
       "totalRevenue": "Total Revenue",
       "totalUsers": "Total Users"
@@ -762,12 +775,17 @@
       "empty": "No category sales in this range."
     },
     "ordersByDay": {
-      "title": "Orders by Day",
-      "subtitle": "Daily Order Trends and Revenue",
-      "chartAria": "Orders by day trend chart",
+      "title": "Trend",
+      "subtitle": "Daily order and revenue trends",
+      "chartAria": "Daily orders and revenue trend chart",
       "empty": "No orders in this range.",
       "ordersCount": "{count} orders",
-      "revenue": "revenue"
+      "ordersLegend": "Orders",
+      "revenueLegend": "Income",
+      "revenue": "revenue",
+      "sideIncome": "Income",
+      "sideOrders": "Orders",
+      "sideAvg": "Average check"
     }
   },
   "hero": {

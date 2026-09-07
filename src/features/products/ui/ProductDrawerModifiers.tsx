@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { useState, useTransition } from "react";
 
 import {
+  ADMIN_CHECKBOX,
   ADMIN_INPUT,
 } from "@/features/admin/ui/admin-form-classes";
 import type { ProductModifierOption } from "@/features/products/types/modifiers";
@@ -198,7 +199,7 @@ function ModifierColumn({
                 checked={selectedSet.has(row.id)}
                 disabled={disabled || pending}
                 onChange={(event) => toggle(row.id, event.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-gray-900"
+                className={ADMIN_CHECKBOX}
                 aria-label={row.name}
               />
               <span className="min-w-0 flex-1 truncate text-sm text-gray-800">

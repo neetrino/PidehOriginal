@@ -152,11 +152,12 @@ export function GroupOrderPageClient({
   }, [view?.status, labels.cancelledAlert, inviteToken, router]);
 
   useEffect(() => {
-    if (!view) return;
+    const status = view?.status;
     if (
-      view.status === "CANCELLED" ||
-      view.status === "COMPLETED" ||
-      view.status === "EXPIRED"
+      status == null ||
+      status === "CANCELLED" ||
+      status === "COMPLETED" ||
+      status === "EXPIRED"
     ) {
       return;
     }

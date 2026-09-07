@@ -109,10 +109,10 @@ export function CouponDrawer({
       open={open}
       onClose={onClose}
       ariaLabel={isEdit ? copy.drawer.editAria : copy.drawer.newAria}
-      panelClassName="w-full sm:w-1/2"
+      variant="admin"
     >
-      <div className="border-b border-gray-200 px-5 py-4">
-        <h2 className="text-lg font-semibold text-gray-900">
+      <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
+        <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
           {isEdit ? copy.drawer.editTitle : copy.drawer.newTitle}
         </h2>
       </div>

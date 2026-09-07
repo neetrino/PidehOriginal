@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import {
+  ADMIN_CHECKBOX,
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
@@ -184,7 +185,7 @@ export function AdminDeliveryScheduleEditor({
                       type="checkbox"
                       checked={hours.isOpen}
                       disabled={disabled}
-                      className="h-4 w-4 rounded border-gray-300"
+                      className={ADMIN_CHECKBOX}
                       onChange={(event) =>
                         updateWeekly(day, { isOpen: event.target.checked })
                       }

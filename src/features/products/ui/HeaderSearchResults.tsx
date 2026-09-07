@@ -57,12 +57,14 @@ export function HeaderSearchResults({
     <>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {showIdle ? (
-          <p
-            ref={idleRef}
-            className="px-5 py-10 text-center text-sm font-bold text-[#1e1e1e]"
-          >
-            {idleLabel}
-          </p>
+          <div className="relative px-5 py-10">
+            <p
+              ref={idleRef}
+              className="text-center text-sm font-bold text-[#1e1e1e]"
+            >
+              {idleLabel}
+            </p>
+          </div>
         ) : null}
 
         {pending && products.length === 0 ? (

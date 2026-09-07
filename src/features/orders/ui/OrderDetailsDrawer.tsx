@@ -34,11 +34,11 @@ export function OrderDetailsDrawer({
       open={open}
       onClose={onClose}
       ariaLabel={copy.orders.drawer.ariaLabel}
-      panelClassName="w-full sm:w-[60%]"
+      variant="admin"
       zIndexClassName="z-[200]"
     >
-      <div className="border-b border-gray-100 px-6 py-5">
-        <h2 className="text-2xl font-semibold text-gray-900">
+      <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
+        <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
           {copy.orders.drawer.title}
         </h2>
         {detail ? (

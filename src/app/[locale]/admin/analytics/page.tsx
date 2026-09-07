@@ -10,6 +10,7 @@ import {
 import { AnalyticsMetricCards } from "@/features/analytics/ui/AnalyticsMetricCards";
 import { AnalyticsOrdersByDay } from "@/features/analytics/ui/AnalyticsOrdersByDay";
 import { AnalyticsPeriodCard } from "@/features/analytics/ui/AnalyticsPeriodCard";
+import { AnalyticsSnapshotCards } from "@/features/analytics/ui/AnalyticsSnapshotCards";
 import { AnalyticsTopRankings } from "@/features/analytics/ui/AnalyticsTopRankings";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -65,6 +66,12 @@ export default async function AdminAnalyticsPage({
         description={dictionary.admin.analytics.subtitle}
       />
 
+      <AnalyticsSnapshotCards
+        snapshots={summary.snapshots}
+        formatMoney={formatMoney}
+        copy={dictionary.admin}
+      />
+
       <AnalyticsPeriodCard
         key={`${range.from}:${range.to}`}
         locale={locale}
@@ -77,21 +84,32 @@ export default async function AdminAnalyticsPage({
       />
 
       <AnalyticsMetricCards
-        orderCount={summary.orderCount}
-        revenueAmount={summary.revenueAmount}
-        userCount={summary.userCount}
+        locale={locale}
+        revenueAmount={summary.period.revenueAmount}
+        orderCount={summary.period.orderCount}
+        averageOrderValue={summary.period.averageOrderValue}
+        customerCount={summary.period.customerCount}
+        previousRevenueAmount={summary.period.previousRevenueAmount}
+        previousOrderCount={summary.period.previousOrderCount}
+        previousAverageOrderValue={summary.period.previousAverageOrderValue}
+        previousCustomerCount={summary.period.previousCustomerCount}
+        copy={dictionary.admin}
+      />
+
+      <AnalyticsOrdersByDay
+        rows={summary.dailyRows}
+        from={range.from}
+        to={range.to}
+        locale={locale}
+        revenueAmount={summary.period.revenueAmount}
+        orderCount={summary.period.orderCount}
+        averageOrderValue={summary.period.averageOrderValue}
         copy={dictionary.admin}
       />
 
       <AnalyticsTopRankings
         products={summary.topProducts}
         categories={summary.topCategories}
-        formatMoney={formatMoney}
-        copy={dictionary.admin}
-      />
-
-      <AnalyticsOrdersByDay
-        rows={summary.dailyRows}
         formatMoney={formatMoney}
         copy={dictionary.admin}
       />

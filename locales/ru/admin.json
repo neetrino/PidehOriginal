@@ -744,30 +744,48 @@
       "thisMonth": "Этот месяц",
       "customRange": "Произвольный период"
     },
+    "snapshots": {
+      "today": "Сегодня",
+      "yesterday": "Вчера",
+      "month": "Месяц",
+      "total": "Всего",
+      "orders": "{count} заказов",
+      "avgOrder": "{amount} средний заказ",
+      "changeAria": "Изменение {value}"
+    },
     "metrics": {
+      "income": "Доход",
+      "orders": "Заказы",
+      "avgCheck": "Средний чек",
+      "customersInRange": "Клиенты за период",
       "totalOrders": "Всего заказов",
       "totalRevenue": "Общая выручка",
       "totalUsers": "Всего пользователей"
     },
     "topProducts": {
-      "title": "Самые продаваемые товары",
+      "title": "Топ продаваемых товаров",
       "sold": "Продано: {quantity}",
       "orders": "{count} заказов",
       "empty": "В этом периоде нет продаж товаров."
     },
     "topCategories": {
-      "title": "Популярные категории",
+      "title": "Топ категорий",
       "items": "{count} товаров",
       "orders": "{count} заказов",
       "empty": "В этом периоде нет продаж по категориям."
     },
     "ordersByDay": {
-      "title": "Заказы по дням",
+      "title": "Тренд",
       "subtitle": "Динамика заказов и выручки по дням",
-      "chartAria": "График динамики заказов по дням",
+      "chartAria": "График динамики заказов и выручки по дням",
       "empty": "В этом периоде нет заказов.",
       "ordersCount": "{count} заказов",
-      "revenue": "выручка"
+      "ordersLegend": "Заказы",
+      "revenueLegend": "Доход",
+      "revenue": "выручка",
+      "sideIncome": "Доход",
+      "sideOrders": "Заказы",
+      "sideAvg": "Средний чек"
     }
   },
   "hero": {

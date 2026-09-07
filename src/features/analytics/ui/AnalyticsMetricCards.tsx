@@ -1,88 +1,133 @@
-"use client";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 
-import NumberFlow from "@number-flow/react";
-import {
-  ClipboardList,
-  DollarSign,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
-
-import { fadeUp } from "@/components/motion/presets";
-import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
+import { percentChange } from "@/features/analytics/domain/date-range";
+import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { formatMoneyAmount } from "@/lib/money/format";
 
-type MetricCard = {
-  label: string;
-  value: number;
-  format?: {
-    minimumFractionDigits: number;
-    maximumFractionDigits: number;
-  };
-  icon: LucideIcon;
-};
+type HighlightTone = "pink" | "yellow" | "blue" | "cream";
 
 type AnalyticsMetricCardsProps = {
-  orderCount: number;
+  locale: Locale;
   revenueAmount: number;
-  userCount: number;
+  orderCount: number;
+  averageOrderValue: number;
+  customerCount: number;
+  previousRevenueAmount: number;
+  previousOrderCount: number;
+  previousAverageOrderValue: number;
+  previousCustomerCount: number;
   copy: Dictionary["admin"];
 };
 
+const TONE_CLASS: Record<HighlightTone, string> = {
+  pink: "border-[#ff6b00]/15 bg-[#ffe8dc]",
+  yellow: "border-[#ffd54a]/60 bg-[#fff4c2]",
+  blue: "border-[#1e1e1e]/10 bg-[#eef2f6]",
+  cream: "border-[#1e1e1e]/10 bg-[#fff8e7]",
+};
+
+function formatChange(change: number | null): string {
+  if (change == null) {
+    return "—";
+  }
+  if (change === 0) {
+    return "0%";
+  }
+  return `${change > 0 ? "+" : ""}${change.toFixed(1)}%`;
+}
+
 export function AnalyticsMetricCards({
-  orderCount,
+  locale,
   revenueAmount,
-  userCount,
+  orderCount,
+  averageOrderValue,
+  customerCount,
+  previousRevenueAmount,
+  previousOrderCount,
+  previousAverageOrderValue,
+  previousCustomerCount,
   copy,
 }: AnalyticsMetricCardsProps) {
-  const metrics: MetricCard[] = [
+  function money(amount: number): string {
+    return formatMoneyAmount(amount, "AMD", locale);
+  }
+
+  const items: Array<{
+    key: string;
+    label: string;
+    value: string;
+    change: number | null;
+    tone: HighlightTone;
+  }> = [
     {
-      label: copy.analytics.metrics.totalOrders,
-      value: orderCount,
-      icon: ClipboardList,
+      key: "income",
+      label: copy.analytics.metrics.income,
+      value: money(revenueAmount),
+      change: percentChange(revenueAmount, previousRevenueAmount),
+      tone: "pink",
     },
     {
-      label: copy.analytics.metrics.totalRevenue,
-      value: revenueAmount,
-      format: { minimumFractionDigits: 2, maximumFractionDigits: 2 },
-      icon: DollarSign,
+      key: "orders",
+      label: copy.analytics.metrics.orders,
+      value: String(orderCount),
+      change: percentChange(orderCount, previousOrderCount),
+      tone: "yellow",
     },
     {
-      label: copy.analytics.metrics.totalUsers,
-      value: userCount,
-      icon: Users,
+      key: "avg",
+      label: copy.analytics.metrics.avgCheck,
+      value: money(averageOrderValue),
+      change: percentChange(averageOrderValue, previousAverageOrderValue),
+      tone: "blue",
+    },
+    {
+      key: "customers",
+      label: copy.analytics.metrics.customersInRange,
+      value: String(customerCount),
+      change: percentChange(customerCount, previousCustomerCount),
+      tone: "cream",
     },
   ];
 
   return (
-    <StaggerGroup className="mb-6 grid gap-4 sm:grid-cols-3">
-      {metrics.map((metric) => {
-        const Icon = metric.icon;
+    <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      {items.map((item) => {
+        const positive = (item.change ?? 0) >= 0;
+        const display = formatChange(item.change);
+
         return (
-          <StaggerItem key={metric.label} variants={fadeUp}>
-            <div className="relative overflow-hidden rounded-[22px] border-2 border-[#1e1e1e] bg-white p-5 shadow-[4px_4px_0_#1e1e1e]">
-              <span
-                className="absolute inset-x-0 top-0 h-1.5 bg-[#ff6b00]"
-                aria-hidden="true"
-              />
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#ffd54a] text-[#1e1e1e]">
-                <Icon className="h-5 w-5" aria-hidden />
-              </div>
-              <p className="text-[11px] font-extrabold tracking-[0.16em] text-[#ff6b00] uppercase">
-                {metric.label}
+          <article
+            key={item.key}
+            className={`rounded-[16px] border px-4 py-4 ${TONE_CLASS[item.tone]}`}
+          >
+            <p className="text-xs font-bold tracking-[0.12em] text-[#1e1e1e]/55 uppercase">
+              {item.label}
+            </p>
+            <div className="mt-2 flex items-end justify-between gap-2">
+              <p className="text-xl font-bold text-[#1e1e1e] sm:text-2xl">
+                {item.value}
               </p>
-              <p className="mt-1 text-3xl font-bold tracking-tight text-[#1e1e1e]">
-                <NumberFlow
-                  value={metric.value}
-                  format={metric.format}
-                  respectMotionPreference
-                  transformTiming={{ duration: 700, easing: "ease-out" }}
-                />
-              </p>
+              {item.change == null ? (
+                <span className="text-xs font-bold text-[#1e1e1e]/40">—</span>
+              ) : (
+                <span
+                  className={`inline-flex items-center gap-0.5 text-xs font-bold ${
+                    positive ? "text-emerald-700" : "text-[#c2410c]"
+                  }`}
+                >
+                  {positive ? (
+                    <ArrowUpRight className="size-3.5" aria-hidden />
+                  ) : (
+                    <ArrowDownRight className="size-3.5" aria-hidden />
+                  )}
+                  {display}
+                </span>
+              )}
             </div>
-          </StaggerItem>
+          </article>
         );
       })}
-    </StaggerGroup>
+    </div>
   );
 }

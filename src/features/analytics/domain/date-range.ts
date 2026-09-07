@@ -131,3 +131,17 @@ export function formatPeriodDelta(current: number, previous: number): string {
   const sign = pct >= 0 ? "+" : "";
   return `${sign}${pct.toFixed(1)}%`;
 }
+
+/**
+ * Percent change vs previous. Returns `null` when previous is 0 and current is 0,
+ * or when comparison is intentionally unavailable.
+ */
+export function percentChange(
+  current: number,
+  previous: number,
+): number | null {
+  if (previous === 0) {
+    return current > 0 ? 100 : null;
+  }
+  return Math.round(((current - previous) / previous) * 1000) / 10;
+}

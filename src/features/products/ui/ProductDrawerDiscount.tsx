@@ -1,7 +1,15 @@
 "use client";
 
 import { Calendar } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+import { createPortal } from "react-dom";
 
 import { ADMIN_INPUT, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import type {
@@ -17,6 +25,16 @@ type ProductDrawerDiscountProps = {
   copy: Dictionary["admin"]["products"]["discount"];
 };
 
+type AnchoredStyle = {
+  top: number;
+  left: number;
+  width: number;
+  transform?: string;
+};
+
+const SCHEDULE_PANEL_WIDTH = 320;
+const SCHEDULE_PANEL_ESTIMATE_HEIGHT = 240;
+
 function toLocalInput(iso: string | null): string {
   if (!iso) return "";
   const date = new Date(iso);
@@ -30,6 +48,33 @@ function fromLocalInput(local: string): string | null {
   const date = new Date(local);
   if (Number.isNaN(date.getTime())) return null;
   return date.toISOString();
+}
+
+function schedulePanelStyle(anchor: DOMRect): AnchoredStyle {
+  const width = Math.min(SCHEDULE_PANEL_WIDTH, window.innerWidth - 24);
+  const left = Math.max(
+    12,
+    Math.min(anchor.right - width, window.innerWidth - width - 12),
+  );
+  const spaceBelow = window.innerHeight - anchor.bottom;
+  const openAbove =
+    spaceBelow < SCHEDULE_PANEL_ESTIMATE_HEIGHT &&
+    anchor.top > spaceBelow;
+
+  if (openAbove) {
+    return {
+      top: anchor.top - 8,
+      left,
+      width,
+      transform: "translateY(-100%)",
+    };
+  }
+
+  return {
+    top: anchor.bottom + 8,
+    left,
+    width,
+  };
 }
 
 export function ProductDrawerDiscount({
@@ -48,10 +93,19 @@ export function ProductDrawerDiscount({
   );
   const [startsAt, setStartsAt] = useState<string | null>(value?.startsAt ?? null);
   const [endsAt, setEndsAt] = useState<string | null>(value?.endsAt ?? null);
+  const [scheduleStyle, setScheduleStyle] = useState<AnchoredStyle | null>(null);
+  const [mounted, setMounted] = useState(false);
+
   const rootRef = useRef<HTMLDivElement>(null);
+  const scheduleTriggerRef = useRef<HTMLButtonElement>(null);
+  const schedulePanelRef = useRef<HTMLDivElement>(null);
   const typeListId = useId();
   const scheduleId = useId();
   const hasSchedule = Boolean(startsAt || endsAt);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setType(value?.type ?? "PERCENTAGE");
@@ -60,14 +114,36 @@ export function ProductDrawerDiscount({
     setEndsAt(value?.endsAt ?? null);
   }, [value]);
 
+  useLayoutEffect(() => {
+    if (!scheduleOpen || !scheduleTriggerRef.current) {
+      setScheduleStyle(null);
+      return;
+    }
+
+    function updatePosition(): void {
+      const trigger = scheduleTriggerRef.current;
+      if (!trigger) return;
+      setScheduleStyle(schedulePanelStyle(trigger.getBoundingClientRect()));
+    }
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [scheduleOpen]);
+
   useEffect(() => {
     if (!typeMenuOpen && !scheduleOpen) return;
 
     function handlePointerDown(event: MouseEvent): void {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setTypeMenuOpen(false);
-        setScheduleOpen(false);
-      }
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (schedulePanelRef.current?.contains(target)) return;
+      setTypeMenuOpen(false);
+      setScheduleOpen(false);
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
@@ -103,6 +179,75 @@ export function ProductDrawerDiscount({
       endsAt: nextEnds,
     });
   }
+
+  const schedulePanel =
+    mounted && scheduleOpen && scheduleStyle
+      ? createPortal(
+          <div
+            ref={schedulePanelRef}
+            id={scheduleId}
+            role="dialog"
+            aria-label={copy.scheduleAria}
+            className="fixed z-[400] space-y-3 rounded-[22px] border-2 border-[#1e1e1e] bg-[#fff8e7] p-4 shadow-[6px_6px_0_#1e1e1e]"
+            style={
+              {
+                top: scheduleStyle.top,
+                left: scheduleStyle.left,
+                width: scheduleStyle.width,
+                transform: scheduleStyle.transform,
+              } satisfies CSSProperties
+            }
+          >
+            <label className="block">
+              <span className="mb-1 block text-xs font-bold tracking-wide text-[#ff6b00] uppercase">
+                {copy.starts}
+              </span>
+              <input
+                type="datetime-local"
+                disabled={disabled}
+                value={toLocalInput(startsAt)}
+                onChange={(event) => {
+                  const next = fromLocalInput(event.target.value);
+                  setStartsAt(next);
+                  emit(type, amount, next, endsAt);
+                }}
+                className={ADMIN_INPUT}
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-bold tracking-wide text-[#ff6b00] uppercase">
+                {copy.ends}
+              </span>
+              <input
+                type="datetime-local"
+                disabled={disabled}
+                value={toLocalInput(endsAt)}
+                onChange={(event) => {
+                  const next = fromLocalInput(event.target.value);
+                  setEndsAt(next);
+                  emit(type, amount, startsAt, next);
+                }}
+                className={ADMIN_INPUT}
+              />
+            </label>
+            {hasSchedule ? (
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={() => {
+                  setStartsAt(null);
+                  setEndsAt(null);
+                  emit(type, amount, null, null);
+                }}
+                className="text-xs font-bold text-[#ff6b00] hover:underline"
+              >
+                {copy.clearSchedule}
+              </button>
+            ) : null}
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
     <div ref={rootRef} className="relative">
@@ -140,6 +285,7 @@ export function ProductDrawerDiscount({
         </div>
 
         <button
+          ref={scheduleTriggerRef}
           type="button"
           disabled={disabled}
           aria-expanded={scheduleOpen}
@@ -151,7 +297,7 @@ export function ProductDrawerDiscount({
           }}
           className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border bg-white shadow-sm transition hover:bg-gray-50 disabled:opacity-40 ${
             hasSchedule
-              ? "border-amber-400 text-amber-600"
+              ? "border-[#ff6b00] text-[#ff6b00]"
               : "border-gray-200 text-gray-500"
           }`}
         >
@@ -189,59 +335,7 @@ export function ProductDrawerDiscount({
         </ul>
       ) : null}
 
-      {scheduleOpen ? (
-        <div
-          id={scheduleId}
-          className="absolute right-0 z-20 mt-2 w-[min(100%,20rem)] space-y-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-lg"
-        >
-          <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">
-              {copy.starts}
-            </span>
-            <input
-              type="datetime-local"
-              disabled={disabled}
-              value={toLocalInput(startsAt)}
-              onChange={(event) => {
-                const next = fromLocalInput(event.target.value);
-                setStartsAt(next);
-                emit(type, amount, next, endsAt);
-              }}
-              className={ADMIN_INPUT}
-            />
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-xs font-medium text-gray-600">
-              {copy.ends}
-            </span>
-            <input
-              type="datetime-local"
-              disabled={disabled}
-              value={toLocalInput(endsAt)}
-              onChange={(event) => {
-                const next = fromLocalInput(event.target.value);
-                setEndsAt(next);
-                emit(type, amount, startsAt, next);
-              }}
-              className={ADMIN_INPUT}
-            />
-          </label>
-          {hasSchedule ? (
-            <button
-              type="button"
-              disabled={disabled}
-              onClick={() => {
-                setStartsAt(null);
-                setEndsAt(null);
-                emit(type, amount, null, null);
-              }}
-              className="text-xs font-medium text-gray-600 hover:text-gray-900"
-            >
-              {copy.clearSchedule}
-            </button>
-          ) : null}
-        </div>
-      ) : null}
+      {schedulePanel}
     </div>
   );
 }

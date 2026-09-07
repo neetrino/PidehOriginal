@@ -4,6 +4,8 @@ import { useRef, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import {
+  ADMIN_CHECKBOX,
+  ADMIN_CHECKBOX_LABEL,
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
@@ -163,7 +165,7 @@ export function AdminCashChangeEditor({
                   ) : null}
                 </label>
 
-                <label className="inline-flex items-center gap-2 pb-2 text-sm text-gray-800">
+                <label className={`${ADMIN_CHECKBOX_LABEL} pb-2`}>
                   <input
                     type="checkbox"
                     checked={item.isActive}
@@ -171,7 +173,7 @@ export function AdminCashChangeEditor({
                       updateItem(item.id, { isActive: event.target.checked })
                     }
                     disabled={disabled || isUploading}
-                    className="h-4 w-4 rounded border-gray-300"
+                    className={ADMIN_CHECKBOX}
                   />
                   {copy.active}
                 </label>

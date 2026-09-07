@@ -18,7 +18,12 @@ type SideSheetProps = {
   onClose: () => void;
   ariaLabel: string;
   children: ReactNode;
-  /** Width classes applied to the docked panel (default: `w-full max-w-md`). */
+  /**
+   * `admin` — half-page width, cream surface, orange close (Pideh admin).
+   * `default` — compact storefront sheet.
+   */
+  variant?: "default" | "admin";
+  /** Width classes applied to the docked panel. */
   panelClassName?: string;
   side?: "left" | "right";
   zIndexClassName?: string;
@@ -41,13 +46,14 @@ export function SideSheet({
   onClose,
   ariaLabel,
   children,
-  panelClassName = "w-full max-w-md",
+  variant = "default",
+  panelClassName,
   side = "right",
   zIndexClassName = "z-50",
   closeVariant = "circle",
-  backdropBlur = false,
+  backdropBlur,
   panelInnerClassName,
-  closeClassName = "",
+  closeClassName,
 }: SideSheetProps) {
   const [mounted, setMounted] = useState(false);
   const [rendered, setRendered] = useState(false);
@@ -55,6 +61,16 @@ export function SideSheet({
   const [displayChildren, setDisplayChildren] = useState(children);
   const [displayAriaLabel, setDisplayAriaLabel] = useState(ariaLabel);
   const exitDoneRef = useRef(false);
+
+  const isAdmin = variant === "admin";
+  const resolvedPanelClassName =
+    panelClassName ?? (isAdmin ? "w-full sm:w-1/2" : "w-full max-w-md");
+  const resolvedBackdropBlur = backdropBlur ?? isAdmin;
+  const resolvedCloseClassName =
+    closeClassName ??
+    (isAdmin
+      ? "bg-[#ff6b00] hover:bg-[#e85f00]"
+      : "bg-gray-900 hover:bg-black");
 
   useEffect(() => {
     setMounted(true);
@@ -121,10 +137,21 @@ export function SideSheet({
   const isRight = side === "right";
   const edgeClass = isRight ? "right-0" : "left-0";
   const panelRadius = isRight
-    ? "rounded-l-[var(--radius)]"
-    : "rounded-r-[var(--radius)]";
+    ? "rounded-l-[28px]"
+    : "rounded-r-[28px]";
+  const panelEdgeBorder = isAdmin
+    ? isRight
+      ? "border-l-2 border-[#1e1e1e]"
+      : "border-r-2 border-[#1e1e1e]"
+    : "";
   const closePosition = isRight ? "right-full" : "left-full";
   const CloseChevron = isRight ? ChevronLeft : ChevronRight;
+
+  const resolvedPanelInnerClassName =
+    panelInnerClassName ??
+    (isAdmin
+      ? `bg-[#fff8e7] shadow-[8px_0_24px_rgba(30,30,30,0.12)] ${panelRadius} ${panelEdgeBorder}`
+      : `bg-white ${isRight ? "rounded-l-[var(--radius)]" : "rounded-r-[var(--radius)]"}`);
 
   const backdropClass = exiting
     ? "animate-sheet-backdrop-out"
@@ -147,20 +174,20 @@ export function SideSheet({
       <button
         type="button"
         className={`absolute inset-0 bg-black/40 ${
-          backdropBlur ? "backdrop-blur-sm" : ""
+          resolvedBackdropBlur ? "backdrop-blur-sm" : ""
         } ${backdropClass}`}
         aria-label="Close"
         onClick={onClose}
       />
       <div
-        className={`fixed inset-y-0 ${edgeClass} z-[1] flex h-dvh max-h-dvh ${panelMotionClass} ${panelClassName}`}
+        className={`fixed inset-y-0 ${edgeClass} z-[1] flex h-dvh max-h-dvh ${panelMotionClass} ${resolvedPanelClassName}`}
         onAnimationEnd={handlePanelAnimationEnd}
       >
         {closeVariant === "edge-tab" ? (
           <button
             type="button"
             onClick={onClose}
-            className={`absolute top-1/2 ${closePosition} z-10 flex h-[38px] w-10 -translate-y-1/2 items-center justify-center bg-gray-900 text-white transition-transform hover:scale-105 ${
+            className={`absolute top-1/2 ${closePosition} z-10 flex h-[38px] w-10 -translate-y-1/2 items-center justify-center bg-[#ff6b00] text-white transition-transform hover:scale-105 ${
               isRight
                 ? "rounded-l-full rounded-r-none"
                 : "rounded-r-full rounded-l-none"
@@ -177,16 +204,14 @@ export function SideSheet({
               isRight
                 ? "rounded-l-full rounded-r-none"
                 : "rounded-r-full rounded-l-none"
-            } ${closeClassName || "bg-gray-900 hover:bg-black"}`}
+            } ${resolvedCloseClassName}`}
             aria-label="Close"
           >
             <X className="h-4 w-4" strokeWidth={2.5} />
           </button>
         )}
         <div
-          className={`flex h-full min-h-0 w-full flex-col overflow-hidden shadow-2xl ${
-            panelInnerClassName ?? `bg-white ${panelRadius}`
-          }`}
+          className={`flex h-full min-h-0 w-full flex-col overflow-hidden shadow-2xl ${resolvedPanelInnerClassName}`}
           onClick={(event) => event.stopPropagation()}
         >
           {displayChildren}

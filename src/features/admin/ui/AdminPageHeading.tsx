@@ -58,7 +58,7 @@ export function AdminPageHeading({
   }, [reduceMotion, title, collapsed]);
 
   return (
-    <div className={className}>
+    <div className={["relative", className].filter(Boolean).join(" ")}>
       <h1 ref={titleRef} className={ADMIN_PAGE_TITLE}>
         {title}
       </h1>

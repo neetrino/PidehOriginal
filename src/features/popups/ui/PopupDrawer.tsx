@@ -40,7 +40,7 @@ export function PopupDrawer({
       ariaLabel={
         isEdit ? copy.popups.drawer.editAria : copy.popups.drawer.createAria
       }
-      panelClassName="w-full sm:w-1/2"
+      variant="admin"
     >
       <PopupDrawerForm
         key={popup?.id ?? "create"}
@@ -85,8 +85,8 @@ function PopupDrawerForm({
 
   return (
     <>
-      <div className="border-b border-gray-200 px-5 py-4">
-        <h2 className="text-lg font-semibold text-gray-900">
+      <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
+        <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
           {isEdit
             ? copy.popups.drawer.editTitle
             : copy.popups.drawer.createTitle}

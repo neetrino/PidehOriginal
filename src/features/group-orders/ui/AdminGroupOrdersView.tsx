@@ -216,14 +216,16 @@ export function AdminGroupOrdersView({
         open={detail != null}
         onClose={() => setDetail(null)}
         ariaLabel={d.ariaLabel}
-        panelClassName="w-full sm:w-[60%]"
+        variant="admin"
       >
         {detail ? (
           <div className="flex h-full flex-col">
-            <div className="border-b border-gray-100 px-6 py-5">
-              <h2 className="text-xl font-bold text-gray-900">{d.title}</h2>
-              <p className="mt-1 font-mono text-xs text-gray-500">{detail.id}</p>
-              <p className="mt-1 text-sm text-gray-600">
+            <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
+              <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
+                {d.title}
+              </h2>
+              <p className="mt-1 font-mono text-xs text-[#1e1e1e]/50">{detail.id}</p>
+              <p className="mt-1 text-sm text-[#1e1e1e]/65">
                 {detail.status} · {detail.paymentMode}
               </p>
             </div>
