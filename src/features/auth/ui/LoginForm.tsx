@@ -56,13 +56,13 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         showPasswordLabel={dictionary.showPassword}
         hidePasswordLabel={dictionary.hidePassword}
         autoComplete="current-password"
-        variant="night"
+        variant="brand"
       />
       <div className="flex justify-end">
         <AppLink
           href={`/${locale}/forgot-password`}
           prefetchPolicy="intent"
-          className="text-sm font-medium text-[#ffd54a] underline-offset-2 hover:text-white hover:underline"
+          className="text-sm font-medium text-[#ff6b00] underline-offset-2 hover:underline"
         >
           {dictionary.forgotPassword}
         </AppLink>
@@ -70,7 +70,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
       {state.error ? (
         <p
           role="alert"
-          className="rounded-2xl border border-red-400/40 bg-red-500/10 p-3 text-sm text-red-200"
+          className="rounded-2xl border border-red-400/50 bg-red-50 p-3 text-sm text-red-700"
         >
           {state.error}
         </p>
@@ -81,12 +81,12 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
       >
         {isPending ? dictionary.submittingLogin : dictionary.submitLogin}
       </button>
-      <p className="text-center text-sm text-white/65">
+      <p className="text-center text-sm text-[#1e1e1e]/70">
         {dictionary.noAccount}{" "}
         <AppLink
           href={`/${locale}/register`}
           prefetchPolicy="intent"
-          className="font-bold text-[#ffd54a] underline-offset-2 hover:underline"
+          className="font-bold text-[#ff6b00] underline-offset-2 hover:underline"
         >
           {dictionary.submitRegister}
         </AppLink>

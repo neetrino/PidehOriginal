@@ -14,7 +14,7 @@ type PasswordFieldProps = {
   showPasswordLabel: string;
   hidePasswordLabel: string;
   autoComplete: string;
-  variant?: "night";
+  variant?: "brand";
 };
 
 export function PasswordField({
@@ -31,8 +31,8 @@ export function PasswordField({
     : "flex flex-col gap-1.5 text-sm font-medium text-gray-700";
   const inputClass = variant ? `${AUTH_INPUT_CLASS} pr-10` : DEFAULT_FIELD_CLASS;
   const toggleClass =
-    variant === "night"
-      ? "absolute inset-y-0 right-0 flex w-10 items-center justify-center text-[#ffd54a] transition hover:text-white"
+    variant === "brand"
+      ? "absolute inset-y-0 right-0 flex w-10 items-center justify-center text-[#ff6b00] transition hover:text-[#1e1e1e]"
       : "absolute inset-y-0 right-0 flex w-10 items-center justify-center text-gray-500 transition hover:text-gray-800";
 
   return (

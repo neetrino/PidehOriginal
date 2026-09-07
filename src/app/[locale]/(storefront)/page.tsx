@@ -153,8 +153,6 @@ export default async function HomePage({ params }: HomePageProps) {
         <HomeFeatures
           titleLine1={dictionary.home.whyUsTitleLine1}
           titleLine2={dictionary.home.whyUsTitleLine2}
-          viewAllLabel={dictionary.home.viewAllMenu}
-          viewAllHref={`/${locale}/products`}
           items={HOME_FEATURE_VISUALS.map((visual) => ({
             title: featureTitles[visual.key],
             imageSrc: visual.imageSrc,
@@ -166,8 +164,6 @@ export default async function HomePage({ params }: HomePageProps) {
 
         <HomeReviews
           title={dictionary.home.reviewsTitle}
-          viewAllLabel={dictionary.home.viewAllMenu}
-          viewAllHref={`/${locale}/products`}
           reviews={dictionary.home.reviews}
         />
 

@@ -8,18 +8,32 @@ type ContactInfoProps = {
   copy: Dictionary["contact"];
 };
 
+type ChannelLine = {
+  text: string;
+  href?: string;
+};
+
 type Channel = {
   index: string;
   icon: LucideIcon;
   title: string;
-  lines: string[];
-  href?: string;
+  lines: ChannelLine[];
 };
+
+function toTelHref(phone: string): string {
+  return `tel:${phone.replace(/[^\d+]/g, "")}`;
+}
+
+function toMapsHref(address: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+}
 
 function ChannelRow({ channel }: { channel: Channel }) {
   const Icon = channel.icon;
-  const body = (
-    <>
+
+  return (
+    <div className="relative border-b border-dashed border-[#1e1e1e]/15 py-6 pl-8">
+      <span className="absolute top-8 left-0 size-2.5 rounded-full bg-[#ff6b00] ring-4 ring-[#ff6b00]/20" />
       <span className="font-mono text-xs tracking-[0.18em] text-[#ff6b00]">
         {channel.index}
       </span>
@@ -28,31 +42,28 @@ function ChannelRow({ channel }: { channel: Channel }) {
         {channel.title}
       </span>
       <span className="mt-2 space-y-1 text-base leading-snug text-[#1e1e1e]/75">
-        {channel.lines.map((line) => (
-          <span key={line} className="block">
-            {line}
-          </span>
-        ))}
+        {channel.lines.map((line) =>
+          line.href ? (
+            <a
+              key={line.text}
+              href={line.href}
+              target={line.href.startsWith("http") ? "_blank" : undefined}
+              rel={
+                line.href.startsWith("http")
+                  ? "noopener noreferrer"
+                  : undefined
+              }
+              className="block w-fit text-[#1e1e1e] underline-offset-2 transition hover:text-[#ff6b00] hover:underline"
+            >
+              {line.text}
+            </a>
+          ) : (
+            <span key={line.text} className="block">
+              {line.text}
+            </span>
+          ),
+        )}
       </span>
-    </>
-  );
-
-  const className =
-    "group relative block border-b border-dashed border-[#1e1e1e]/15 py-6 pl-8 transition-transform hover:translate-x-1";
-
-  if (channel.href) {
-    return (
-      <a href={channel.href} className={className}>
-        <span className="absolute top-8 left-0 size-2.5 rounded-full bg-[#ff6b00] ring-4 ring-[#ff6b00]/20" />
-        {body}
-      </a>
-    );
-  }
-
-  return (
-    <div className={className}>
-      <span className="absolute top-8 left-0 size-2.5 rounded-full bg-[#ff6b00] ring-4 ring-[#ff6b00]/20" />
-      {body}
     </div>
   );
 }
@@ -63,27 +74,43 @@ export function ContactInfo({ copy }: ContactInfoProps) {
       index: "01",
       icon: Phone,
       title: copy.callTitle,
-      lines: [copy.callDescription, copy.storePhone],
-      href: `tel:${copy.storePhone}`,
+      lines: [
+        { text: copy.callDescription },
+        { text: copy.storePhone, href: toTelHref(copy.storePhone) },
+      ],
     },
     {
       index: "02",
       icon: Mail,
       title: copy.writeTitle,
-      lines: [copy.writeDescription, copy.storeEmail],
-      href: `mailto:${copy.storeEmail}`,
+      lines: [
+        { text: copy.writeDescription },
+        { text: copy.storeEmail, href: `mailto:${copy.storeEmail}` },
+      ],
     },
     {
       index: "03",
       icon: MapPin,
       title: copy.hqTitle,
-      lines: [copy.storeAddress, copy.storeAddressSecondary],
+      lines: [
+        {
+          text: copy.storeAddress,
+          href: toMapsHref(copy.storeAddress),
+        },
+        {
+          text: copy.storeAddressSecondary,
+          href: toMapsHref(copy.storeAddressSecondary),
+        },
+      ],
     },
     {
       index: "04",
       icon: Clock3,
       title: copy.hoursTitle,
-      lines: [copy.hoursWeekdays, copy.hoursDelivery],
+      lines: [
+        { text: copy.hoursWeekdays },
+        { text: copy.hoursDelivery },
+      ],
     },
   ];
 

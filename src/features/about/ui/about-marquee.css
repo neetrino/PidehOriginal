@@ -8,7 +8,7 @@
 }
 
 .about-marquee-track {
-  animation: about-marquee 28s linear infinite;
+  animation: about-marquee 68s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

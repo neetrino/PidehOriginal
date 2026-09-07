@@ -16,7 +16,6 @@ type ContactFormCopy = {
   sending: string;
   success: string;
   error: string;
-  ticketStamp: string;
 };
 
 type ContactFormProps = {
@@ -84,9 +83,6 @@ export function ContactForm({ copy }: ContactFormProps) {
           aria-hidden="true"
           className="pointer-events-none absolute inset-y-0 left-0 w-4 bg-[radial-gradient(circle_at_left,var(--pideh-cream)_6px,transparent_7px)] bg-[length:100%_18px]"
         />
-        <p className="font-display mb-8 -rotate-6 text-sm font-bold tracking-[0.18em] text-pideh-orange uppercase">
-          {copy.ticketStamp}
-        </p>
         <label className="mb-6 block text-[11px] font-semibold tracking-[0.2em] text-pideh-muted uppercase">
           {copy.name}
           <input

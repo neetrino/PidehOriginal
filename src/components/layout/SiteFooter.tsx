@@ -218,7 +218,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             </StaggerItem>
           </StaggerGroup>
 
-          <RevealOnView className="mt-16 pt-2 text-center" variants={footerColumn} delay={0.2}>
+          <RevealOnView className="mt-10 pt-2 text-center md:mt-12" variants={footerColumn} delay={0.2}>
             <p className="text-sm leading-4 tracking-[0.35px] text-[#1e1e1e]">
               {footer.copyright
                 .replace("{year}", String(year))
@@ -227,7 +227,14 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   index < parts.length - 1 ? (
                     <span key={`copy-${index}`}>
                       {part}
-                      <span className="text-[#ff6900]">Neetrino IT Company</span>
+                      <a
+                        href="https://www.neetrino.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#ff6900] underline-offset-2 hover:underline"
+                      >
+                        Neetrino IT Company
+                      </a>
                     </span>
                   ) : (
                     <span key={`copy-end-${index}`}>{part}</span>

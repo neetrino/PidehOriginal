@@ -21,14 +21,8 @@ export default async function LoginPage({ params }: LoginPageProps) {
   const { auth } = dictionary;
 
   return (
-    <LoginScene
-      eyebrow={auth.loginEyebrow}
-      neon={auth.loginNeon}
-      title={auth.loginTitle}
-      subtitle={auth.loginSubtitle}
-      windowLabel={auth.loginWindowLabel}
-    >
-      <Suspense fallback={<p className="text-sm text-white/50">…</p>}>
+    <LoginScene title={auth.loginTitle}>
+      <Suspense fallback={<p className="text-sm text-[#1e1e1e]/50">…</p>}>
         <LoginForm locale={rawLocale} dictionary={auth} />
       </Suspense>
     </LoginScene>

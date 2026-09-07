@@ -166,9 +166,14 @@ export function MobileHome({
 
       <p className="mx-auto max-w-[340px] px-4 text-center text-base leading-[21px] tracking-[0.35px] text-[#1e1e1e]">
         <span>{copyrightLead}</span>
-        <i className="not-italic font-bold text-[#ffd54a]">
+        <a
+          href="https://www.neetrino.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-bold text-[#ffd54a] underline-offset-2 hover:underline"
+        >
           Neetrino IT Company
-        </i>
+        </a>
         {copyrightBrand}
       </p>
     </div>

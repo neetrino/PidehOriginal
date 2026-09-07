@@ -51,10 +51,10 @@ export function AboutStory({ copy }: AboutStoryProps) {
                   className="relative ml-10 rounded-[2px] bg-white px-6 py-7 shadow-[12px_16px_0_0_var(--pideh-yellow)] md:ml-0 md:px-10 md:py-9"
                 >
                   <span className="absolute top-8 -left-[1.85rem] size-3 rounded-full bg-pideh-orange ring-4 ring-pideh-yellow md:top-10 md:-left-[2.35rem]" />
-                  <h2 className="font-display text-2xl text-pideh-ink uppercase md:text-3xl">
+                  <h2 className="font-display text-[22px] leading-6 text-[#ff6b00] uppercase md:text-[28px] md:leading-8">
                     {title}
                   </h2>
-                  <p className="mt-4 max-w-2xl text-base leading-relaxed text-pideh-ink/75 md:text-lg">
+                  <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#1e1e1e]/80 md:text-lg">
                     {paragraph}
                   </p>
                 </article>

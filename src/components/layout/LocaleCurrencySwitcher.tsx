@@ -13,9 +13,9 @@ import { currencies } from "@/lib/money/currency";
 
 const HOVER_CLOSE_DELAY_MS = 140;
 
-/** Short codes for the navbar trigger (MaMarie-style `AMD / HY`). */
+/** Short labels for the navbar trigger (e.g. `AMD / Հայ`). */
 const localeShortLabels: Record<Locale, string> = {
-  hy: "HY",
+  hy: "Հայ",
   en: "EN",
   ru: "RU",
 };
@@ -87,7 +87,7 @@ function SwitcherOption({
 
 /**
  * Combined currency + language control matching MaMarie navbar:
- * pill trigger `AMD / HY`, two-column dropdown.
+ * pill trigger `AMD / Հայ`, two-column dropdown.
  */
 export function LocaleCurrencySwitcher({
   locale,
@@ -189,7 +189,7 @@ export function LocaleCurrencySwitcher({
         type="button"
         className={
           compact
-            ? "flex h-5 items-center gap-px text-[16px] leading-4 font-bold text-[#1e1e1e]"
+            ? "flex h-5 items-center gap-px text-[16px] leading-4 text-[#1e1e1e]"
             : "flex h-9 shrink-0 items-center gap-1 rounded-full border-2 border-[#1e1e1e] bg-[#fff8e7] py-0 pr-2.5 pl-3 text-[#1e1e1e] shadow-[2px_2px_0_#1e1e1e] transition hover:bg-[#ffd54a]"
         }
         aria-expanded={open}
@@ -200,7 +200,9 @@ export function LocaleCurrencySwitcher({
       >
         {compact ? (
           <>
-            <span>{localeShortLabels[locale]}</span>
+            <span className="font-noto-armenian font-semibold tracking-normal">
+              {localeShortLabels[locale]}
+            </span>
             <ChevronDown
               className={`size-[14px] shrink-0 text-[#1e1e1e] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
               aria-hidden
@@ -213,7 +215,9 @@ export function LocaleCurrencySwitcher({
               <span className="inline-block w-[2px]" aria-hidden />
               <span>/</span>
               <span className="inline-block w-[2px]" aria-hidden />
-              <span>{localeShortLabels[locale]}</span>
+              <span className="font-noto-armenian font-semibold tracking-normal">
+                {localeShortLabels[locale]}
+              </span>
             </span>
             <ChevronDown
               className={`h-4 w-4 shrink-0 text-[#1e1e1e] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}

@@ -69,6 +69,12 @@ body {
     var(--font-montserrat), ui-sans-serif, sans-serif;
 }
 
+/** Soft rounded Armenian UI labels (language switcher short code). */
+.font-noto-armenian {
+  font-family: var(--font-noto-armenian), var(--font-montserrat-arm),
+    ui-sans-serif, sans-serif;
+}
+
 /* Hero entrance + pide float (approximates Figma Kling video 51:133) */
 @keyframes pideh-hero-line1-in {
   from {
@@ -218,7 +224,7 @@ body {
 }
 
 .storefront-shell:has(.pideh-login) {
-  background: var(--pideh-ink);
+  background: var(--pideh-cream);
 }
 
 .storefront-shell:has(.pideh-login) .storefront-footer {
@@ -268,7 +274,12 @@ body {
 .storefront-shell:has(.pideh-about) .storefront-footer {
   position: relative;
   z-index: 1;
-  margin-top: -6rem;
+  /*
+   * About ends on a full-viewport gallery (cream + rounded photo), not an orange
+   * drip section. Cancel SiteFooter `-mt-10` and do not pull the yellow wave into
+   * the gallery — that was the cramped/overlapping seam on /about only.
+   */
+  margin-top: 0;
 }
 
 .storefront-shell:has(.pideh-shop) .storefront-footer {
