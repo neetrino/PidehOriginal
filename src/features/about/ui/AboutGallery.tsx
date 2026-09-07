@@ -31,7 +31,6 @@ export function AboutGallery({ copy }: AboutGalleryProps) {
       >
         {ABOUT_GALLERY.map((slide, index) => {
           const caption = copy.gallery[index];
-          const step = String(index + 1).padStart(2, "0");
 
           return (
             <article
@@ -51,18 +50,6 @@ export function AboutGallery({ copy }: AboutGalleryProps) {
                 className="object-cover"
                 priority={index === 0}
               />
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent"
-              />
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 px-5 py-8 sm:px-10 sm:py-10">
-                <h2 className="font-display text-3xl text-white uppercase md:text-5xl">
-                  {caption?.title ?? ""}
-                </h2>
-                <p className="font-mono text-sm tracking-[0.2em] text-white/80">
-                  {step}/{String(ABOUT_GALLERY.length).padStart(2, "0")}
-                </p>
-              </div>
             </article>
           );
         })}

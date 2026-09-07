@@ -36,7 +36,6 @@ export default async function ContactPage({ params }: ContactPageProps) {
               sending: contact.sending,
               success: contact.success,
               error: contact.error,
-              ticketStamp: contact.ticketStamp,
             }}
           />
         </div>

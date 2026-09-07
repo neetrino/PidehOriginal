@@ -75,7 +75,7 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         showPasswordLabel={dictionary.showPassword}
         hidePasswordLabel={dictionary.hidePassword}
         autoComplete="new-password"
-        variant="night"
+        variant="brand"
       />
 
       <PasswordField
@@ -84,13 +84,13 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         showPasswordLabel={dictionary.showPassword}
         hidePasswordLabel={dictionary.hidePassword}
         autoComplete="new-password"
-        variant="night"
+        variant="brand"
       />
 
       {state.error ? (
         <p
           role="alert"
-          className="rounded-2xl border border-red-400/40 bg-red-500/10 p-3 text-sm text-red-200"
+          className="rounded-2xl border border-red-400/50 bg-red-50 p-3 text-sm text-red-700"
         >
           {state.error}
         </p>
@@ -105,12 +105,12 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
           : dictionary.submitRegister}
       </button>
 
-      <p className="text-center text-sm text-white/65">
+      <p className="text-center text-sm text-[#1e1e1e]/70">
         {dictionary.hasAccount}{" "}
         <AppLink
           href={`/${locale}/login`}
           prefetchPolicy="intent"
-          className="font-bold text-[#ffd54a] underline-offset-2 hover:underline"
+          className="font-bold text-[#ff6b00] underline-offset-2 hover:underline"
         >
           {dictionary.signInLink}
         </AppLink>

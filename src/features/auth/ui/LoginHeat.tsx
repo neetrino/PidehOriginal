@@ -1,24 +1,21 @@
-"use client";
+import Image from "next/image";
 
-import { MeshGradient } from "@paper-design/shaders-react";
-import { useReducedMotion } from "motion/react";
+/** Local high-res food photo — no cream wash / light overlays. */
+const LOGIN_FOOD_IMAGE = "/brand/pideh/login-food-bg.png";
 
-const LOGIN_MESH_COLORS = ["#1e1e1e", "#ff6b00", "#3a1400", "#ffd54a"] as const;
-
+/** Full-bleed food photo behind auth. */
 export function LoginHeat() {
-  const reduceMotion = useReducedMotion();
-
   return (
     <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true">
-      <MeshGradient
-        className="size-full"
-        colors={[...LOGIN_MESH_COLORS]}
-        speed={reduceMotion ? 0 : 0.28}
-        distortion={0.85}
-        swirl={0.22}
-        grainOverlay={0.18}
+      <Image
+        src={LOGIN_FOOD_IMAGE}
+        alt=""
+        fill
+        priority
+        quality={95}
+        sizes="100vw"
+        className="object-cover object-center"
       />
-      <div className="absolute inset-0 bg-[#1e1e1e]/35" />
     </div>
   );
 }

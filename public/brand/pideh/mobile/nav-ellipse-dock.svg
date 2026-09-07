@@ -1,0 +1,24 @@
+<svg width="440" height="130" viewBox="0 0 440 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g filter="url(#figmaEllipse3469Shadow)">
+    <!--
+      Figma Ellipse 3469: radius 468, chord 440 → ~55px center dip.
+      Fill is ONLY below the arc — above the curve stays transparent.
+    -->
+    <path
+      d="M0 22A468 468 0 0 1 440 22V130H0V22Z"
+      fill="#FF6900"
+    />
+  </g>
+  <defs>
+    <filter id="figmaEllipse3469Shadow" x="-30" y="0" width="500" height="150" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="-4"/>
+      <feGaussianBlur stdDeviation="6"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.439 0 0 0 0 0.205 0 0 0 0 0 0 0 0 0.42 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+  </defs>
+</svg>

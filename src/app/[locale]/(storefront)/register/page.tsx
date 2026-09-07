@@ -20,13 +20,7 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
   const { auth } = dictionary;
 
   return (
-    <LoginScene
-      eyebrow={auth.loginEyebrow}
-      neon={auth.loginNeon}
-      title={auth.registerTitle}
-      subtitle={auth.registerSubtitle}
-      windowLabel={auth.loginWindowLabel}
-    >
+    <LoginScene title={auth.registerTitle}>
       <RegisterForm locale={rawLocale} dictionary={auth} />
     </LoginScene>
   );

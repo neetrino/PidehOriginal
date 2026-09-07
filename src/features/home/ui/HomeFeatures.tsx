@@ -1,9 +1,8 @@
 import Image from "next/image";
 
-import { PidehPillButton } from "@/components/brand/PidehPillButton";
 import { RevealOnView } from "@/components/motion/RevealOnView";
 import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
-import { FEATURE_ENTRANCES, fadeUp, pillPop, titleSweep } from "@/components/motion/presets";
+import { FEATURE_ENTRANCES, fadeUp, titleSweep } from "@/components/motion/presets";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
 
 type FeatureImageBox = {
@@ -31,8 +30,6 @@ type FeatureItem = {
 type HomeFeaturesProps = {
   titleLine1: string;
   titleLine2: string;
-  viewAllLabel: string;
-  viewAllHref: string;
   items: readonly FeatureItem[];
 };
 
@@ -51,26 +48,16 @@ function figmaBox(x: number, y: number, width: number, height: number) {
 export function HomeFeatures({
   titleLine1,
   titleLine2,
-  viewAllLabel,
-  viewAllHref,
   items,
 }: HomeFeaturesProps) {
   return (
     <section className="relative z-10 overflow-x-clip overflow-y-hidden bg-[#ff6b00]">
-      <div className="md:hidden px-4 py-12">
+      <div className="px-4 py-12 md:hidden">
         <RevealOnView variants={titleSweep}>
-          <h2 className="font-display mb-6 text-[clamp(2.5rem,12vw,4.5rem)] leading-[0.78] text-white">
+          <h2 className="font-display mb-8 text-[clamp(2.5rem,12vw,4.5rem)] leading-[0.78] text-white">
             <span className="block">{titleLine1}</span>
             <span className="block">{titleLine2}</span>
           </h2>
-        </RevealOnView>
-        <RevealOnView variants={pillPop} delay={0.1}>
-          <PidehPillButton
-            href={viewAllHref}
-            label={viewAllLabel}
-            tone="yellow"
-            className="mb-8"
-          />
         </RevealOnView>
         <StaggerGroup className="grid grid-cols-2 gap-6" stagger={0.1}>
           {items.map((item, index) => (
@@ -113,20 +100,6 @@ export function HomeFeatures({
             <span className="block">{titleLine1}</span>
             <span className="block">{titleLine2}</span>
           </h2>
-        </RevealOnView>
-
-        <RevealOnView
-          className="absolute z-30"
-          style={figmaBox(1152, 211, 213, 56)}
-          variants={pillPop}
-          delay={0.12}
-        >
-          <PidehPillButton
-            href={viewAllHref}
-            label={viewAllLabel}
-            tone="yellow"
-            className="h-full w-full px-6 py-4"
-          />
         </RevealOnView>
 
         <div

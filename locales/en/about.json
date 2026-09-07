@@ -2,11 +2,11 @@
   "eyebrow": "Pideh · Yerevan",
   "title": "About our online store",
   "heroImageAlt": "Freshly baked Pideh pide on a cream table",
-  "storyTitles": ["Welcome", "Mission", "Team"],
+  "storyTitles": ["Beginning", "Mission", "Goal"],
   "paragraphs": [
-    "We are delighted to welcome you to our online store. Our company strives to provide you with the best shopping experience with a wide range of quality products and excellent service.",
-    "Our mission is to make online shopping simple, convenient and enjoyable. We carefully select each product to ensure high quality and customer satisfaction.",
-    "We are proud to offer not only excellent products but also excellent customer service. Our team is always ready to help you find exactly what you are looking for."
+    "The fast-food chain was founded in 2020 by restaurateur Areg Gevorgyan — also known as Restormania. The project is built on a simple idea of quick food: tasty, high-quality, and filling meals at an accessible price.",
+    "Pideh is a convenient choice for anyone who wants a quick meal during the day without giving up taste or quality. The concept combines fast service, affordable prices, and satisfying food — a good fit for dining in or ordering ahead.",
+    "Over the years, Pideh has built a recognizable style and a loyal circle of guests. Today the chain has two addresses in Yerevan: Yeznik Koghbatsi St. 83 and Zoravar Andranik St. 151/2. Pideh’s goal is to keep developing fast-food culture while balancing quality, accessibility, and convenience."
   ],
   "gallery": [
     { "title": "Pavilion", "alt": "Pideh street pavilion in Yerevan" },
@@ -15,7 +15,7 @@
     { "title": "Terrace", "alt": "Pideh outdoor terrace" },
     { "title": "Table", "alt": "Pide and spices on the table" }
   ],
-  "marquee": ["Pideh", "Yerevan", "Pide", "Hospitality", "Fresh dough"],
+  "marquee": ["Pideh", "Yerevan", "Pide", "Fresh dough"],
   "stats": [
     { "value": 2, "suffix": "", "label": "branches" },
     { "value": 12, "suffix": "", "label": "hours open" },
