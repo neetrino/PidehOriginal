@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-import { GROUP_ORDER_PAYMENT_MODES } from "@/features/group-orders/domain/status";
+import {
+  GROUP_ORDER_PAYMENT_MODES,
+  GROUP_ORDER_STATUSES,
+} from "@/features/group-orders/domain/status";
 
 export const createGroupOrderSchema = z.object({
   paymentMode: z.enum(GROUP_ORDER_PAYMENT_MODES),
@@ -79,6 +82,17 @@ export const setDeliveryAddressSchema = z.object({
 export const adminGroupOrderIdSchema = z.object({
   groupOrderId: z.string().uuid(),
 });
+
+export const adminGroupOrdersFilterSchema = z.object({
+  status: z.enum(GROUP_ORDER_STATUSES).optional(),
+  paymentMode: z.enum(GROUP_ORDER_PAYMENT_MODES).optional(),
+  q: z.string().trim().max(100).optional(),
+  page: z.coerce.number().int().min(1).max(500).default(1),
+});
+
+export type AdminGroupOrdersFilter = z.infer<
+  typeof adminGroupOrdersFilterSchema
+>;
 
 export const adminMarkParticipantPaidSchema = z.object({
   groupOrderId: z.string().uuid(),

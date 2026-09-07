@@ -2,13 +2,17 @@
 
 import { createHash } from "node:crypto";
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 import { getProviders } from "@/config/providers";
 import {
   cartItems,
   carts,
+  giftCards,
+  groupOrderItemModifiers,
+  groupOrderItems,
+  groupOrderParticipants,
   orderEvents,
   orderItemModifiers,
   orderItems,
@@ -19,7 +23,6 @@ import {
   promotions,
   stockMovements,
   users,
-  giftCards,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
 import {
@@ -63,6 +66,7 @@ import {
   formatDeliverySlotSnapshot,
   isDeliverySlotAvailable,
 } from "@/features/delivery/domain/delivery-schedule";
+import { loadPrimaryProductImageObjectKeys } from "@/features/orders/application/order-item-images";
 import {
   ORDER_NUMBER_LOCK_KEY,
   formatOrderNumber,
@@ -301,12 +305,15 @@ export async function createOrderAction(
         productId: string;
         title: string;
         sku: string;
+        imageKey: string | null;
         quantity: number;
         unitAmount: number;
         unitDisplayAmount: number;
         compareAtAmount: number | null;
         lineDiscountAmount: number;
         lineTotal: number;
+        groupOrderParticipantId: string | null;
+        participantNameSnapshot: string | null;
         modifiers: Array<{
           modifierId: string;
           kind: "ADDITION" | "EXCEPTION";
@@ -341,13 +348,16 @@ export async function createOrderAction(
         lockedById.set(productId, locked);
       }
 
-      const pricedUnits = await resolveProductPrices(
-        [...lockedById.values()].map((product) => ({
-          id: product.id,
-          priceAmount: product.priceAmount,
-          compareAtAmount: product.compareAtAmount,
-        })),
-      );
+      const [pricedUnits, primaryImageKeys] = await Promise.all([
+        resolveProductPrices(
+          [...lockedById.values()].map((product) => ({
+            id: product.id,
+            priceAmount: product.priceAmount,
+            compareAtAmount: product.compareAtAmount,
+          })),
+        ),
+        loadPrimaryProductImageObjectKeys([...lockedById.keys()]),
+      ]);
 
       const remainingStock = new Map(
         [...lockedById.entries()].map(([id, product]) => [
@@ -392,12 +402,15 @@ export async function createOrderAction(
             locked.translations.hy?.title ??
             locked.sku,
           sku: locked.sku,
+          imageKey: primaryImageKeys.get(locked.id) ?? null,
           quantity: item.quantity,
           unitAmount,
           unitDisplayAmount,
           compareAtAmount,
           lineDiscountAmount,
           lineTotal,
+          groupOrderParticipantId: null,
+          participantNameSnapshot: null,
           modifiers: modifiers.map((modifier) => ({
             modifierId: modifier.id,
             kind: modifier.kind,
@@ -406,6 +419,117 @@ export async function createOrderAction(
               modifier.kind === "ADDITION" ? modifier.priceAmount : 0,
           })),
         });
+      }
+
+      if (groupCheckout.active) {
+        const groupLines = await tx
+          .select({
+            item: groupOrderItems,
+            participantId: groupOrderParticipants.id,
+            participantName: groupOrderParticipants.displayName,
+            product: products,
+          })
+          .from(groupOrderItems)
+          .innerJoin(
+            groupOrderParticipants,
+            eq(groupOrderItems.participantId, groupOrderParticipants.id),
+          )
+          .innerJoin(products, eq(groupOrderItems.productId, products.id))
+          .where(eq(groupOrderItems.groupOrderId, groupCheckout.groupOrderId));
+
+        if (groupLines.length === 0) {
+          throw new Error("Group order has no items to checkout.");
+        }
+
+        const missingImageProductIds = [
+          ...new Set(
+            groupLines
+              .map((row) => row.product.id)
+              .filter((id) => !primaryImageKeys.has(id)),
+          ),
+        ];
+        if (missingImageProductIds.length > 0) {
+          const extraKeys = await loadPrimaryProductImageObjectKeys(
+            missingImageProductIds,
+          );
+          for (const [productId, objectKey] of extraKeys) {
+            primaryImageKeys.set(productId, objectKey);
+          }
+        }
+
+        const groupLineIds = groupLines.map((row) => row.item.id);
+        const groupMods =
+          groupLineIds.length === 0
+            ? []
+            : await tx
+                .select()
+                .from(groupOrderItemModifiers)
+                .where(
+                  inArray(
+                    groupOrderItemModifiers.groupOrderItemId,
+                    groupLineIds,
+                  ),
+                );
+        const modsByGroupLine = new Map<string, typeof groupMods>();
+        for (const mod of groupMods) {
+          const list = modsByGroupLine.get(mod.groupOrderItemId) ?? [];
+          list.push(mod);
+          modsByGroupLine.set(mod.groupOrderItemId, list);
+        }
+
+        lineSnapshots.length = 0;
+        subtotal = 0;
+        for (const row of groupLines) {
+          const locked = lockedById.get(row.product.id);
+          if (!locked) {
+            throw new Error("A product in the cart is unavailable.");
+          }
+          const resolved = pricedUnits.get(locked.id);
+          const unitAmount = row.item.unitAmount;
+          const compareAtAmount = resolved?.compareAtAmount ?? null;
+          const lineDiscountAmount = Math.max(
+            0,
+            (resolved?.listAmount ?? locked.priceAmount) -
+              (resolved?.unitAmount ?? locked.priceAmount),
+          );
+          const lineTotal = row.item.lineTotalAmount;
+          const unitDisplayAmount = Number(
+            convertAmount(
+              unitAmount,
+              rateSnapshot.rate,
+              defaultCurrency,
+              displayCurrency,
+            ).amount,
+          );
+          subtotal += lineTotal;
+          const mods = modsByGroupLine.get(row.item.id) ?? [];
+          lineSnapshots.push({
+            productId: locked.id,
+            title:
+              locked.translations.en?.title ??
+              locked.translations.hy?.title ??
+              locked.sku,
+            sku: locked.sku,
+            imageKey: primaryImageKeys.get(locked.id) ?? null,
+            quantity: row.item.quantity,
+            unitAmount,
+            unitDisplayAmount,
+            compareAtAmount,
+            lineDiscountAmount,
+            lineTotal,
+            groupOrderParticipantId: row.participantId,
+            participantNameSnapshot: row.participantName,
+            modifiers: mods.map((mod) => ({
+              modifierId: mod.modifierId,
+              kind:
+                mod.kindSnapshot === "EXCEPTION"
+                  ? ("EXCEPTION" as const)
+                  : ("ADDITION" as const),
+              name: mod.nameSnapshot,
+              unitPriceAmount: mod.priceAmountSnapshot,
+            })),
+          });
+        }
       }
 
       const stockAfterOrder = remainingStock;
@@ -672,6 +796,7 @@ export async function createOrderAction(
           productId: line.productId,
           productTitleSnapshot: line.title,
           productSkuSnapshot: line.sku,
+          productImageKeySnapshot: line.imageKey,
           quantity: line.quantity,
           unitBaseAmount: line.unitAmount,
           unitDisplayAmount: line.unitDisplayAmount,
@@ -679,6 +804,8 @@ export async function createOrderAction(
           discountAmount: line.lineDiscountAmount * line.quantity,
           lineTotalAmount: line.lineTotal,
           currency: defaultCurrency,
+          groupOrderParticipantId: line.groupOrderParticipantId,
+          participantNameSnapshot: line.participantNameSnapshot,
         });
 
         if (line.modifiers.length > 0) {

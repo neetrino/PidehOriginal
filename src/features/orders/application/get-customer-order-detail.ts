@@ -1,24 +1,20 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
-
-import { getDb } from "@/db/client";
-import { groupOrderParticipants } from "@/db/schema";
+import { canCustomerAccessOrder } from "@/features/orders/application/customer-order-access";
 import {
-  toAdminOrderDetailView,
+  getAdminOrderDetailView,
   type AdminOrderDetailView,
 } from "@/features/orders/application/order-detail-view";
-import { getAdminOrderByNumber } from "@/features/orders/application/queries";
-import { resolveCustomerFacingOrderAmount } from "@/features/orders/domain/customer-order-amount";
-import { getStoreIdentity } from "@/features/settings/application/queries";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
+import { getAdminOrderByNumber } from "@/features/orders/application/queries";
 
 /**
- * Customer-owned fetch of a single order for the profile order details drawer.
- * Returns NOT_FOUND when the order is missing or belongs to another user.
- * Group-order amounts are scoped to this customer's participant share.
+ * Customer fetch of a single order for the profile order details drawer.
+ * Returns NOT_FOUND when the order is missing, or the viewer is neither the
+ * owner nor an ACTIVE group-order participant.
+ * Group orders include per-participant breakdown so members can be distinguished.
  */
 export async function getCustomerOrderDetailAction(
   locale: string,
@@ -36,60 +32,23 @@ export async function getCustomerOrderDetailAction(
   const user = await requireUser(locale as Locale);
   const loaded = await getAdminOrderByNumber(trimmed);
 
-  if (!loaded || loaded.order.userId !== user.id) {
+  if (!loaded) {
     return err("NOT_FOUND", "Order not found.");
   }
 
-  const identity = await getStoreIdentity();
-  const view = toAdminOrderDetailView(loaded, identity.name);
-
-  if (!loaded.order.groupOrderId) {
-    return ok(view);
-  }
-
-  const [participant] = await getDb()
-    .select({
-      id: groupOrderParticipants.id,
-      subtotalAmount: groupOrderParticipants.subtotalAmount,
-      deliveryShareAmount: groupOrderParticipants.deliveryShareAmount,
-      finalAmount: groupOrderParticipants.finalAmount,
-    })
-    .from(groupOrderParticipants)
-    .where(
-      and(
-        eq(groupOrderParticipants.groupOrderId, loaded.order.groupOrderId),
-        eq(groupOrderParticipants.userId, user.id),
-        eq(groupOrderParticipants.status, "ACTIVE"),
-      ),
-    )
-    .limit(1);
-
-  if (!participant) {
-    return ok(view);
-  }
-
-  const ownTotal = resolveCustomerFacingOrderAmount({
-    orderTotalAmount: loaded.order.totalAmount,
+  const allowed = await canCustomerAccessOrder({
+    userId: user.id,
+    orderUserId: loaded.order.userId,
     groupOrderId: loaded.order.groupOrderId,
-    participantFinalAmount: participant.finalAmount,
   });
+  if (!allowed) {
+    return err("NOT_FOUND", "Order not found.");
+  }
 
-  const ownItems = loaded.items.some(
-    (item) => item.groupOrderParticipantId != null,
-  )
-    ? view.items.filter((_, index) => {
-        const item = loaded.items[index];
-        return item?.groupOrderParticipantId === participant.id;
-      })
-    : view.items;
+  const detail = await getAdminOrderDetailView(trimmed, locale as Locale);
+  if (!detail) {
+    return err("NOT_FOUND", "Order not found.");
+  }
 
-  return ok({
-    ...view,
-    subtotalAmount: participant.subtotalAmount,
-    deliveryAmount: participant.deliveryShareAmount,
-    discountAmount: 0,
-    totalAmount: ownTotal,
-    paymentAmount: ownTotal,
-    items: ownItems,
-  });
+  return ok(detail);
 }

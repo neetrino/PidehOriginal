@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_DELIVERY_SCHEDULE,
   buildSlotsForDate,
+  formatYerevanDateTime,
   isDeliverySlotAvailable,
   listAvailableDeliveryDays,
   parseDeliverySchedule,
@@ -103,5 +104,14 @@ describe("listAvailableDeliveryDays / isDeliverySlotAvailable", () => {
         now,
       ),
     ).toBe(false);
+  });
+});
+
+describe("formatYerevanDateTime", () => {
+  it("formats UTC instants in Asia/Yerevan wall time", () => {
+    // 12:00 UTC → 16:00 in Yerevan (UTC+4, no DST).
+    expect(formatYerevanDateTime(new Date("2026-09-07T12:00:00.000Z"))).toBe(
+      "2026-09-07 16:00",
+    );
   });
 });

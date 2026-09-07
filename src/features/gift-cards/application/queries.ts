@@ -9,6 +9,8 @@ import {
   isGiftCardRedeemable,
   giftCardRedeemErrorMessage,
   normalizeGiftCardCode,
+  resolveCustomerGiftCardBucket,
+  type CustomerGiftCardBucket,
 } from "@/features/gift-cards/domain/gift-card-rules";
 
 export type GiftCardRedeemActor = {
@@ -44,6 +46,10 @@ export type GiftCardListItem = {
   activatedAt: Date | null;
   expiresAt: Date | null;
   createdAt: Date;
+};
+
+export type CustomerGiftCardListItem = GiftCardListItem & {
+  bucket: CustomerGiftCardBucket;
 };
 
 export type GiftCardDetail = GiftCardListItem & {
@@ -125,19 +131,38 @@ export async function getGiftCardDetail(
 export async function listCustomerGiftCards(
   userId: string,
   userEmail: string,
-): Promise<GiftCardListItem[]> {
+): Promise<CustomerGiftCardListItem[]> {
   const email = userEmail.trim().toLowerCase();
-  return getDb()
-    .select(listColumns)
+  const actor = { id: userId, email };
+  const rows = await getDb()
+    .select({
+      ...listColumns,
+      purchaserUserId: giftCards.purchaserUserId,
+      recipientUserId: giftCards.recipientUserId,
+    })
     .from(giftCards)
     .where(
       or(
         eq(giftCards.purchaserUserId, userId),
         eq(giftCards.recipientUserId, userId),
         email ? eq(giftCards.recipientEmail, email) : sql`false`,
+        email ? eq(giftCards.purchaserEmail, email) : sql`false`,
       ),
     )
     .orderBy(desc(giftCards.createdAt));
+
+  return rows.map(({ purchaserUserId, recipientUserId, ...card }) => ({
+    ...card,
+    bucket: resolveCustomerGiftCardBucket({
+      actor,
+      purchaserUserId,
+      purchaserEmail: card.purchaserEmail,
+      recipientUserId,
+      recipientEmail: card.recipientEmail,
+      status: card.status,
+      balanceAmount: card.balanceAmount,
+    }),
+  }));
 }
 
 export type AdminGiftCardFilters = {

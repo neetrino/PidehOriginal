@@ -206,6 +206,59 @@ function formatUserOptionLabel(
   return name.length > 0 ? `${name} (${email})` : email;
 }
 
+export type UserAssignedCoupon = {
+  id: string;
+  code: string;
+  discountType: string;
+  discountValue: number;
+  isActive: boolean;
+  endsAt: Date | null;
+  usedCount: number;
+  totalUsageLimit: number | null;
+};
+
+/** Coupons explicitly allowlisted for a user (empty allowlist = unrestricted, not listed). */
+export async function listCouponsAssignedToUser(
+  userId: string,
+): Promise<UserAssignedCoupon[]> {
+  const rows = await getDb()
+    .select({
+      id: promotions.id,
+      code: promotions.code,
+      discountType: promotions.discountType,
+      discountValue: promotions.discountValue,
+      isActive: promotions.isActive,
+      endsAt: promotions.endsAt,
+      usedCount: promotions.usedCount,
+      totalUsageLimit: promotions.totalUsageLimit,
+    })
+    .from(promotionUsers)
+    .innerJoin(promotions, eq(promotionUsers.promotionId, promotions.id))
+    .where(
+      and(
+        eq(promotionUsers.userId, userId),
+        eq(promotions.kind, "COUPON"),
+      ),
+    )
+    .orderBy(desc(promotions.createdAt));
+
+  return rows.flatMap((row) => {
+    if (!row.code) return [];
+    return [
+      {
+        id: row.id,
+        code: row.code,
+        discountType: row.discountType,
+        discountValue: row.discountValue,
+        isActive: row.isActive,
+        endsAt: row.endsAt,
+        usedCount: row.usedCount,
+        totalUsageLimit: row.totalUsageLimit,
+      },
+    ];
+  });
+}
+
 /** Product/category options for automatic discount targeting. */
 export async function listPromotionTargetOptions(): Promise<{
   products: Array<{ id: string; sku: string; title: string }>;

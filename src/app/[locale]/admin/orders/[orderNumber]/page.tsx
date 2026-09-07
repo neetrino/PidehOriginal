@@ -22,7 +22,9 @@ import {
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
+import { getAdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderByNumber } from "@/features/orders/application/queries";
+import { formatYerevanDateTime } from "@/features/delivery/domain/delivery-schedule";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { mediaPublicUrl } from "@/lib/media/public-url";
@@ -51,10 +53,17 @@ export default async function AdminOrderDetailPage({
     notFound();
   }
 
+  const view = await getAdminOrderDetailView(
+    decodeURIComponent(orderNumber),
+    locale,
+  );
+  const participants = view?.participants ?? null;
+
   const { order, items, events } = detail;
   const address = order.shippingAddress;
 
   const d = copy.orders.detail;
+  const drawer = copy.orders.drawer;
 
   const deliveryLabel = order.deliveryLabelSnapshot
     ? d.deliveryWithLabel
@@ -181,16 +190,40 @@ export default async function AdminOrderDetailPage({
           </p>
           <p className="text-sm text-gray-700">{deliveryLabel}</p>
           <p className="text-sm text-gray-700">{couponLabel}</p>
+          {order.bonusRedeemedAmount > 0 ? (
+            <p className="text-sm text-green-700">
+              {d.bonusRedeemed.replace(
+                "{amount}",
+                formatMoney(order.bonusRedeemedAmount, order.baseCurrency),
+              )}
+            </p>
+          ) : null}
+          {order.giftCardAmount > 0 ? (
+            <p className="text-sm text-green-700">
+              {d.giftCard.replace(
+                "{amount}",
+                formatMoney(order.giftCardAmount, order.baseCurrency),
+              )}
+            </p>
+          ) : null}
           <p className="mt-2 text-sm font-semibold text-gray-900">
             {d.total.replace(
               "{amount}",
               formatMoney(order.totalAmount, order.baseCurrency),
             )}
           </p>
+          {order.bonusEarnedAmount > 0 ? (
+            <p className="mt-1 text-sm text-emerald-700">
+              {d.bonusEarned.replace(
+                "{amount}",
+                formatMoney(order.bonusEarnedAmount, order.baseCurrency),
+              )}
+            </p>
+          ) : null}
           <p className="mt-2 text-sm text-gray-500">
             {d.placedAt.replace(
               "{datetime}",
-              order.placedAt.toISOString().slice(0, 16).replace("T", " "),
+              formatYerevanDateTime(order.placedAt),
             )}
           </p>
         </Card>
@@ -198,37 +231,109 @@ export default async function AdminOrderDetailPage({
 
       <Card className={`mb-6 ${ADMIN_TABLE_CARD}`}>
         <div className="border-b border-gray-200 px-4 py-3 sm:px-5">
-          <h2 className={ADMIN_SECTION_TITLE}>{d.lineItems}</h2>
+          <h2 className={ADMIN_SECTION_TITLE}>
+            {participants && participants.length > 0
+              ? drawer.participants
+              : d.lineItems}
+          </h2>
         </div>
-        <div className={ADMIN_TABLE_OUTER_SCROLL}>
-          <table className={ADMIN_TABLE}>
-            <thead className={ADMIN_TABLE_THEAD}>
-              <tr>
-                <th className={ADMIN_TABLE_TH}>{d.product}</th>
-                <th className={ADMIN_TABLE_TH}>{d.qty}</th>
-                <th className={ADMIN_TABLE_TH}>{d.lineTotal}</th>
-              </tr>
-            </thead>
-            <tbody className={ADMIN_TABLE_TBODY}>
-              {items.map((item) => (
-                <tr key={item.id} className={ADMIN_TABLE_ROW}>
-                  <td className={ADMIN_TABLE_TD}>
-                    <p className="font-medium text-gray-900">
-                      {item.productTitleSnapshot}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {item.productSkuSnapshot}
-                    </p>
-                  </td>
-                  <td className={ADMIN_TABLE_TD}>×{item.quantity}</td>
-                  <td className={ADMIN_TABLE_TD}>
-                    {formatMoney(item.lineTotalAmount, item.currency)}
-                  </td>
+        {participants && participants.length > 0 ? (
+          <div className="space-y-4 px-4 py-4 sm:px-5">
+            {participants.map((participant) => (
+              <div
+                key={participant.id}
+                className="rounded-xl border border-gray-200 p-4"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <p className="text-sm font-bold tracking-wide text-emerald-800 uppercase">
+                    {participant.displayName}
+                    {participant.role === "ORGANIZER" ? (
+                      <span className="ml-2 text-xs font-semibold normal-case text-gray-500">
+                        ({drawer.organizer})
+                      </span>
+                    ) : null}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    {drawer.paymentMethod.replace(
+                      "{method}",
+                      participant.paymentMethod,
+                    )}
+                  </p>
+                </div>
+                <p className="mt-2 text-xs text-gray-600">
+                  {drawer.subtotal}:{" "}
+                  {formatMoney(participant.subtotalAmount, order.baseCurrency)}
+                  {" · "}
+                  {drawer.delivery}:{" "}
+                  {formatMoney(
+                    participant.deliveryShareAmount,
+                    order.baseCurrency,
+                  )}
+                  {" · "}
+                  {drawer.grandTotal}:{" "}
+                  {formatMoney(participant.finalAmount, order.baseCurrency)}
+                  {participant.bonusEarnedAmount > 0
+                    ? ` · ${drawer.bonusEarned}: +${formatMoney(participant.bonusEarnedAmount, order.baseCurrency)}`
+                    : ""}
+                </p>
+                <ul className="mt-3 space-y-2">
+                  {participant.items.map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex items-center justify-between gap-3 text-sm"
+                    >
+                      <span className="min-w-0 truncate text-gray-900">
+                        {item.title}
+                        {item.modifiers.length > 0
+                          ? ` (${item.modifiers
+                              .map(
+                                (m) =>
+                                  `${m.kind === "ADDITION" ? "+" : "−"}${m.name}`,
+                              )
+                              .join(", ")})`
+                          : ""}{" "}
+                        ×{item.quantity}
+                      </span>
+                      <span className="shrink-0 font-medium text-gray-900">
+                        {formatMoney(item.lineTotalAmount, item.currency)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={ADMIN_TABLE_OUTER_SCROLL}>
+            <table className={ADMIN_TABLE}>
+              <thead className={ADMIN_TABLE_THEAD}>
+                <tr>
+                  <th className={ADMIN_TABLE_TH}>{d.product}</th>
+                  <th className={ADMIN_TABLE_TH}>{d.qty}</th>
+                  <th className={ADMIN_TABLE_TH}>{d.lineTotal}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className={ADMIN_TABLE_TBODY}>
+                {items.map((item) => (
+                  <tr key={item.id} className={ADMIN_TABLE_ROW}>
+                    <td className={ADMIN_TABLE_TD}>
+                      <p className="font-medium text-gray-900">
+                        {item.productTitleSnapshot}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {item.productSkuSnapshot}
+                      </p>
+                    </td>
+                    <td className={ADMIN_TABLE_TD}>×{item.quantity}</td>
+                    <td className={ADMIN_TABLE_TD}>
+                      {formatMoney(item.lineTotalAmount, item.currency)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
 
       <Card className="p-6">

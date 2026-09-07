@@ -16,6 +16,8 @@ type AdminOrdersViewOrder = {
   contactName: string;
   contactEmail: string;
   totalAmount: number;
+  bonusRedeemedAmount: number;
+  bonusEarnedAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
   isArchived: boolean;

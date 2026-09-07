@@ -93,6 +93,11 @@
     "initial": "Initial value",
     "recipient": "Recipient",
     "expires": "Expires",
+    "filters": {
+      "mine": "My gift cards",
+      "usedByMe": "Gift cards used by me",
+      "boughtForOthers": "Gift cards I bought for others"
+    },
     "statuses": {
       "PENDING_PAYMENT": "Pending payment",
       "ACTIVE": "Active",

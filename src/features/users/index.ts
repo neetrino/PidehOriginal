@@ -3,6 +3,7 @@ export {
   updateUserRoleAction,
   updateUserStatusAction,
 } from "@/features/users/application/update-user";
+export { getAdminUserDetailAction } from "@/features/users/application/get-admin-user-detail";
 export {
   getAdminUserById,
   listAdminUsers,

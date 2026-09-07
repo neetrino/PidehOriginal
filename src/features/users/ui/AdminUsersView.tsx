@@ -30,11 +30,14 @@ import {
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
+import { getAdminUserDetailAction } from "@/features/users/application/get-admin-user-detail";
+import type { AdminUserDrawerDetail } from "@/features/users/application/get-admin-user-detail";
 import {
   bulkAnonymizeUsersAction,
   updateUserStatusAction,
 } from "@/features/users/application/update-user";
 import type { AdminUserListItem } from "@/features/users/application/queries";
+import { AdminUserDetailsDrawer } from "@/features/users/ui/AdminUserDetailsDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminUsersViewProps = {
@@ -83,6 +86,11 @@ export function AdminUsersView({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerDetail, setDrawerDetail] =
+    useState<AdminUserDrawerDetail | null>(null);
+  const [drawerError, setDrawerError] = useState<string | null>(null);
+  const [drawerPending, startDrawerTransition] = useTransition();
 
   const allIds = users.map((user) => user.id);
   const allSelected =
@@ -99,6 +107,28 @@ export function AdminUsersView({
 
   function toggleAll(): void {
     setSelected(allSelected ? new Set() : new Set(allIds));
+  }
+
+  function openUser(userId: string): void {
+    setDrawerOpen(true);
+    setDrawerDetail(null);
+    setDrawerError(null);
+
+    startDrawerTransition(async () => {
+      const result = await getAdminUserDetailAction(locale, userId);
+      if (!result.ok) {
+        setDrawerError(result.error.message);
+        setDrawerDetail(null);
+        return;
+      }
+      setDrawerDetail(result.value);
+    });
+  }
+
+  function closeDrawer(): void {
+    setDrawerOpen(false);
+    setDrawerDetail(null);
+    setDrawerError(null);
   }
 
   function runAction(action: () => Promise<void>): void {
@@ -237,31 +267,41 @@ export function AdminUsersView({
                   const isActive = user.status === "ACTIVE";
                   const canToggle =
                     user.status === "ACTIVE" || user.status === "SUSPENDED";
+                  const name = displayName(user);
 
                   return (
-                    <tr key={user.id} className={ADMIN_TABLE_ROW}>
-                      <td className={ADMIN_TABLE_TD_CHECK}>
+                    <tr
+                      key={user.id}
+                      className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+                      onClick={() => openUser(user.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          openUser(user.id);
+                        }
+                      }}
+                      tabIndex={0}
+                      role="link"
+                      aria-label={name}
+                    >
+                      <td
+                        className={ADMIN_TABLE_TD_CHECK}
+                        onClick={(event) => event.stopPropagation()}
+                      >
                         <input
                           type="checkbox"
                           className={ADMIN_TABLE_CHECKBOX}
                           checked={selected.has(user.id)}
                           onChange={() => toggleOne(user.id)}
                           disabled={isPending || user.status === "ANONYMIZED"}
-                          aria-label={copy.users.selectOneAria.replace("{name}", displayName(user))}
+                          aria-label={copy.users.selectOneAria.replace("{name}", name)}
                         />
                       </td>
                       <td className={ADMIN_TABLE_TD}>
-                        <Link
-                          href={`/${locale}/admin/users/${user.id}`}
-                          className="block min-w-[160px]"
-                        >
-                          <p className="font-medium text-gray-900 hover:underline">
-                            {displayName(user)}
-                          </p>
-                          <p className="truncate text-xs text-gray-400">
-                            {user.id}
-                          </p>
-                        </Link>
+                        <p className="font-medium text-gray-900">{name}</p>
+                        <p className="truncate text-xs text-gray-400">
+                          {user.id}
+                        </p>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
                         <p className="text-sm text-gray-600">{user.email}</p>
@@ -285,7 +325,10 @@ export function AdminUsersView({
                           {user.role.toLowerCase()}
                         </span>
                       </td>
-                      <td className={ADMIN_TABLE_TD_CENTER}>
+                      <td
+                        className={ADMIN_TABLE_TD_CENTER}
+                        onClick={(event) => event.stopPropagation()}
+                      >
                         <button
                           type="button"
                           role="switch"
@@ -310,8 +353,8 @@ export function AdminUsersView({
                           }`}
                           aria-label={
                             isActive
-                              ? copy.users.suspendAria.replace("{name}", displayName(user))
-                              : copy.users.activateAria.replace("{name}", displayName(user))
+                              ? copy.users.suspendAria.replace("{name}", name)
+                              : copy.users.activateAria.replace("{name}", name)
                           }
                         >
                           <span
@@ -348,6 +391,16 @@ export function AdminUsersView({
           if (!isPending) setConfirmOpen(false);
         }}
         onConfirm={confirmDeleteSelected}
+      />
+
+      <AdminUserDetailsDrawer
+        open={drawerOpen}
+        onClose={closeDrawer}
+        locale={locale}
+        detail={drawerDetail}
+        error={drawerError}
+        isLoading={drawerPending}
+        copy={copy}
       />
     </section>
   );

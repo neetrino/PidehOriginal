@@ -7,12 +7,10 @@ import type { Currency } from "@/lib/money/currency";
 type CartDrawerTotalsProps = {
   currency: Currency;
   subtotalLabel: string;
-  shippingLabel: string;
   totalLabel: string;
   checkoutLabel: string;
   checkoutHref: string;
   subtotalAmount: number;
-  shippingAmount: number;
   totalAmount: number;
   hasItems: boolean;
   onCheckout: () => void;
@@ -21,12 +19,10 @@ type CartDrawerTotalsProps = {
 export function CartDrawerTotals({
   currency,
   subtotalLabel,
-  shippingLabel,
   totalLabel,
   checkoutLabel,
   checkoutHref,
   subtotalAmount,
-  shippingAmount,
   totalAmount,
   hasItems,
   onCheckout,
@@ -38,12 +34,6 @@ export function CartDrawerTotals({
           <dt>{subtotalLabel}</dt>
           <dd className="tabular-nums font-medium text-[#1e1e1e]">
             <CartMoneyFlow amount={subtotalAmount} currency={currency} />
-          </dd>
-        </div>
-        <div className="flex items-center justify-between text-[#1e1e1e]/70">
-          <dt>{shippingLabel}</dt>
-          <dd className="tabular-nums font-medium text-[#1e1e1e]">
-            <CartMoneyFlow amount={shippingAmount} currency={currency} />
           </dd>
         </div>
         <div className="flex items-center justify-between pt-1 text-base font-bold text-[#1e1e1e]">

@@ -2,14 +2,16 @@
 
 import { useMemo, useState, useTransition } from "react";
 
+import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
+import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
 import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
+import { getMapPickerConfigAction } from "@/features/delivery/application/get-map-picker-config";
 import { saveDeliverySettingsAction } from "@/features/delivery/application/save-delivery-settings";
 import type { CashChangeDenomination } from "@/features/delivery/domain/cash-change";
 import type { StoreDeliverySettings } from "@/features/delivery/domain/delivery-settings";
@@ -103,6 +105,8 @@ export function AdminDeliveryView({
       setSchedule({ ...schedule, weekly });
       const result = await saveDeliverySettingsAction(locale, {
         originAddress,
+        originLat,
+        originLng,
         pricePerKmAmount: Number(pricePerKmAmount),
         isActive,
         schedule: {
@@ -124,6 +128,15 @@ export function AdminDeliveryView({
       setOriginLat(result.value.originLat);
       setOriginLng(result.value.originLng);
       setMessage(copy.delivery.saved);
+    });
+  }
+
+  function onPlaceSelected(address: string): void {
+    startTransition(async () => {
+      const config = await getMapPickerConfigAction(address);
+      if (!config.ok) return;
+      setOriginLat(config.center.lat);
+      setOriginLng(config.center.lng);
     });
   }
 
@@ -156,17 +169,39 @@ export function AdminDeliveryView({
               </p>
             </div>
 
-            <label>
+            <div>
               <span className={ADMIN_LABEL}>{copy.delivery.storeAddress}</span>
-              <AddressAutocomplete
-                value={originAddress}
-                onValueChange={setOriginAddress}
-                placeholder={copy.delivery.storeAddressPlaceholder}
-                required
-                className={ADMIN_INPUT}
-                disabled={isPending}
-                languageCode={languageCode}
-              />
+              <div className="mt-1 flex items-start gap-2">
+                <div className="min-w-0 flex-1">
+                  <AddressAutocomplete
+                    value={originAddress}
+                    onValueChange={setOriginAddress}
+                    onPlaceSelected={onPlaceSelected}
+                    placeholder={copy.delivery.storeAddressPlaceholder}
+                    required
+                    className={ADMIN_INPUT}
+                    disabled={isPending}
+                    languageCode={languageCode}
+                  />
+                </div>
+                <AddressMapPicker
+                  addressValue={originAddress}
+                  disabled={isPending}
+                  onAddressSelected={(address, point) => {
+                    setOriginAddress(address);
+                    setOriginLat(point.lat);
+                    setOriginLng(point.lng);
+                  }}
+                  labels={{
+                    openMap: copy.delivery.map.openMap,
+                    title: copy.delivery.map.title,
+                    hint: copy.delivery.map.hint,
+                    confirm: copy.delivery.map.confirm,
+                    cancel: copy.delivery.map.cancel,
+                    resolving: copy.delivery.map.resolving,
+                  }}
+                />
+              </div>
               <span className="mt-1 block text-xs text-gray-500">
                 {copy.delivery.storeAddressHint}
               </span>
@@ -177,7 +212,7 @@ export function AdminDeliveryView({
                     .replace("{lng}", originLng.toFixed(5))}
                 </span>
               ) : null}
-            </label>
+            </div>
 
             <label>
               <span className={ADMIN_LABEL}>{copy.delivery.pricePerKm}</span>
@@ -217,6 +252,12 @@ export function AdminDeliveryView({
               />
               {copy.delivery.offerDelivery}
             </label>
+
+            <div>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? copy.common.saving : copy.common.save}
+              </Button>
+            </div>
           </div>
         </Card>
 

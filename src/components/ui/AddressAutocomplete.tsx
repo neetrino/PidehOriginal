@@ -11,6 +11,8 @@ type AddressAutocompleteProps = {
   name?: string;
   value: string;
   onValueChange: (value: string) => void;
+  /** Fires when the user picks a Google suggestion (not on every keystroke). */
+  onPlaceSelected?: (address: string) => void;
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
@@ -23,6 +25,7 @@ export function AddressAutocomplete({
   name,
   value,
   onValueChange,
+  onPlaceSelected,
   placeholder,
   disabled = false,
   required = false,
@@ -113,6 +116,7 @@ export function AddressAutocomplete({
     }
     requestIdRef.current += 1;
     onValueChange(suggestion.fullText);
+    onPlaceSelected?.(suggestion.fullText);
     clearSuggestions();
   }
 

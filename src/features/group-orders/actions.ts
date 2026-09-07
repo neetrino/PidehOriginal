@@ -236,7 +236,7 @@ export async function checkActiveGroupOrderSessionAction() {
 
 export async function listAdminGroupOrdersAction(locale: Locale) {
   await requireAdmin(locale);
-  return listAdminGroupOrders();
+  return listAdminGroupOrders({ page: 1 });
 }
 
 export async function getAdminGroupOrderDetailAction(

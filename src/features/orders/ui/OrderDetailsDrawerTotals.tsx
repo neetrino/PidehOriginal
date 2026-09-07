@@ -57,12 +57,53 @@ export function OrderDetailsDrawerTotals({
           </span>
         </div>
 
+        {detail.bonusRedeemedAmount > 0 ? (
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-gray-600">{d.bonusRedeemed}</span>
+            <span className="font-medium text-green-700">
+              −
+              {formatOrderDrawerMoney(
+                detail.bonusRedeemedAmount,
+                detail.baseCurrency,
+              )}
+            </span>
+          </div>
+        ) : null}
+
+        {detail.giftCardAmount > 0 ? (
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-gray-600">{d.giftCard}</span>
+            <span className="font-medium text-green-700">
+              −
+              {formatOrderDrawerMoney(
+                detail.giftCardAmount,
+                detail.baseCurrency,
+              )}
+            </span>
+          </div>
+        ) : null}
+
         <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-3">
-          <span className="text-base font-semibold text-gray-900">{d.grandTotal}</span>
+          <span className="text-base font-semibold text-gray-900">
+            {d.grandTotal}
+          </span>
           <span className="text-base font-semibold text-gray-900">
             {formatOrderDrawerMoney(detail.totalAmount, detail.baseCurrency)}
           </span>
         </div>
+
+        {detail.bonusEarnedAmount > 0 ? (
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-gray-600">{d.bonusEarned}</span>
+            <span className="font-medium text-emerald-700">
+              +
+              {formatOrderDrawerMoney(
+                detail.bonusEarnedAmount,
+                detail.baseCurrency,
+              )}
+            </span>
+          </div>
+        ) : null}
       </div>
     </div>
   );

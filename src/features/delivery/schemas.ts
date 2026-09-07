@@ -72,6 +72,8 @@ const cashChangeDenominationSchema = z.object({
 export const deliverySettingsSchema = z
   .object({
     originAddress: z.string().trim().min(3).max(300),
+    originLat: z.number().finite().min(-90).max(90).nullable().optional(),
+    originLng: z.number().finite().min(-180).max(180).nullable().optional(),
     pricePerKmAmount: z.coerce.number().int().min(0).max(10_000_000),
     isActive: z.boolean(),
     schedule: deliveryScheduleSchema,
@@ -81,6 +83,16 @@ export const deliverySettingsSchema = z
       .default([]),
   })
   .superRefine((value, ctx) => {
+    const hasLat = value.originLat != null;
+    const hasLng = value.originLng != null;
+    if (hasLat !== hasLng) {
+      ctx.addIssue({
+        code: "custom",
+        path: hasLat ? ["originLng"] : ["originLat"],
+        message: "Store map pin requires both latitude and longitude.",
+      });
+    }
+
     const amounts = new Set<number>();
     for (const [index, item] of value.cashChangeDenominations.entries()) {
       if (amounts.has(item.amount)) {

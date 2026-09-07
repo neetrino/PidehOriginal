@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { getCustomerBonusSummary } from "@/features/bonuses/application/queries";
+import { formatYerevanDateTime } from "@/features/delivery/domain/delivery-schedule";
 import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
@@ -82,13 +83,12 @@ export default async function ProfileBonusesPage({
                       {typeLabel(row.type, copy.types)}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {row.createdAt.toISOString().slice(0, 16).replace("T", " ")}{" "}
-                      UTC
+                      {formatYerevanDateTime(row.createdAt)}
                       {row.orderNumber ? (
                         <>
                           {" · "}
                           <AppLink
-                            href={`/${rawLocale}/profile/orders`}
+                            href={`/${rawLocale}/profile/orders?order=${encodeURIComponent(row.orderNumber)}`}
                             className="underline-offset-2 hover:underline"
                           >
                             {copy.order} {row.orderNumber}

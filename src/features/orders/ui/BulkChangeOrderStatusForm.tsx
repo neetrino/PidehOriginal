@@ -26,6 +26,7 @@ import {
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
+import { formatYerevanDateTime } from "@/features/delivery/domain/delivery-schedule";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -37,6 +38,8 @@ type BulkOrderRow = {
   contactName: string;
   contactEmail: string;
   totalAmount: number;
+  bonusRedeemedAmount: number;
+  bonusEarnedAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
   isArchived: boolean;
@@ -169,6 +172,7 @@ export function BulkChangeOrderStatusForm({
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.status}</th>
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.payment}</th>
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.total}</th>
+                <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.bonus}</th>
                 <th className={ADMIN_TABLE_TH}>{copy.orders.table.placed}</th>
               </tr>
             </thead>
@@ -178,6 +182,15 @@ export function BulkChangeOrderStatusForm({
                   key={order.id}
                   className={`${ADMIN_TABLE_ROW} cursor-pointer`}
                   onClick={() => onOpenOrder(order.orderNumber)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      onOpenOrder(order.orderNumber);
+                    }
+                  }}
+                  tabIndex={0}
+                  role="link"
+                  aria-label={order.orderNumber}
                 >
                   <td
                     className={ADMIN_TABLE_TD_CHECK}
@@ -240,13 +253,34 @@ export function BulkChangeOrderStatusForm({
                       {formatMoney(order.totalAmount, order.baseCurrency)}
                     </span>
                   </td>
+                  <td className={ADMIN_TABLE_TD_METRIC}>
+                    {order.bonusEarnedAmount > 0 ||
+                    order.bonusRedeemedAmount > 0 ? (
+                      <div className="flex flex-col gap-0.5 text-xs">
+                        {order.bonusEarnedAmount > 0 ? (
+                          <span className="font-medium text-emerald-700">
+                            +{formatMoney(order.bonusEarnedAmount, order.baseCurrency)}
+                          </span>
+                        ) : null}
+                        {order.bonusRedeemedAmount > 0 ? (
+                          <span className="font-medium text-green-700">
+                            −
+                            {formatMoney(
+                              order.bonusRedeemedAmount,
+                              order.baseCurrency,
+                            )}
+                          </span>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-400">
+                        {copy.orders.table.bonusEmpty}
+                      </span>
+                    )}
+                  </td>
                   <td className={ADMIN_TABLE_TD}>
                     <span className="text-xs text-gray-500">
-                      {new Date(order.placedAt)
-                        .toISOString()
-                        .slice(0, 16)
-                        .replace("T", " ")}{" "}
-                      {copy.common.utc}
+                      {formatYerevanDateTime(order.placedAt)}
                     </span>
                   </td>
                 </tr>

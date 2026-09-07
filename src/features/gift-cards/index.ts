@@ -23,6 +23,7 @@ export {
   evaluateGiftCardForRedeem,
   listAdminGiftCards,
   listCustomerGiftCards,
+  type CustomerGiftCardListItem,
   type GiftCardDetail,
   type GiftCardListItem,
   type GiftCardTransactionView,
@@ -38,6 +39,8 @@ export {
   isGiftCardRedeemable,
   isValidGiftCardAmount,
   normalizeGiftCardCode,
+  resolveCustomerGiftCardBucket,
+  type CustomerGiftCardBucket,
   type GiftCardRedeemPreview,
   type GiftCardSettings,
 } from "@/features/gift-cards/domain/gift-card-rules";

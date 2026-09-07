@@ -24,7 +24,11 @@ import {
   products,
   users,
 } from "@/db/schema";
-import { customerFacingOrderAmountSql } from "@/features/orders/application/customer-facing-order-amount-sql";
+import { customerVisibleOrdersWhere } from "@/features/orders/application/customer-order-access";
+import {
+  customerFacingBonusEarnedSql,
+  customerFacingOrderAmountSql,
+} from "@/features/orders/application/customer-facing-order-amount-sql";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status";
 import { getStoreRevenue } from "@/features/settings/application/queries";
@@ -39,6 +43,8 @@ export type AdminOrderListItem = {
   contactName: string;
   contactEmail: string;
   totalAmount: number;
+  bonusRedeemedAmount: number;
+  bonusEarnedAmount: number;
   baseCurrency: string;
   placedAt: Date;
   isArchived: boolean;
@@ -123,6 +129,8 @@ export async function listAdminOrders(
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,
+        bonusRedeemedAmount: orders.bonusRedeemedAmount,
+        bonusEarnedAmount: orders.bonusEarnedAmount,
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
@@ -143,17 +151,17 @@ export async function listAdminOrders(
 }
 
 /**
- * Lists orders belonging to a single customer (profile surface).
- * Same shape as admin list rows; always scoped to `userId`.
+ * Lists orders visible to a customer (profile surface): owned orders plus
+ * group orders where they are an ACTIVE participant.
+ * Same shape as admin list rows; amounts are viewer-scoped for group orders.
  */
 export async function listCustomerOrders(
   userId: string,
   filters: AdminOrdersFilter,
 ): Promise<{ rows: AdminOrderListItem[]; total: number; pageSize: number }> {
   const baseWhere = buildOrderFilters(filters);
-  const where = baseWhere
-    ? and(eq(orders.userId, userId), baseWhere)
-    : eq(orders.userId, userId);
+  const visibility = customerVisibleOrdersWhere(userId);
+  const where = baseWhere ? and(visibility, baseWhere) : visibility;
   const offset = (filters.page - 1) * PAGE_SIZE;
 
   const [rows, [totalRow]] = await Promise.all([
@@ -166,7 +174,10 @@ export async function listCustomerOrders(
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         /** Own group-order share when applicable; admin list keeps raw total. */
-        totalAmount: customerFacingOrderAmountSql(),
+        totalAmount: customerFacingOrderAmountSql(userId),
+        bonusRedeemedAmount: orders.bonusRedeemedAmount,
+        /** Viewer's earn row when present; else order snapshot. */
+        bonusEarnedAmount: customerFacingBonusEarnedSql(userId),
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
@@ -365,6 +376,8 @@ export async function getAdminDashboardMetrics(input: {
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,
+        bonusRedeemedAmount: orders.bonusRedeemedAmount,
+        bonusEarnedAmount: orders.bonusEarnedAmount,
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,

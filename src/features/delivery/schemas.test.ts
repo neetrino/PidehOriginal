@@ -29,6 +29,23 @@ describe("deliverySettingsSchema", () => {
     expect(deliverySettingsSchema.safeParse(base).success).toBe(true);
   });
 
+  it("accepts an explicit store map pin", () => {
+    const parsed = deliverySettingsSchema.safeParse({
+      ...base,
+      originLat: 40.1792,
+      originLng: 44.4991,
+    });
+    expect(parsed.success).toBe(true);
+  });
+
+  it("rejects a partial store map pin", () => {
+    const parsed = deliverySettingsSchema.safeParse({
+      ...base,
+      originLat: 40.1792,
+    });
+    expect(parsed.success).toBe(false);
+  });
+
   it("normalizes HH:mm:ss from time inputs", () => {
     const parsed = deliverySettingsSchema.safeParse({
       ...base,

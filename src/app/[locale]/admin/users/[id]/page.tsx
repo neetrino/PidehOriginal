@@ -4,20 +4,19 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import {
   ADMIN_PAGE_SUBTITLE,
-  ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
 import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
-import {
-  ADMIN_BADGE,
-  orderStatusBadgeClass,
-  paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
+import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
+import { getCustomerBonusSummary } from "@/features/bonuses";
+import { listCustomerGiftCards } from "@/features/gift-cards";
+import { listCouponsAssignedToUser } from "@/features/promotions";
 import { getAdminUserById } from "@/features/users/application/queries";
 import {
   getEligibleUserStatuses,
   isUserRole,
   isUserStatus,
 } from "@/features/users/domain/user-lifecycle";
+import { AdminUserLoyaltySections } from "@/features/users/ui/AdminUserLoyaltySections";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
 import { isLocale } from "@/lib/i18n/config";
@@ -66,10 +65,17 @@ export default async function AdminUserDetailPage({
   }
 
   const { user, recentOrders } = detail;
+  const [bonuses, giftCards, coupons] = await Promise.all([
+    getCustomerBonusSummary(user.id, { limit: 10 }),
+    listCustomerGiftCards(user.id, user.email),
+    listCouponsAssignedToUser(user.id),
+  ]);
+
   const role = isUserRole(user.role) ? user.role : null;
   const status = isUserStatus(user.status) ? user.status : null;
   const eligibleStatuses = status ? getEligibleUserStatuses(status) : [];
   const isAnonymized = status === "ANONYMIZED";
+  const d = t.users.detail;
 
   return (
     <section>
@@ -91,7 +97,7 @@ export default async function AdminUserDetailPage({
       <Card className="mb-6 p-6">
         <div className="grid gap-3 text-sm md:grid-cols-2">
           <p className="text-gray-700">
-            {t.users.detail.role}{" "}
+            {d.role}{" "}
             <span
               className={`${ADMIN_BADGE} ${userRoleBadgeClass(user.role)}`}
             >
@@ -99,7 +105,7 @@ export default async function AdminUserDetailPage({
             </span>
           </p>
           <p className="text-gray-700">
-            {t.users.detail.status}{" "}
+            {d.status}{" "}
             <span
               className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
             >
@@ -107,26 +113,26 @@ export default async function AdminUserDetailPage({
             </span>
           </p>
           <p className="text-gray-700">
-            {t.users.detail.phone.replace("{phone}", user.phone ?? t.common.none)}
+            {d.phone.replace("{phone}", user.phone ?? t.common.none)}
           </p>
           <p className="text-gray-700">
-            {t.users.detail.emailVerified.replace(
+            {d.emailVerified.replace(
               "{value}",
               user.emailVerifiedAt
                 ? user.emailVerifiedAt.toISOString().slice(0, 10)
-                : t.users.detail.emailVerifiedNo,
+                : d.emailVerifiedNo,
             )}
           </p>
           <p className="text-gray-700">
-            {t.users.detail.lastLogin.replace(
+            {d.lastLogin.replace(
               "{value}",
               user.lastLoginAt
                 ? user.lastLoginAt.toISOString().slice(0, 16).replace("T", " ")
-                : t.users.detail.lastLoginNever,
+                : d.lastLoginNever,
             )}
           </p>
           <p className="text-gray-700">
-            {t.users.detail.created.replace(
+            {d.created.replace(
               "{date}",
               user.createdAt.toISOString().slice(0, 10),
             )}
@@ -144,7 +150,7 @@ export default async function AdminUserDetailPage({
             copy={t}
           />
         ) : (
-          <p className="text-sm text-red-700">{t.users.detail.unknownRole}</p>
+          <p className="text-sm text-red-700">{d.unknownRole}</p>
         )}
         {status ? (
           <UpdateUserStatusForm
@@ -155,44 +161,40 @@ export default async function AdminUserDetailPage({
             copy={t}
           />
         ) : (
-          <p className="text-sm text-red-700">{t.users.detail.unknownStatus}</p>
+          <p className="text-sm text-red-700">{d.unknownStatus}</p>
         )}
       </div>
 
-      <Card className="p-6">
-        <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>{t.users.detail.recentOrders}</h2>
-        <div className="space-y-3">
-          {recentOrders.map((order) => (
-            <Link
-              key={order.id}
-              href={`/${locale}/admin/orders/${order.orderNumber}`}
-              className="block rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <strong className="text-sm text-gray-900">
-                  {order.orderNumber}
-                </strong>
-                <span
-                  className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-                >
-                  {order.status}
-                </span>
-                <span
-                  className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-                >
-                  {order.paymentStatus}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-gray-600">
-                {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
-              </p>
-            </Link>
-          ))}
-          {recentOrders.length === 0 ? (
-            <p className="text-sm text-gray-600">{t.users.detail.noOrders}</p>
-          ) : null}
-        </div>
-      </Card>
+      <AdminUserLoyaltySections
+        locale={locale}
+        bonuses={bonuses}
+        giftCards={giftCards}
+        coupons={coupons}
+        recentOrders={recentOrders}
+        copy={{
+          bonusesTitle: d.bonusesTitle,
+          availableBalance: d.availableBalance,
+          totalEarned: d.totalEarned,
+          totalRedeemed: d.totalRedeemed,
+          noBonusHistory: d.noBonusHistory,
+          orderLabel: d.orderLabel,
+          bonusTypes: d.bonusTypes,
+          giftCardsTitle: d.giftCardsTitle,
+          noGiftCards: d.noGiftCards,
+          giftCardBalance: d.giftCardBalance,
+          giftCardStatuses: d.giftCardStatuses,
+          couponsTitle: d.couponsTitle,
+          noCoupons: d.noCoupons,
+          couponActive: d.couponActive,
+          couponInactive: d.couponInactive,
+          couponExpires: d.couponExpires,
+          couponNoExpiry: d.couponNoExpiry,
+          percentOff: d.percentOff,
+          fixedAmount: d.fixedAmount,
+          recentOrders: d.recentOrders,
+          noOrders: d.noOrders,
+        }}
+      />
     </section>
   );
 }

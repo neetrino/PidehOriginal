@@ -12,6 +12,7 @@ import {
   isValidGiftCardAmount,
   nextGiftCardBalance,
   normalizeGiftCardCode,
+  resolveCustomerGiftCardBucket,
   resolveGiftCardExpiresAt,
   resolveGiftCardStatusAfterBalance,
 } from "@/features/gift-cards/domain/gift-card-rules";
@@ -221,5 +222,57 @@ describe("gift-card-rules", () => {
         orderStatus: "REFUNDED",
       }),
     ).toBe(0);
+  });
+
+  it("classifies customer gift-card profile buckets", () => {
+    const actor = { id: "user-1", email: "me@example.com" };
+
+    expect(
+      resolveCustomerGiftCardBucket({
+        actor,
+        purchaserUserId: "user-2",
+        purchaserEmail: "other@example.com",
+        recipientUserId: "user-1",
+        recipientEmail: "me@example.com",
+        status: "ACTIVE",
+        balanceAmount: 10_000,
+      }),
+    ).toBe("mine");
+
+    expect(
+      resolveCustomerGiftCardBucket({
+        actor,
+        purchaserUserId: "user-2",
+        purchaserEmail: "other@example.com",
+        recipientUserId: "user-1",
+        recipientEmail: "me@example.com",
+        status: "USED",
+        balanceAmount: 0,
+      }),
+    ).toBe("usedByMe");
+
+    expect(
+      resolveCustomerGiftCardBucket({
+        actor,
+        purchaserUserId: "user-1",
+        purchaserEmail: "me@example.com",
+        recipientUserId: "user-3",
+        recipientEmail: "friend@example.com",
+        status: "ACTIVE",
+        balanceAmount: 20_000,
+      }),
+    ).toBe("boughtForOthers");
+
+    expect(
+      resolveCustomerGiftCardBucket({
+        actor,
+        purchaserUserId: "user-1",
+        purchaserEmail: "me@example.com",
+        recipientUserId: "user-1",
+        recipientEmail: "me@example.com",
+        status: "ACTIVE",
+        balanceAmount: 5_000,
+      }),
+    ).toBe("mine");
   });
 });

@@ -1,12 +1,23 @@
 import "server-only";
 
 import { STORE_PICKUP_LABEL } from "@/features/checkout/domain/shipping-methods";
-import { mediaPublicUrl } from "@/lib/media/public-url";
-import { getStoreIdentity } from "@/features/settings/application/queries";
+import {
+  loadOrderGroupParticipants,
+  type AdminOrderParticipantView,
+} from "@/features/orders/application/order-group-participants";
+import {
+  loadPrimaryProductImageObjectKeys,
+  resolveOrderItemImageUrl,
+} from "@/features/orders/application/order-item-images";
 import {
   getAdminOrderByNumber,
   type AdminOrderDetail,
 } from "@/features/orders/application/queries";
+import { getStoreIdentity } from "@/features/settings/application/queries";
+import type { Locale } from "@/lib/i18n/config";
+import { mediaPublicUrl } from "@/lib/media/public-url";
+
+export type { AdminOrderParticipantView };
 
 export type AdminOrderDetailItemView = {
   id: string;
@@ -36,6 +47,9 @@ export type AdminOrderDetailView = {
   subtotalAmount: number;
   deliveryAmount: number;
   discountAmount: number;
+  bonusRedeemedAmount: number;
+  bonusEarnedAmount: number;
+  giftCardAmount: number;
   totalAmount: number;
   deliveryLabel: string | null;
   couponCode: string | null;
@@ -51,6 +65,8 @@ export type AdminOrderDetailView = {
   cashChangeImageUrl: string | null;
   paymentMethod: string;
   paymentAmount: number;
+  /** Present when this order was placed from a group session. */
+  participants: AdminOrderParticipantView[] | null;
   items: AdminOrderDetailItemView[];
 };
 
@@ -87,6 +103,8 @@ function paymentMethodLabel(method: string): string {
 export function toAdminOrderDetailView(
   detail: AdminOrderDetail,
   storeName: string,
+  participants: AdminOrderParticipantView[] | null = null,
+  liveObjectKeyByProductId: ReadonlyMap<string, string> = new Map(),
 ): AdminOrderDetailView {
   const { order, items, payments } = detail;
   const isPickup = order.deliveryLabelSnapshot === STORE_PICKUP_LABEL;
@@ -103,6 +121,9 @@ export function toAdminOrderDetailView(
     subtotalAmount: order.subtotalAmount,
     deliveryAmount: order.deliveryAmount,
     discountAmount: order.discountAmount,
+    bonusRedeemedAmount: order.bonusRedeemedAmount,
+    bonusEarnedAmount: order.bonusEarnedAmount,
+    giftCardAmount: order.giftCardAmount,
     totalAmount: order.totalAmount,
     deliveryLabel: order.deliveryLabelSnapshot,
     couponCode: order.promotionCodeSnapshot,
@@ -137,13 +158,16 @@ export function toAdminOrderDetailView(
       ? paymentMethodLabel(latestPayment.method)
       : "—",
     paymentAmount: latestPayment?.amount ?? order.totalAmount,
+    participants,
     items: items.map((item) => ({
       id: item.id,
       title: item.productTitleSnapshot,
       sku: item.productSkuSnapshot,
-      imageUrl: item.productImageKeySnapshot
-        ? mediaPublicUrl(item.productImageKeySnapshot)
-        : null,
+      imageUrl: resolveOrderItemImageUrl({
+        productImageKeySnapshot: item.productImageKeySnapshot,
+        productId: item.productId,
+        liveObjectKeyByProductId,
+      }),
       quantity: item.quantity,
       unitPriceAmount: item.unitBaseAmount,
       lineTotalAmount: item.lineTotalAmount,
@@ -156,12 +180,37 @@ export function toAdminOrderDetailView(
 /** Loads order detail shaped for the admin drawer. */
 export async function getAdminOrderDetailView(
   orderNumber: string,
+  locale: Locale,
 ): Promise<AdminOrderDetailView | null> {
   const detail = await getAdminOrderByNumber(orderNumber);
   if (!detail) {
     return null;
   }
 
-  const identity = await getStoreIdentity();
-  return toAdminOrderDetailView(detail, identity.name);
+  const productIdsNeedingLiveImage = detail.items
+    .filter((item) => !item.productImageKeySnapshot && item.productId)
+    .map((item) => item.productId as string);
+
+  const [identity, liveObjectKeyByProductId] = await Promise.all([
+    getStoreIdentity(),
+    loadPrimaryProductImageObjectKeys(productIdsNeedingLiveImage),
+  ]);
+
+  const participants = detail.order.groupOrderId
+    ? await loadOrderGroupParticipants({
+        groupOrderId: detail.order.groupOrderId,
+        orderId: detail.order.id,
+        locale,
+        currency: detail.order.baseCurrency,
+        orderItems: detail.items,
+        liveObjectKeyByProductId,
+      })
+    : null;
+
+  return toAdminOrderDetailView(
+    detail,
+    identity.name,
+    participants && participants.length > 0 ? participants : null,
+    liveObjectKeyByProductId,
+  );
 }

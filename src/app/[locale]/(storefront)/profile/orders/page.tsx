@@ -92,7 +92,12 @@ export default async function OrdersPage({
         q={filters.q}
       />
 
-      <CustomerOrdersView locale={locale} orders={rows} copy={dictionary.admin} />
+      <CustomerOrdersView
+        locale={locale}
+        orders={rows}
+        copy={dictionary.admin}
+        initialOrderNumber={firstParam(raw.order)}
+      />
 
       {totalPages > 1 ? (
         <nav className="flex items-center gap-3 text-sm font-medium text-[#1e1e1e]/70">
