@@ -11,7 +11,7 @@
     "giftCards": "Gift Card-եր",
     "users": "Օգտատերեր",
     "analytics": "Վերլուծություն",
-    "hero": "Հերոս",
+    "hero": "Բաններ",
     "popups": "Popup-ներ",
     "blog": "Բլոգ",
     "messages": "Հաղորդագրություններ",
@@ -84,7 +84,7 @@
       "product": "ապրանքը",
       "category": "կատեգորիան",
       "promoCode": "պրոմո կոդը",
-      "slide": "սլայդը",
+      "slide": "բանները",
       "post": "հրապարակումը",
       "popup": "popup-ը"
     },
@@ -150,6 +150,8 @@
       "status": "Կարգավիճակ",
       "payment": "Վճարում",
       "total": "Ընդամենը",
+      "bonus": "Բոնուս",
+      "bonusEmpty": "—",
       "placed": "Կատարման ամսաթիվ",
       "archivedBadge": "Արխիվացված"
     },
@@ -190,6 +192,9 @@
       "amount": "Գումար՝",
       "paymentStatus": "Կարգավիճակ՝",
       "items": "Ապրանքներ",
+      "participants": "Մասնակիցներ",
+      "organizer": "Կազմակերպիչ",
+      "paymentMethod": "Վճարման եղանակ՝ {method}",
       "product": "Ապրանք",
       "sku": "SKU",
       "qty": "Քանակ",
@@ -201,6 +206,9 @@
       "freeStorePickup": "Անվճար (ինքնաառաքում)",
       "couponDiscount": "Կուպոնի զեղչ",
       "couponDiscountWithCode": "Կուպոնի զեղչ ({code})",
+      "bonusRedeemed": "Օգտագործված բոնուսներ",
+      "bonusEarned": "Կուտակված բոնուսներ",
+      "giftCard": "Gift card",
       "grandTotal": "Ընդամենը"
     },
     "detail": {
@@ -211,8 +219,11 @@
       "deliveryWithLabel": "Առաքում ({label})՝ {amount}",
       "couponDiscount": "Կուպոնի զեղչ՝ {amount}",
       "couponDiscountWithCode": "Կուպոնի զեղչ ({code})՝ {amount}",
+      "bonusRedeemed": "Օգտագործված բոնուսներ՝ {amount}",
+      "bonusEarned": "Կուտակված բոնուսներ՝ {amount}",
+      "giftCard": "Gift card՝ {amount}",
       "total": "Ընդամենը՝ {amount}",
-      "placedAt": "Կատարված է {datetime} UTC",
+      "placedAt": "Կատարված է {datetime}",
       "floor": "Հարկ՝",
       "intercomCode": "Դոմոֆոնի կոդ՝",
       "deliverySlot": "Առաքման ժամային միջակայք՝",
@@ -252,6 +263,45 @@
       "title": "Ավելացնել ներքին նշում",
       "note": "Նշում",
       "addNote": "Ավելացնել նշում"
+    }
+  },
+  "groupOrders": {
+    "title": "Խմբային պատվերներ",
+    "filters": {
+      "statusAria": "Խմբային պատվերի կարգավիճակ",
+      "allStatuses": "Բոլոր կարգավիճակները",
+      "modeAria": "Վճարման ռեժիմ",
+      "allModes": "Բոլոր ռեժիմները",
+      "searchPlaceholder": "Որոնել ըստ կազմակերպչի կամ ID",
+      "searchAria": "Որոնել խմբային պատվերներ",
+      "totalGroupOrders": "{total} խմբային պատվեր"
+    },
+    "table": {
+      "id": "ID",
+      "organizer": "Կազմակերպիչ",
+      "total": "Ընդամենը",
+      "delivery": "Առաքում",
+      "created": "Ստեղծված",
+      "status": "Կարգավիճակ",
+      "participants": "Մասնակիցներ",
+      "mode": "Ռեժիմ",
+      "selectAllAria": "Ընտրել էջի բոլոր խմբային պատվերները",
+      "selectOneAria": "Ընտրել խմբային պատվեր {id}",
+      "empty": "Այս զտիչներին համապատասխան խմբային պատվերներ չկան։"
+    },
+    "drawer": {
+      "ariaLabel": "Խմբային պատվերի մանրամասներ",
+      "title": "Խմբային պատվեր",
+      "organizer": "Կազմակերպիչ՝",
+      "invite": "Հրավեր՝",
+      "deliveryTotal": "Առաքում՝ {delivery} · Ընդամենը՝ {total}",
+      "participants": "Մասնակիցներ",
+      "subtotalDeliveryFinal": "Ենթագումար {subtotal} · Առաքում {delivery} · Վերջնական {final}",
+      "payment": "Վճարում՝ {status}",
+      "markPaid": "Նշել որպես վճարված",
+      "activity": "Գործունեություն",
+      "closeJoins": "Փակել միացումները",
+      "cancel": "Չեղարկել խմբային պատվերը"
     }
   },
   "products": {
@@ -408,8 +458,16 @@
     "storeAndPricingHint": "Մեկնարկային հասցեն և մեկ կիլոմետրի առաքման վճարը, որոնք օգտագործվում են պատվերի ձևակերպման ժամանակ։",
     "storeAddress": "Խանութի հասցե",
     "storeAddressPlaceholder": "օր.՝ Անդրանիկ 108/10, Երևան",
-    "storeAddressHint": "Սկսեք մուտքագրել փողոցի անունը — ընտրեք Google-ի առաջարկներից, ապա պահպանեք։",
-    "geocoded": "Գեոկոդավորված՝ {lat}, {lng}",
+    "storeAddressHint": "Սկսեք մուտքագրել փողոցի անունը — ընտրեք Google-ի առաջարկներից, կամ բացեք քարտեզը pin դնելու համար, ապա պահպանեք։",
+    "geocoded": "Pin՝ {lat}, {lng}",
+    "map": {
+      "openMap": "Քարտեզ",
+      "title": "Նշեք խանութը քարտեզի վրա",
+      "hint": "Սեղմեք քարտեզին կամ տեղափոխեք նշիչը խանութի մուտքի ճիշտ տեղը։",
+      "confirm": "Օգտագործել այս տեղը",
+      "cancel": "Փակել",
+      "resolving": "Հասցեն որոշվում է…"
+    },
     "pricePerKm": "Գին մեկ կիլոմետրի համար (AMD)",
     "pricePerKmPlaceholder": "1000",
     "pricePerKmExample": "Օրինակ՝ 1.101 կմ → {amount}",
@@ -576,7 +634,9 @@
       "quantity": "Քանակ",
       "expiresOptional": "Գործողության ավարտ (ըստ ցանկության)",
       "selectUsers": "Ընտրեք օգտատերերին",
-      "allUsersCanUse": "Բոլոր օգտատերերը կարող են օգտագործել այս կուպոնը"
+      "allUsersCanUse": "Բոլոր օգտատերերը կարող են օգտագործել այս կուպոնը",
+      "searchUsers": "Որոնել անունով կամ էլ. փոստով…",
+      "noUsersFound": "Օգտատերեր չեն գտնվել"
     }
   },
   "users": {
@@ -603,6 +663,11 @@
     },
     "suspendAria": "Կասեցնել {name}-ին",
     "activateAria": "Ակտիվացնել {name}-ին",
+    "drawer": {
+      "ariaLabel": "Օգտատիրոջ մանրամասներ",
+      "title": "Օգտատիրոջ մանրամասներ",
+      "loading": "Օգտատերը բեռնվում է…"
+    },
     "detail": {
       "role": "Դեր՝",
       "status": "Կարգավիճակ՝",
@@ -614,6 +679,37 @@
       "created": "Ստեղծվել է՝ {date}",
       "unknownRole": "Անհայտ դեր։",
       "unknownStatus": "Անհայտ կարգավիճակ։",
+      "bonusesTitle": "Բոնուսներ",
+      "availableBalance": "Հասանելի մնացորդ",
+      "totalEarned": "Ընդհանուր կուտակված",
+      "totalRedeemed": "Ընդհանուր օգտագործված",
+      "noBonusHistory": "Բոնուսների շարժ դեռ չկա։",
+      "orderLabel": "Պատվեր՝",
+      "bonusTypes": {
+        "EARN": "Կուտակում",
+        "REDEEM": "Օգտագործում",
+        "REVERSAL_EARN": "Կուտակման վերադարձ",
+        "REVERSAL_REDEEM": "Օգտագործման վերադարձ",
+        "EXPIRE": "Ժամկետի ավարտ"
+      },
+      "giftCardsTitle": "Gift Card-եր",
+      "noGiftCards": "Gift Card դեռ չկա։",
+      "giftCardBalance": "Մնացորդ",
+      "giftCardStatuses": {
+        "PENDING_PAYMENT": "Սպասում է վճարման",
+        "ACTIVE": "Ակտիվ",
+        "USED": "Օգտագործված",
+        "EXPIRED": "Ժամկետանց",
+        "DISABLED": "Անջատված"
+      },
+      "couponsTitle": "Կուպոններ",
+      "noCoupons": "Նշանակված կուպոններ չկան։",
+      "couponActive": "Ակտիվ",
+      "couponInactive": "Ապաակտիվ",
+      "couponExpires": "Մինչև {date}",
+      "couponNoExpiry": "Առանց ժամկետի",
+      "percentOff": "{value}% զեղչ",
+      "fixedAmount": "{value}",
       "recentOrders": "Վերջին պատվերներ",
       "noOrders": "Պատվերներ չկան։"
     },
@@ -675,25 +771,25 @@
     }
   },
   "hero": {
-    "title": "Հերոս սլայդներ",
-    "slideCount": "{count} սլայդ",
-    "slideCountPlural": "{count} սլայդ",
-    "createHeroSlide": "Ստեղծել հերոս սլայդ",
-    "slidesHeading": "Սլայդներ ({count})",
+    "title": "Բաններներ",
+    "slideCount": "{count} բաններ",
+    "slideCountPlural": "{count} բաններ",
+    "createHeroSlide": "Ստեղծել բաններ",
+    "slidesHeading": "Բաններներ ({count})",
     "noImage": "Պատկեր չկա",
     "sortOrder": "կարգ {order}",
     "published": "ՀՐԱՊԱՐԱԿՎԱԾ",
     "draft": "ՍԵՎԱԳԻՐ",
-    "empty": "Դեռևս հերոս սլայդներ չկան։",
+    "empty": "Դեռևս բաններներ չկան։",
     "editAria": "Խմբագրել {title}",
     "deleteAria": "Ջնջել {title}",
-    "publishAria": "Հրապարակել սլայդը",
-    "unpublishAria": "Չհրապարակել սլայդը",
+    "publishAria": "Հրապարակել բանները",
+    "unpublishAria": "Չհրապարակել բանները",
     "drawer": {
-      "createTitle": "Ստեղծել հերոս սլայդ",
-      "editTitle": "Խմբագրել հերոս սլայդը",
-      "createAria": "Ստեղծել հերոս սլայդ",
-      "editAria": "Խմբագրել հերոս սլայդը",
+      "createTitle": "Ստեղծել բաններ",
+      "editTitle": "Խմբագրել բանները",
+      "createAria": "Ստեղծել բաններ",
+      "editAria": "Խմբագրել բանները",
       "title": "Վերնագիր",
       "subtitle": "Ենթավերնագիր",
       "uploadImage": "Վերբեռնել պատկեր",

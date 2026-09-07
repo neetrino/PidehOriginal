@@ -4,7 +4,30 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { SideSheet } from "@/components/ui/SideSheet";
+import {
+  ADMIN_TABLE,
+  ADMIN_TABLE_CARD,
+  ADMIN_TABLE_CHECKBOX,
+  ADMIN_TABLE_OUTER_SCROLL,
+  ADMIN_TABLE_ROW,
+  ADMIN_TABLE_STATE_INSET,
+  ADMIN_TABLE_TBODY,
+  ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
+  ADMIN_TABLE_TD_CHECK,
+  ADMIN_TABLE_TD_METRIC,
+  ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
+  ADMIN_TABLE_TH_CHECK,
+  ADMIN_TABLE_TH_METRIC,
+  ADMIN_TABLE_THEAD,
+} from "@/features/admin/ui/admin-table-classes";
+import {
+  ADMIN_BADGE,
+  groupOrderStatusBadgeClass,
+} from "@/features/admin/ui/status-badge";
 import {
   adminCancelGroupOrderAction,
   adminCloseJoinsAction,
@@ -15,24 +38,53 @@ import type {
   AdminGroupOrderListItem,
   GroupOrderDetailView,
 } from "@/features/group-orders/application/queries";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { formatMoneyAmount } from "@/lib/money/format";
 import type { Currency } from "@/lib/money/currency";
 
 type AdminGroupOrdersViewProps = {
   locale: Locale;
   currency: Currency;
   rows: AdminGroupOrderListItem[];
+  copy: Dictionary["admin"]["groupOrders"];
 };
+
+function shortId(id: string): string {
+  return id.replace(/-/g, "").slice(0, 8).toUpperCase();
+}
 
 export function AdminGroupOrdersView({
   locale,
   currency,
   rows,
+  copy,
 }: AdminGroupOrdersViewProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [detail, setDetail] = useState<GroupOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  const allIds = rows.map((row) => row.id);
+  const allSelected =
+    allIds.length > 0 && allIds.every((id) => selected.has(id));
+
+  function toggleOne(id: string): void {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  function toggleAll(): void {
+    setSelected(allSelected ? new Set() : new Set(allIds));
+  }
 
   function openDetail(id: string): void {
     setError(null);
@@ -64,61 +116,112 @@ export function AdminGroupOrdersView({
     });
   }
 
+  const t = copy.table;
+  const d = copy.drawer;
+
   return (
     <>
-      <div className={`overflow-x-auto rounded-xl border border-gray-200 bg-white ${pending ? "opacity-70" : ""}`}>
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
-            <tr>
-              <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">Organizer</th>
-              <th className="px-4 py-3">Mode</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Participants</th>
-              <th className="px-4 py-3">Delivery</th>
-              <th className="px-4 py-3">Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 ? (
+      <Card className={`mt-4 ${ADMIN_TABLE_CARD} ${pending ? "opacity-70" : ""}`}>
+        <div className={ADMIN_TABLE_OUTER_SCROLL}>
+          <table className={ADMIN_TABLE}>
+            <thead className={ADMIN_TABLE_THEAD}>
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
-                  No group orders yet.
-                </td>
+                <th className={ADMIN_TABLE_TH_CHECK}>
+                  <input
+                    type="checkbox"
+                    className={ADMIN_TABLE_CHECKBOX}
+                    checked={allSelected}
+                    onChange={toggleAll}
+                    disabled={pending || rows.length === 0}
+                    aria-label={t.selectAllAria}
+                  />
+                </th>
+                <th className={ADMIN_TABLE_TH}>{t.id}</th>
+                <th className={ADMIN_TABLE_TH}>{t.organizer}</th>
+                <th className={ADMIN_TABLE_TH_METRIC}>{t.total}</th>
+                <th className={ADMIN_TABLE_TH_METRIC}>{t.delivery}</th>
+                <th className={ADMIN_TABLE_TH}>{t.created}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{t.status}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{t.participants}</th>
+                <th className={ADMIN_TABLE_TH}>{t.mode}</th>
               </tr>
-            ) : (
-              rows.map((row) => (
-                <tr
-                  key={row.id}
-                  className="cursor-pointer border-b border-gray-50 hover:bg-gray-50"
-                  onClick={() => openDetail(row.id)}
-                >
-                  <td className="px-4 py-3 font-mono text-xs">{row.id.slice(0, 8)}…</td>
-                  <td className="px-4 py-3">{row.organizerDisplayName}</td>
-                  <td className="px-4 py-3 text-xs">{row.paymentMode}</td>
-                  <td className="px-4 py-3">{row.status}</td>
-                  <td className="px-4 py-3">{row.participantCount}</td>
-                  <td className="px-4 py-3">{row.deliveryAmount} ֏</td>
-                  <td className="px-4 py-3 text-xs text-gray-500">
-                    {new Date(row.createdAt).toLocaleString()}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className={ADMIN_TABLE_TBODY}>
+              {rows.map((row) => {
+                const idLabel = shortId(row.id);
+                return (
+                  <tr
+                    key={row.id}
+                    className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+                    onClick={() => openDetail(row.id)}
+                  >
+                    <td
+                      className={ADMIN_TABLE_TD_CHECK}
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        className={ADMIN_TABLE_CHECKBOX}
+                        checked={selected.has(row.id)}
+                        onChange={() => toggleOne(row.id)}
+                        disabled={pending}
+                        aria-label={t.selectOneAria.replace("{id}", idLabel)}
+                      />
+                    </td>
+                    <td className={ADMIN_TABLE_TD}>
+                      <span className="font-mono text-xs text-gray-900">
+                        {idLabel}
+                      </span>
+                    </td>
+                    <td className={ADMIN_TABLE_TD}>{row.organizerDisplayName}</td>
+                    <td className={ADMIN_TABLE_TD_METRIC}>
+                      <span className="font-semibold text-gray-900">
+                        {formatMoneyAmount(row.totalAmount, currency, locale)}
+                      </span>
+                    </td>
+                    <td className={ADMIN_TABLE_TD_METRIC}>
+                      {formatMoneyAmount(row.deliveryAmount, currency, locale)}
+                    </td>
+                    <td className={ADMIN_TABLE_TD}>
+                      <p className="text-sm text-gray-900">{row.createdTime}</p>
+                      <p className="text-xs text-gray-500">{row.createdDate}</p>
+                    </td>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
+                      <span
+                        className={`${ADMIN_BADGE} ${groupOrderStatusBadgeClass(row.status)}`}
+                      >
+                        {row.status}
+                      </span>
+                    </td>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
+                      {row.participantCount}
+                    </td>
+                    <td className={`${ADMIN_TABLE_TD} text-xs`}>
+                      {row.paymentMode}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {rows.length === 0 ? (
+          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
+            {t.empty}
+          </p>
+        ) : null}
+      </Card>
 
       <SideSheet
         open={detail != null}
         onClose={() => setDetail(null)}
-        ariaLabel="Group order details"
+        ariaLabel={d.ariaLabel}
         panelClassName="w-full sm:w-[60%]"
       >
         {detail ? (
           <div className="flex h-full flex-col">
             <div className="border-b border-gray-100 px-6 py-5">
-              <h2 className="text-xl font-bold text-gray-900">Group order</h2>
+              <h2 className="text-xl font-bold text-gray-900">{d.title}</h2>
               <p className="mt-1 font-mono text-xs text-gray-500">{detail.id}</p>
               <p className="mt-1 text-sm text-gray-600">
                 {detail.status} · {detail.paymentMode}
@@ -128,19 +231,22 @@ export function AdminGroupOrdersView({
             <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5 text-sm">
               <div>
                 <p className="font-medium text-gray-900">
-                  Organizer: {detail.organizerDisplayName}
+                  {d.organizer} {detail.organizerDisplayName}
                 </p>
                 <p className="mt-1 break-all text-xs text-gray-500">
-                  Invite: {detail.invitePath}
+                  {d.invite} {detail.invitePath}
                 </p>
                 <p className="mt-1 text-gray-600">
-                  Delivery: {detail.deliveryFormatted} · Total:{" "}
-                  {detail.grandTotalFormatted}
+                  {d.deliveryTotal
+                    .replace("{delivery}", detail.deliveryFormatted)
+                    .replace("{total}", detail.grandTotalFormatted)}
                 </p>
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">Participants</h3>
+                <h3 className="mb-2 font-semibold text-gray-900">
+                  {d.participants}
+                </h3>
                 <ul className="space-y-3">
                   {detail.participants.map((p) => (
                     <li
@@ -151,12 +257,13 @@ export function AdminGroupOrdersView({
                         <div>
                           <p className="font-medium">{p.displayName}</p>
                           <p className="text-xs text-gray-500">
-                            Subtotal {p.subtotalFormatted} · Delivery{" "}
-                            {p.deliveryShareFormatted} · Final{" "}
-                            {p.finalAmountFormatted}
+                            {d.subtotalDeliveryFinal
+                              .replace("{subtotal}", p.subtotalFormatted)
+                              .replace("{delivery}", p.deliveryShareFormatted)
+                              .replace("{final}", p.finalAmountFormatted)}
                           </p>
                           <p className="text-xs text-gray-500">
-                            Payment: {p.paymentStatus}
+                            {d.payment.replace("{status}", p.paymentStatus)}
                           </p>
                           <ul className="mt-2 space-y-1 text-xs text-gray-600">
                             {p.items.map((item) => (
@@ -186,7 +293,7 @@ export function AdminGroupOrdersView({
                               )
                             }
                           >
-                            Mark paid
+                            {d.markPaid}
                           </Button>
                         ) : null}
                       </div>
@@ -196,7 +303,7 @@ export function AdminGroupOrdersView({
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">Activity</h3>
+                <h3 className="mb-2 font-semibold text-gray-900">{d.activity}</h3>
                 <ul className="space-y-1 text-xs text-gray-500">
                   {detail.events.map((event) => (
                     <li key={event.id}>
@@ -228,7 +335,7 @@ export function AdminGroupOrdersView({
                   )
                 }
               >
-                Close joins
+                {d.closeJoins}
               </Button>
               <Button
                 type="button"
@@ -243,7 +350,7 @@ export function AdminGroupOrdersView({
                   )
                 }
               >
-                Cancel group order
+                {d.cancel}
               </Button>
             </div>
           </div>

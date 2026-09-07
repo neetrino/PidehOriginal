@@ -34,5 +34,28 @@ export function paymentStatusBadgeClass(status: string): string {
   return "bg-[#1e1e1e]/8 text-[#1e1e1e]";
 }
 
+/** Group-order lifecycle pills — soft semantic tones for the admin list. */
+export function groupOrderStatusBadgeClass(status: string): string {
+  const normalized = status.toUpperCase();
+  if (normalized === "PAID" || normalized === "COMPLETED") {
+    return "bg-emerald-50 text-emerald-800";
+  }
+  if (normalized === "CANCELLED" || normalized === "EXPIRED") {
+    return "bg-red-50 text-red-700";
+  }
+  if (normalized === "OPEN") {
+    return "bg-amber-50 text-amber-800";
+  }
+  if (
+    normalized === "LOCKED" ||
+    normalized === "AWAITING_PAYMENTS" ||
+    normalized === "CHECKOUT" ||
+    normalized === "PREPARING"
+  ) {
+    return "bg-[#ffd54a]/70 text-[#1e1e1e]";
+  }
+  return "bg-[#1e1e1e]/8 text-[#1e1e1e]";
+}
+
 export const ADMIN_BADGE =
   "inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold";

@@ -312,7 +312,7 @@ Order, provider/method, provider reference, requested amount/currency, current s
 
 **Earn:** on transition into `DELIVERED` (group orders split eligible base by participant merchandise share). Leaving `DELIVERED` or cancel/refund reverses earn/redeem via ledger rows (`REVERSAL_EARN` / `REVERSAL_REDEEM`).
 
-**Gift cards:** codes use `PID-XXXX-XXXX`. Purchase (COD) activates immediately and emails the recipient. Status lifecycle: `PENDING_PAYMENT` → `ACTIVE` → `USED` / `EXPIRED` / `DISABLED`. Ledgers are immutable; balances are cached on `users.bonus_balance` and `gift_cards.balance_amount`.
+**Gift cards:** codes use `PID-XXXX-XXXX`. Purchase (COD) activates immediately and emails the recipient. Redeem is recipient-bound: only the signed-in recipient (`recipient_user_id` or matching `recipient_email`) may apply the code at checkout. Status lifecycle: `PENDING_PAYMENT` → `ACTIVE` → `USED` / `EXPIRED` / `DISABLED`. Ledgers are immutable; balances are cached on `users.bonus_balance` and `gift_cards.balance_amount`.
 
 **Settings keys:** `store.bonuses`, `store.giftCards`.
 

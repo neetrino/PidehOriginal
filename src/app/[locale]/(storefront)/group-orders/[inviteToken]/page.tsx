@@ -33,6 +33,7 @@ export default async function GroupOrderInvitePage({ params }: PageProps) {
   return (
     <GroupOrderPageClient
       locale={locale}
+      currency={currency}
       labels={dictionary.groupOrder}
       initialView={view}
       inviteToken={inviteToken}

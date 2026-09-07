@@ -11,6 +11,7 @@ export {
   toAdminOrderDetailView,
   type AdminOrderDetailItemView,
   type AdminOrderDetailView,
+  type AdminOrderParticipantView,
 } from "@/features/orders/application/order-detail-view";
 export {
   getAdminDashboardMetrics,

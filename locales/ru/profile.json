@@ -93,6 +93,11 @@
     "initial": "Номинал",
     "recipient": "Получатель",
     "expires": "Срок",
+    "filters": {
+      "mine": "Мои подарочные карты",
+      "usedByMe": "Использованные мной карты",
+      "boughtForOthers": "Карты, купленные мной для других"
+    },
     "statuses": {
       "PENDING_PAYMENT": "Ожидает оплаты",
       "ACTIVE": "Активна",

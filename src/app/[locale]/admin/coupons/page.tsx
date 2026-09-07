@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { listAdminPromotions } from "@/features/promotions/application/queries";
+import { listAdminPromotions, listCouponUserOptions } from "@/features/promotions/application/queries";
 import { adminPromotionsFilterSchema } from "@/features/promotions/schemas/admin-promotions";
 import { AdminCouponsView } from "@/features/promotions/ui/AdminCouponsView";
 import { isLocale } from "@/lib/i18n/config";
@@ -51,6 +51,9 @@ export default async function AdminCouponsPage({
     listAdminPromotions(filters),
     getDictionary(locale),
   ]);
+  const userOptions = await listCouponUserOptions(
+    rows.flatMap((row) => row.userIds),
+  );
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
@@ -58,6 +61,7 @@ export default async function AdminCouponsPage({
       <AdminCouponsView
         locale={locale}
         coupons={rows}
+        userOptions={userOptions}
         copy={{
           coupons: dict.admin.coupons,
           common: dict.admin.common,

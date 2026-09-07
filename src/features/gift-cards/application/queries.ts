@@ -5,10 +5,18 @@ import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { giftCardTransactions, giftCards, users } from "@/db/schema";
 import {
+  isGiftCardRecipientActor,
   isGiftCardRedeemable,
   giftCardRedeemErrorMessage,
   normalizeGiftCardCode,
+  resolveCustomerGiftCardBucket,
+  type CustomerGiftCardBucket,
 } from "@/features/gift-cards/domain/gift-card-rules";
+
+export type GiftCardRedeemActor = {
+  id: string;
+  email: string;
+} | null;
 
 export type GiftCardTransactionView = {
   id: string;
@@ -38,6 +46,10 @@ export type GiftCardListItem = {
   activatedAt: Date | null;
   expiresAt: Date | null;
   createdAt: Date;
+};
+
+export type CustomerGiftCardListItem = GiftCardListItem & {
+  bucket: CustomerGiftCardBucket;
 };
 
 export type GiftCardDetail = GiftCardListItem & {
@@ -119,19 +131,38 @@ export async function getGiftCardDetail(
 export async function listCustomerGiftCards(
   userId: string,
   userEmail: string,
-): Promise<GiftCardListItem[]> {
+): Promise<CustomerGiftCardListItem[]> {
   const email = userEmail.trim().toLowerCase();
-  return getDb()
-    .select(listColumns)
+  const actor = { id: userId, email };
+  const rows = await getDb()
+    .select({
+      ...listColumns,
+      purchaserUserId: giftCards.purchaserUserId,
+      recipientUserId: giftCards.recipientUserId,
+    })
     .from(giftCards)
     .where(
       or(
         eq(giftCards.purchaserUserId, userId),
         eq(giftCards.recipientUserId, userId),
         email ? eq(giftCards.recipientEmail, email) : sql`false`,
+        email ? eq(giftCards.purchaserEmail, email) : sql`false`,
       ),
     )
     .orderBy(desc(giftCards.createdAt));
+
+  return rows.map(({ purchaserUserId, recipientUserId, ...card }) => ({
+    ...card,
+    bucket: resolveCustomerGiftCardBucket({
+      actor,
+      purchaserUserId,
+      purchaserEmail: card.purchaserEmail,
+      recipientUserId,
+      recipientEmail: card.recipientEmail,
+      status: card.status,
+      balanceAmount: card.balanceAmount,
+    }),
+  }));
 }
 
 export type AdminGiftCardFilters = {
@@ -182,15 +213,18 @@ export async function listAdminGiftCards(
   return { items, total: countRow?.count ?? 0 };
 }
 
-/** Preview helper for checkout — returns null when not redeemable. */
-export async function getRedeemableGiftCardByCode(rawCode: string): Promise<{
+/** Preview helper for checkout — returns null when not redeemable by this actor. */
+export async function getRedeemableGiftCardByCode(
+  rawCode: string,
+  actor: GiftCardRedeemActor = null,
+): Promise<{
   id: string;
   code: string;
   initialAmount: number;
   balanceAmount: number;
   expiresAt: Date | null;
 } | null> {
-  const evaluated = await evaluateGiftCardForRedeem(rawCode);
+  const evaluated = await evaluateGiftCardForRedeem(rawCode, actor);
   return evaluated.ok ? evaluated.card : null;
 }
 
@@ -213,8 +247,31 @@ export type EvaluateGiftCardForRedeemResult =
 /** Resolves a gift card for redeem with a specific user-facing error. */
 export async function evaluateGiftCardForRedeem(
   rawCode: string,
+  actor: GiftCardRedeemActor = null,
 ): Promise<EvaluateGiftCardForRedeemResult> {
-  const card = await findGiftCardByCode(rawCode);
+  const code = normalizeGiftCardCode(rawCode);
+  if (!code) {
+    return {
+      ok: false,
+      error: giftCardRedeemErrorMessage({ found: false }),
+    };
+  }
+
+  const [card] = await getDb()
+    .select({
+      id: giftCards.id,
+      code: giftCards.code,
+      initialAmount: giftCards.initialAmount,
+      balanceAmount: giftCards.balanceAmount,
+      status: giftCards.status,
+      expiresAt: giftCards.expiresAt,
+      recipientUserId: giftCards.recipientUserId,
+      recipientEmail: giftCards.recipientEmail,
+    })
+    .from(giftCards)
+    .where(eq(giftCards.code, code))
+    .limit(1);
+
   if (!card) {
     return {
       ok: false,
@@ -236,6 +293,25 @@ export async function evaluateGiftCardForRedeem(
         status: card.status,
         balanceAmount: card.balanceAmount,
         expiresAt: card.expiresAt,
+      }),
+    };
+  }
+
+  if (
+    !isGiftCardRecipientActor({
+      actor,
+      recipientUserId: card.recipientUserId,
+      recipientEmail: card.recipientEmail,
+    })
+  ) {
+    return {
+      ok: false,
+      error: giftCardRedeemErrorMessage({
+        found: true,
+        status: card.status,
+        balanceAmount: card.balanceAmount,
+        expiresAt: card.expiresAt,
+        recipientDenied: actor ? "mismatch" : "unauthenticated",
       }),
     };
   }

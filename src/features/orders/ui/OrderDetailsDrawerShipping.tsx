@@ -40,7 +40,9 @@ export function OrderDetailsDrawerShipping({
           ) : null}
           <div className="flex items-center gap-2">
             <MapPin
-              className="h-4 w-4 shrink-0 text-gray-400"
+              className={`h-4 w-4 shrink-0 ${
+                detail.participants ? "text-emerald-700" : "text-gray-400"
+              }`}
               aria-hidden
             />
             <dd className="min-w-0 font-medium text-gray-900">

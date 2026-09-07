@@ -7,10 +7,12 @@ import {
   calculateGiftCardRedeemAmount,
   giftCardLedgerTargetNet,
   giftCardRedeemErrorMessage,
+  isGiftCardRecipientActor,
   isGiftCardRedeemable,
   isValidGiftCardAmount,
   nextGiftCardBalance,
   normalizeGiftCardCode,
+  resolveCustomerGiftCardBucket,
   resolveGiftCardExpiresAt,
   resolveGiftCardStatusAfterBalance,
 } from "@/features/gift-cards/domain/gift-card-rules";
@@ -115,6 +117,55 @@ describe("gift-card-rules", () => {
         expiresAt: null,
       }),
     ).toBe("Gift card has no remaining balance.");
+    expect(
+      giftCardRedeemErrorMessage({
+        found: true,
+        status: "ACTIVE",
+        balanceAmount: 1000,
+        expiresAt: null,
+        recipientDenied: "unauthenticated",
+      }),
+    ).toBe("Sign in with the recipient account to use this gift card.");
+    expect(
+      giftCardRedeemErrorMessage({
+        found: true,
+        status: "ACTIVE",
+        balanceAmount: 1000,
+        expiresAt: null,
+        recipientDenied: "mismatch",
+      }),
+    ).toBe("This gift card can only be used by the recipient.");
+  });
+
+  it("allows only the recipient actor to redeem", () => {
+    expect(
+      isGiftCardRecipientActor({
+        actor: null,
+        recipientUserId: "u1",
+        recipientEmail: "a@example.com",
+      }),
+    ).toBe(false);
+    expect(
+      isGiftCardRecipientActor({
+        actor: { id: "u2", email: "other@example.com" },
+        recipientUserId: "u1",
+        recipientEmail: "a@example.com",
+      }),
+    ).toBe(false);
+    expect(
+      isGiftCardRecipientActor({
+        actor: { id: "u1", email: "other@example.com" },
+        recipientUserId: "u1",
+        recipientEmail: "a@example.com",
+      }),
+    ).toBe(true);
+    expect(
+      isGiftCardRecipientActor({
+        actor: { id: "u9", email: "A@Example.com" },
+        recipientUserId: null,
+        recipientEmail: "a@example.com",
+      }),
+    ).toBe(true);
   });
 
   it("updates status from balance", () => {
@@ -171,5 +222,57 @@ describe("gift-card-rules", () => {
         orderStatus: "REFUNDED",
       }),
     ).toBe(0);
+  });
+
+  it("classifies customer gift-card profile buckets", () => {
+    const actor = { id: "user-1", email: "me@example.com" };
+
+    expect(
+      resolveCustomerGiftCardBucket({
+        actor,
+        purchaserUserId: "user-2",
+        purchaserEmail: "other@example.com",
+        recipientUserId: "user-1",
+        recipientEmail: "me@example.com",
+        status: "ACTIVE",
+        balanceAmount: 10_000,
+      }),
+    ).toBe("mine");
+
+    expect(
+      resolveCustomerGiftCardBucket({
+        actor,
+        purchaserUserId: "user-2",
+        purchaserEmail: "other@example.com",
+        recipientUserId: "user-1",
+        recipientEmail: "me@example.com",
+        status: "USED",
+        balanceAmount: 0,
+      }),
+    ).toBe("usedByMe");
+
+    expect(
+      resolveCustomerGiftCardBucket({
+        actor,
+        purchaserUserId: "user-1",
+        purchaserEmail: "me@example.com",
+        recipientUserId: "user-3",
+        recipientEmail: "friend@example.com",
+        status: "ACTIVE",
+        balanceAmount: 20_000,
+      }),
+    ).toBe("boughtForOthers");
+
+    expect(
+      resolveCustomerGiftCardBucket({
+        actor,
+        purchaserUserId: "user-1",
+        purchaserEmail: "me@example.com",
+        recipientUserId: "user-1",
+        recipientEmail: "me@example.com",
+        status: "ACTIVE",
+        balanceAmount: 5_000,
+      }),
+    ).toBe("mine");
   });
 });

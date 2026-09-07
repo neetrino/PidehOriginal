@@ -33,6 +33,7 @@ type GoogleMapInstance = {
 type GoogleMarkerInstance = {
   setPosition: (position: { lat: number; lng: number }) => void;
   getPosition: () => { lat: () => number; lng: () => number } | null;
+  setDraggable?: (value: boolean) => void;
 };
 
 declare global {
@@ -81,7 +82,8 @@ export function loadGoogleMapsScript(apiKey: string): Promise<GoogleMapsNamespac
     script.id = SCRIPT_ID;
     script.async = true;
     script.defer = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&callback=__kamanchaMapsReady`;
+    // `loading=async` is a Maps URL param (separate from script.async) — silences Google's console warning.
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async&callback=__kamanchaMapsReady`;
     script.onerror = () => {
       reject(
         new Error(

@@ -49,7 +49,7 @@ function weekdayLabel(
   }
 }
 
-/** Saves store origin + AMD/km after geocoding the origin address. */
+/** Saves store origin (map pin preferred) + AMD/km delivery settings. */
 export async function saveDeliverySettingsAction(
   locale: string,
   raw: DeliverySettingsInput,
@@ -93,21 +93,29 @@ export async function saveDeliverySettingsAction(
   let originLat: number;
   let originLng: number;
   let formattedAddress: string;
-  try {
-    const geocoded = await geocodeAddress(data.originAddress);
-    originLat = geocoded.location.lat;
-    originLng = geocoded.location.lng;
-    formattedAddress = geocoded.formattedAddress;
-  } catch (error) {
-    logger.warn("delivery.origin_geocode_failed", {
-      message: error instanceof Error ? error.message : "unknown",
-    });
-    return err(
-      "GEOCODE_FAILED",
-      error instanceof Error
-        ? error.message
-        : "Store address could not be found on the map.",
-    );
+
+  if (data.originLat != null && data.originLng != null) {
+    // Prefer the admin-dropped pin over address geocoding (street center ≠ entrance).
+    originLat = data.originLat;
+    originLng = data.originLng;
+    formattedAddress = data.originAddress;
+  } else {
+    try {
+      const geocoded = await geocodeAddress(data.originAddress);
+      originLat = geocoded.location.lat;
+      originLng = geocoded.location.lng;
+      formattedAddress = geocoded.formattedAddress;
+    } catch (error) {
+      logger.warn("delivery.origin_geocode_failed", {
+        message: error instanceof Error ? error.message : "unknown",
+      });
+      return err(
+        "GEOCODE_FAILED",
+        error instanceof Error
+          ? error.message
+          : "Store address could not be found on the map.",
+      );
+    }
   }
 
   const value = {

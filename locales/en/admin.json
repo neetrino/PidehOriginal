@@ -11,7 +11,7 @@
     "giftCards": "Gift cards",
     "users": "Users",
     "analytics": "Analytics",
-    "hero": "Hero",
+    "hero": "Banner",
     "popups": "Popups",
     "blog": "Blog",
     "messages": "Messages",
@@ -84,7 +84,7 @@
       "product": "product",
       "category": "category",
       "promoCode": "promo code",
-      "slide": "slide",
+      "slide": "banner",
       "post": "post",
       "popup": "popup"
     },
@@ -150,6 +150,8 @@
       "status": "Status",
       "payment": "Payment",
       "total": "Total",
+      "bonus": "Bonus",
+      "bonusEmpty": "—",
       "placed": "Placed",
       "archivedBadge": "Archived"
     },
@@ -190,6 +192,9 @@
       "amount": "Amount:",
       "paymentStatus": "Status:",
       "items": "Items",
+      "participants": "Participants",
+      "organizer": "Organizer",
+      "paymentMethod": "Payment method: {method}",
       "product": "Product",
       "sku": "SKU",
       "qty": "Qty",
@@ -201,6 +206,9 @@
       "freeStorePickup": "Free (Store Pickup)",
       "couponDiscount": "Coupon discount",
       "couponDiscountWithCode": "Coupon discount ({code})",
+      "bonusRedeemed": "Bonuses used",
+      "bonusEarned": "Bonuses earned",
+      "giftCard": "Gift card",
       "grandTotal": "Total"
     },
     "detail": {
@@ -211,8 +219,11 @@
       "deliveryWithLabel": "Delivery ({label}): {amount}",
       "couponDiscount": "Coupon discount: {amount}",
       "couponDiscountWithCode": "Coupon discount ({code}): {amount}",
+      "bonusRedeemed": "Bonuses used: {amount}",
+      "bonusEarned": "Bonuses earned: {amount}",
+      "giftCard": "Gift card: {amount}",
       "total": "Total: {amount}",
-      "placedAt": "Placed {datetime} UTC",
+      "placedAt": "Placed {datetime}",
       "floor": "Floor:",
       "intercomCode": "Intercom code:",
       "deliverySlot": "Delivery slot:",
@@ -252,6 +263,45 @@
       "title": "Add internal note",
       "note": "Note",
       "addNote": "Add note"
+    }
+  },
+  "groupOrders": {
+    "title": "Group orders",
+    "filters": {
+      "statusAria": "Group order status",
+      "allStatuses": "All statuses",
+      "modeAria": "Payment mode",
+      "allModes": "All modes",
+      "searchPlaceholder": "Search by organizer or ID",
+      "searchAria": "Search group orders",
+      "totalGroupOrders": "{total} group orders"
+    },
+    "table": {
+      "id": "ID",
+      "organizer": "Organizer",
+      "total": "Total",
+      "delivery": "Delivery",
+      "created": "Created",
+      "status": "Status",
+      "participants": "Participants",
+      "mode": "Mode",
+      "selectAllAria": "Select all group orders on this page",
+      "selectOneAria": "Select group order {id}",
+      "empty": "No group orders match these filters."
+    },
+    "drawer": {
+      "ariaLabel": "Group order details",
+      "title": "Group order",
+      "organizer": "Organizer:",
+      "invite": "Invite:",
+      "deliveryTotal": "Delivery: {delivery} · Total: {total}",
+      "participants": "Participants",
+      "subtotalDeliveryFinal": "Subtotal {subtotal} · Delivery {delivery} · Final {final}",
+      "payment": "Payment: {status}",
+      "markPaid": "Mark paid",
+      "activity": "Activity",
+      "closeJoins": "Close joins",
+      "cancel": "Cancel group order"
     }
   },
   "products": {
@@ -408,8 +458,16 @@
     "storeAndPricingHint": "Origin address and per-kilometer delivery fee used at checkout.",
     "storeAddress": "Store address",
     "storeAddressPlaceholder": "e.g. Andranik 108/10, Yerevan",
-    "storeAddressHint": "Start typing a street name — pick from Google suggestions, then Save.",
-    "geocoded": "Geocoded: {lat}, {lng}",
+    "storeAddressHint": "Start typing a street name — pick from Google suggestions, or open the map to drop a pin, then Save.",
+    "geocoded": "Pin: {lat}, {lng}",
+    "map": {
+      "openMap": "Map",
+      "title": "Pin the store on the map",
+      "hint": "Click the map or drag the pin to the exact store entrance.",
+      "confirm": "Use this location",
+      "cancel": "Close",
+      "resolving": "Resolving address…"
+    },
     "pricePerKm": "Price per kilometer (AMD)",
     "pricePerKmPlaceholder": "1000",
     "pricePerKmExample": "Example: 1.101 km → {amount}",
@@ -576,7 +634,9 @@
       "quantity": "Quantity",
       "expiresOptional": "Expires (optional)",
       "selectUsers": "Select users",
-      "allUsersCanUse": "All users can use this coupon"
+      "allUsersCanUse": "All users can use this coupon",
+      "searchUsers": "Search by name or email…",
+      "noUsersFound": "No users found"
     }
   },
   "users": {
@@ -603,6 +663,11 @@
     },
     "suspendAria": "Suspend {name}",
     "activateAria": "Activate {name}",
+    "drawer": {
+      "ariaLabel": "User details",
+      "title": "User details",
+      "loading": "Loading user…"
+    },
     "detail": {
       "role": "Role:",
       "status": "Status:",
@@ -614,6 +679,37 @@
       "created": "Created: {date}",
       "unknownRole": "Unknown role.",
       "unknownStatus": "Unknown status.",
+      "bonusesTitle": "Bonuses",
+      "availableBalance": "Available balance",
+      "totalEarned": "Total earned",
+      "totalRedeemed": "Total used",
+      "noBonusHistory": "No bonus history yet.",
+      "orderLabel": "Order:",
+      "bonusTypes": {
+        "EARN": "Earned",
+        "REDEEM": "Redeemed",
+        "REVERSAL_EARN": "Earn reversed",
+        "REVERSAL_REDEEM": "Redeem reversed",
+        "EXPIRE": "Expired"
+      },
+      "giftCardsTitle": "Gift cards",
+      "noGiftCards": "No gift cards yet.",
+      "giftCardBalance": "Balance",
+      "giftCardStatuses": {
+        "PENDING_PAYMENT": "Pending payment",
+        "ACTIVE": "Active",
+        "USED": "Used",
+        "EXPIRED": "Expired",
+        "DISABLED": "Disabled"
+      },
+      "couponsTitle": "Coupons",
+      "noCoupons": "No assigned coupons.",
+      "couponActive": "Active",
+      "couponInactive": "Inactive",
+      "couponExpires": "Expires {date}",
+      "couponNoExpiry": "No expiry",
+      "percentOff": "{value}% off",
+      "fixedAmount": "{value}",
       "recentOrders": "Recent orders",
       "noOrders": "No orders."
     },
@@ -675,25 +771,25 @@
     }
   },
   "hero": {
-    "title": "Hero slides",
-    "slideCount": "{count} slide",
-    "slideCountPlural": "{count} slides",
-    "createHeroSlide": "Create hero slide",
-    "slidesHeading": "Slides ({count})",
+    "title": "Banners",
+    "slideCount": "{count} banner",
+    "slideCountPlural": "{count} banners",
+    "createHeroSlide": "Create banner",
+    "slidesHeading": "Banners ({count})",
     "noImage": "No image",
     "sortOrder": "sort {order}",
     "published": "PUBLISHED",
     "draft": "DRAFT",
-    "empty": "No hero slides yet.",
+    "empty": "No banners yet.",
     "editAria": "Edit {title}",
     "deleteAria": "Delete {title}",
-    "publishAria": "Publish slide",
-    "unpublishAria": "Unpublish slide",
+    "publishAria": "Publish banner",
+    "unpublishAria": "Unpublish banner",
     "drawer": {
-      "createTitle": "Create hero slide",
-      "editTitle": "Edit hero slide",
-      "createAria": "Create hero slide",
-      "editAria": "Edit hero slide",
+      "createTitle": "Create banner",
+      "editTitle": "Edit banner",
+      "createAria": "Create banner",
+      "editAria": "Edit banner",
       "title": "Title",
       "subtitle": "Subtitle",
       "uploadImage": "Upload image",

@@ -144,6 +144,88 @@ export function giftCardLedgerTargetNet(input: {
   return -input.giftCardAmount;
 }
 
+/**
+ * Gift cards are recipient-bound: only the named recipient account may redeem.
+ * Match by linked user id, otherwise by normalized recipient email.
+ */
+export function isGiftCardRecipientActor(input: {
+  actor: { id: string; email: string } | null;
+  recipientUserId: string | null;
+  recipientEmail: string;
+}): boolean {
+  if (!input.actor) {
+    return false;
+  }
+  if (
+    input.recipientUserId != null &&
+    input.actor.id === input.recipientUserId
+  ) {
+    return true;
+  }
+  const actorEmail = input.actor.email.trim().toLowerCase();
+  const recipientEmail = input.recipientEmail.trim().toLowerCase();
+  return actorEmail.length > 0 && actorEmail === recipientEmail;
+}
+
+/** Profile gift-card filter buckets (mutually exclusive). */
+export type CustomerGiftCardBucket = "mine" | "usedByMe" | "boughtForOthers";
+
+function isGiftCardPurchaserActor(input: {
+  actor: { id: string; email: string };
+  purchaserUserId: string | null;
+  purchaserEmail: string | null;
+}): boolean {
+  if (
+    input.purchaserUserId != null &&
+    input.actor.id === input.purchaserUserId
+  ) {
+    return true;
+  }
+  const actorEmail = input.actor.email.trim().toLowerCase();
+  const purchaserEmail = input.purchaserEmail?.trim().toLowerCase() ?? "";
+  return actorEmail.length > 0 && actorEmail === purchaserEmail;
+}
+
+/**
+ * Classifies a card for the customer profile filters.
+ * - mine: received by me and still has remaining value
+ * - usedByMe: received by me and fully consumed
+ * - boughtForOthers: purchased by me for a different recipient
+ */
+export function resolveCustomerGiftCardBucket(input: {
+  actor: { id: string; email: string };
+  purchaserUserId: string | null;
+  purchaserEmail: string | null;
+  recipientUserId: string | null;
+  recipientEmail: string;
+  status: GiftCardStatus;
+  balanceAmount: number;
+}): CustomerGiftCardBucket {
+  const isRecipient = isGiftCardRecipientActor({
+    actor: input.actor,
+    recipientUserId: input.recipientUserId,
+    recipientEmail: input.recipientEmail,
+  });
+  const isPurchaser = isGiftCardPurchaserActor({
+    actor: input.actor,
+    purchaserUserId: input.purchaserUserId,
+    purchaserEmail: input.purchaserEmail,
+  });
+
+  if (isPurchaser && !isRecipient) {
+    return "boughtForOthers";
+  }
+
+  if (isRecipient) {
+    if (input.status === "USED" || input.balanceAmount <= 0) {
+      return "usedByMe";
+    }
+    return "mine";
+  }
+
+  return "boughtForOthers";
+}
+
 /** User-facing reason when a gift card cannot be applied at checkout. */
 export function giftCardRedeemErrorMessage(input: {
   found: boolean;
@@ -151,7 +233,14 @@ export function giftCardRedeemErrorMessage(input: {
   balanceAmount?: number;
   expiresAt?: Date | null;
   now?: Date;
+  recipientDenied?: "unauthenticated" | "mismatch";
 }): string {
+  if (input.recipientDenied === "unauthenticated") {
+    return "Sign in with the recipient account to use this gift card.";
+  }
+  if (input.recipientDenied === "mismatch") {
+    return "This gift card can only be used by the recipient.";
+  }
   if (!input.found || input.status == null) {
     return "Gift card code was not found.";
   }

@@ -84,7 +84,7 @@
       "product": "товар",
       "category": "категорию",
       "promoCode": "промокод",
-      "slide": "слайд",
+      "slide": "баннер",
       "post": "публикацию",
       "popup": "popup"
     },
@@ -150,6 +150,8 @@
       "status": "Статус",
       "payment": "Оплата",
       "total": "Итого",
+      "bonus": "Бонус",
+      "bonusEmpty": "—",
       "placed": "Оформлен",
       "archivedBadge": "В архиве"
     },
@@ -190,6 +192,9 @@
       "amount": "Сумма:",
       "paymentStatus": "Статус:",
       "items": "Товары",
+      "participants": "Участники",
+      "organizer": "Организатор",
+      "paymentMethod": "Способ оплаты: {method}",
       "product": "Товар",
       "sku": "SKU",
       "qty": "Кол-во",
@@ -201,6 +206,9 @@
       "freeStorePickup": "Бесплатно (самовывоз)",
       "couponDiscount": "Скидка по купону",
       "couponDiscountWithCode": "Скидка по купону ({code})",
+      "bonusRedeemed": "Использованные бонусы",
+      "bonusEarned": "Начисленные бонусы",
+      "giftCard": "Подарочная карта",
       "grandTotal": "Итого"
     },
     "detail": {
@@ -211,8 +219,11 @@
       "deliveryWithLabel": "Доставка ({label}): {amount}",
       "couponDiscount": "Скидка по купону: {amount}",
       "couponDiscountWithCode": "Скидка по купону ({code}): {amount}",
+      "bonusRedeemed": "Использованные бонусы: {amount}",
+      "bonusEarned": "Начисленные бонусы: {amount}",
+      "giftCard": "Подарочная карта: {amount}",
       "total": "Итого: {amount}",
-      "placedAt": "Оформлен: {datetime} UTC",
+      "placedAt": "Оформлен: {datetime}",
       "floor": "Этаж:",
       "intercomCode": "Код домофона:",
       "deliverySlot": "Интервал доставки:",
@@ -252,6 +263,45 @@
       "title": "Добавить внутреннее примечание",
       "note": "Примечание",
       "addNote": "Добавить примечание"
+    }
+  },
+  "groupOrders": {
+    "title": "Групповые заказы",
+    "filters": {
+      "statusAria": "Статус группового заказа",
+      "allStatuses": "Все статусы",
+      "modeAria": "Режим оплаты",
+      "allModes": "Все режимы",
+      "searchPlaceholder": "Поиск по организатору или ID",
+      "searchAria": "Поиск групповых заказов",
+      "totalGroupOrders": "{total} групповых заказов"
+    },
+    "table": {
+      "id": "ID",
+      "organizer": "Организатор",
+      "total": "Итого",
+      "delivery": "Доставка",
+      "created": "Создан",
+      "status": "Статус",
+      "participants": "Участники",
+      "mode": "Режим",
+      "selectAllAria": "Выбрать все групповые заказы на странице",
+      "selectOneAria": "Выбрать групповой заказ {id}",
+      "empty": "Нет групповых заказов по этим фильтрам."
+    },
+    "drawer": {
+      "ariaLabel": "Детали группового заказа",
+      "title": "Групповой заказ",
+      "organizer": "Организатор:",
+      "invite": "Приглашение:",
+      "deliveryTotal": "Доставка: {delivery} · Итого: {total}",
+      "participants": "Участники",
+      "subtotalDeliveryFinal": "Подытог {subtotal} · Доставка {delivery} · Итого {final}",
+      "payment": "Оплата: {status}",
+      "markPaid": "Отметить оплаченным",
+      "activity": "Активность",
+      "closeJoins": "Закрыть присоединение",
+      "cancel": "Отменить групповой заказ"
     }
   },
   "products": {
@@ -408,8 +458,16 @@
     "storeAndPricingHint": "Адрес отправления и стоимость доставки за километр, используемые при оформлении заказа.",
     "storeAddress": "Адрес магазина",
     "storeAddressPlaceholder": "например, Андраник 108/10, Ереван",
-    "storeAddressHint": "Начните вводить название улицы — выберите вариант из подсказок Google, затем сохраните.",
-    "geocoded": "Геокодировано: {lat}, {lng}",
+    "storeAddressHint": "Начните вводить название улицы — выберите вариант из подсказок Google или откройте карту, чтобы поставить метку, затем сохраните.",
+    "geocoded": "Метка: {lat}, {lng}",
+    "map": {
+      "openMap": "Карта",
+      "title": "Отметьте магазин на карте",
+      "hint": "Нажмите на карту или перетащите метку к точному входу магазина.",
+      "confirm": "Использовать это место",
+      "cancel": "Закрыть",
+      "resolving": "Определяем адрес…"
+    },
     "pricePerKm": "Цена за километр (AMD)",
     "pricePerKmPlaceholder": "1000",
     "pricePerKmExample": "Пример: 1.101 км → {amount}",
@@ -576,7 +634,9 @@
       "quantity": "Количество",
       "expiresOptional": "Срок действия (необязательно)",
       "selectUsers": "Выберите пользователей",
-      "allUsersCanUse": "Все пользователи могут использовать этот купон"
+      "allUsersCanUse": "Все пользователи могут использовать этот купон",
+      "searchUsers": "Поиск по имени или email…",
+      "noUsersFound": "Пользователи не найдены"
     }
   },
   "users": {
@@ -603,6 +663,11 @@
     },
     "suspendAria": "Приостановить {name}",
     "activateAria": "Активировать {name}",
+    "drawer": {
+      "ariaLabel": "Данные пользователя",
+      "title": "Данные пользователя",
+      "loading": "Загрузка пользователя…"
+    },
     "detail": {
       "role": "Роль:",
       "status": "Статус:",
@@ -614,6 +679,37 @@
       "created": "Создан: {date}",
       "unknownRole": "Неизвестная роль.",
       "unknownStatus": "Неизвестный статус.",
+      "bonusesTitle": "Бонусы",
+      "availableBalance": "Доступный баланс",
+      "totalEarned": "Всего накоплено",
+      "totalRedeemed": "Всего использовано",
+      "noBonusHistory": "Истории бонусов пока нет.",
+      "orderLabel": "Заказ:",
+      "bonusTypes": {
+        "EARN": "Начисление",
+        "REDEEM": "Списание",
+        "REVERSAL_EARN": "Отмена начисления",
+        "REVERSAL_REDEEM": "Возврат списания",
+        "EXPIRE": "Истечение"
+      },
+      "giftCardsTitle": "Gift Card",
+      "noGiftCards": "Gift Card пока нет.",
+      "giftCardBalance": "Баланс",
+      "giftCardStatuses": {
+        "PENDING_PAYMENT": "Ожидает оплаты",
+        "ACTIVE": "Активна",
+        "USED": "Использована",
+        "EXPIRED": "Истекла",
+        "DISABLED": "Отключена"
+      },
+      "couponsTitle": "Купоны",
+      "noCoupons": "Назначенных купонов нет.",
+      "couponActive": "Активен",
+      "couponInactive": "Неактивен",
+      "couponExpires": "До {date}",
+      "couponNoExpiry": "Без срока",
+      "percentOff": "{value}% скидка",
+      "fixedAmount": "{value}",
       "recentOrders": "Последние заказы",
       "noOrders": "Заказов нет."
     },
@@ -676,10 +772,10 @@
   },
   "hero": {
     "title": "Баннеры",
-    "slideCount": "{count} слайд",
-    "slideCountPlural": "{count} слайдов",
+    "slideCount": "{count} баннер",
+    "slideCountPlural": "{count} баннеров",
     "createHeroSlide": "Создать баннер",
-    "slidesHeading": "Слайды ({count})",
+    "slidesHeading": "Баннеры ({count})",
     "noImage": "Нет изображения",
     "sortOrder": "порядок {order}",
     "published": "ОПУБЛИКОВАНО",
@@ -687,8 +783,8 @@
     "empty": "Баннеров пока нет.",
     "editAria": "Редактировать {title}",
     "deleteAria": "Удалить {title}",
-    "publishAria": "Опубликовать слайд",
-    "unpublishAria": "Снять слайд с публикации",
+    "publishAria": "Опубликовать баннер",
+    "unpublishAria": "Снять баннер с публикации",
     "drawer": {
       "createTitle": "Создать баннер",
       "editTitle": "Редактировать баннер",

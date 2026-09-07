@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -13,6 +13,7 @@ import {
 import type { LocaleTranslation, TranslationsJson } from "@/db/schema/catalog";
 import { buildInvitePath } from "@/features/group-orders/application/money";
 import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
+import type { AdminGroupOrdersFilter } from "@/features/group-orders/schemas";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 import { formatMoneyAmount } from "@/lib/money/format";
@@ -271,50 +272,145 @@ export type AdminGroupOrderListItem = {
   paymentMode: string;
   status: string;
   participantCount: number;
+  totalAmount: number;
   deliveryAmount: number;
   createdAt: string;
+  /** Preformatted for stable SSR/client display (Asia/Yerevan). */
+  createdTime: string;
+  createdDate: string;
   orderId: string | null;
 };
 
-export async function listAdminGroupOrders(input?: {
-  limit?: number;
-  offset?: number;
-}): Promise<AdminGroupOrderListItem[]> {
-  const limit = input?.limit ?? 50;
-  const offset = input?.offset ?? 0;
+const ADMIN_GROUP_ORDERS_PAGE_SIZE = 50;
+const ADMIN_LIST_TIME_ZONE = "Asia/Yerevan";
+
+function formatAdminCreatedParts(value: Date): {
+  time: string;
+  date: string;
+} {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: ADMIN_LIST_TIME_ZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).formatToParts(value);
+
+  const get = (type: Intl.DateTimeFormatPartTypes): string =>
+    parts.find((part) => part.type === type)?.value ?? "";
+
+  return {
+    time: `${get("hour")}:${get("minute")}`,
+    date: `${get("day")}.${get("month")}.${get("year")}`,
+  };
+}
+
+function buildAdminGroupOrderFilters(
+  filters: AdminGroupOrdersFilter,
+): SQL | undefined {
+  const conditions: SQL[] = [];
+
+  if (filters.status) {
+    conditions.push(eq(groupOrders.status, filters.status));
+  }
+  if (filters.paymentMode) {
+    conditions.push(eq(groupOrders.paymentMode, filters.paymentMode));
+  }
+  if (filters.q) {
+    const pattern = `%${filters.q}%`;
+    conditions.push(
+      or(
+        ilike(groupOrders.organizerDisplayName, pattern),
+        sql`${groupOrders.id}::text ilike ${pattern}`,
+      )!,
+    );
+  }
+
+  return conditions.length > 0 ? and(...conditions) : undefined;
+}
+
+/** Lists group orders for the admin surface with optional status/mode/search filters. */
+export async function listAdminGroupOrders(
+  filters: AdminGroupOrdersFilter = { page: 1 },
+): Promise<{
+  rows: AdminGroupOrderListItem[];
+  total: number;
+  pageSize: number;
+}> {
+  const where = buildAdminGroupOrderFilters(filters);
+  const offset = (filters.page - 1) * ADMIN_GROUP_ORDERS_PAGE_SIZE;
   const db = getDb();
 
-  const rows = await db
-    .select()
-    .from(groupOrders)
-    .orderBy(desc(groupOrders.createdAt))
-    .limit(limit)
-    .offset(offset);
+  const [rows, [totalRow]] = await Promise.all([
+    db
+      .select()
+      .from(groupOrders)
+      .where(where)
+      .orderBy(desc(groupOrders.createdAt))
+      .limit(ADMIN_GROUP_ORDERS_PAGE_SIZE)
+      .offset(offset),
+    db.select({ value: count() }).from(groupOrders).where(where),
+  ]);
 
-  const result: AdminGroupOrderListItem[] = [];
-  for (const row of rows) {
-    const participants = await db
-      .select({ id: groupOrderParticipants.id })
-      .from(groupOrderParticipants)
-      .where(
-        and(
-          eq(groupOrderParticipants.groupOrderId, row.id),
-          eq(groupOrderParticipants.status, "ACTIVE"),
-        ),
-      );
-    result.push({
-      id: row.id,
-      inviteToken: row.inviteToken,
-      organizerDisplayName: row.organizerDisplayName,
-      paymentMode: row.paymentMode,
-      status: row.status,
-      participantCount: participants.length,
-      deliveryAmount: row.deliveryAmount,
-      createdAt: row.createdAt.toISOString(),
-      orderId: row.orderId,
-    });
+  if (rows.length === 0) {
+    return {
+      rows: [],
+      total: totalRow?.value ?? 0,
+      pageSize: ADMIN_GROUP_ORDERS_PAGE_SIZE,
+    };
   }
-  return result;
+
+  const ids = rows.map((row) => row.id);
+  const statsRows = await db
+    .select({
+      groupOrderId: groupOrderParticipants.groupOrderId,
+      participantCount: count(),
+      merchandiseTotal: sql<number>`coalesce(sum(${groupOrderParticipants.subtotalAmount}), 0)::int`,
+    })
+    .from(groupOrderParticipants)
+    .where(
+      and(
+        inArray(groupOrderParticipants.groupOrderId, ids),
+        eq(groupOrderParticipants.status, "ACTIVE"),
+      ),
+    )
+    .groupBy(groupOrderParticipants.groupOrderId);
+
+  const statsById = new Map(
+    statsRows.map((row) => [
+      row.groupOrderId,
+      {
+        participantCount: row.participantCount,
+        merchandiseTotal: Number(row.merchandiseTotal),
+      },
+    ]),
+  );
+
+  return {
+    rows: rows.map((row) => {
+      const stats = statsById.get(row.id);
+      const merchandiseTotal = stats?.merchandiseTotal ?? 0;
+      const created = formatAdminCreatedParts(row.createdAt);
+      return {
+        id: row.id,
+        inviteToken: row.inviteToken,
+        organizerDisplayName: row.organizerDisplayName,
+        paymentMode: row.paymentMode,
+        status: row.status,
+        participantCount: stats?.participantCount ?? 0,
+        totalAmount: merchandiseTotal + row.deliveryAmount,
+        deliveryAmount: row.deliveryAmount,
+        createdAt: row.createdAt.toISOString(),
+        createdTime: created.time,
+        createdDate: created.date,
+        orderId: row.orderId,
+      };
+    }),
+    total: totalRow?.value ?? 0,
+    pageSize: ADMIN_GROUP_ORDERS_PAGE_SIZE,
+  };
 }
 
 export async function getAdminGroupOrderDetail(input: {

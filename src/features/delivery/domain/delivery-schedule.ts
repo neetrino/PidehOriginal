@@ -208,6 +208,12 @@ export function formatYerevanTime(date: Date): string {
   }).format(date);
 }
 
+/** Formats a Date as `YYYY-MM-DD HH:mm` in Asia/Yerevan. */
+export function formatYerevanDateTime(date: Date | string): string {
+  const value = date instanceof Date ? date : new Date(date);
+  return `${formatYerevanDate(value)} ${formatYerevanTime(value)}`;
+}
+
 /** ISO weekday (Mon=1 … Sun=7) for a `YYYY-MM-DD` calendar date. */
 export function isoWeekdayFromYmd(dateYmd: string): IsoWeekday {
   const { year, month, day } = parseYmdParts(dateYmd);

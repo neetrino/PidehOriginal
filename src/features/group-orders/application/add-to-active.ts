@@ -8,11 +8,20 @@ import { peekGroupOrderSession } from "@/features/group-orders/session";
  * Adds to the active group order when a session cookie is present;
  * otherwise falls back to the personal cart.
  */
+export type AddProductToActiveCartResult =
+  | { ok: true; target: "group" | "cart" }
+  | {
+      ok: false;
+      error: string;
+      code?: "SPEND_LIMIT_EXCEEDED";
+      limitAmount?: number;
+    };
+
 export async function addProductToActiveCart(
   productId: string,
   quantity: number,
   options?: { modifierIds?: string[] },
-): Promise<{ ok: true; target: "group" | "cart" } | { ok: false; error: string }> {
+): Promise<AddProductToActiveCartResult> {
   const session = await peekGroupOrderSession();
   if (session.inviteToken && session.participantId) {
     const result = await addGroupOrderItem({

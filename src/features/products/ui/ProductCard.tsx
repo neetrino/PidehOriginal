@@ -85,10 +85,11 @@ export function ProductCard({
           </span>
         ) : null}
 
-        {showAddToCart ? (
+        {showAddToCart && locale != null ? (
           <AddToCartButton
             productId={productId}
             label={addToCartLabel}
+            locale={locale}
             disabled={!inStock}
             size="sm"
             className="absolute right-3 bottom-3 z-10 h-9 w-9 bg-white/90 text-gray-800 shadow-sm hover:bg-white"

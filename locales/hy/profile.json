@@ -77,8 +77,8 @@
     "expires": "Ավարտ՝ {date}",
     "noExpiry": "Առանց ժամկետի",
     "types": {
-      "EARN": "Կուտակում",
-      "REDEEM": "Օգտագործում",
+      "EARN": "Կուտակված",
+      "REDEEM": "Օգտագործված",
       "REVERSAL_EARN": "Կուտակման վերադարձ",
       "REVERSAL_REDEEM": "Օգտագործման վերադարձ",
       "EXPIRE": "Ժամկետի ավարտ"
@@ -93,6 +93,11 @@
     "initial": "Սկզբնական արժեք",
     "recipient": "Ստացող",
     "expires": "Ավարտ",
+    "filters": {
+      "mine": "Իմ Gift Card-երը",
+      "usedByMe": "Իմ կողմից օգտագործված Gift Card-երը",
+      "boughtForOthers": "Ուրիշի համար իմ գնած Gift Card-երը"
+    },
     "statuses": {
       "PENDING_PAYMENT": "Սպասում է վճարման",
       "ACTIVE": "Ակտիվ",

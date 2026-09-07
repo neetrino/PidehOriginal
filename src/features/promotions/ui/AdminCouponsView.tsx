@@ -28,7 +28,10 @@ import {
   deletePromotionAction,
   duplicatePromotionAction,
 } from "@/features/promotions/application/upsert-promotion";
-import type { AdminPromotionListItem } from "@/features/promotions/application/queries";
+import type {
+  AdminPromotionListItem,
+  CouponUserOption,
+} from "@/features/promotions/application/queries";
 import { CouponDrawer } from "@/features/promotions/ui/CouponDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -41,6 +44,7 @@ type AdminCouponsViewCopy = {
 type AdminCouponsViewProps = {
   locale: string;
   coupons: AdminPromotionListItem[];
+  userOptions: CouponUserOption[];
   copy: AdminCouponsViewCopy;
 };
 
@@ -52,7 +56,12 @@ function formatValidUntil(
   return new Date(endsAt).toLocaleString(locale);
 }
 
-export function AdminCouponsView({ locale, coupons, copy }: AdminCouponsViewProps) {
+export function AdminCouponsView({
+  locale,
+  coupons,
+  userOptions,
+  copy,
+}: AdminCouponsViewProps) {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] =
@@ -259,6 +268,7 @@ export function AdminCouponsView({ locale, coupons, copy }: AdminCouponsViewProp
         open={drawerOpen}
         onClose={closeDrawer}
         coupon={editingCoupon}
+        userOptions={userOptions}
         copy={{
           drawer: copy.coupons.drawer,
           common: copy.common,

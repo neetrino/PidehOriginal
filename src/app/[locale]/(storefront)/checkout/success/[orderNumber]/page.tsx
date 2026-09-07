@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { getDb } from "@/db/client";
-import { orders } from "@/db/schema";
+import { orders, payments } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -42,11 +42,23 @@ export default async function CheckoutSuccessPage({
   const currency = isCurrency(order.baseCurrency)
     ? order.baseCurrency
     : defaultCurrency;
-  const totalFormatted = formatMoneyAmount(
-    order.totalAmount,
-    currency,
-    locale,
-  );
+
+  let amountShown = order.totalAmount;
+  let amountLabel = copy.total;
+  if (order.groupOrderId) {
+    const [payment] = await getDb()
+      .select({ amount: payments.amount })
+      .from(payments)
+      .where(eq(payments.orderId, order.id))
+      .orderBy(desc(payments.attemptNumber))
+      .limit(1);
+    if (payment && payment.amount !== order.totalAmount) {
+      amountShown = payment.amount;
+      amountLabel = copy.amountPaid;
+    }
+  }
+
+  const amountFormatted = formatMoneyAmount(amountShown, currency, locale);
 
   return (
     <section className="mx-auto flex max-w-lg flex-col gap-4 px-4 py-12 sm:px-6 lg:px-8">
@@ -55,7 +67,7 @@ export default async function CheckoutSuccessPage({
         {copy.body.replace("{orderNumber}", order.orderNumber)}
       </p>
       <p className="text-sm text-gray-900">
-        {copy.total.replace("{amount}", totalFormatted)}
+        {amountLabel.replace("{amount}", amountFormatted)}
       </p>
       <div className="flex flex-wrap gap-3 pt-2">
         <AppLink
