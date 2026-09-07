@@ -1,3 +1,4 @@
+import { MobileFrame440 } from "@/features/home/ui/mobile/MobileFrame440";
 import { MobileProductCard } from "@/features/home/ui/mobile/MobileProductCard";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -23,12 +24,12 @@ type MobileHomeFeaturedProps = {
   products: readonly FeaturedItem[];
 };
 
+/** Two Figma product rows (260:547 + 260:959): 372 + (953-588-372) + 372 = 737. */
+const FEATURED_FRAME_HEIGHT = 737;
+
 /**
- * Figma product row on 440 frame:
- * — wall → white card ≈ 14px orange
- * — between white cards ≈ 11px orange
- * Fixed 427px rows were clipped by overflow-x and ate the wall space;
- * fluid 2-col grid keeps Figma proportions on every width.
+ * Figma product grid in the 440 design space (same scale as the hero band).
+ * Keeps cards at exactly 200×340 so Button 8 never overflows into the orange page.
  */
 export function MobileHomeFeatured({
   locale,
@@ -49,29 +50,37 @@ export function MobileHomeFeatured({
   }
 
   return (
-    <section className="relative z-20 box-border px-[14px] pb-8">
-      <div className="mx-auto grid w-full max-w-[412px] grid-cols-2 gap-x-[11px] gap-y-3">
-        {products.slice(0, 4).map((product, index) => (
-          <MobileProductCard
-            key={product.id}
-            href={product.href}
-            title={product.title}
-            description={product.description}
-            priceFormatted={product.priceFormatted}
-            imageUrl={product.imageUrl}
-            inStock={product.inStock}
-            priority={index < 2}
-            locale={locale}
-            productId={product.id}
-            inWishlist={product.inWishlist ?? false}
-            isSignedIn={isSignedIn}
-            wishlistLabel={wishlistLabel}
-            addLabel={addLabel}
-            ratingLabel={ratingLabel}
-            prepTimeLabel={prepTimeLabel}
-          />
-        ))}
-      </div>
+    <section className="relative z-20 pb-2">
+      <MobileFrame440 height={FEATURED_FRAME_HEIGHT}>
+        <div className="box-border px-[14px]">
+          <div className="grid grid-cols-2 gap-x-[11px] gap-y-0">
+            {products.slice(0, 4).map((product, index) => (
+              <div
+                key={product.id}
+                className="relative flex h-[372px] justify-center pt-4"
+              >
+                <MobileProductCard
+                  href={product.href}
+                  title={product.title}
+                  description={product.description}
+                  priceFormatted={product.priceFormatted}
+                  imageUrl={product.imageUrl}
+                  inStock={product.inStock}
+                  priority={index < 2}
+                  locale={locale}
+                  productId={product.id}
+                  inWishlist={product.inWishlist ?? false}
+                  isSignedIn={isSignedIn}
+                  wishlistLabel={wishlistLabel}
+                  addLabel={addLabel}
+                  ratingLabel={ratingLabel}
+                  prepTimeLabel={prepTimeLabel}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </MobileFrame440>
     </section>
   );
 }

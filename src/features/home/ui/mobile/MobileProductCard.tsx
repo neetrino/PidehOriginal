@@ -29,10 +29,10 @@ type MobileProductCardProps = {
 };
 
 /**
- * Figma Product (260:592 / 260:512).
- * Internal spacing from Dev Mode; width is fluid so side “walls” stay visible.
+ * Figma Product 260:512 — fixed 200×340 design space (scaled via MobileFrame440).
+ * Button 8 stays inside the white rounded rect (never spills into the orange page).
  *
- * @see https://www.figma.com/design/zyLVZFDhohLYxwuohIrPDN/Pideh-Dev?node-id=260-592
+ * @see https://www.figma.com/design/zyLVZFDhohLYxwuohIrPDN/Pideh-Dev?node-id=260-512
  */
 export function MobileProductCard({
   href,
@@ -79,25 +79,25 @@ export function MobileProductCard({
   return (
     <article
       data-node-id="260:512"
-      className="box-border flex min-h-[340px] w-full flex-col items-stretch gap-2 rounded-[26px] bg-white pt-[27px] pr-4 pb-4 pl-3.5 shadow-[0px_12px_28px_rgba(31,20,8,0.11)]"
+      className="relative box-border flex h-[340px] w-[200px] flex-col gap-2 overflow-visible rounded-[26px] bg-white pt-[27px] pr-4 pb-4 pl-3.5 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]"
     >
       <div
         data-node-id="260:513"
-        className="relative mx-auto h-[123px] w-full max-w-[193px] shrink-0 overflow-visible"
+        className="relative mx-auto h-[123px] w-[193px] shrink-0"
       >
         <AppLink
           href={href}
           prefetchPolicy={priority ? "intent" : "auto"}
-          className="absolute inset-0 block overflow-visible"
+          className="absolute inset-0 block"
         >
           {imageUrl ? (
-            <span className="pointer-events-none absolute top-[-20px] left-1/2 h-[170px] w-[min(213px,115%)] -translate-x-1/2">
+            <span className="pointer-events-none absolute top-[-20px] left-1/2 h-[170px] w-[213px] -translate-x-1/2">
               <Image
                 src={imageUrl}
                 alt={title}
                 width={214}
                 height={170}
-                sizes="(max-width: 440px) 45vw, 214px"
+                sizes="200px"
                 priority={priority}
                 className="size-full object-contain"
               />
@@ -118,19 +118,28 @@ export function MobileProductCard({
           emptyIconSrc={MOBILE_HOME_ASSETS.heartOutline}
           emptyIconWidth={34}
           emptyIconHeight={34}
-          className="absolute top-0 right-0 z-20 size-[34px] bg-transparent text-[#ff6b00] shadow-none"
+          className="absolute -top-3 right-5 z-20 size-[34px] bg-transparent text-[#ff6b00] shadow-none"
         />
       </div>
 
-      <div className="flex h-[13px] w-full shrink-0 items-start overflow-hidden">
+      <div
+        data-node-id="260:517"
+        className="flex h-[13px] w-full shrink-0 items-start overflow-hidden"
+      >
         {ratingLabel ? (
-          <b className="text-[13px] leading-[1.25] font-bold whitespace-nowrap text-[#ff6b00]">
+          <b
+            data-node-id="260:518"
+            className="font-montserrat-arm text-[13px] leading-[1.25] font-bold whitespace-nowrap text-[#ff6b00]"
+          >
             {ratingLabel}
           </b>
         ) : null}
       </div>
 
-      <div className="h-[19px] w-full shrink-0 overflow-hidden text-base leading-[1.25] font-extrabold text-[#1e1e1e]">
+      <div
+        data-node-id="260:519"
+        className="font-montserrat-arm h-[19px] w-full shrink-0 overflow-hidden text-base leading-[1.25] font-extrabold text-[#1e1e1e]"
+      >
         <AppLink
           href={href}
           prefetchPolicy="auto"
@@ -140,34 +149,51 @@ export function MobileProductCard({
         </AppLink>
       </div>
 
-      <p className="line-clamp-2 min-h-[32px] w-full shrink-0 text-sm leading-[1.14] text-[#6b6b6b]">
+      <p
+        data-node-id="260:520"
+        className="font-montserrat-arm line-clamp-3 min-h-[48px] w-full shrink-0 overflow-hidden text-sm leading-[1.14] text-[#6b6b6b]"
+      >
         {description ?? "\u00A0"}
       </p>
 
-      <p className="h-[16px] w-full shrink-0 text-[13px] leading-[1.25] font-medium text-[#6b6b6b]">
+      <p
+        data-node-id="260:521"
+        className="font-montserrat-arm h-4 w-full shrink-0 text-[13px] leading-[1.25] font-medium text-[#6b6b6b]"
+      >
         {prepTimeLabel ?? "\u00A0"}
       </p>
 
-      <div className="mt-auto flex w-full shrink-0 items-center gap-7">
-        <div className="min-w-0 flex-1 truncate text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]">
+      <div
+        data-node-id="260:875"
+        className="mt-auto flex h-[56px] w-full shrink-0 items-center gap-7"
+      >
+        <p
+          data-node-id="260:522"
+          className="font-montserrat-arm min-w-0 flex-1 truncate text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]"
+        >
           {priceFormatted}
-        </div>
+        </p>
         <button
           type="button"
+          data-node-id="260:934"
           aria-label={addLabel}
           disabled={!inStock || pending}
           onClick={handleAdd}
-          className="box-border flex w-[59px] shrink-0 items-center justify-center overflow-hidden rounded-[42px] bg-[#ff6b00] px-6 py-4 transition enabled:hover:brightness-105 disabled:opacity-50"
+          className="box-border flex h-[56px] w-[59px] shrink-0 -translate-y-3 items-center justify-center overflow-hidden rounded-[42px] border-0 bg-[#ff6b00] p-0 transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:pointer-events-none disabled:opacity-50"
         >
           {justAdded ? (
-            <span className="text-lg font-bold text-white">✓</span>
+            <span className="text-lg font-bold text-white" aria-hidden>
+              ✓
+            </span>
           ) : (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               src={MOBILE_HOME_ASSETS.plus}
               alt=""
               width={24}
               height={24}
-              className="size-6 shrink-0"
+              className="pointer-events-none size-6 max-w-none"
+              draggable={false}
             />
           )}
         </button>
