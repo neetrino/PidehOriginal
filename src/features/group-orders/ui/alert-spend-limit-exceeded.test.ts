@@ -37,7 +37,7 @@ describe("alert-spend-limit-exceeded", () => {
     expect(handled).toBe(true);
     expect(window.alert).toHaveBeenCalledOnce();
     expect(String(vi.mocked(window.alert).mock.calls[0]?.[0])).toContain(
-      "1\u202f600 AMD",
+      "1\u202f600 ֏",
     );
   });
 });

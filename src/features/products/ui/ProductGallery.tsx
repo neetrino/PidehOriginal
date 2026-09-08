@@ -26,20 +26,20 @@ export function ProductGallery({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="relative flex min-h-[280px] w-full items-center justify-center overflow-hidden rounded-[24px] bg-[#fff3e0] sm:min-h-[380px] lg:min-h-[500px]">
+      <div className="relative flex aspect-[657/575] w-full items-center justify-center overflow-hidden rounded-[24px] bg-[#fff3e0]">
         {selected ? (
-          <Image
-            src={selected.url}
-            alt={selected.alt || title}
-            fill
-            sizes="(max-width: 1024px) 100vw, 656px"
-            className="object-cover"
-            priority
-          />
+          <span className="relative block h-[77%] w-[77%] rotate-[55deg]">
+            <Image
+              src={selected.url}
+              alt={selected.alt || title}
+              fill
+              sizes="(max-width: 1024px) 100vw, 657px"
+              className="object-contain"
+              priority
+            />
+          </span>
         ) : (
-          <div className="flex h-full min-h-[280px] w-full items-center justify-center text-sm text-[#6b6b6b]">
-            —
-          </div>
+          <span className="text-sm text-[#6b6b6b]">—</span>
         )}
         {discountPercent != null ? (
           <span className="absolute top-4 left-4 z-10 rounded-[12px] bg-[#ff6b00] px-3 py-1.5 text-sm font-bold text-white">
