@@ -8,9 +8,15 @@ import {
   parseCatalogSearchParams,
 } from "@/features/products/application/catalog-search-params";
 import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
+import {
+  listCatalogSections,
+  type CatalogSection,
+} from "@/features/products/application/list-catalog-sections";
 import { CatalogControls } from "@/features/products/ui/CatalogControls";
 import { ShopBreadcrumb } from "@/features/products/ui/ShopBreadcrumb";
 import { ShopProductGrid } from "@/features/products/ui/ShopProductGrid";
+import { MobileCatalog } from "@/features/products/ui/mobile/MobileCatalog";
+import { buildMobileCatalogSections } from "@/features/products/ui/mobile/mobile-catalog-sections";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
@@ -59,8 +65,32 @@ export default async function ProductsPage({
     catalog = await listCatalogProducts(rawLocale, filters, currency);
   }
 
+  const activeCategory = categories.find(
+    (category) => category.slug === filters.category,
+  );
+  const sections: CatalogSection[] = filters.category
+    ? [
+        {
+          slug: filters.category,
+          title: activeCategory?.title ?? catalogCopy.title,
+          products: catalog.products,
+          total: catalog.total,
+        },
+      ]
+    : await listCatalogSections(rawLocale, categories, filters, currency);
+
+  const wishlistTargets = new Set(
+    catalog.products
+      .map((product) => product.id)
+      .concat(
+        sections.flatMap((section) =>
+          section.products.map((product) => product.id),
+        ),
+      ),
+  );
+
   const [wishlistIds, formatPrice] = await Promise.all([
-    getWishlistProductIds(catalog.products.map((product) => product.id)),
+    getWishlistProductIds([...wishlistTargets]),
     createDisplayPriceFormatter(rawLocale, currency),
   ]);
 
@@ -78,9 +108,28 @@ export default async function ProductsPage({
     };
   });
 
+  const mobileSections = buildMobileCatalogSections({
+    locale: rawLocale,
+    filters,
+    sections,
+    wishlistIds,
+    formatPrice: (amount) => formatPrice(amount).formatted,
+    seeAllTemplate: catalogCopy.seeAllCategory,
+    withSeeAll: !filters.category,
+  });
+
   return (
     <div className="pideh-shop">
-      <div className="mx-auto w-full max-w-[1440px] px-4 pt-6 pb-28 sm:px-6 md:px-[66px] md:pt-8 md:pb-32">
+      <MobileCatalog
+        locale={rawLocale}
+        dictionary={dictionary}
+        filters={filters}
+        categories={categories}
+        sections={mobileSections}
+        isSignedIn={Boolean(user)}
+      />
+
+      <div className="mx-auto hidden w-full max-w-[1440px] px-4 pt-6 pb-28 sm:px-6 md:block md:px-[66px] md:pt-8 md:pb-32">
         <RevealOnView variants={fadeUp}>
           <ShopBreadcrumb
             backHref={`/${rawLocale}`}

@@ -1,4 +1,6 @@
+import { MobileBrandBar } from "@/components/layout/MobileBrandBar";
 import { NAV_DOCK_HEIGHT_PX } from "@/components/layout/NavEllipse3469";
+import { MobileCopyright } from "@/features/home/ui/mobile/MobileCopyright";
 import { MobileEllipse3469 } from "@/features/home/ui/mobile/MobileEllipse3469";
 import { MobileFrame440 } from "@/features/home/ui/mobile/MobileFrame440";
 import { MobileHomeBranches } from "@/features/home/ui/mobile/MobileHomeBranches";
@@ -7,8 +9,8 @@ import {
   MOBILE_FEATURE_LAYOUT,
   MobileHomeFeatures,
 } from "@/features/home/ui/mobile/MobileHomeFeatures";
-import { MobileHomeHeader } from "@/features/home/ui/mobile/MobileHomeHeader";
 import { MobileHomeHero } from "@/features/home/ui/mobile/MobileHomeHero";
+import { toTelHref } from "@/lib/contact/tel-href";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -60,10 +62,6 @@ function splitFeaturedTitle(title: string): { line1: string; line2: string } {
   };
 }
 
-function toTelHref(phone: string): string {
-  return `tel:${phone.replace(/[^\d+]/g, "")}`;
-}
-
 /**
  * Full mobile home composition from Figma node 259:369 (440×2973).
  */
@@ -82,7 +80,6 @@ export function MobileHome({
   const phoneHref = toTelHref(contact.storePhone);
   const year = new Date().getFullYear();
   const copyright = dictionary.footer.copyright.replace("{year}", String(year));
-  const [copyrightLead, copyrightBrand] = copyright.split("Neetrino IT Company");
 
   const featureTitles = {
     delivery: home.features.deliveryTitle,
@@ -116,11 +113,12 @@ export function MobileHome({
       <MobileFrame440 height={MOBILE_TOP_BAND_HEIGHT}>
         <MobileEllipse3469 />
 
-        <MobileHomeHeader
+        <MobileBrandBar
           locale={locale}
           dictionary={dictionary}
           phoneHref={phoneHref}
           phoneLabel={contact.callTitle}
+          className="absolute top-[49px] left-1/2 z-40 flex -translate-x-1/2 items-end justify-center gap-[179px]"
         />
 
         <MobileHomeHero
@@ -164,18 +162,7 @@ export function MobileHome({
         branches={branches}
       />
 
-      <p className="mx-auto max-w-[340px] px-4 text-center text-base leading-[21px] tracking-[0.35px] text-[#1e1e1e]">
-        <span>{copyrightLead}</span>
-        <a
-          href="https://www.neetrino.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-bold text-[#ffd54a] underline-offset-2 hover:underline"
-        >
-          Neetrino IT Company
-        </a>
-        {copyrightBrand}
-      </p>
+      <MobileCopyright text={copyright} />
     </div>
   );
 }

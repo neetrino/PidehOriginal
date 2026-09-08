@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
+import { MobileStorefrontHeader } from "@/components/layout/MobileStorefrontHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
@@ -41,6 +42,11 @@ export default async function StorefrontLayout({
 
   return (
     <div className="storefront-shell flex min-h-dvh flex-1 flex-col bg-[#fff8e7]">
+      <MobileStorefrontHeader
+        locale={locale}
+        currency={currency}
+        dictionary={dictionary}
+      />
       <SiteHeader
         locale={locale}
         currency={currency}

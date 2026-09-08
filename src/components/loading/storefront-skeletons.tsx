@@ -26,24 +26,41 @@ export function CatalogGridSkeleton() {
 
 export function ShopCatalogSkeleton() {
   return (
-    <div
-      className={`${pulse} space-y-8 px-4 pt-8 pb-24 md:px-[66px]`}
-      aria-busy="true"
-      aria-live="polite"
-    >
-      <Block className="h-4 w-28 rounded-full bg-white/70" />
-      <Block className="h-16 w-48 rounded-lg bg-white/70" />
-      <div className="flex gap-2.5 overflow-hidden">
-        <Block className="h-14 w-36 shrink-0 rounded-[40px] bg-white/70" />
-        <Block className="h-14 w-44 shrink-0 rounded-[40px] bg-white/70" />
-        <Block className="h-14 w-40 shrink-0 rounded-[40px] bg-white/70" />
-        <Block className="h-14 w-44 shrink-0 rounded-[40px] bg-white/70" />
+    <div className={pulse} aria-busy="true" aria-live="polite">
+      {/* Mobile menu (Figma 366:464): chips, display heading, 2-column grid. */}
+      <div className="space-y-6 px-6 pt-6 pb-24 md:hidden">
+        <div className="flex gap-2.5 overflow-hidden">
+          <Block className="h-14 w-40 shrink-0 rounded-[40px] bg-white/70" />
+          <Block className="h-14 w-44 shrink-0 rounded-[40px] bg-white/70" />
+          <Block className="h-14 w-40 shrink-0 rounded-[40px] bg-white/70" />
+        </div>
+        <div className="flex items-end justify-between gap-4">
+          <Block className="h-10 w-44 rounded-lg bg-white/50" />
+          <Block className="h-[52px] w-[68px] shrink-0 rounded-[42px] bg-[#ffd54a]" />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Block className="h-[340px] rounded-[26px] bg-white/70" />
+          <Block className="h-[340px] rounded-[26px] bg-white/70" />
+          <Block className="h-[340px] rounded-[26px] bg-white/70" />
+          <Block className="h-[340px] rounded-[26px] bg-white/70" />
+        </div>
       </div>
-      <div className="flex flex-wrap gap-[13px]">
-        <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
-        <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
-        <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
-        <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
+
+      <div className="hidden space-y-8 px-4 pt-8 pb-24 md:block md:px-[66px]">
+        <Block className="h-4 w-28 rounded-full bg-white/70" />
+        <Block className="h-16 w-48 rounded-lg bg-white/70" />
+        <div className="flex gap-2.5 overflow-hidden">
+          <Block className="h-14 w-36 shrink-0 rounded-[40px] bg-white/70" />
+          <Block className="h-14 w-44 shrink-0 rounded-[40px] bg-white/70" />
+          <Block className="h-14 w-40 shrink-0 rounded-[40px] bg-white/70" />
+          <Block className="h-14 w-44 shrink-0 rounded-[40px] bg-white/70" />
+        </div>
+        <div className="flex flex-wrap gap-[13px]">
+          <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
+          <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
+          <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
+          <Block className="h-[420px] w-full max-w-[325px] rounded-[26px] bg-white/70" />
+        </div>
       </div>
     </div>
   );

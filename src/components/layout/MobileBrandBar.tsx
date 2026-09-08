@@ -5,25 +5,33 @@ import Image from "next/image";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import { AppLink } from "@/components/ui/AppLink";
 import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { Currency } from "@/lib/money/currency";
 
-type MobileHomeHeaderProps = {
+type MobileBrandBarProps = {
   locale: Locale;
   dictionary: Dictionary;
   phoneHref: string;
   phoneLabel: string;
+  /** Enables the language/currency switcher inside the nav drawer. */
+  currency?: Currency;
+  /** Positioning classes — the row itself only owns its inner layout. */
+  className?: string;
 };
 
 /**
- * Figma 260:488 — logo + menu/phone, centered row at y=49.
+ * Figma 366:576 / 260:488 — logo on the left, burger + call pill on the right.
+ * The pill artwork is a single SVG with two invisible hit areas over it.
  */
-export function MobileHomeHeader({
+export function MobileBrandBar({
   locale,
   dictionary,
   phoneHref,
   phoneLabel,
-}: MobileHomeHeaderProps) {
+  currency,
+  className = "",
+}: MobileBrandBarProps) {
   const navItems = [
     { href: `/${locale}`, label: dictionary.nav.home },
     { href: `/${locale}/products`, label: dictionary.nav.menu },
@@ -33,11 +41,12 @@ export function MobileHomeHeader({
   ] as const;
 
   return (
-    <div className="absolute top-[49px] left-1/2 z-40 flex -translate-x-1/2 items-end justify-center gap-[179px]">
+    <div data-site-header className={className}>
+      {/* Figma 366:577 — the export carries transparent padding the frame crops. */}
       <AppLink
         href={`/${locale}`}
         prefetchPolicy="intent"
-        className="relative h-[75px] w-[92px] shrink-0"
+        className="relative h-[75px] w-[92px] shrink-0 overflow-hidden"
         aria-label={dictionary.brand}
       >
         <Image
@@ -45,7 +54,7 @@ export function MobileHomeHeader({
           alt={dictionary.brand}
           fill
           sizes="92px"
-          className="object-contain object-left mix-blend-multiply"
+          className="object-cover object-top"
           priority
         />
       </AppLink>
@@ -63,11 +72,10 @@ export function MobileHomeHeader({
         <MobileNavDrawer
           locale={locale}
           dictionary={dictionary}
+          currency={currency}
           navItems={navItems}
           triggerClassName="absolute inset-y-0 left-0 z-10 w-[52%] touch-manipulation bg-transparent"
-          triggerContent={
-            <span className="sr-only">{dictionary.nav.openMenu}</span>
-          }
+          triggerContent={<span className="sr-only">{dictionary.nav.openMenu}</span>}
         />
         <a
           href={phoneHref}

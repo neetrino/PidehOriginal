@@ -308,6 +308,17 @@ body {
 }
 
 @media (max-width: 767px) {
+  /* Figma mobile chrome (366:464) replaces the desktop header everywhere. */
+  .storefront-shell .site-header {
+    display: none;
+  }
+
+  /* Pages that ship their own in-page chrome opt out of the shared bar. */
+  .storefront-shell:has(.pideh-home-mobile) .mobile-storefront-header,
+  .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header {
+    display: none;
+  }
+
   .storefront-shell:has(.pideh-home) .storefront-main,
   .storefront-shell:has(.pideh-about) .storefront-main,
   .storefront-shell:has(.pideh-login) .storefront-main,
@@ -322,12 +333,20 @@ body {
     padding-bottom: 0;
   }
 
-  /* Figma mobile home (259:369) uses in-page chrome instead of site header. */
-  .storefront-shell:has(.pideh-home-mobile) .site-header {
+  .storefront-shell:has(.pideh-home-mobile) .storefront-footer {
     display: none;
   }
 
-  .storefront-shell:has(.pideh-home-mobile) .storefront-footer {
+  /* Figma mobile menu (366:464): orange page with its own chrome + copyright. */
+  .storefront-shell:has(.pideh-shop-mobile) {
+    background: var(--pideh-orange);
+  }
+
+  .storefront-shell:has(.pideh-shop-mobile) .storefront-main {
+    padding-bottom: 0;
+  }
+
+  .storefront-shell:has(.pideh-shop-mobile) .storefront-footer {
     display: none;
   }
 }
