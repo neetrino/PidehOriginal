@@ -69,6 +69,15 @@ body {
     var(--font-montserrat), ui-sans-serif, sans-serif;
 }
 
+/**
+ * Latin-first stack for light body copy. The Armenian face only ships Bold,
+ * so text that needs a regular weight has to lead with Montserrat.
+ */
+.font-montserrat {
+  font-family: var(--font-montserrat), var(--font-noto-armenian),
+    ui-sans-serif, sans-serif;
+}
+
 /** Soft rounded Armenian UI labels (language switcher short code). */
 .font-noto-armenian {
   font-family: var(--font-noto-armenian), var(--font-montserrat-arm),

@@ -79,7 +79,10 @@ export function MobileHome({
   const featuredTitle = splitFeaturedTitle(home.featuredTitle);
   const phoneHref = toTelHref(contact.storePhone);
   const year = new Date().getFullYear();
-  const copyright = dictionary.footer.copyright.replace("{year}", String(year));
+  const copyright = dictionary.footer.copyrightMobile.replace(
+    "{year}",
+    String(year),
+  );
 
   const featureTitles = {
     delivery: home.features.deliveryTitle,

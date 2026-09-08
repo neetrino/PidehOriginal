@@ -44,6 +44,7 @@
     "faq": "FAQ",
     "contactInfo": "Contact",
     "followUs": "Follow us",
-    "copyright": "Copyright © {year}. All Rights Reserved. Created by Neetrino IT Company"
+    "copyright": "Copyright © {year}. All Rights Reserved. Created by Neetrino IT Company",
+    "copyrightMobile": "© {year}. All Rights Reserved. Created by Neetrino"
   }
 }
