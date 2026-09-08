@@ -92,7 +92,10 @@ export function MobileCatalog({
 
       <div className="pt-12">
         <MobileCopyright
-          text={dictionary.footer.copyright.replace("{year}", String(year))}
+          text={dictionary.footer.copyrightMobile.replace(
+            "{year}",
+            String(year),
+          )}
         />
       </div>
     </div>
