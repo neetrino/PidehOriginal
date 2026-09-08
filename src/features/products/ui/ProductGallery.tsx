@@ -28,7 +28,7 @@ export function ProductGallery({
     <div className="flex flex-col gap-3">
       <div className="relative flex aspect-[657/575] w-full items-center justify-center overflow-hidden rounded-[24px] bg-[#fff3e0]">
         {selected ? (
-          <span className="relative block h-[77%] w-[77%] rotate-[55deg]">
+          <span className="relative block h-[135%] w-[135%] shrink-0 rotate-[55deg]">
             <Image
               src={selected.url}
               alt={selected.alt || title}
