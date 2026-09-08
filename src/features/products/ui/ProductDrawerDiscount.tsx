@@ -7,7 +7,6 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type CSSProperties,
 } from "react";
 import { createPortal } from "react-dom";
 
@@ -189,14 +188,12 @@ export function ProductDrawerDiscount({
             role="dialog"
             aria-label={copy.scheduleAria}
             className="fixed z-[400] space-y-3 rounded-[22px] border-2 border-[#1e1e1e] bg-[#fff8e7] p-4 shadow-[6px_6px_0_#1e1e1e]"
-            style={
-              {
-                top: scheduleStyle.top,
-                left: scheduleStyle.left,
-                width: scheduleStyle.width,
-                transform: scheduleStyle.transform,
-              } satisfies CSSProperties
-            }
+            style={{
+              top: scheduleStyle.top,
+              left: scheduleStyle.left,
+              width: scheduleStyle.width,
+              transform: scheduleStyle.transform,
+            }}
           >
             <label className="block">
               <span className="mb-1 block text-xs font-bold tracking-wide text-[#ff6b00] uppercase">

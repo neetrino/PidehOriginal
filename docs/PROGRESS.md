@@ -40,7 +40,7 @@
 
 ### Phase 11
 - Security headers (CSP baseline, nosniff, frame deny, referrer, permissions)
-- Legal route stubs (`/legal/terms`, `/legal/privacy`) — OPEN-014 copy pending
+- Legal routes `/legal/terms`, `/legal/privacy`, `/legal/delivery` published with approved copy (OPEN-014 resolved)
 - `docs/ops/RELEASE-CHECKLIST.md` + product README
 - Production deploy **not** performed (requires explicit authorization)
 
@@ -52,7 +52,6 @@
 
 ### Remaining non-blocking items
 - Email verify/reset, Playwright E2E suite
-- Approved legal copy (OPEN-014)
 - Online payment provider selection (OPEN-002)
 - Real Upstash/Resend adapters when credentials provided
 - Re-upload existing media after enabling R2 (local `public/uploads` keys are not in the bucket)

@@ -11,6 +11,7 @@ import enCommon from "@/locales/en/common.json";
 import enContact from "@/locales/en/contact.json";
 import enGroupOrder from "@/locales/en/group-order.json";
 import enHome from "@/locales/en/home.json";
+import enLegal from "@/locales/en/legal.json";
 import enProduct from "@/locales/en/product.json";
 import enProfile from "@/locales/en/profile.json";
 import enWishlist from "@/locales/en/wishlist.json";
@@ -26,6 +27,7 @@ import hyCommon from "@/locales/hy/common.json";
 import hyContact from "@/locales/hy/contact.json";
 import hyGroupOrder from "@/locales/hy/group-order.json";
 import hyHome from "@/locales/hy/home.json";
+import hyLegal from "@/locales/hy/legal.json";
 import hyProduct from "@/locales/hy/product.json";
 import hyProfile from "@/locales/hy/profile.json";
 import hyWishlist from "@/locales/hy/wishlist.json";
@@ -41,6 +43,7 @@ import ruCommon from "@/locales/ru/common.json";
 import ruContact from "@/locales/ru/contact.json";
 import ruGroupOrder from "@/locales/ru/group-order.json";
 import ruHome from "@/locales/ru/home.json";
+import ruLegal from "@/locales/ru/legal.json";
 import ruProduct from "@/locales/ru/product.json";
 import ruProfile from "@/locales/ru/profile.json";
 import ruWishlist from "@/locales/ru/wishlist.json";
@@ -60,6 +63,7 @@ type LocaleNamespaces = {
   blog: typeof hyBlog;
   catalog: typeof hyCatalog;
   wishlist: typeof hyWishlist;
+  legal: typeof hyLegal;
 };
 
 function buildDictionary(namespaces: LocaleNamespaces) {
@@ -81,6 +85,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     blog: namespaces.blog,
     catalog: namespaces.catalog,
     wishlist: namespaces.wishlist,
+    legal: namespaces.legal,
   } as const;
 }
 
@@ -100,6 +105,7 @@ const dictionaries = {
     blog: hyBlog,
     catalog: hyCatalog,
     wishlist: hyWishlist,
+    legal: hyLegal,
   }),
   en: buildDictionary({
     common: enCommon,
@@ -116,6 +122,7 @@ const dictionaries = {
     blog: enBlog,
     catalog: enCatalog,
     wishlist: enWishlist,
+    legal: enLegal,
   }),
   ru: buildDictionary({
     common: ruCommon,
@@ -132,6 +139,7 @@ const dictionaries = {
     blog: ruBlog,
     catalog: ruCatalog,
     wishlist: ruWishlist,
+    legal: ruLegal,
   }),
 } as const;
 

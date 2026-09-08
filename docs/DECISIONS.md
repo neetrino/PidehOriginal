@@ -49,7 +49,7 @@
 | OPEN-011 | Observability | Open | Sentry/այլ provider, log retention և PII policy | Structured server logs, provider adapter |
 | OPEN-012 | Analytics | Open | Vercel Analytics/PostHog/այլ և consent requirements | First-party aggregate order analytics only |
 | OPEN-013 | Design system | Open | Figma, brand tokens, dark mode և final breakpoints | shadcn/ui + Tailwind CSS variables, light theme first |
-| OPEN-014 | Legal content | Open | Terms/privacy/shipping/returns/cookies approved copy | Routes ստեղծվում են, publish-ը blocked է մինչև approved text |
+| OPEN-014 | Legal content | Resolved | — | `/legal/terms`, `/legal/privacy`, `/legal/delivery` publish արված են approved copy-ով (hy/en/ru)։ Returns-ը ծածկված է terms §6-ում, cookies-ը՝ privacy §7-ում; առանձն routes չկան |
 | OPEN-015 | Countries | Open | Միայն Հայաստան, թե միջազգային shipping | Armenia-first, data model-ը international-ready |
 | OPEN-016 | Inventory policy | Open | Overselling/backorder և reservation timeout | Backorder չկա; stock decrement order creation-ի transaction-ում |
 | DEF-001 | Granular staff roles | Deferred | ADMIN/CUSTOMER-ից ավելի մանր permissions | Future RBAC extension |
