@@ -73,9 +73,8 @@ export function AdminMenuDrawer({
         onClose={() => setOpen(false)}
         ariaLabel={shell.adminMenuAria}
         side="left"
-        panelClassName="w-1/2 min-w-[16rem] max-w-full"
-        panelInnerClassName="relative overflow-hidden bg-[#140a04] text-white"
-        closeClassName="bg-[#ff6b00] hover:bg-[#e85f00]"
+        variant="admin"
+        panelInnerClassName="relative overflow-hidden rounded-r-[28px] border-r-2 border-[#1e1e1e] bg-[#140a04] text-white shadow-[-8px_0_24px_rgba(30,30,30,0.18)]"
       >
         <AdminSidebarBackdrop />
         <div

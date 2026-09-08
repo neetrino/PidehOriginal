@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { X } from "lucide-react";
 
-import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CHECKBOX, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 export type ProductDraftImage = {
@@ -114,13 +114,13 @@ export function ProductDrawerImages({
                 className="aspect-square w-full object-cover"
               />
               <div className="flex items-center justify-between gap-2 px-2 py-2">
-                <label className="flex items-center gap-1.5 text-xs text-gray-700">
+                <label className="flex items-center gap-1.5 text-xs font-bold text-[#1e1e1e]">
                   <input
                     type="checkbox"
                     checked={image.isPrimary}
                     disabled={disabled}
                     onChange={() => setPrimary(image.key)}
-                    className="h-3.5 w-3.5 rounded border-gray-300"
+                    className={`${ADMIN_CHECKBOX} size-4 rounded-[5px]`}
                   />
                   {copy.main}
                 </label>

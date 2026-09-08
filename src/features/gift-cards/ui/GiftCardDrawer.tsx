@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
+  ADMIN_CHECKBOX,
+  ADMIN_CHECKBOX_LABEL,
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
@@ -72,10 +74,10 @@ export function GiftCardDrawer({
       open={open}
       onClose={onClose}
       ariaLabel={copy.drawer.newAria}
-      panelClassName="w-full max-w-md"
+      variant="admin"
     >
-      <div className="border-b border-gray-200 px-5 py-4">
-        <h2 className="text-lg font-semibold text-gray-900">
+      <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
+        <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
           {copy.drawer.newTitle}
         </h2>
       </div>
@@ -140,11 +142,12 @@ export function GiftCardDrawer({
             onChange={(event) => setExpiresAt(event.target.value)}
           />
         </label>
-        <label className="flex items-center gap-2 text-sm text-gray-700">
+        <label className={ADMIN_CHECKBOX_LABEL}>
           <input
             type="checkbox"
             checked={sendEmail}
             onChange={(event) => setSendEmail(event.target.checked)}
+            className={ADMIN_CHECKBOX}
           />
           {copy.drawer.sendEmail}
         </label>

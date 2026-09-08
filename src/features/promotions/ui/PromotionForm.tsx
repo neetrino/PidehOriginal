@@ -6,6 +6,8 @@ import { useMemo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
+  ADMIN_CHECKBOX,
+  ADMIN_CHECKBOX_LABEL,
   ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_SECTION_TITLE,
@@ -324,23 +326,23 @@ export function PromotionForm({
           />
         </label>
 
-        <label className="flex items-center gap-2 text-sm text-gray-700">
+        <label className={ADMIN_CHECKBOX_LABEL}>
           <input
             type="checkbox"
             name="allowStacking"
             defaultChecked={defaults?.allowStacking ?? false}
             disabled={isPending}
-            className="h-4 w-4 rounded border-gray-300"
+            className={ADMIN_CHECKBOX}
           />
           {copy.form.allowStacking}
         </label>
-        <label className="flex items-center gap-2 text-sm text-gray-700">
+        <label className={ADMIN_CHECKBOX_LABEL}>
           <input
             type="checkbox"
             name="isActive"
             defaultChecked={defaults?.isActive ?? true}
             disabled={isPending}
-            className="h-4 w-4 rounded border-gray-300"
+            className={ADMIN_CHECKBOX}
           />
           {copy.form.active}
         </label>

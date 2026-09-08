@@ -6,6 +6,7 @@
   "title": "Մենյու",
   "back": "Ետ",
   "allChip": "Բոլորը",
+  "seeAllCategory": "Տեսնել բոլորը՝ {category}",
   "sortAction": "Դասավորել",
   "resultsCount": "{count} ապրանք",
   "resultsCountOne": "1 ապրանք",

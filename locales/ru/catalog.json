@@ -6,6 +6,7 @@
   "title": "Меню",
   "back": "Назад",
   "allChip": "Все",
+  "seeAllCategory": "Показать все: {category}",
   "sortAction": "Сортировать",
   "resultsCount": "{count} товаров",
   "resultsCountOne": "1 товар",

@@ -52,12 +52,14 @@ export function CartDrawerEmpty({
       >
         <ShoppingBag className="size-12" aria-hidden />
       </motion.div>
-      <p
-        ref={titleRef}
-        className="mt-6 inline-block text-xl font-bold text-[#1e1e1e]"
-      >
-        {empty}
-      </p>
+      <div className="relative mt-6">
+        <p
+          ref={titleRef}
+          className="inline-block text-xl font-bold text-[#1e1e1e]"
+        >
+          {empty}
+        </p>
+      </div>
       <p className="mt-3 max-w-[20rem] text-sm leading-relaxed text-[#1e1e1e]/60">
         {emptyDescription}
       </p>

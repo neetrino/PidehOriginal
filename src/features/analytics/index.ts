@@ -1,6 +1,9 @@
 export {
   getAnalyticsSummary,
   invalidateAnalyticsCache,
+  type AnalyticsMetricBlock,
+  type AnalyticsPeriodMetrics,
+  type AnalyticsSummary,
 } from "@/features/analytics/application/queries";
 export {
   buildAnalyticsCsv,
@@ -16,6 +19,7 @@ export {
   formatAnalyticsShortDate,
   formatPeriodDelta,
   matchAnalyticsPeriodPreset,
+  percentChange,
   rangeForAnalyticsPeriod,
   type AnalyticsDateRange,
   type AnalyticsPeriodPreset,

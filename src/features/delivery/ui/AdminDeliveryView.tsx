@@ -7,6 +7,8 @@ import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
+  ADMIN_CHECKBOX,
+  ADMIN_CHECKBOX_LABEL,
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
@@ -242,13 +244,13 @@ export function AdminDeliveryView({
               ) : null}
             </label>
 
-            <label className="inline-flex items-center gap-2 text-sm text-gray-800">
+            <label className={ADMIN_CHECKBOX_LABEL}>
               <input
                 type="checkbox"
                 checked={isActive}
                 onChange={(event) => setIsActive(event.target.checked)}
                 disabled={isPending}
-                className="h-4 w-4 rounded border-gray-300"
+                className={ADMIN_CHECKBOX}
               />
               {copy.delivery.offerDelivery}
             </label>

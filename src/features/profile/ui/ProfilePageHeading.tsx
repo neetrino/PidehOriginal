@@ -34,7 +34,7 @@ export function ProfilePageHeading({
   }, [reduceMotion, title]);
 
   return (
-    <div>
+    <div className="relative">
       <p className="text-[11px] font-bold tracking-[0.22em] text-[#ff6b00] uppercase">
         {eyebrow}
       </p>

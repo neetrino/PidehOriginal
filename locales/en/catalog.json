@@ -6,6 +6,7 @@
   "title": "Menu",
   "back": "Back",
   "allChip": "All",
+  "seeAllCategory": "See all: {category}",
   "sortAction": "Sort",
   "resultsCount": "{count} products",
   "resultsCountOne": "1 product",

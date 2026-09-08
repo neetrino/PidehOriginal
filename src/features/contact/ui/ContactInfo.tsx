@@ -2,6 +2,7 @@ import { Clock3, Mail, MapPin, Phone, type LucideIcon } from "lucide-react";
 
 import { fadeUp } from "@/components/motion/presets";
 import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
+import { toTelHref } from "@/lib/contact/tel-href";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ContactInfoProps = {
@@ -19,10 +20,6 @@ type Channel = {
   title: string;
   lines: ChannelLine[];
 };
-
-function toTelHref(phone: string): string {
-  return `tel:${phone.replace(/[^\d+]/g, "")}`;
-}
 
 function toMapsHref(address: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;

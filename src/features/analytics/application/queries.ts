@@ -6,13 +6,15 @@ import {
   eq,
   gte,
   inArray,
+  isNotNull,
   lte,
+  or,
   sql,
 } from "drizzle-orm";
 
 import { getProviders } from "@/config/providers";
 import { getDb } from "@/db/client";
-import { orders, users } from "@/db/schema";
+import { orders } from "@/db/schema";
 import {
   queryTopCategories,
   queryTopSellingProducts,
@@ -20,6 +22,7 @@ import {
   type AnalyticsTopProduct,
 } from "@/features/analytics/application/top-rankings";
 import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
+import { percentChange } from "@/features/analytics/domain/date-range";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { getStoreRevenue } from "@/features/settings/application/queries";
 import type { Locale } from "@/lib/i18n/config";
@@ -34,18 +37,36 @@ export { buildAnalyticsCsv, guardCsvCell } from "@/features/analytics/domain/csv
 const CACHE_TTL_SECONDS = 300;
 const cacheKeys = new Set<string>();
 
+export type AnalyticsMetricBlock = {
+  revenueAmount: number;
+  orderCount: number;
+  averageOrderValue: number;
+  changePercent: number | null;
+};
+
+export type AnalyticsPeriodMetrics = {
+  revenueAmount: number;
+  orderCount: number;
+  averageOrderValue: number;
+  customerCount: number;
+  previousRevenueAmount: number;
+  previousOrderCount: number;
+  previousAverageOrderValue: number;
+  previousCustomerCount: number;
+};
+
 export type AnalyticsSummary = {
   from: string;
   to: string;
   previousFrom: string;
   previousTo: string;
-  orderCount: number;
-  revenueAmount: number;
-  averageOrderValue: number;
-  userCount: number;
-  previousOrderCount: number;
-  previousRevenueAmount: number;
-  previousAverageOrderValue: number;
+  snapshots: {
+    today: AnalyticsMetricBlock;
+    yesterday: AnalyticsMetricBlock;
+    month: AnalyticsMetricBlock;
+    total: AnalyticsMetricBlock;
+  };
+  period: AnalyticsPeriodMetrics;
   dailyRows: AnalyticsCsvRow[];
   topProducts: AnalyticsTopProduct[];
   topCategories: AnalyticsTopCategory[];
@@ -78,6 +99,17 @@ function periodBounds(from: string, to: string): {
   };
 }
 
+function utcDayBounds(isoDate: string): { start: Date; end: Date } {
+  return {
+    start: new Date(`${isoDate}T00:00:00.000Z`),
+    end: new Date(`${isoDate}T23:59:59.999Z`),
+  };
+}
+
+function toIsoDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
 function averageOrderValue(revenue: number, orderCount: number): number {
   if (orderCount === 0) {
     return 0;
@@ -86,7 +118,23 @@ function averageOrderValue(revenue: number, orderCount: number): number {
 }
 
 function cacheKey(from: string, to: string, locale: Locale): string {
-  return `analytics:${locale}:${from}:${to}`;
+  return `analytics:v2:${locale}:${from}:${to}`;
+}
+
+function metricBlock(
+  revenueAmount: number,
+  orderCount: number,
+  previousRevenue: number,
+  withChange: boolean,
+): AnalyticsMetricBlock {
+  return {
+    revenueAmount,
+    orderCount,
+    averageOrderValue: averageOrderValue(revenueAmount, orderCount),
+    changePercent: withChange
+      ? percentChange(revenueAmount, previousRevenue)
+      : null,
+  };
 }
 
 async function queryPeriodMetrics(input: {
@@ -99,6 +147,52 @@ async function queryPeriodMetrics(input: {
     gte(orders.placedAt, input.start),
     lte(orders.placedAt, input.end),
   );
+
+  const [[ordersRow], [revenueRow]] = await Promise.all([
+    getDb().select({ value: count() }).from(orders).where(where),
+    getDb()
+      .select({
+        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(
+          Number,
+        ),
+      })
+      .from(orders)
+      .where(and(where, inArray(orders.status, input.revenueStatuses))),
+  ]);
+
+  return {
+    orderCount: ordersRow?.value ?? 0,
+    revenueAmount: revenueRow?.value ?? 0,
+  };
+}
+
+async function queryCustomerCount(input: {
+  start: Date;
+  end: Date;
+}): Promise<number> {
+  const [row] = await getDb()
+    .select({
+      value: sql<number>`count(distinct coalesce(${orders.userId}::text, ${orders.contactEmail}))`.mapWith(
+        Number,
+      ),
+    })
+    .from(orders)
+    .where(
+      and(
+        eq(orders.isArchived, false),
+        gte(orders.placedAt, input.start),
+        lte(orders.placedAt, input.end),
+        or(isNotNull(orders.userId), isNotNull(orders.contactEmail)),
+      ),
+    );
+
+  return row?.value ?? 0;
+}
+
+async function queryAllTimeMetrics(input: {
+  revenueStatuses: OrderStatus[];
+}): Promise<{ orderCount: number; revenueAmount: number }> {
+  const where = eq(orders.isArchived, false);
 
   const [[ordersRow], [revenueRow]] = await Promise.all([
     getDb().select({ value: count() }).from(orders).where(where),
@@ -164,55 +258,161 @@ async function computeAnalyticsSummary(input: {
   const revenueStatuses = revenue.statuses as OrderStatus[];
   const bounds = periodBounds(input.from, input.to);
 
-  const [current, previous, dailyRows, [usersRow], topProducts, topCategories] =
-    await Promise.all([
-      queryPeriodMetrics({
-        start: bounds.start,
-        end: bounds.end,
-        revenueStatuses,
-      }),
-      queryPeriodMetrics({
-        start: bounds.previousStart,
-        end: bounds.previousEnd,
-        revenueStatuses,
-      }),
-      queryDailyRows({
-        from: input.from,
-        to: input.to,
-        revenueStatuses,
-      }),
-      getDb().select({ value: count() }).from(users),
-      queryTopSellingProducts({
-        start: bounds.start,
-        end: bounds.end,
-        revenueStatuses,
-      }),
-      queryTopCategories({
-        start: bounds.start,
-        end: bounds.end,
-        revenueStatuses,
-        locale: input.locale,
-      }),
-    ]);
+  const todayIso = toIsoDate(
+    new Date(
+      Date.UTC(
+        new Date().getUTCFullYear(),
+        new Date().getUTCMonth(),
+        new Date().getUTCDate(),
+      ),
+    ),
+  );
+  const yesterdayDate = new Date(`${todayIso}T00:00:00.000Z`);
+  yesterdayDate.setUTCDate(yesterdayDate.getUTCDate() - 1);
+  const yesterdayIso = toIsoDate(yesterdayDate);
+  const dayBeforeDate = new Date(yesterdayDate);
+  dayBeforeDate.setUTCDate(dayBeforeDate.getUTCDate() - 1);
+  const dayBeforeIso = toIsoDate(dayBeforeDate);
+
+  const monthStartIso = `${todayIso.slice(0, 7)}-01`;
+  const prevMonthEnd = new Date(`${monthStartIso}T00:00:00.000Z`);
+  prevMonthEnd.setUTCDate(0);
+  const prevMonthEndIso = toIsoDate(prevMonthEnd);
+  const prevMonthStartIso = `${prevMonthEndIso.slice(0, 7)}-01`;
+
+  const todayBounds = utcDayBounds(todayIso);
+  const yesterdayBounds = utcDayBounds(yesterdayIso);
+  const dayBeforeBounds = utcDayBounds(dayBeforeIso);
+  const monthBounds = {
+    start: new Date(`${monthStartIso}T00:00:00.000Z`),
+    end: todayBounds.end,
+  };
+  const prevMonthBounds = {
+    start: new Date(`${prevMonthStartIso}T00:00:00.000Z`),
+    end: new Date(`${prevMonthEndIso}T23:59:59.999Z`),
+  };
+
+  const [
+    current,
+    previous,
+    currentCustomers,
+    previousCustomers,
+    today,
+    yesterday,
+    dayBefore,
+    month,
+    prevMonth,
+    allTime,
+    dailyRows,
+    topProducts,
+    topCategories,
+  ] = await Promise.all([
+    queryPeriodMetrics({
+      start: bounds.start,
+      end: bounds.end,
+      revenueStatuses,
+    }),
+    queryPeriodMetrics({
+      start: bounds.previousStart,
+      end: bounds.previousEnd,
+      revenueStatuses,
+    }),
+    queryCustomerCount({ start: bounds.start, end: bounds.end }),
+    queryCustomerCount({
+      start: bounds.previousStart,
+      end: bounds.previousEnd,
+    }),
+    queryPeriodMetrics({
+      start: todayBounds.start,
+      end: todayBounds.end,
+      revenueStatuses,
+    }),
+    queryPeriodMetrics({
+      start: yesterdayBounds.start,
+      end: yesterdayBounds.end,
+      revenueStatuses,
+    }),
+    queryPeriodMetrics({
+      start: dayBeforeBounds.start,
+      end: dayBeforeBounds.end,
+      revenueStatuses,
+    }),
+    queryPeriodMetrics({
+      start: monthBounds.start,
+      end: monthBounds.end,
+      revenueStatuses,
+    }),
+    queryPeriodMetrics({
+      start: prevMonthBounds.start,
+      end: prevMonthBounds.end,
+      revenueStatuses,
+    }),
+    queryAllTimeMetrics({ revenueStatuses }),
+    queryDailyRows({
+      from: input.from,
+      to: input.to,
+      revenueStatuses,
+    }),
+    queryTopSellingProducts({
+      start: bounds.start,
+      end: bounds.end,
+      revenueStatuses,
+    }),
+    queryTopCategories({
+      start: bounds.start,
+      end: bounds.end,
+      revenueStatuses,
+      locale: input.locale,
+    }),
+  ]);
 
   return {
     from: input.from,
     to: input.to,
     previousFrom: bounds.previousFrom,
     previousTo: bounds.previousTo,
-    orderCount: current.orderCount,
-    revenueAmount: current.revenueAmount,
-    averageOrderValue: averageOrderValue(
-      current.revenueAmount,
-      current.orderCount,
-    ),
-    userCount: usersRow?.value ?? 0,
-    previousOrderCount: previous.orderCount,
-    previousRevenueAmount: previous.revenueAmount,
-    previousAverageOrderValue: averageOrderValue(
-      previous.revenueAmount,
-      previous.orderCount,
-    ),
+    snapshots: {
+      today: metricBlock(
+        today.revenueAmount,
+        today.orderCount,
+        yesterday.revenueAmount,
+        true,
+      ),
+      yesterday: metricBlock(
+        yesterday.revenueAmount,
+        yesterday.orderCount,
+        dayBefore.revenueAmount,
+        true,
+      ),
+      month: metricBlock(
+        month.revenueAmount,
+        month.orderCount,
+        prevMonth.revenueAmount,
+        true,
+      ),
+      total: metricBlock(
+        allTime.revenueAmount,
+        allTime.orderCount,
+        0,
+        false,
+      ),
+    },
+    period: {
+      revenueAmount: current.revenueAmount,
+      orderCount: current.orderCount,
+      averageOrderValue: averageOrderValue(
+        current.revenueAmount,
+        current.orderCount,
+      ),
+      customerCount: currentCustomers,
+      previousRevenueAmount: previous.revenueAmount,
+      previousOrderCount: previous.orderCount,
+      previousAverageOrderValue: averageOrderValue(
+        previous.revenueAmount,
+        previous.orderCount,
+      ),
+      previousCustomerCount: previousCustomers,
+    },
     dailyRows,
     topProducts,
     topCategories,

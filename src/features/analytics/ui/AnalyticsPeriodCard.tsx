@@ -1,9 +1,9 @@
 "use client";
 
+import { CalendarDays, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
-import { Card } from "@/components/ui/Card";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import {
   ADMIN_INPUT,
@@ -84,78 +84,81 @@ export function AnalyticsPeriodCard({
   }
 
   return (
-    <Card className="mb-6 rounded-2xl p-5 sm:p-6">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-        <h2 className="text-lg font-semibold text-gray-900">
-          {copy.analytics.period.title}
-        </h2>
-        <p className="text-sm font-medium text-gray-500">
-          {formatAnalyticsDisplayDate(from)} – {formatAnalyticsDisplayDate(to)}
-        </p>
-      </div>
+    <div className="mb-5 rounded-[18px] border border-[#1e1e1e]/8 bg-white px-4 py-4 shadow-[0_8px_20px_rgba(30,30,30,0.04)] sm:px-5">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 text-sm font-medium text-[#1e1e1e]">
+            <CalendarDays className="size-4 shrink-0 text-[#ff6b00]" aria-hidden />
+            <p>
+              {formatAnalyticsDisplayDate(from)} –{" "}
+              {formatAnalyticsDisplayDate(to)}
+            </p>
+          </div>
 
-      <div className="max-w-md">
-        <span className={ADMIN_LABEL}>{copy.analytics.period.label}</span>
-        <SelectDropdown
-          ariaLabel={copy.analytics.period.aria}
-          value={selectedPreset}
-          options={ANALYTICS_PERIOD_PRESETS.map((option) => ({
-            label: presetLabel(option),
-            value: option,
-          }))}
-          disabled={pending}
-          deferChange={false}
-          className="mt-1"
-          onValueChange={onPeriodChange}
-        />
-      </div>
-
-      {selectedPreset === "custom" ? (
-        <form
-          onSubmit={onCustomSubmit}
-          className="mt-4 flex flex-wrap items-end gap-3"
-        >
-          <label className="min-w-[140px] flex-1">
-            <span className={ADMIN_LABEL}>{copy.analytics.period.from}</span>
-            <input
-              name="from"
-              type="date"
-              defaultValue={from}
-              className={ADMIN_INPUT}
+          <div className="mt-3 max-w-xs">
+            <span className={ADMIN_LABEL}>{copy.analytics.period.label}</span>
+            <SelectDropdown
+              ariaLabel={copy.analytics.period.aria}
+              value={selectedPreset}
+              options={ANALYTICS_PERIOD_PRESETS.map((option) => ({
+                label: presetLabel(option),
+                value: option,
+              }))}
+              disabled={pending}
+              deferChange={false}
+              className="mt-1"
+              onValueChange={onPeriodChange}
             />
-          </label>
-          <label className="min-w-[140px] flex-1">
-            <span className={ADMIN_LABEL}>{copy.analytics.period.to}</span>
-            <input
-              name="to"
-              type="date"
-              defaultValue={to}
-              className={ADMIN_INPUT}
-            />
-          </label>
-          <button
-            type="submit"
-            disabled={pending}
-            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-60"
-          >
-            {copy.analytics.period.apply}
-          </button>
-        </form>
-      ) : null}
+          </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-4">
+          {selectedPreset === "custom" ? (
+            <form
+              onSubmit={onCustomSubmit}
+              className="mt-3 flex flex-wrap items-end gap-3"
+            >
+              <label className="min-w-[140px] flex-1">
+                <span className={ADMIN_LABEL}>{copy.analytics.period.from}</span>
+                <input
+                  name="from"
+                  type="date"
+                  defaultValue={from}
+                  className={ADMIN_INPUT}
+                />
+              </label>
+              <label className="min-w-[140px] flex-1">
+                <span className={ADMIN_LABEL}>{copy.analytics.period.to}</span>
+                <input
+                  name="to"
+                  type="date"
+                  defaultValue={to}
+                  className={ADMIN_INPUT}
+                />
+              </label>
+              <button
+                type="submit"
+                disabled={pending}
+                className="rounded-full bg-[#ff6b00] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#e85f00] disabled:opacity-60"
+              >
+                {copy.analytics.period.apply}
+              </button>
+            </form>
+          ) : null}
+
+          {rangeInvalid ? (
+            <p className="mt-2 text-sm text-[#c2410c]">
+              {copy.analytics.period.invalidRange}
+            </p>
+          ) : null}
+        </div>
+
         <a
           href={`/api/exports/admin/analytics?${exportQuery}`}
-          className="text-sm font-medium text-gray-700 underline-offset-2 hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm font-bold text-[#ff6b00] underline-offset-2 hover:underline"
         >
+          <Download className="size-4" aria-hidden />
           {copy.analytics.period.downloadCsv}
         </a>
-        {rangeInvalid ? (
-          <p className="text-sm text-red-700">
-            {copy.analytics.period.invalidRange}
-          </p>
-        ) : null}
       </div>
-    </Card>
+    </div>
   );
 }

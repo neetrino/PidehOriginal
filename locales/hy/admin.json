@@ -744,30 +744,48 @@
       "thisMonth": "Այս ամիս",
       "customRange": "Ընտրովի միջակայք"
     },
+    "snapshots": {
+      "today": "Այսօր",
+      "yesterday": "Երեկ",
+      "month": "Ամիս",
+      "total": "Ընդհանուր",
+      "orders": "{count} պատվեր",
+      "avgOrder": "{amount} միջին պատվեր",
+      "changeAria": "Փոփոխություն {value}"
+    },
     "metrics": {
+      "income": "Եկամուտ",
+      "orders": "Պատվերներ",
+      "avgCheck": "Միջին չեկ",
+      "customersInRange": "Հաճախորդներ ընտրված ժամանակահատվածում",
       "totalOrders": "Ընդամենը պատվերներ",
       "totalRevenue": "Ընդհանուր եկամուտ",
       "totalUsers": "Ընդամենը օգտատերեր"
     },
     "topProducts": {
-      "title": "Ամենաշատ վաճառվող ապրանքներ",
+      "title": "Թոփ վաճառվող ապրանքներ",
       "sold": "Վաճառվել է {quantity}",
       "orders": "{count} պատվեր",
       "empty": "Այս ժամանակահատվածում ապրանքի վաճառք չկա։"
     },
     "topCategories": {
-      "title": "Առաջատար կատեգորիաներ",
+      "title": "Թոփ կատեգորիաներ",
       "items": "{count} ապրանք",
       "orders": "{count} պատվեր",
       "empty": "Այս ժամանակահատվածում կատեգորիաների վաճառք չկա։"
     },
     "ordersByDay": {
-      "title": "Պատվերներ ըստ օրերի",
+      "title": "Միտում",
       "subtitle": "Պատվերների և եկամտի օրական միտումներ",
-      "chartAria": "Պատվերների օրական միտումների գծապատկեր",
+      "chartAria": "Պատվերների և եկամտի օրական միտումների գծապատկեր",
       "empty": "Այս ժամանակահատվածում պատվերներ չկան։",
       "ordersCount": "{count} պատվեր",
-      "revenue": "եկամուտ"
+      "ordersLegend": "Պատվերներ",
+      "revenueLegend": "Եկամուտ",
+      "revenue": "եկամուտ",
+      "sideIncome": "Եկամուտ",
+      "sideOrders": "Պատվերներ",
+      "sideAvg": "Միջին չեկ"
     }
   },
   "hero": {

@@ -26,3 +26,25 @@ export const ADMIN_PRIMARY_BTN =
 
 export const ADMIN_GHOST_LINK =
   "rounded-full px-3 py-1.5 text-sm font-bold text-[#ff6b00] transition hover:bg-[#ffd54a]/50";
+
+/** Pideh admin checkbox — orange fill, ink border (replaces native blue). */
+export const ADMIN_CHECKBOX =
+  "admin-checkbox size-5 shrink-0 cursor-pointer rounded-[7px] border-2 border-[#1e1e1e]/20 bg-white transition hover:border-[#ff6b00]/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b00]/35 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
+
+export const ADMIN_CHECKBOX_LABEL =
+  "inline-flex cursor-pointer items-center gap-2.5 text-sm font-bold text-[#1e1e1e] select-none";
+
+/** Admin side sheets stretch to the viewport midline. */
+export const ADMIN_SHEET_PANEL = "w-full sm:w-1/2";
+
+export const ADMIN_SHEET_HEADER =
+  "shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6";
+
+export const ADMIN_SHEET_TITLE =
+  "font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl";
+
+export const ADMIN_SHEET_BODY =
+  "min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-5 sm:px-6";
+
+export const ADMIN_SHEET_FOOTER =
+  "shrink-0 border-t-2 border-[#1e1e1e]/10 bg-[#fff8e7] px-5 py-4 sm:px-6";

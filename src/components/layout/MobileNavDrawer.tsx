@@ -13,9 +13,11 @@ import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
+import { LocaleCurrencySwitcher } from "@/components/layout/LocaleCurrencySwitcher";
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import type { Currency } from "@/lib/money/currency";
 
 const MENU_EXIT_MS = 260;
 const MENU_GAP_PX = 8;
@@ -30,6 +32,8 @@ type MobileNavDrawerProps = {
   locale: Locale;
   dictionary: Dictionary;
   navItems: readonly NavItem[];
+  /** When set, the panel also offers the language/currency switcher. */
+  currency?: Currency;
   /** Optional classes for the open/close trigger button. */
   triggerClassName?: string;
   /** When set, replaces the default Menu/X glyphs inside the trigger. */
@@ -51,6 +55,7 @@ export function MobileNavDrawer({
   locale,
   dictionary,
   navItems,
+  currency,
   triggerClassName,
   triggerContent,
 }: MobileNavDrawerProps) {
@@ -75,12 +80,17 @@ export function MobileNavDrawer({
   }, []);
 
   const measureHeader = useCallback(() => {
-    const header = document.querySelector<HTMLElement>("[data-site-header]");
+    const trigger = triggerRef.current;
+    // Prefer the header this trigger actually lives in — the storefront
+    // renders both the desktop and the mobile chrome.
+    const header =
+      trigger?.closest<HTMLElement>("[data-site-header]") ??
+      document.querySelector<HTMLElement>("[data-site-header]");
+
     if (header) {
       setPanelTopPx(header.getBoundingClientRect().bottom);
       return;
     }
-    const trigger = triggerRef.current;
     if (trigger) {
       setPanelTopPx(trigger.getBoundingClientRect().bottom);
     }
@@ -278,6 +288,17 @@ export function MobileNavDrawer({
                       );
                     })}
                   </div>
+
+                  {currency ? (
+                    <div className="border-t border-pideh-ink/10 py-4">
+                      <LocaleCurrencySwitcher
+                        locale={locale}
+                        currency={currency}
+                        currencyLabel={dictionary.header.currency}
+                        languageLabel={dictionary.header.language}
+                      />
+                    </div>
+                  ) : null}
 
                   <div className="border-t border-pideh-ink/10 py-5">
                     <AppLink

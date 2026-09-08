@@ -37,7 +37,7 @@ export function HeroSlideModal({
       open={open}
       onClose={onClose}
       ariaLabel={isEdit ? copy.hero.drawer.editAria : copy.hero.drawer.createAria}
-      panelClassName="w-full max-w-lg"
+      variant="admin"
     >
       <HeroSlideDrawerForm
         key={slide?.id ?? "create"}
@@ -80,8 +80,8 @@ function HeroSlideDrawerForm({
 
   return (
     <>
-        <div className="border-b border-gray-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+        <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
+          <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
             {isEdit ? copy.hero.drawer.editTitle : copy.hero.drawer.createTitle}
           </h2>
         </div>

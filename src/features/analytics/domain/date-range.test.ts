@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatAnalyticsDisplayDate,
   matchAnalyticsPeriodPreset,
+  percentChange,
   rangeForAnalyticsPeriod,
 } from "@/features/analytics/domain/date-range";
 
@@ -27,5 +28,20 @@ describe("rangeForAnalyticsPeriod", () => {
 describe("formatAnalyticsDisplayDate", () => {
   it("formats UTC ISO dates for headers", () => {
     expect(formatAnalyticsDisplayDate("2026-07-12")).toBe("Jul 12, 2026");
+  });
+});
+
+describe("percentChange", () => {
+  it("returns null when both values are zero", () => {
+    expect(percentChange(0, 0)).toBeNull();
+  });
+
+  it("returns 100 when rising from zero", () => {
+    expect(percentChange(50, 0)).toBe(100);
+  });
+
+  it("computes signed percent to one decimal", () => {
+    expect(percentChange(150, 100)).toBe(50);
+    expect(percentChange(50, 100)).toBe(-50);
   });
 });

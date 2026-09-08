@@ -3,25 +3,14 @@
 import { useState } from "react";
 
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
-import { ProductOptionPills } from "@/features/products/ui/ProductOptionPills";
 import { ProductPurchaseControls } from "@/features/products/ui/ProductPurchaseControls";
 import { ProductSectionHeading } from "@/features/products/ui/ProductSectionHeading";
 import type { useProductConfigurator } from "@/features/products/ui/use-product-configurator";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 
-const DEFAULT_SIZE_ID = "medium";
-const DEFAULT_DOUGH_ID = "thin";
-
 export type ProductInfoCardLabels = {
   ingredients: string;
-  size: string;
-  sizeSmall: string;
-  sizeMedium: string;
-  sizeLarge: string;
-  dough: string;
-  doughThin: string;
-  doughThick: string;
   specialRequests: string;
   specialRequestsPlaceholder: string;
   quantity: string;
@@ -33,9 +22,6 @@ export type ProductInfoCardLabels = {
   added: string;
   error: string;
   resetSelection: string;
-  orderSummary: string;
-  basePrice: string;
-  total: string;
 };
 
 type ProductInfoCardProps = {
@@ -61,14 +47,10 @@ export function ProductInfoCard({
   labels,
   state,
 }: ProductInfoCardProps) {
-  const [sizeId, setSizeId] = useState(DEFAULT_SIZE_ID);
-  const [doughId, setDoughId] = useState(DEFAULT_DOUGH_ID);
   const [note, setNote] = useState("");
   const disabled = state.disabled || state.pending;
 
   function handleReset(): void {
-    setSizeId(DEFAULT_SIZE_ID);
-    setDoughId(DEFAULT_DOUGH_ID);
     setNote("");
     state.resetSelection();
   }
@@ -108,23 +90,22 @@ export function ProductInfoCard({
         </div>
       ) : null}
 
-      <PrepOptions
-        sizeId={sizeId}
-        doughId={doughId}
-        disabled={disabled}
-        labels={labels}
-        onSize={setSizeId}
-        onDough={setDoughId}
-      />
+      <div className="flex flex-wrap items-baseline gap-3">
+        <p className="text-[36px] leading-9 font-extrabold text-[#ff6900]">
+          {state.totalFormatted}
+        </p>
+        {state.compareAtTotalFormatted ? (
+          <span className="text-base leading-6 text-[#99a1af] line-through">
+            {state.compareAtTotalFormatted}
+          </span>
+        ) : null}
+      </div>
 
       <ProductPurchaseControls
         quantity={state.quantity}
         maxQty={state.maxQty}
         disabled={state.disabled}
         pending={state.pending}
-        unitPriceFormatted={state.unitPriceFormatted}
-        totalFormatted={state.totalFormatted}
-        compareAtTotalFormatted={state.compareAtTotalFormatted}
         onQuantityChange={state.changeQuantity}
         onReset={handleReset}
         onAdd={state.handleAdd}
@@ -141,68 +122,6 @@ export function ProductInfoCard({
         onChange={setNote}
       />
     </div>
-  );
-}
-
-function PrepOptions({
-  sizeId,
-  doughId,
-  disabled,
-  labels,
-  onSize,
-  onDough,
-}: {
-  sizeId: string;
-  doughId: string;
-  disabled: boolean;
-  labels: ProductInfoCardLabels;
-  onSize: (id: string) => void;
-  onDough: (id: string) => void;
-}) {
-  return (
-    <>
-      <div className="flex flex-col gap-2">
-        <ProductSectionHeading
-          iconSrc={PIDEH_ASSETS.pdpRuler}
-          iconWidth={14}
-          iconHeight={14}
-          title={labels.size}
-          tone="onCream"
-          titleSize="sm"
-        />
-        <ProductOptionPills
-          groupLabel={labels.size}
-          selectedId={sizeId}
-          disabled={disabled}
-          onSelect={onSize}
-          options={[
-            { id: "small", label: labels.sizeSmall },
-            { id: "medium", label: labels.sizeMedium },
-            { id: "large", label: labels.sizeLarge },
-          ]}
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <ProductSectionHeading
-          iconSrc={PIDEH_ASSETS.pdpLayers}
-          iconWidth={14}
-          iconHeight={14}
-          title={labels.dough}
-          tone="onCream"
-          titleSize="sm"
-        />
-        <ProductOptionPills
-          groupLabel={labels.dough}
-          selectedId={doughId}
-          disabled={disabled}
-          onSelect={onDough}
-          options={[
-            { id: "thin", label: labels.doughThin },
-            { id: "thick", label: labels.doughThick },
-          ]}
-        />
-      </div>
-    </>
   );
 }
 

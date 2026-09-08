@@ -214,6 +214,23 @@ body {
   mix-blend-mode: color-burn;
 }
 
+/** Admin form checkboxes — custom checkmark (no native blue). */
+.admin-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  print-color-adjust: exact;
+  color-adjust: exact;
+}
+
+.admin-checkbox:checked {
+  border-color: #ff6b00;
+  background-color: #ff6b00;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.2 8.2 6.6 11.5 12.8 4.5' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 0.78rem 0.78rem;
+}
+
 /* Full-bleed Pideh homepage shell (Figma 1:76) */
 .storefront-shell:has(.pideh-home) {
   background: var(--pideh-orange);
@@ -291,6 +308,17 @@ body {
 }
 
 @media (max-width: 767px) {
+  /* Figma mobile chrome (366:464) replaces the desktop header everywhere. */
+  .storefront-shell .site-header {
+    display: none;
+  }
+
+  /* Pages that ship their own in-page chrome opt out of the shared bar. */
+  .storefront-shell:has(.pideh-home-mobile) .mobile-storefront-header,
+  .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header {
+    display: none;
+  }
+
   .storefront-shell:has(.pideh-home) .storefront-main,
   .storefront-shell:has(.pideh-about) .storefront-main,
   .storefront-shell:has(.pideh-login) .storefront-main,
@@ -305,12 +333,20 @@ body {
     padding-bottom: 0;
   }
 
-  /* Figma mobile home (259:369) uses in-page chrome instead of site header. */
-  .storefront-shell:has(.pideh-home-mobile) .site-header {
+  .storefront-shell:has(.pideh-home-mobile) .storefront-footer {
     display: none;
   }
 
-  .storefront-shell:has(.pideh-home-mobile) .storefront-footer {
+  /* Figma mobile menu (366:464): orange page with its own chrome + copyright. */
+  .storefront-shell:has(.pideh-shop-mobile) {
+    background: var(--pideh-orange);
+  }
+
+  .storefront-shell:has(.pideh-shop-mobile) .storefront-main {
+    padding-bottom: 0;
+  }
+
+  .storefront-shell:has(.pideh-shop-mobile) .storefront-footer {
     display: none;
   }
 }
