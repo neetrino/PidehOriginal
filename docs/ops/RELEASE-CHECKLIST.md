@@ -16,7 +16,7 @@
 - [ ] COD checkout + order status transitions smoke-tested
 - [ ] Review moderation + currency switch smoke-tested
 - [ ] Analytics CSV export authorized-only
-- [ ] Legal pages replaced with approved copy (OPEN-014) before public launch
+- [x] Legal pages carry approved copy — terms, privacy, delivery (OPEN-014)
 - [ ] Online payments still deferred unless OPEN-002 approved
 
 ## Rollback

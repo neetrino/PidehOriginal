@@ -1,0 +1,341 @@
+{
+  "delivery": {
+    "title": "Food Delivery Terms",
+    "intro": [
+      "At PIDEH.am, we aim to deliver your order as quickly as possible while keeping the food fresh, safe, and properly packaged. Below are the main terms for food delivery orders."
+    ],
+    "sections": [
+      {
+        "heading": "Preparation and Delivery Timeframes",
+        "lead": "",
+        "items": [
+          "Order preparation begins after the order has been confirmed.",
+          "Total delivery time depends on the size of the order, delivery address, traffic conditions, and courier availability.",
+          "The estimated delivery time is shown during checkout or communicated after the order is confirmed."
+        ],
+        "clauses": [],
+        "note": ""
+      },
+      {
+        "heading": "Delivery Conditions",
+        "lead": "Food delivery is carried out under the following conditions:",
+        "items": [
+          "Food is packaged to help preserve its temperature, freshness, and presentation during delivery.",
+          "Delivery is available within supported service areas based on the delivery address provided with the order."
+        ],
+        "clauses": [],
+        "note": ""
+      },
+      {
+        "heading": "Delivery Fee",
+        "lead": "",
+        "items": [
+          "The delivery fee is calculated based on the delivery address and service area and is shown before the order is finally confirmed.",
+          "If free delivery or another delivery promotion is available, it will be applied according to the terms of that promotion."
+        ],
+        "clauses": [],
+        "note": ""
+      },
+      {
+        "heading": "Possible Delays",
+        "lead": "In some cases, delivery may be delayed due to:",
+        "items": [
+          "High order volume",
+          "Traffic congestion or weather conditions",
+          "Other unforeseen circumstances"
+        ],
+        "clauses": [],
+        "note": "If the expected delivery time changes significantly, our team or delivery service will inform you whenever possible."
+      }
+    ]
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": [
+      "By visiting the website pideh.am (hereinafter referred to as the \"Website\") and making purchases, you automatically consent to the collection, processing, and use of your personal data.",
+      "By \"Personal Data,\" we mean any information that allows or may allow us to directly or indirectly identify your identity, such as your name, surname, address, email, phone number, and other data (hereinafter referred to as \"Data\").",
+      "In this Privacy Policy, \"we,\" \"us,\" and \"our\" refer to the Website (for more information, please visit the \"About Us\" section), while \"you,\" \"your,\" and \"yours\" refer to any individual who visits the Website or uses our services."
+    ],
+    "sections": [
+      {
+        "heading": "Collected Data",
+        "lead": "We may collect the following types of information:",
+        "items": [
+          "Contact information – name, surname, address, phone number, email address",
+          "Purchase information – products purchased, payment methods",
+          "Technical information – device type, browser, operating system",
+          "Cookies and tracking technologies – for website usage analysis"
+        ],
+        "clauses": [],
+        "note": ""
+      },
+      {
+        "heading": "Use of Data",
+        "lead": "Collected data is never sold or provided to third parties for marketing purposes. It is used only for the following purposes:",
+        "items": [
+          "Processing and shipping orders",
+          "Providing user support",
+          "Improving website functionality",
+          "Complying with legal requirements"
+        ],
+        "clauses": [],
+        "note": ""
+      },
+      {
+        "heading": "Data Retention Periods",
+        "lead": "Your personal data is stored as follows:",
+        "items": [
+          "User account data – as long as the account is active",
+          "Purchase history – 5 years (to comply with tax and accounting regulations)",
+          "Marketing data – 2 years or until the user opts out"
+        ],
+        "clauses": [],
+        "note": ""
+      },
+      {
+        "heading": "Data Security",
+        "lead": "We implement appropriate technical and organizational measures to ensure the protection of your data, including:",
+        "items": [
+          "SSL encryption – to secure payment and personal data transmission",
+          "Access control – limited access to personal data",
+          "Regular audits – to detect potential security vulnerabilities"
+        ],
+        "clauses": [],
+        "note": ""
+      },
+      {
+        "heading": "Sharing Data with Third Parties",
+        "lead": "We do not sell or provide your data to third parties, except for:",
+        "items": [
+          "Shipping services – to ensure order delivery",
+          "Payment systems – for secure payment processing",
+          "Law enforcement authorities – in cases required by law"
+        ],
+        "clauses": [],
+        "note": "All third parties are obligated to protect your data and cannot use it for other purposes."
+      },
+      {
+        "heading": "User Rights",
+        "lead": "You have the right to:",
+        "items": [
+          "Receive a copy of your personal data",
+          "Edit or delete your data (through our website settings or customer support)",
+          "Opt out of marketing emails (via the \"unsubscribe\" link in each email)",
+          "Request that your data is not processed for specific purposes, except in cases required by law"
+        ],
+        "clauses": [],
+        "note": ""
+      },
+      {
+        "heading": "Cookies Usage",
+        "lead": "Our website uses cookies to optimize user experience. We use:",
+        "items": [
+          "Functional cookies – to ensure proper website operation",
+          "Analytical cookies – to understand user behavior and improve the website",
+          "Marketing cookies (only with your consent) – to provide more relevant advertisements"
+        ],
+        "clauses": [],
+        "note": "You can change your preferences at any time by adjusting the cookie settings in your browser."
+      },
+      {
+        "heading": "Policy Changes",
+        "lead": "We reserve the right to make legally permitted changes to this page and the above sections. Updates will be posted on the Website.",
+        "items": [],
+        "clauses": [],
+        "note": ""
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "intro": [],
+    "sections": [
+      {
+        "heading": "GENERAL PROVISIONS",
+        "lead": "",
+        "items": [],
+        "clauses": [
+          {
+            "text": "These Terms and Conditions govern the use of the pideh.am website (hereinafter referred to as the \"Website\").",
+            "items": []
+          },
+          {
+            "text": "By accessing or using the Website, you agree to these Terms.",
+            "items": []
+          },
+          {
+            "text": "If you do not agree to any part of these Terms, please do not use the Website.",
+            "items": []
+          },
+          {
+            "text": "The Website reserves the right to modify these Terms without prior notice. Changes become effective upon their publication on the Website.",
+            "items": []
+          },
+          {
+            "text": "Continued use of the Website implies acceptance of the updated Terms.",
+            "items": []
+          }
+        ],
+        "note": ""
+      },
+      {
+        "heading": "KEY DEFINITIONS",
+        "lead": "The following definitions apply in these Terms:",
+        "items": [
+          "Website – The online platform pideh.am offering services, content, and various functionalities.",
+          "User – Any individual or legal entity accessing or using the Website.",
+          "Services – All products, services, content, and tools available via the Website.",
+          "Content – Any text, images, videos, audio, or other materials available on the Website.",
+          "Intellectual Property – Website name, logo, texts, software, and other elements protected by copyright or trademark law.",
+          "Transaction – Any purchase, service registration, or other contractual agreement on the Website."
+        ],
+        "clauses": [],
+        "note": ""
+      },
+      {
+        "heading": "USER OBLIGATIONS",
+        "lead": "",
+        "items": [],
+        "clauses": [
+          {
+            "text": "The User agrees to:",
+            "items": [
+              "Use the Website only for lawful purposes.",
+              "Not interfere with the Website's technical operation.",
+              "Not distribute viruses, malware, or any harmful code.",
+              "Not attempt to illegally access Website servers or data.",
+              "Not publish or distribute illegal, offensive, defamatory, or hate-inducing content."
+            ]
+          },
+          {
+            "text": "The Website reserves the right to block any User who violates these Terms.",
+            "items": []
+          }
+        ],
+        "note": ""
+      },
+      {
+        "heading": "LIMITATION OF LIABILITY",
+        "lead": "",
+        "items": [],
+        "clauses": [
+          {
+            "text": "The Website is provided \"as is\" without any warranties.",
+            "items": []
+          },
+          {
+            "text": "The Website is not responsible for:",
+            "items": [
+              "Any errors or technical malfunctions.",
+              "Incorrect or false information entered by Users.",
+              "Damages resulting from third-party interactions with the Website.",
+              "The accuracy, reliability, or timeliness of the content provided."
+            ]
+          },
+          {
+            "text": "The Website is not liable for indirect damages, including lost revenue or data loss.",
+            "items": []
+          }
+        ],
+        "note": ""
+      },
+      {
+        "heading": "INTELLECTUAL PROPERTY",
+        "lead": "",
+        "items": [],
+        "clauses": [
+          {
+            "text": "All materials on the Website, including texts, images, logos, and software, belong to the Website or its rightful owners.",
+            "items": []
+          },
+          {
+            "text": "Copying, distributing, selling, or using any content without prior written permission is strictly prohibited.",
+            "items": []
+          },
+          {
+            "text": "The User has no right to use the Website's trademark or domain name without written permission.",
+            "items": []
+          }
+        ],
+        "note": ""
+      },
+      {
+        "heading": "PAYMENTS AND REFUNDS",
+        "lead": "",
+        "items": [],
+        "clauses": [
+          {
+            "text": "If the Website offers paid services, payments must be made under the specified conditions.",
+            "items": []
+          },
+          {
+            "text": "The Website may change prices or payment terms without prior notice.",
+            "items": []
+          },
+          {
+            "text": "If applicable, refund policies will be outlined separately on the Website.",
+            "items": []
+          }
+        ],
+        "note": ""
+      },
+      {
+        "heading": "DISPUTE RESOLUTION",
+        "lead": "",
+        "items": [],
+        "clauses": [
+          {
+            "text": "These Terms are governed by the laws of the Republic of Armenia.",
+            "items": []
+          },
+          {
+            "text": "All disputes should first be resolved through negotiations.",
+            "items": []
+          },
+          {
+            "text": "If negotiations fail, disputes will be handled in the competent courts of Armenia.",
+            "items": []
+          }
+        ],
+        "note": ""
+      },
+      {
+        "heading": "FORCE MAJEURE",
+        "lead": "",
+        "items": [],
+        "clauses": [
+          {
+            "text": "The Website is not responsible for failure or delay in fulfilling obligations due to force majeure circumstances, including:",
+            "items": [
+              "Natural disasters (earthquakes, floods, fires, etc.).",
+              "Governmental restrictions or prohibitions.",
+              "Military conflicts, terrorism, or civil unrest.",
+              "Technical failures beyond the Website's control."
+            ]
+          }
+        ],
+        "note": ""
+      },
+      {
+        "heading": "PRIVACY AND DATA PROTECTION",
+        "lead": "",
+        "items": [],
+        "clauses": [
+          {
+            "text": "The Website commits to protecting user data in accordance with the Privacy Policy.",
+            "items": []
+          },
+          {
+            "text": "The Website may collect and process user data for legal purposes.",
+            "items": []
+          },
+          {
+            "text": "The Website reserves the right to disclose user data to authorities as required by law.",
+            "items": []
+          }
+        ],
+        "note": ""
+      }
+    ]
+  }
+}

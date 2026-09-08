@@ -180,7 +180,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               <ul className="space-y-4 text-sm leading-5 text-[#1e1e1e]">
                 <li>
                   <AppLink
-                    href={`/${locale}/legal/terms`}
+                    href={`/${locale}/legal/delivery`}
                     prefetchPolicy="intent"
                     className="transition hover:text-[#ff6b00]"
                   >
