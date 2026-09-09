@@ -3,11 +3,11 @@ export {
   getStoreRevenue,
   getStoreBonusSettings,
   getStoreGiftCardSettings,
-} from "@/features/settings/application/queries";
+} from '@/features/settings/application/queries';
 export {
   upsertStoreSettingAction,
   type UpsertStoreSettingInput,
-} from "@/features/settings/application/upsert-settings";
+} from '@/features/settings/application/upsert-settings';
 export {
   DEFAULT_FX_RATES,
   DEFAULT_REVENUE_STATUSES,
@@ -28,4 +28,4 @@ export {
   type StoreRevenue,
   type StoreSettingKey,
   type StoreStacking,
-} from "@/features/settings/domain/store-settings";
+} from '@/features/settings/domain/store-settings';

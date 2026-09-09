@@ -1,32 +1,32 @@
-"use server";
+'use server';
 
-import { z } from "zod";
+import { z } from 'zod';
 
-import { getCartWithItems } from "@/features/cart/cart";
-import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
+import { getCartWithItems } from '@/features/cart/cart';
+import { cartLineUnitAmount } from '@/features/cart/domain/line-price';
 import {
   buildGiftCardRedeemPreview,
   type GiftCardRedeemPreview,
-} from "@/features/gift-cards/domain/gift-card-rules";
-import { evaluateGiftCardForRedeem } from "@/features/gift-cards/application/queries";
+} from '@/features/gift-cards/domain/gift-card-rules';
+import { evaluateGiftCardForRedeem } from '@/features/gift-cards/application/queries';
 import {
   calculateMaxRedeemAmount,
   clampBonusRedeemRequest,
   bonusEligibleMerchandiseAmount,
-} from "@/features/bonuses/domain/bonus-rules";
-import { getUserBonusBalance } from "@/features/bonuses/application/queries";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+} from '@/features/bonuses/domain/bonus-rules';
+import { getUserBonusBalance } from '@/features/bonuses/application/queries';
+import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
   isCouponUserEligible,
-} from "@/features/promotions/domain/evaluate-coupon";
-import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
-import { getDb } from "@/db/client";
-import { promotionUsers, promotions } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
-import { getCurrentUser } from "@/lib/auth/session";
-import { getStoreBonusSettings } from "@/features/settings/application/queries";
+} from '@/features/promotions/domain/evaluate-coupon';
+import { normalizePromotionCode } from '@/features/promotions/domain/promotion-rules';
+import { getDb } from '@/db/client';
+import { promotionUsers, promotions } from '@/db/schema';
+import { and, eq } from 'drizzle-orm';
+import { getCurrentUser } from '@/lib/auth/session';
+import { getStoreBonusSettings } from '@/features/settings/application/queries';
 
 const previewSchema = z.object({
   giftCardCode: z.string().trim().min(1).max(64),
@@ -36,8 +36,7 @@ const previewSchema = z.object({
 });
 
 export type PreviewGiftCardResult =
-  | { ok: true; preview: GiftCardRedeemPreview }
-  | { ok: false; error: string };
+  { ok: true; preview: GiftCardRedeemPreview } | { ok: false; error: string };
 
 /** Validates a gift card against current cart totals without consuming balance. */
 export async function previewGiftCardAction(
@@ -45,12 +44,12 @@ export async function previewGiftCardAction(
 ): Promise<PreviewGiftCardResult> {
   const parsed = previewSchema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, error: "Enter a gift card code." };
+    return { ok: false, error: 'Enter a gift card code.' };
   }
 
   const { items } = await getCartWithItems();
   if (items.length === 0) {
-    return { ok: false, error: "Cart is empty." };
+    return { ok: false, error: 'Cart is empty.' };
   }
 
   const prices = await resolveProductPrices(
@@ -72,15 +71,13 @@ export async function previewGiftCardAction(
     const [coupon] = await getDb()
       .select()
       .from(promotions)
-      .where(and(eq(promotions.kind, "COUPON"), eq(promotions.code, code)))
+      .where(and(eq(promotions.kind, 'COUPON'), eq(promotions.code, code)))
       .limit(1);
     const evaluated = evaluateCouponDiscount(coupon, subtotal);
     if (!evaluated.ok || !coupon) {
       return {
         ok: false,
-        error: couponDiscountErrorMessage(
-          evaluated.ok ? "INVALID_OR_INACTIVE" : evaluated.error,
-        ),
+        error: couponDiscountErrorMessage(evaluated.ok ? 'INVALID_OR_INACTIVE' : evaluated.error),
       };
     }
     const allowlistRows = await getDb()
@@ -95,16 +92,13 @@ export async function previewGiftCardAction(
     ) {
       return {
         ok: false,
-        error: couponDiscountErrorMessage("USER_NOT_ELIGIBLE"),
+        error: couponDiscountErrorMessage('USER_NOT_ELIGIBLE'),
       };
     }
     discountAmount = evaluated.discountAmount;
   }
 
-  const merchandiseAfterDiscount = bonusEligibleMerchandiseAmount(
-    subtotal,
-    discountAmount,
-  );
+  const merchandiseAfterDiscount = bonusEligibleMerchandiseAmount(subtotal, discountAmount);
 
   let bonusRedeemedAmount = 0;
   if (user && (parsed.data.bonusRedeemAmount ?? 0) > 0) {
@@ -115,16 +109,12 @@ export async function previewGiftCardAction(
       availableBalance: balance,
       maxRedeemPercent: settings.maxRedeemPercent,
     });
-    bonusRedeemedAmount = clampBonusRedeemRequest(
-      parsed.data.bonusRedeemAmount ?? 0,
-      maxRedeem,
-    );
+    bonusRedeemedAmount = clampBonusRedeemRequest(parsed.data.bonusRedeemAmount ?? 0, maxRedeem);
   }
 
   const deliveryAmount = parsed.data.deliveryAmount ?? 0;
   const payableBeforeGiftCard =
-    Math.max(0, merchandiseAfterDiscount - bonusRedeemedAmount) +
-    deliveryAmount;
+    Math.max(0, merchandiseAfterDiscount - bonusRedeemedAmount) + deliveryAmount;
 
   const evaluated = await evaluateGiftCardForRedeem(
     parsed.data.giftCardCode,

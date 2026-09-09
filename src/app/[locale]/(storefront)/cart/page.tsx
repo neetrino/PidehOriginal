@@ -1,14 +1,10 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { AppLink } from "@/components/ui/AppLink";
-import {
-  getCartWithItems,
-  removeItem,
-  updateQuantity,
-} from "@/features/cart/cart";
-import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
-import { isLocale } from "@/lib/i18n/config";
+import { AppLink } from '@/components/ui/AppLink';
+import { getCartWithItems, removeItem, updateQuantity } from '@/features/cart/cart';
+import { cartLineUnitAmount } from '@/features/cart/domain/line-price';
+import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
+import { isLocale } from '@/lib/i18n/config';
 
 type CartPageProps = { params: Promise<{ locale: string }> };
 
@@ -34,26 +30,22 @@ export default async function CartPage({ params }: CartPageProps) {
     <section className="flex max-w-2xl flex-col gap-4">
       <h1 className="text-3xl font-semibold">Cart</h1>
       {items.map(({ item, product, modifiers }) => {
-        const base =
-          prices.get(product.id)?.unitAmount ?? product.priceAmount;
+        const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
         const unit = cartLineUnitAmount(base, modifiers);
-        const additions = modifiers.filter((row) => row.kind === "ADDITION");
-        const exceptions = modifiers.filter((row) => row.kind === "EXCEPTION");
+        const additions = modifiers.filter((row) => row.kind === 'ADDITION');
+        const exceptions = modifiers.filter((row) => row.kind === 'EXCEPTION');
         return (
-          <div
-            className="flex items-center justify-between border p-3"
-            key={item.id}
-          >
+          <div className="flex items-center justify-between border p-3" key={item.id}>
             <div>
               <p>{product.translations[locale]?.title ?? product.sku}</p>
               {additions.length > 0 ? (
                 <p className="text-xs text-gray-600">
-                  + {additions.map((row) => row.name).join(", ")}
+                  + {additions.map((row) => row.name).join(', ')}
                 </p>
               ) : null}
               {exceptions.length > 0 ? (
                 <p className="text-xs text-gray-600">
-                  − {exceptions.map((row) => row.name).join(", ")}
+                  − {exceptions.map((row) => row.name).join(', ')}
                 </p>
               ) : null}
               <p className="text-sm">
@@ -63,7 +55,7 @@ export default async function CartPage({ params }: CartPageProps) {
             <div className="flex gap-2">
               <form
                 action={async () => {
-                  "use server";
+                  'use server';
                   await updateQuantity(item.id, item.quantity - 1);
                 }}
               >
@@ -71,7 +63,7 @@ export default async function CartPage({ params }: CartPageProps) {
               </form>
               <form
                 action={async () => {
-                  "use server";
+                  'use server';
                   await updateQuantity(item.id, item.quantity + 1);
                 }}
               >
@@ -79,7 +71,7 @@ export default async function CartPage({ params }: CartPageProps) {
               </form>
               <form
                 action={async () => {
-                  "use server";
+                  'use server';
                   await removeItem(item.id);
                 }}
               >

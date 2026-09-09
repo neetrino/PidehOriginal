@@ -1,7 +1,7 @@
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
-import type { AnalyticsMetricBlock } from "@/features/analytics/application/queries";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { AnalyticsMetricBlock } from '@/features/analytics/application/queries';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AnalyticsSnapshotCardsProps = {
   snapshots: {
@@ -11,14 +11,14 @@ type AnalyticsSnapshotCardsProps = {
     total: AnalyticsMetricBlock;
   };
   formatMoney: (amount: number) => string;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
 function formatChange(changePercent: number): string {
   if (changePercent === 0) {
-    return "0%";
+    return '0%';
   }
-  const sign = changePercent > 0 ? "+" : "";
+  const sign = changePercent > 0 ? '+' : '';
   return `${sign}${changePercent.toFixed(1)}%`;
 }
 
@@ -43,11 +43,9 @@ function ChangeBadge({
   return (
     <span
       className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-bold ${
-        positive
-          ? "bg-emerald-50 text-emerald-700"
-          : "bg-[#ff6b00]/12 text-[#c2410c]"
+        positive ? 'bg-emerald-50 text-emerald-700' : 'bg-[#ff6b00]/12 text-[#c2410c]'
       }`}
-      aria-label={changeAria.replace("{value}", display)}
+      aria-label={changeAria.replace('{value}', display)}
     >
       {positive ? (
         <ArrowUpRight className="size-3.5" aria-hidden />
@@ -65,14 +63,14 @@ export function AnalyticsSnapshotCards({
   copy,
 }: AnalyticsSnapshotCardsProps) {
   const cards = [
-    { key: "today", label: copy.analytics.snapshots.today, block: snapshots.today },
+    { key: 'today', label: copy.analytics.snapshots.today, block: snapshots.today },
     {
-      key: "yesterday",
+      key: 'yesterday',
       label: copy.analytics.snapshots.yesterday,
       block: snapshots.yesterday,
     },
-    { key: "month", label: copy.analytics.snapshots.month, block: snapshots.month },
-    { key: "total", label: copy.analytics.snapshots.total, block: snapshots.total },
+    { key: 'month', label: copy.analytics.snapshots.month, block: snapshots.month },
+    { key: 'total', label: copy.analytics.snapshots.total, block: snapshots.total },
   ] as const;
 
   return (
@@ -96,14 +94,11 @@ export function AnalyticsSnapshotCards({
           </p>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#1e1e1e]/55">
             <span>
-              {copy.analytics.snapshots.orders.replace(
-                "{count}",
-                String(card.block.orderCount),
-              )}
+              {copy.analytics.snapshots.orders.replace('{count}', String(card.block.orderCount))}
             </span>
             <span>
               {copy.analytics.snapshots.avgOrder.replace(
-                "{amount}",
+                '{amount}',
                 formatMoney(card.block.averageOrderValue),
               )}
             </span>

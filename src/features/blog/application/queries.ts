@@ -1,23 +1,20 @@
-import "server-only";
+import 'server-only';
 
-import { and, desc, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
-import { cache } from "react";
+import { and, desc, eq, inArray, isNotNull, isNull, or, sql } from 'drizzle-orm';
+import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 
-import { getDb } from "@/db/client";
-import { blogPosts, mediaAssets } from "@/db/schema";
+import { getDb } from '@/db/client';
+import { blogPosts, mediaAssets } from '@/db/schema';
 import {
   resolveBlogTranslation,
   type BlogLocaleCopy,
   type BlogPostStatus,
   type BlogTranslations,
-} from "@/features/blog/domain/blog-rules";
-import {
-  CACHE_TAGS,
-  PUBLIC_CACHE_REVALIDATE_SECONDS,
-} from "@/lib/cache/tags";
-import { locales, type Locale } from "@/lib/i18n/config";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+} from '@/features/blog/domain/blog-rules';
+import { CACHE_TAGS, PUBLIC_CACHE_REVALIDATE_SECONDS } from '@/lib/cache/tags';
+import { locales, type Locale } from '@/lib/i18n/config';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 export type AdminBlogPost = typeof blogPosts.$inferSelect;
 
@@ -56,9 +53,7 @@ function toPublishedAtIso(value: Date | string | null): string | null {
 
 export type StorefrontBlogPost = StorefrontBlogPostListItem;
 
-async function loadBlogCoverUrls(
-  blogPostIds: string[],
-): Promise<Map<string, string>> {
+async function loadBlogCoverUrls(blogPostIds: string[]): Promise<Map<string, string>> {
   const images = new Map<string, string>();
   if (blogPostIds.length === 0) {
     return images;
@@ -73,11 +68,11 @@ async function loadBlogCoverUrls(
     .where(
       and(
         inArray(mediaAssets.blogPostId, blogPostIds),
-        eq(mediaAssets.uploadStatus, "READY"),
+        eq(mediaAssets.uploadStatus, 'READY'),
         or(
           eq(mediaAssets.isPrimary, true),
-          eq(mediaAssets.role, "COVER"),
-          eq(mediaAssets.role, "PRIMARY"),
+          eq(mediaAssets.role, 'COVER'),
+          eq(mediaAssets.role, 'PRIMARY'),
         ),
       ),
     );
@@ -91,9 +86,7 @@ async function loadBlogCoverUrls(
 }
 
 /** Lists all non-deleted blog posts for admin UI. */
-export async function listAdminBlogPosts(
-  locale: Locale,
-): Promise<AdminBlogListItem[]> {
+export async function listAdminBlogPosts(locale: Locale): Promise<AdminBlogListItem[]> {
   const rows = await getDb()
     .select()
     .from(blogPosts)
@@ -104,15 +97,15 @@ export async function listAdminBlogPosts(
 
   return rows.map((row) => {
     const copy = resolveBlogTranslation(row.translations, locale);
-    const slug = copy?.slug ?? "";
+    const slug = copy?.slug ?? '';
     return {
       id: row.id,
       status: row.status,
       publishedAt: toPublishedAtIso(row.publishedAt)?.slice(0, 10) ?? null,
-      title: copy?.title ?? "Untitled",
-      excerpt: copy?.excerpt ?? "",
+      title: copy?.title ?? 'Untitled',
+      excerpt: copy?.excerpt ?? '',
       slug,
-      path: slug ? `/blog/${slug}` : "/blog",
+      path: slug ? `/blog/${slug}` : '/blog',
       coverUrl: images.get(row.id) ?? null,
       tags: row.tags,
       translations: row.translations,
@@ -121,9 +114,7 @@ export async function listAdminBlogPosts(
 }
 
 /** Loads one blog post by id for admin. */
-export async function getAdminBlogPostById(
-  id: string,
-): Promise<AdminBlogPost | null> {
+export async function getAdminBlogPostById(id: string): Promise<AdminBlogPost | null> {
   const [row] = await getDb()
     .select()
     .from(blogPosts)
@@ -133,15 +124,13 @@ export async function getAdminBlogPostById(
   return row ?? null;
 }
 
-async function loadPublishedBlogPosts(
-  locale: Locale,
-): Promise<StorefrontBlogPostListItem[]> {
+async function loadPublishedBlogPosts(locale: Locale): Promise<StorefrontBlogPostListItem[]> {
   const rows = await getDb()
     .select()
     .from(blogPosts)
     .where(
       and(
-        eq(blogPosts.status, "PUBLISHED"),
+        eq(blogPosts.status, 'PUBLISHED'),
         isNull(blogPosts.deletedAt),
         isNotNull(blogPosts.publishedAt),
       ),
@@ -173,7 +162,7 @@ export async function listPublishedBlogPosts(
 ): Promise<StorefrontBlogPostListItem[]> {
   return unstable_cache(
     async () => loadPublishedBlogPosts(locale),
-    ["published-blog-posts", locale],
+    ['published-blog-posts', locale],
     {
       tags: [CACHE_TAGS.blog],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
@@ -183,11 +172,7 @@ export async function listPublishedBlogPosts(
 
 /** Matches a slug against any locale translation (for locale-switch URLs). */
 function blogSlugMatchesAnyLocale(slug: string) {
-  return or(
-    ...locales.map(
-      (loc) => sql`${blogPosts.translations}->${loc}->>'slug' = ${slug}`,
-    ),
-  );
+  return or(...locales.map((loc) => sql`${blogPosts.translations}->${loc}->>'slug' = ${slug}`));
 }
 
 async function loadPublishedBlogPostBySlug(
@@ -199,7 +184,7 @@ async function loadPublishedBlogPostBySlug(
     .from(blogPosts)
     .where(
       and(
-        eq(blogPosts.status, "PUBLISHED"),
+        eq(blogPosts.status, 'PUBLISHED'),
         isNull(blogPosts.deletedAt),
         isNotNull(blogPosts.publishedAt),
         blogSlugMatchesAnyLocale(slug),
@@ -233,13 +218,10 @@ async function loadPublishedBlogPostBySlug(
  * then the page redirects to the canonical slug for the active locale.
  */
 export const getPublishedBlogPostBySlug = cache(
-  async (
-    locale: Locale,
-    slug: string,
-  ): Promise<StorefrontBlogPost | null> => {
+  async (locale: Locale, slug: string): Promise<StorefrontBlogPost | null> => {
     return unstable_cache(
       async () => loadPublishedBlogPostBySlug(locale, slug),
-      ["published-blog-post", locale, slug],
+      ['published-blog-post', locale, slug],
       {
         tags: [CACHE_TAGS.blogPostSlug(locale, slug)],
         revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

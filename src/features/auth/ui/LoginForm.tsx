@@ -1,29 +1,26 @@
-"use client";
+'use client';
 
-import { useActionState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useActionState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { loginAction, type AuthActionState } from "@/features/auth/login-action";
-import {
-  AUTH_INPUT_CLASS,
-  AUTH_LABEL_CLASS,
-} from "@/features/auth/ui/auth-field-styles";
-import { PasswordField } from "@/features/auth/ui/PasswordField";
-import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { AppLink } from '@/components/ui/AppLink';
+import { loginAction, type AuthActionState } from '@/features/auth/login-action';
+import { AUTH_INPUT_CLASS, AUTH_LABEL_CLASS } from '@/features/auth/ui/auth-field-styles';
+import { PasswordField } from '@/features/auth/ui/PasswordField';
+import type { Locale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 const initialState: AuthActionState = {};
 
 type LoginFormProps = {
   locale: Locale;
-  dictionary: Dictionary["auth"];
+  dictionary: Dictionary['auth'];
 };
 
 export function LoginForm({ locale, dictionary }: LoginFormProps) {
   const searchParams = useSearchParams();
-  const nextPath = searchParams.get("next");
-  const resetSucceeded = searchParams.get("reset") === "1";
+  const nextPath = searchParams.get('next');
+  const resetSucceeded = searchParams.get('reset') === '1';
   const action = loginAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
 
@@ -82,7 +79,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         {isPending ? dictionary.submittingLogin : dictionary.submitLogin}
       </button>
       <p className="text-center text-sm text-[#1e1e1e]/70">
-        {dictionary.noAccount}{" "}
+        {dictionary.noAccount}{' '}
         <AppLink
           href={`/${locale}/register`}
           prefetchPolicy="intent"

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
-import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { useAdminSidebarCollapse } from '@/features/admin/ui/AdminSidebarCollapseContext';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminSidebarBrandProps = {
   locale: string;
-  shell: Dictionary["admin"]["shell"];
+  shell: Dictionary['admin']['shell'];
 };
 
 export function AdminSidebarBrand({ locale, shell }: AdminSidebarBrandProps) {
@@ -16,9 +16,7 @@ export function AdminSidebarBrand({ locale, shell }: AdminSidebarBrandProps) {
   return (
     <div
       className={`relative z-10 flex shrink-0 border-b border-white/15 bg-black/20 pb-3 pt-2 backdrop-blur-md ${
-        collapsed
-          ? "flex-col items-center gap-2 px-1"
-          : "items-center gap-1 px-2"
+        collapsed ? 'flex-col items-center gap-2 px-1' : 'items-center gap-1 px-2'
       }`}
     >
       {collapsed ? (
@@ -63,11 +61,7 @@ export function AdminSidebarBrand({ locale, shell }: AdminSidebarBrandProps) {
             viewBox="0 0 24 24"
             strokeWidth={2}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 19l-7-7 7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         )}
       </button>

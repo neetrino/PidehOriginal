@@ -1,8 +1,8 @@
 import {
   MobileProductGrid,
   type MobileGridProduct,
-} from "@/features/home/ui/mobile/MobileProductGrid";
-import type { Locale } from "@/lib/i18n/config";
+} from '@/features/home/ui/mobile/MobileProductGrid';
+import type { Locale } from '@/lib/i18n/config';
 
 type MobileHomeFeaturedProps = {
   locale: Locale;

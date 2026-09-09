@@ -1,10 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq, or, sql, type SQL } from "drizzle-orm";
+import { and, eq, or, sql, type SQL } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { groupOrderParticipants, orders } from "@/db/schema";
-import { canViewerSeeCustomerOrder } from "@/features/orders/domain/customer-order-visibility";
+import { getDb } from '@/db/client';
+import { groupOrderParticipants, orders } from '@/db/schema';
+import { canViewerSeeCustomerOrder } from '@/features/orders/domain/customer-order-visibility';
 
 /**
  * Profile visibility: orders owned by the customer, or group orders where they
@@ -46,7 +46,7 @@ export async function canCustomerAccessOrder(input: {
       and(
         eq(groupOrderParticipants.groupOrderId, input.groupOrderId),
         eq(groupOrderParticipants.userId, input.userId),
-        eq(groupOrderParticipants.status, "ACTIVE"),
+        eq(groupOrderParticipants.status, 'ACTIVE'),
       ),
     )
     .limit(1);

@@ -1,15 +1,12 @@
-import "server-only";
+import 'server-only';
 
-import { updateTag } from "next/cache";
+import { updateTag } from 'next/cache';
 
-import type { TranslationsJson } from "@/db/schema";
-import { CACHE_TAGS } from "@/lib/cache/tags";
-import { locales } from "@/lib/i18n/config";
+import type { TranslationsJson } from '@/db/schema';
+import { CACHE_TAGS } from '@/lib/cache/tags';
+import { locales } from '@/lib/i18n/config';
 
-function collectTranslationSlugs(
-  translations?: TranslationsJson,
-  slug?: string,
-): string[] {
+function collectTranslationSlugs(translations?: TranslationsJson, slug?: string): string[] {
   const slugs = new Set<string>();
   if (slug) {
     slugs.add(slug);

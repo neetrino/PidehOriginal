@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { PAYMENT_STATUSES } from "@/features/orders/domain/payment-status";
+import { PAYMENT_STATUSES } from '@/features/orders/domain/payment-status';
 
 export const changePaymentStatusSchema = z.object({
   orderNumber: z.string().trim().min(1).max(64),
@@ -8,6 +8,4 @@ export const changePaymentStatusSchema = z.object({
   note: z.string().trim().max(1000).optional(),
 });
 
-export type ChangePaymentStatusInput = z.infer<
-  typeof changePaymentStatusSchema
->;
+export type ChangePaymentStatusInput = z.infer<typeof changePaymentStatusSchema>;

@@ -1,5 +1,5 @@
-import Link from "next/link";
-import type { ComponentProps } from "react";
+import Link from 'next/link';
+import type { ComponentProps } from 'react';
 
 /**
  * Selective prefetch for storefront navigation (TECH_CARD + docs/06).
@@ -10,21 +10,18 @@ import type { ComponentProps } from "react";
  *
  * Prefetch runs in production only; `next dev` will not show the same latency win.
  */
-export type AppLinkPrefetchPolicy = "intent" | "auto" | "none";
+export type AppLinkPrefetchPolicy = 'intent' | 'auto' | 'none';
 
-type AppLinkProps = Omit<ComponentProps<typeof Link>, "prefetch"> & {
+type AppLinkProps = Omit<ComponentProps<typeof Link>, 'prefetch'> & {
   prefetchPolicy?: AppLinkPrefetchPolicy;
 };
 
-export function AppLink({
-  prefetchPolicy = "auto",
-  ...props
-}: AppLinkProps) {
-  if (prefetchPolicy === "intent") {
+export function AppLink({ prefetchPolicy = 'auto', ...props }: AppLinkProps) {
+  if (prefetchPolicy === 'intent') {
     return <Link {...props} prefetch />;
   }
 
-  if (prefetchPolicy === "none") {
+  if (prefetchPolicy === 'none') {
     return <Link {...props} prefetch={false} />;
   }
 

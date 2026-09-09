@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { LayoutDashboard, LogOut, User } from "lucide-react";
+import { LayoutDashboard, LogOut, User } from 'lucide-react';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { IconDropdown } from "@/components/ui/IconDropdown";
-import { logoutAction } from "@/features/auth/logout-action";
-import type { Locale } from "@/lib/i18n/config";
-import type { SessionUser } from "@/lib/auth/session";
+import { AppLink } from '@/components/ui/AppLink';
+import { IconDropdown } from '@/components/ui/IconDropdown';
+import { logoutAction } from '@/features/auth/logout-action';
+import type { Locale } from '@/lib/i18n/config';
+import type { SessionUser } from '@/lib/auth/session';
 
 type AccountControlsProps = {
   locale: Locale;
@@ -18,14 +18,14 @@ type AccountControlsProps = {
 };
 
 const menuItemClassName =
-  "flex w-full items-center gap-2.5 rounded-[14px] px-3 py-2.5 text-left text-sm font-semibold whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12 hover:text-[#ff6b00]";
+  'flex w-full items-center gap-2.5 rounded-[14px] px-3 py-2.5 text-left text-sm font-semibold whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12 hover:text-[#ff6b00]';
 
 const logoutItemClassName =
-  "flex w-full items-center gap-2.5 rounded-[14px] px-3 py-2.5 text-left text-sm font-semibold whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12 hover:text-[#ff6b00]";
+  'flex w-full items-center gap-2.5 rounded-[14px] px-3 py-2.5 text-left text-sm font-semibold whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12 hover:text-[#ff6b00]';
 
 function iconButtonClassName(active = false): string {
   const base =
-    "inline-flex h-11 w-11 items-center justify-center rounded-full transition duration-150";
+    'inline-flex h-11 w-11 items-center justify-center rounded-full transition duration-150';
   return active
     ? `${base} bg-[#fff8e7] text-[#1e1e1e] ring-2 ring-[#1e1e1e]`
     : `${base} text-[#1e1e1e] hover:bg-[#fff8e7] hover:text-[#ff6b00]`;
@@ -61,13 +61,13 @@ export function AccountControls({
       triggerClassName={iconButtonClassName()}
       trigger={(open) => (
         <User
-          className={`h-5 w-5 transition-colors ${open ? "text-[#ff6b00]" : ""}`}
+          className={`h-5 w-5 transition-colors ${open ? 'text-[#ff6b00]' : ''}`}
           aria-hidden="true"
         />
       )}
       openOnHover
     >
-      {user.role === "ADMIN" ? (
+      {user.role === 'ADMIN' ? (
         <AppLink
           href={`/${locale}/admin`}
           prefetchPolicy="intent"

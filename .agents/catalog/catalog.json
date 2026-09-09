@@ -7,10 +7,7 @@
       "state": "active",
       "origin": "internal",
       "path": ".agents/skills/project-onboarding",
-      "compatibility": [
-        "cursor",
-        "codex"
-      ],
+      "compatibility": ["cursor", "codex"],
       "risk": "medium"
     },
     {
@@ -19,10 +16,7 @@
       "state": "active",
       "origin": "internal",
       "path": ".agents/skills/debug-first",
-      "compatibility": [
-        "cursor",
-        "codex"
-      ],
+      "compatibility": ["cursor", "codex"],
       "risk": "low"
     },
     {
@@ -31,10 +25,7 @@
       "state": "active",
       "origin": "internal",
       "path": ".agents/skills/verify-before-completion",
-      "compatibility": [
-        "cursor",
-        "codex"
-      ],
+      "compatibility": ["cursor", "codex"],
       "risk": "low"
     },
     {
@@ -43,10 +34,7 @@
       "state": "active",
       "origin": "internal",
       "path": ".agents/skills/safe-database-migration",
-      "compatibility": [
-        "cursor",
-        "codex"
-      ],
+      "compatibility": ["cursor", "codex"],
       "risk": "high"
     },
     {
@@ -55,10 +43,7 @@
       "state": "active",
       "origin": "internal",
       "path": ".agents/skills/figma-to-production",
-      "compatibility": [
-        "cursor",
-        "codex"
-      ],
+      "compatibility": ["cursor", "codex"],
       "risk": "low"
     },
     {
@@ -67,10 +52,7 @@
       "state": "library",
       "origin": "internal",
       "path": ".agents/library/code-review",
-      "compatibility": [
-        "cursor",
-        "codex"
-      ],
+      "compatibility": ["cursor", "codex"],
       "risk": "low"
     },
     {
@@ -79,10 +61,7 @@
       "state": "library",
       "origin": "internal",
       "path": ".agents/library/security-review",
-      "compatibility": [
-        "cursor",
-        "codex"
-      ],
+      "compatibility": ["cursor", "codex"],
       "risk": "medium"
     },
     {
@@ -91,10 +70,7 @@
       "state": "library",
       "origin": "internal",
       "path": ".agents/library/react-performance-review",
-      "compatibility": [
-        "cursor",
-        "codex"
-      ],
+      "compatibility": ["cursor", "codex"],
       "risk": "low"
     },
     {
@@ -103,10 +79,7 @@
       "state": "library",
       "origin": "external-adapted",
       "path": ".agents/library/ui-accessibility-review",
-      "compatibility": [
-        "cursor",
-        "codex"
-      ],
+      "compatibility": ["cursor", "codex"],
       "risk": "low",
       "sourceId": "vercel-web-interface-guidelines"
     }

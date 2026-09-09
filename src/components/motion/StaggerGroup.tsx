@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { motion, useReducedMotion, type Variants } from "motion/react";
-import type { CSSProperties, ReactNode } from "react";
+import { motion, useReducedMotion, type Variants } from 'motion/react';
+import type { CSSProperties, ReactNode } from 'react';
 
-import { VIEWPORT_ONCE } from "@/components/motion/presets";
+import { VIEWPORT_ONCE } from '@/components/motion/presets';
 
 type StaggerGroupProps = {
   children: ReactNode;
@@ -62,12 +62,7 @@ export function StaggerGroup({
 /**
  * Child of StaggerGroup — must be a direct descendant.
  */
-export function StaggerItem({
-  children,
-  className,
-  style,
-  variants,
-}: StaggerItemProps) {
+export function StaggerItem({ children, className, style, variants }: StaggerItemProps) {
   const reduceMotion = useReducedMotion();
 
   if (reduceMotion) {

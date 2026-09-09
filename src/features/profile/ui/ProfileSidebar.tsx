@@ -1,20 +1,16 @@
-import { ProfileSidebarNav } from "@/features/profile/ui/ProfileSidebarNav";
-import { logoutAction } from "@/features/auth/logout-action";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
-import type { SessionUser } from "@/lib/auth/session";
+import { ProfileSidebarNav } from '@/features/profile/ui/ProfileSidebarNav';
+import { logoutAction } from '@/features/auth/logout-action';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import type { SessionUser } from '@/lib/auth/session';
 
 type ProfileSidebarProps = {
   locale: Locale;
   user: SessionUser;
-  dictionary: Dictionary["profile"];
+  dictionary: Dictionary['profile'];
 };
 
-export function ProfileSidebar({
-  locale,
-  user,
-  dictionary,
-}: ProfileSidebarProps) {
+export function ProfileSidebar({ locale, user, dictionary }: ProfileSidebarProps) {
   const logoutWithLocale = logoutAction.bind(null, locale);
 
   return (
@@ -32,9 +28,7 @@ export function ProfileSidebar({
             <p className="font-display text-2xl leading-[0.9] text-[#1e1e1e] uppercase">
               {user.firstName}
             </p>
-            <p className="text-xs font-bold tracking-wide text-[#1e1e1e]/60">
-              {user.lastName}
-            </p>
+            <p className="text-xs font-bold tracking-wide text-[#1e1e1e]/60">{user.lastName}</p>
           </div>
         </div>
         <div className="mt-5 rounded-2xl bg-white/80 px-3.5 py-2.5 text-left text-xs font-medium break-words text-[#1e1e1e]/75 sm:text-sm">

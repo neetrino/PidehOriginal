@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
-import { ProductPurchaseControls } from "@/features/products/ui/ProductPurchaseControls";
-import { ProductSectionHeading } from "@/features/products/ui/ProductSectionHeading";
-import type { useProductConfigurator } from "@/features/products/ui/use-product-configurator";
-import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
-import type { Locale } from "@/lib/i18n/config";
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
+import { ProductPriceFlow } from '@/features/products/ui/ProductPriceFlow';
+import { ProductPurchaseControls } from '@/features/products/ui/ProductPurchaseControls';
+import { ProductSectionHeading } from '@/features/products/ui/ProductSectionHeading';
+import type { useProductConfigurator } from '@/features/products/ui/use-product-configurator';
+import { WishlistButton } from '@/features/wishlist/ui/WishlistButton';
+import type { Locale } from '@/lib/i18n/config';
 
 export type ProductInfoCardLabels = {
   ingredients: string;
@@ -17,9 +18,7 @@ export type ProductInfoCardLabels = {
   decreaseQuantity: string;
   increaseQuantity: string;
   addToCart: string;
-  adding: string;
   outOfStock: string;
-  added: string;
   error: string;
   resetSelection: string;
 };
@@ -47,11 +46,10 @@ export function ProductInfoCard({
   labels,
   state,
 }: ProductInfoCardProps) {
-  const [note, setNote] = useState("");
-  const disabled = state.disabled || state.pending;
+  const [note, setNote] = useState('');
 
   function handleReset(): void {
-    setNote("");
+    setNote('');
     state.resetSelection();
   }
 
@@ -84,18 +82,20 @@ export function ProductInfoCard({
             tone="onCream"
             titleSize="sm"
           />
-          <p className="mt-2 text-sm leading-[22.75px] text-[#555]">
+          <p className="font-noto-armenian mt-2 text-sm leading-[22.75px] text-[#555]">
             {description}
           </p>
         </div>
       ) : null}
 
       <div className="flex flex-wrap items-baseline gap-3">
-        <p className="text-[36px] leading-9 font-extrabold text-[#ff6900]">
-          {state.totalFormatted}
-        </p>
+        <ProductPriceFlow
+          amount={state.totalAmount}
+          formatted={state.totalFormatted}
+          className="text-[36px] leading-9 font-extrabold text-[#ff6900]"
+        />
         {state.compareAtTotalFormatted ? (
-          <span className="text-base leading-6 text-[#99a1af] line-through">
+          <span className="font-noto-armenian text-base leading-6 text-[#99a1af] line-through">
             {state.compareAtTotalFormatted}
           </span>
         ) : null}
@@ -105,12 +105,10 @@ export function ProductInfoCard({
         quantity={state.quantity}
         maxQty={state.maxQty}
         disabled={state.disabled}
-        pending={state.pending}
         onQuantityChange={state.changeQuantity}
         onReset={handleReset}
         onAdd={state.handleAdd}
         labels={labels}
-        message={state.message}
         error={state.error}
       />
 
@@ -118,7 +116,7 @@ export function ProductInfoCard({
         label={labels.specialRequests}
         placeholder={labels.specialRequestsPlaceholder}
         value={note}
-        disabled={disabled}
+        disabled={state.disabled}
         onChange={setNote}
       />
     </div>
@@ -154,7 +152,7 @@ function SpecialRequestsField({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         rows={3}
-        className="min-h-[84px] w-full resize-none rounded-[16px] border-0 bg-[rgba(255,107,0,0.09)] px-4 py-3 text-sm leading-5 text-[#1e1e1e] placeholder:text-[rgba(204,86,0,0.48)] focus-visible:ring-2 focus-visible:ring-[#ff6b00]/40 focus-visible:outline-none disabled:opacity-50"
+        className="font-noto-armenian min-h-[84px] w-full resize-none rounded-[16px] border-0 bg-[rgba(255,107,0,0.09)] px-4 py-3 text-sm leading-5 text-[#1e1e1e] placeholder:text-[rgba(204,86,0,0.48)] focus-visible:ring-2 focus-visible:ring-[#ff6b00]/40 focus-visible:outline-none disabled:opacity-50"
       />
     </div>
   );

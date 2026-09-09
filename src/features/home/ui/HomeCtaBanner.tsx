@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from 'motion/react';
 
-import { VIEWPORT_ONCE, ctaLift } from "@/components/motion/presets";
-import { HomeCtaCard } from "@/features/home/ui/HomeCtaCard";
+import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import { VIEWPORT_ONCE, ctaLift } from '@/components/motion/presets';
+import { HomeCtaCard } from '@/features/home/ui/HomeCtaCard';
 
 type HomeCtaBannerProps = {
   titleLine1: string;
@@ -20,15 +21,15 @@ type HomeCtaOrangeBandProps = {
 /**
  * Full-bleed orange page band. Sibling behind HomeCtaCard — not its parent.
  */
-export function HomeCtaOrangeBand({ className = "" }: HomeCtaOrangeBandProps) {
+export function HomeCtaOrangeBand({ className = '' }: HomeCtaOrangeBandProps) {
   const reduceMotion = useReducedMotion();
 
   return (
     <motion.div
       aria-hidden="true"
       className={`pointer-events-none absolute inset-x-0 bottom-0 bg-[#ff6b00] ${className}`}
-      initial={reduceMotion ? false : { clipPath: "inset(0 0 100% 0)" }}
-      whileInView={reduceMotion ? undefined : { clipPath: "inset(0 0 0% 0)" }}
+      initial={reduceMotion ? false : { clipPath: 'inset(0 0 100% 0)' }}
+      whileInView={reduceMotion ? undefined : { clipPath: 'inset(0 0 0% 0)' }}
       viewport={VIEWPORT_ONCE}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
     />
@@ -60,12 +61,10 @@ export function HomeCtaBanner({
     <div className="relative z-30 -mt-32 md:-mt-48">
       <HomeCtaOrangeBand className="top-16 md:top-24" />
       {reduceMotion ? (
-        <div className="relative z-10 px-4 pb-12 md:px-10 md:pb-16 lg:px-[100px]">
-          {card}
-        </div>
+        <div className={`relative z-10 pb-12 md:pb-16 ${PAGE_CONTAINER}`}>{card}</div>
       ) : (
         <motion.div
-          className="relative z-10 px-4 pb-12 md:px-10 md:pb-16 lg:px-[100px]"
+          className={`relative z-10 pb-12 md:pb-16 ${PAGE_CONTAINER}`}
           initial="hidden"
           whileInView="show"
           viewport={VIEWPORT_ONCE}

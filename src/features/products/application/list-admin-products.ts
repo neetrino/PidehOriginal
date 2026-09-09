@@ -1,4 +1,4 @@
-import "server-only";
+import 'server-only';
 
 import {
   and,
@@ -14,9 +14,9 @@ import {
   or,
   sql,
   type SQL,
-} from "drizzle-orm";
+} from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
+import { getDb } from '@/db/client';
 import {
   categories,
   mediaAssets,
@@ -24,13 +24,13 @@ import {
   productModifierLinks,
   products,
   type LocaleTranslation,
-} from "@/db/schema";
-import { loadProductImagesForAdmin } from "@/features/products/application/persist-product-media";
-import { loadProductDiscounts } from "@/features/products/application/sync-product-discount";
-import type { AdminProductDiscount } from "@/features/products/types/product-discount";
-import type { AdminProductsFilter } from "@/features/products/schemas/admin-list";
-import type { Locale } from "@/lib/i18n/config";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+} from '@/db/schema';
+import { loadProductImagesForAdmin } from '@/features/products/application/persist-product-media';
+import { loadProductDiscounts } from '@/features/products/application/sync-product-discount';
+import type { AdminProductDiscount } from '@/features/products/types/product-discount';
+import type { AdminProductsFilter } from '@/features/products/schemas/admin-list';
+import type { Locale } from '@/lib/i18n/config';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 const PAGE_SIZE = 20;
 
@@ -66,7 +66,7 @@ export type AdminCategoryOption = {
 };
 
 function translationFor(
-  translations: (typeof products.$inferSelect)["translations"],
+  translations: (typeof products.$inferSelect)['translations'],
   locale: Locale,
 ): LocaleTranslation | null {
   return translations[locale] ?? translations.hy ?? translations.en ?? null;
@@ -91,11 +91,11 @@ function buildWhere(filters: AdminProductsFilter, locale: Locale): SQL | undefin
     conditions.push(ilike(products.sku, `%${filters.sku}%`));
   }
 
-  if (filters.stock === "in_stock") {
+  if (filters.stock === 'in_stock') {
     conditions.push(gt(products.stockOnHand, 0));
-  } else if (filters.stock === "out_of_stock") {
+  } else if (filters.stock === 'out_of_stock') {
     conditions.push(eq(products.stockOnHand, 0));
-  } else if (filters.stock === "low_stock") {
+  } else if (filters.stock === 'low_stock') {
     conditions.push(
       and(gt(products.stockOnHand, 0), lte(products.stockOnHand, products.lowStockThreshold))!,
     );
@@ -115,25 +115,21 @@ function buildWhere(filters: AdminProductsFilter, locale: Locale): SQL | undefin
 }
 
 function orderByClause(filters: AdminProductsFilter, locale: Locale) {
-  const direction = filters.dir === "asc" ? asc : desc;
+  const direction = filters.dir === 'asc' ? asc : desc;
   switch (filters.sort) {
-    case "stock":
+    case 'stock':
       return direction(products.stockOnHand);
-    case "price":
+    case 'price':
       return direction(products.priceAmount);
-    case "title":
-      return direction(
-        sql`${products.translations}->${locale}->>'title'`,
-      );
-    case "created":
+    case 'title':
+      return direction(sql`${products.translations}->${locale}->>'title'`);
+    case 'created':
     default:
       return direction(products.createdAt);
   }
 }
 
-async function loadPrimaryImages(
-  productIds: string[],
-): Promise<Map<string, string>> {
+async function loadPrimaryImages(productIds: string[]): Promise<Map<string, string>> {
   const map = new Map<string, string>();
   if (productIds.length === 0) return map;
 
@@ -146,8 +142,8 @@ async function loadPrimaryImages(
     .where(
       and(
         inArray(mediaAssets.productId, productIds),
-        eq(mediaAssets.uploadStatus, "READY"),
-        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, "PRIMARY")),
+        eq(mediaAssets.uploadStatus, 'READY'),
+        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, 'PRIMARY')),
       ),
     )
     .orderBy(asc(mediaAssets.sortOrder));
@@ -159,9 +155,7 @@ async function loadPrimaryImages(
   return map;
 }
 
-async function loadModifierIds(
-  productIds: string[],
-): Promise<Map<string, string[]>> {
+async function loadModifierIds(productIds: string[]): Promise<Map<string, string[]>> {
   const map = new Map<string, string[]>();
   if (productIds.length === 0) return map;
 
@@ -204,9 +198,7 @@ async function loadCategoryMeta(
 
   for (const row of rows) {
     const title =
-      translationFor(row.translations, locale)?.title ??
-      row.translations.hy?.title ??
-      "Category";
+      translationFor(row.translations, locale)?.title ?? row.translations.hy?.title ?? 'Category';
     const entry = map.get(row.productId) ?? { ids: [], labels: [] };
     entry.ids.push(row.categoryId);
     entry.labels.push(title);
@@ -223,10 +215,7 @@ export async function listAdminProducts(
   const where = buildWhere(filters, locale);
   const db = getDb();
 
-  const [totalRow] = await db
-    .select({ value: count() })
-    .from(products)
-    .where(where);
+  const [totalRow] = await db.select({ value: count() }).from(products).where(where);
 
   const total = totalRow?.value ?? 0;
   const offset = (filters.page - 1) * PAGE_SIZE;
@@ -240,14 +229,13 @@ export async function listAdminProducts(
     .offset(offset);
 
   const ids = rows.map((row) => row.id);
-  const [primaryImages, categoryMap, modifierMap, discountMap, galleryImages] =
-    await Promise.all([
-      loadPrimaryImages(ids),
-      loadCategoryMeta(ids, locale),
-      loadModifierIds(ids),
-      loadProductDiscounts(ids),
-      loadProductImagesForAdmin(ids),
-    ]);
+  const [primaryImages, categoryMap, modifierMap, discountMap, galleryImages] = await Promise.all([
+    loadPrimaryImages(ids),
+    loadCategoryMeta(ids, locale),
+    loadModifierIds(ids),
+    loadProductDiscounts(ids),
+    loadProductImagesForAdmin(ids),
+  ]);
 
   return {
     total,
@@ -266,8 +254,8 @@ export async function listAdminProducts(
         isFeatured: product.isFeatured,
         createdAt: product.createdAt,
         title: translation?.title ?? product.sku,
-        slug: translation?.slug ?? "",
-        description: translation?.description ?? "",
+        slug: translation?.slug ?? '',
+        description: translation?.description ?? '',
         imageUrl: primaryImages.get(product.id) ?? null,
         categoryIds: categoryMeta?.ids ?? [],
         categoryLabels: categoryMeta?.labels ?? [],
@@ -280,17 +268,15 @@ export async function listAdminProducts(
 }
 
 /** Active categories for the admin products filter dropdown. */
-export async function listAdminCategoryOptions(
-  locale: Locale,
-): Promise<AdminCategoryOption[]> {
+export async function listAdminCategoryOptions(locale: Locale): Promise<AdminCategoryOption[]> {
   const rows = await getDb()
     .select()
     .from(categories)
-    .where(and(eq(categories.status, "ACTIVE"), isNull(categories.deletedAt)))
+    .where(and(eq(categories.status, 'ACTIVE'), isNull(categories.deletedAt)))
     .orderBy(asc(categories.sortOrder));
 
   return rows.map((row) => ({
     id: row.id,
-    title: translationFor(row.translations, locale)?.title ?? "Category",
+    title: translationFor(row.translations, locale)?.title ?? 'Category',
   }));
 }

@@ -1,9 +1,9 @@
-import { catalogHref } from "@/features/products/application/catalog-search-params";
-import type { CatalogSection } from "@/features/products/application/list-catalog-sections";
-import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
-import type { CatalogProduct } from "@/features/products/types";
-import type { MobileGridProduct } from "@/features/home/ui/mobile/MobileProductGrid";
-import type { MobileCatalogSectionData } from "@/features/products/ui/mobile/MobileCatalog";
+import { catalogHref } from '@/features/products/application/catalog-search-params';
+import type { CatalogSection } from '@/features/products/application/list-catalog-sections';
+import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
+import type { CatalogProduct } from '@/features/products/types';
+import type { MobileGridProduct } from '@/features/home/ui/mobile/MobileProductGrid';
+import type { MobileCatalogSectionData } from '@/features/products/ui/mobile/MobileCatalog';
 
 type BuildMobileCatalogSectionsArgs = {
   locale: string;
@@ -49,7 +49,7 @@ export function buildMobileCatalogSections({
     seeAllHref: withSeeAll
       ? catalogHref(locale, filters, { category: section.slug, page: 1 })
       : null,
-    seeAllLabel: seeAllTemplate.replace("{category}", section.title),
+    seeAllLabel: seeAllTemplate.replace('{category}', section.title),
     products: section.products.map(toCard),
   }));
 }

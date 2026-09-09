@@ -1,4 +1,4 @@
-import type { Currency } from "@/lib/money/currency";
+import type { Currency } from '@/lib/money/currency';
 
 export type ExchangeRateQuote = {
   base: Currency;

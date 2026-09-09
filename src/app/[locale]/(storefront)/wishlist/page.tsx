@@ -1,19 +1,50 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { ProductCard } from "@/features/products/ui/ProductCard";
-import { listWishlistProducts } from "@/features/wishlist/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import {
-  createDisplayPriceFormatter,
-  getSelectedCurrency,
-} from "@/lib/money/display-price";
+import { RevealOnView } from '@/components/motion/RevealOnView';
+import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
+import { cardShelf, fadeUp, titleSweep } from '@/components/motion/presets';
+import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
+import { ShopBreadcrumb } from '@/features/products/ui/ShopBreadcrumb';
+import { listWishlistProducts } from '@/features/wishlist/queries';
+import { WishlistEmptyState } from '@/features/wishlist/ui/WishlistEmptyState';
+import { getCurrentUser } from '@/lib/auth/session';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { createDisplayPriceFormatter, getSelectedCurrency } from '@/lib/money/display-price';
 
 type WishlistPageProps = {
   params: Promise<{ locale: string }>;
 };
+
+function WishlistHeading({
+  locale,
+  backLabel,
+  title,
+  subtitle,
+}: {
+  locale: Locale;
+  backLabel: string;
+  title: string;
+  subtitle?: string;
+}) {
+  return (
+    <>
+      <RevealOnView variants={fadeUp}>
+        <ShopBreadcrumb backHref={`/${locale}`} backLabel={backLabel} currentLabel={title} />
+      </RevealOnView>
+      <RevealOnView variants={titleSweep} delay={0.06}>
+        <h1 className="font-display mt-5 text-[clamp(2.75rem,7vw,4.25rem)] leading-[0.95] text-[#ff6b00]">
+          {title}
+        </h1>
+      </RevealOnView>
+      {subtitle ? (
+        <RevealOnView variants={fadeUp} delay={0.12}>
+          <p className="font-noto-armenian mt-2 text-sm text-[#6b6b6b]">{subtitle}</p>
+        </RevealOnView>
+      ) : null}
+    </>
+  );
+}
 
 export default async function WishlistPage({ params }: WishlistPageProps) {
   const { locale: rawLocale } = await params;
@@ -23,6 +54,8 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   }
 
   const dictionary = getDictionary(rawLocale);
+  const copy = dictionary.wishlist;
+  const title = dictionary.nav.wishlist;
   const [user, currency, products] = await Promise.all([
     getCurrentUser(),
     getSelectedCurrency(),
@@ -30,20 +63,19 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   ]);
 
   if (!user) {
+    const loginHref = `/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`;
+
     return (
-      <section className="flex flex-col gap-4">
-        <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
-          {dictionary.nav.wishlist}
-        </h1>
-        <p className="text-gray-600">
-          <Link
-            href={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
-            className="font-medium text-gray-900 underline underline-offset-2"
-          >
-            {dictionary.header.login}
-          </Link>{" "}
-          — {dictionary.wishlist.signInPrompt}
-        </p>
+      <section>
+        <WishlistHeading locale={rawLocale} backLabel={dictionary.catalog.back} title={title} />
+        <RevealOnView variants={fadeUp} delay={0.12} className="mt-8">
+          <WishlistEmptyState
+            title={copy.signInTitle}
+            description={copy.signInPrompt}
+            ctaHref={loginHref}
+            ctaLabel={dictionary.header.login}
+          />
+        </RevealOnView>
       </section>
     );
   }
@@ -51,10 +83,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   const formatPrice = await createDisplayPriceFormatter(rawLocale, currency);
   const priced = products.map((product) => {
     const price = formatPrice(product.priceAmount);
-    const compareAt =
-      product.compareAtAmount != null
-        ? formatPrice(product.compareAtAmount)
-        : null;
+    const compareAt = product.compareAtAmount != null ? formatPrice(product.compareAtAmount) : null;
 
     return {
       product,
@@ -63,39 +92,65 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
     };
   });
 
-  return (
-    <section className="flex flex-col gap-8">
-      <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
-        {dictionary.nav.wishlist}
-      </h1>
+  const countLabel =
+    priced.length === 1 ? copy.countOne : copy.countMany.replace('{count}', String(priced.length));
 
-      {priced.length === 0 ? (
-        <p className="text-gray-600">{dictionary.wishlist.empty}</p>
-      ) : (
-        <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
-          {priced.map(
-            ({ product, priceFormatted, compareAtFormatted }, index) => (
-              <ProductCard
+  return (
+    <section>
+      <WishlistHeading
+        locale={rawLocale}
+        backLabel={dictionary.catalog.back}
+        title={title}
+        subtitle={priced.length > 0 ? countLabel : undefined}
+      />
+
+      <div className="mt-8">
+        {priced.length === 0 ? (
+          <RevealOnView variants={fadeUp} delay={0.12}>
+            <WishlistEmptyState
+              title={copy.empty}
+              description={copy.emptyDescription}
+              ctaHref={`/${rawLocale}/products`}
+              ctaLabel={copy.browseCta}
+            />
+          </RevealOnView>
+        ) : (
+          <StaggerGroup
+            className="grid grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-4"
+            stagger={0.08}
+            delayChildren={0.04}
+          >
+            {priced.map(({ product, priceFormatted, compareAtFormatted }, index) => (
+              <StaggerItem
                 key={product.id}
-                href={`/${rawLocale}/products/${product.translation.slug}`}
-                title={product.translation.title}
-                priceFormatted={priceFormatted}
-                compareAtFormatted={compareAtFormatted}
-                discountPercent={product.discountPercent}
-                imageUrl={product.imageUrl}
-                inStock={product.stockOnHand > 0}
-                priority={index < 4}
-                locale={rawLocale}
-                productId={product.id}
-                inWishlist
-                isSignedIn
-                wishlistLabel={dictionary.nav.wishlist}
-                addToCartLabel={dictionary.product.addToCart}
-              />
-            ),
-          )}
-        </div>
-      )}
+                variants={cardShelf}
+                className="relative z-0 w-full min-w-0 overflow-visible hover:z-50"
+              >
+                <HomeProductCard
+                  href={`/${rawLocale}/products/${product.translation.slug}`}
+                  title={product.translation.title}
+                  description={product.translation.description ?? null}
+                  priceFormatted={priceFormatted}
+                  compareAtFormatted={compareAtFormatted}
+                  imageUrl={product.imageUrl}
+                  inStock={product.stockOnHand > 0}
+                  priority={index < 4}
+                  locale={rawLocale}
+                  productId={product.id}
+                  inWishlist
+                  isSignedIn
+                  wishlistLabel={title}
+                  orderLabel={dictionary.home.orderCta}
+                  outOfStockLabel={dictionary.product.outOfStock}
+                  ratingLabel={dictionary.product.cardRating}
+                  prepTimeLabel={dictionary.product.prepTime}
+                  className="max-w-none"
+                />
+              </StaggerItem>
+            ))}
+          </StaggerGroup>
+        )}
+      </div>
     </section>
   );
 }

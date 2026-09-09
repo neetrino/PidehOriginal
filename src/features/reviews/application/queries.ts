@@ -1,14 +1,14 @@
-import "server-only";
+import 'server-only';
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { orderItems, orders, reviews, users } from "@/db/schema";
+import { getDb } from '@/db/client';
+import { orderItems, orders, reviews, users } from '@/db/schema';
 import {
   buildReviewAggregate,
   isReviewEligibleOrderStatus,
   type ReviewAggregate,
-} from "@/features/reviews/domain/review-rules";
+} from '@/features/reviews/domain/review-rules';
 
 export type PublicReview = {
   id: string;
@@ -52,9 +52,7 @@ async function findEligibleOrderItem(
     )
     .orderBy(desc(orders.placedAt));
 
-  const eligible = rows.find((row) =>
-    isReviewEligibleOrderStatus(row.orderStatus),
-  );
+  const eligible = rows.find((row) => isReviewEligibleOrderStatus(row.orderStatus));
 
   return eligible ? { orderItemId: eligible.orderItemId } : null;
 }
@@ -75,12 +73,7 @@ export async function getProductReviewsView(
     })
     .from(reviews)
     .innerJoin(users, eq(reviews.userId, users.id))
-    .where(
-      and(
-        eq(reviews.productId, productId),
-        eq(reviews.moderationStatus, "APPROVED"),
-      ),
-    )
+    .where(and(eq(reviews.productId, productId), eq(reviews.moderationStatus, 'APPROVED')))
     .orderBy(desc(reviews.createdAt));
 
   const publicReviews: PublicReview[] = approved.map((row) => ({
@@ -116,9 +109,7 @@ export async function getProductReviewsView(
     })
     .from(reviews)
     .innerJoin(users, eq(reviews.userId, users.id))
-    .where(
-      and(eq(reviews.userId, viewerUserId), eq(reviews.productId, productId)),
-    )
+    .where(and(eq(reviews.userId, viewerUserId), eq(reviews.productId, productId)))
     .limit(1);
 
   if (existing) {

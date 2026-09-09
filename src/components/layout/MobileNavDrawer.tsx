@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   useCallback,
@@ -8,16 +8,16 @@ import {
   useRef,
   useState,
   type ReactNode,
-} from "react";
-import { createPortal } from "react-dom";
-import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+} from 'react';
+import { createPortal } from 'react-dom';
+import { usePathname } from 'next/navigation';
+import { Menu, X } from 'lucide-react';
 
-import { LocaleCurrencySwitcher } from "@/components/layout/LocaleCurrencySwitcher";
-import { AppLink } from "@/components/ui/AppLink";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
+import { LocaleCurrencySwitcher } from '@/components/layout/LocaleCurrencySwitcher';
+import { AppLink } from '@/components/ui/AppLink';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 const MENU_EXIT_MS = 260;
 const MENU_GAP_PX = 8;
@@ -60,7 +60,7 @@ export function MobileNavDrawer({
   triggerContent,
 }: MobileNavDrawerProps) {
   const menuId = useId();
-  const pathname = usePathname() ?? "";
+  const pathname = usePathname() ?? '';
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const exitTimerRef = useRef<number | null>(null);
@@ -84,8 +84,8 @@ export function MobileNavDrawer({
     // Prefer the header this trigger actually lives in — the storefront
     // renders both the desktop and the mobile chrome.
     const header =
-      trigger?.closest<HTMLElement>("[data-site-header]") ??
-      document.querySelector<HTMLElement>("[data-site-header]");
+      trigger?.closest<HTMLElement>('[data-site-header]') ??
+      document.querySelector<HTMLElement>('[data-site-header]');
 
     if (header) {
       setPanelTopPx(header.getBoundingClientRect().bottom);
@@ -138,13 +138,13 @@ export function MobileNavDrawer({
   }, [open, openMenu, closeMenu]);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 768px)");
+    const media = window.matchMedia('(min-width: 768px)');
     function closeOnDesktop(): void {
       if (media.matches) setOpen(false);
     }
     closeOnDesktop();
-    media.addEventListener("change", closeOnDesktop);
-    return () => media.removeEventListener("change", closeOnDesktop);
+    media.addEventListener('change', closeOnDesktop);
+    return () => media.removeEventListener('change', closeOnDesktop);
   }, []);
 
   useEffect(() => {
@@ -154,35 +154,35 @@ export function MobileNavDrawer({
   useLayoutEffect(() => {
     if (!rendered) return;
     measureHeader();
-    window.addEventListener("resize", measureHeader);
-    return () => window.removeEventListener("resize", measureHeader);
+    window.addEventListener('resize', measureHeader);
+    return () => window.removeEventListener('resize', measureHeader);
   }, [rendered, measureHeader]);
 
   useEffect(() => {
     if (!rendered) return;
 
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === 'Escape') setOpen(false);
     }
 
     function handleTouchMove(event: TouchEvent): void {
       const target = event.target;
       if (!(target instanceof Node)) return;
       if (panelRef.current?.contains(target)) return;
-      const header = document.querySelector("[data-site-header]");
+      const header = document.querySelector('[data-site-header]');
       if (header?.contains(target)) return;
       event.preventDefault();
     }
 
-    document.addEventListener("touchmove", handleTouchMove, { passive: false });
-    window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [rendered]);
 
@@ -196,7 +196,7 @@ export function MobileNavDrawer({
         onClick={toggleMenu}
         className={
           triggerClassName ??
-          "relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-pideh-ink text-white transition-opacity hover:opacity-80 touch-manipulation sm:h-10 sm:w-10"
+          'relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-pideh-ink text-white transition-opacity hover:opacity-80 touch-manipulation sm:h-10 sm:w-10'
         }
         aria-label={open ? dictionary.nav.closeMenu : dictionary.nav.openMenu}
         aria-expanded={open}
@@ -209,9 +209,7 @@ export function MobileNavDrawer({
               aria-hidden="true"
               style={{
                 opacity: open ? 0 : 1,
-                transform: open
-                  ? "rotate(-90deg) scale(0.82)"
-                  : "rotate(0deg) scale(1)",
+                transform: open ? 'rotate(-90deg) scale(0.82)' : 'rotate(0deg) scale(1)',
               }}
             />
             <X
@@ -219,9 +217,7 @@ export function MobileNavDrawer({
               aria-hidden="true"
               style={{
                 opacity: open ? 1 : 0,
-                transform: open
-                  ? "rotate(0deg) scale(1)"
-                  : "rotate(90deg) scale(0.82)",
+                transform: open ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.82)',
               }}
             />
           </>
@@ -236,8 +232,8 @@ export function MobileNavDrawer({
                 aria-label={dictionary.nav.closeMenu}
                 className={`fixed inset-0 z-[60] cursor-pointer border-0 bg-pideh-ink/35 backdrop-blur-[10px] transition-[opacity,visibility] duration-[260ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
                   expanded
-                    ? "pointer-events-auto visible opacity-100"
-                    : "pointer-events-none invisible opacity-0"
+                    ? 'pointer-events-auto visible opacity-100'
+                    : 'pointer-events-none invisible opacity-0'
                 }`}
                 onClick={() => setOpen(false)}
               />
@@ -249,8 +245,8 @@ export function MobileNavDrawer({
                 aria-label={dictionary.nav.navigation}
                 className={`fixed z-[75] overflow-hidden rounded-[28px] bg-white px-6 shadow-[0_16px_40px_rgba(30,30,30,0.14)] transition-[opacity,transform] duration-[260ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
                   expanded
-                    ? "translate-y-0 scale-100 opacity-100"
-                    : "-translate-y-2.5 scale-[0.98] opacity-0"
+                    ? 'translate-y-0 scale-100 opacity-100'
+                    : '-translate-y-2.5 scale-[0.98] opacity-0'
                 }`}
                 style={{
                   top: panelTopPx + MENU_GAP_PX,
@@ -265,21 +261,17 @@ export function MobileNavDrawer({
                 >
                   <div className="flex flex-col py-4">
                     {navItems.map((item) => {
-                      const active = isNavItemActive(
-                        pathname,
-                        item.href,
-                        locale,
-                      );
+                      const active = isNavItemActive(pathname, item.href, locale);
                       return (
                         <AppLink
                           key={item.href}
                           href={item.href}
                           prefetchPolicy="intent"
-                          aria-current={active ? "page" : undefined}
+                          aria-current={active ? 'page' : undefined}
                           className={`font-montserrat-arm rounded-xl px-1 py-3.5 text-[22px] leading-none font-black tracking-tight transition-colors ${
                             active
-                              ? "text-pideh-orange"
-                              : "text-pideh-ink hover:bg-pideh-cream hover:text-pideh-orange"
+                              ? 'text-pideh-orange'
+                              : 'text-pideh-ink hover:bg-pideh-cream hover:text-pideh-orange'
                           }`}
                           onClick={() => setOpen(false)}
                         >

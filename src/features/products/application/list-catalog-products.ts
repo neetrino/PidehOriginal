@@ -1,4 +1,4 @@
-import "server-only";
+import 'server-only';
 
 import {
   and,
@@ -13,29 +13,21 @@ import {
   lte,
   sql,
   type SQL,
-} from "drizzle-orm";
-import { unstable_cache } from "next/cache";
+} from 'drizzle-orm';
+import { unstable_cache } from 'next/cache';
 
-import { getDb } from "@/db/client";
-import {
-  categories,
-  orderItems,
-  productCategories,
-  products,
-} from "@/db/schema";
-import { enrichCatalogProducts } from "@/features/products/application/catalog-product-enrichment";
-import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
-import type { CatalogProduct } from "@/features/products/types";
-import {
-  CACHE_TAGS,
-  PUBLIC_CACHE_REVALIDATE_SECONDS,
-} from "@/lib/cache/tags";
-import { getCheckoutRateSnapshot } from "@/lib/fx/service";
-import type { Locale } from "@/lib/i18n/config";
-import { convertAmountToBase } from "@/lib/money/convert";
-import type { Currency } from "@/lib/money/currency";
-import { defaultCurrency } from "@/lib/money/currency";
-import { getCurrencyMeta } from "@/lib/money/currency-meta";
+import { getDb } from '@/db/client';
+import { categories, orderItems, productCategories, products } from '@/db/schema';
+import { enrichCatalogProducts } from '@/features/products/application/catalog-product-enrichment';
+import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
+import type { CatalogProduct } from '@/features/products/types';
+import { CACHE_TAGS, PUBLIC_CACHE_REVALIDATE_SECONDS } from '@/lib/cache/tags';
+import { getCheckoutRateSnapshot } from '@/lib/fx/service';
+import type { Locale } from '@/lib/i18n/config';
+import { convertAmountToBase } from '@/lib/money/convert';
+import type { Currency } from '@/lib/money/currency';
+import { defaultCurrency } from '@/lib/money/currency';
+import { getCurrencyMeta } from '@/lib/money/currency-meta';
 
 export type CatalogListResult = {
   products: CatalogProduct[];
@@ -44,10 +36,7 @@ export type CatalogListResult = {
   page: number;
 };
 
-const activeCatalogWhere = and(
-  eq(products.status, "ACTIVE"),
-  isNull(products.deletedAt),
-);
+const activeCatalogWhere = and(eq(products.status, 'ACTIVE'), isNull(products.deletedAt));
 
 function displayMajorToBaseAmd(
   majorUnits: number,
@@ -56,19 +45,11 @@ function displayMajorToBaseAmd(
 ): number {
   const scale = getCurrencyMeta(displayCurrency).scale;
   const minor = BigInt(majorUnits) * 10n ** BigInt(scale);
-  const base = convertAmountToBase(
-    minor,
-    rate,
-    displayCurrency,
-    defaultCurrency,
-  );
+  const base = convertAmountToBase(minor, rate, displayCurrency, defaultCurrency);
   return Number(base.amount);
 }
 
-async function resolveActiveCategoryIdBySlug(
-  locale: Locale,
-  slug: string,
-): Promise<string | null> {
+async function resolveActiveCategoryIdBySlug(locale: Locale, slug: string): Promise<string | null> {
   const normalized = slug.trim();
   if (!normalized) {
     return null;
@@ -79,7 +60,7 @@ async function resolveActiveCategoryIdBySlug(
     .from(categories)
     .where(
       and(
-        eq(categories.status, "ACTIVE"),
+        eq(categories.status, 'ACTIVE'),
         isNull(categories.deletedAt),
         sql`${categories.translations}->${locale}->>'slug' = ${normalized}`,
       ),
@@ -129,10 +110,7 @@ async function buildWhere(
   }
 
   if (filters.category) {
-    const categoryId = await resolveActiveCategoryIdBySlug(
-      locale,
-      filters.category,
-    );
+    const categoryId = await resolveActiveCategoryIdBySlug(locale, filters.category);
     if (!categoryId) {
       return sql`false`;
     }
@@ -149,23 +127,15 @@ async function buildWhere(
   return and(...conditions);
 }
 
-function orderByClause(sort: CatalogFilters["sort"], soldExpr: SQL) {
+function orderByClause(sort: CatalogFilters['sort'], soldExpr: SQL) {
   switch (sort) {
-    case "price_asc":
-      return [
-        asc(products.priceAmount),
-        desc(products.createdAt),
-        desc(products.id),
-      ] as const;
-    case "price_desc":
-      return [
-        desc(products.priceAmount),
-        desc(products.createdAt),
-        desc(products.id),
-      ] as const;
-    case "popular":
+    case 'price_asc':
+      return [asc(products.priceAmount), desc(products.createdAt), desc(products.id)] as const;
+    case 'price_desc':
+      return [desc(products.priceAmount), desc(products.createdAt), desc(products.id)] as const;
+    case 'popular':
       return [desc(soldExpr), desc(products.createdAt), desc(products.id)] as const;
-    case "newest":
+    case 'newest':
     default:
       return [desc(products.createdAt), desc(products.id)] as const;
   }
@@ -192,14 +162,12 @@ async function loadCatalogProductsPage(
   const popularity = getDb()
     .select({
       productId: orderItems.productId,
-      sold: sql<number>`coalesce(sum(${orderItems.quantity}), 0)::int`.as(
-        "sold",
-      ),
+      sold: sql<number>`coalesce(sum(${orderItems.quantity}), 0)::int`.as('sold'),
     })
     .from(orderItems)
     .where(isNotNull(orderItems.productId))
     .groupBy(orderItems.productId)
-    .as("popularity");
+    .as('popularity');
 
   const soldExpr = sql`coalesce(${popularity.sold}, 0)`;
   const orderBy = orderByClause(filters.sort, soldExpr);
@@ -209,7 +177,7 @@ async function loadCatalogProductsPage(
       .select({ count: sql<number>`count(*)::int` })
       .from(products)
       .where(where),
-    filters.sort === "popular"
+    filters.sort === 'popular'
       ? getDb()
           .select(getTableColumns(products))
           .from(products)
@@ -247,15 +215,15 @@ export async function listCatalogProducts(
   displayCurrency: Currency,
 ): Promise<CatalogListResult> {
   const cacheKey = [
-    "catalog-products-page",
+    'catalog-products-page',
     locale,
     displayCurrency,
-    filters.q ?? "",
-    String(filters.minPrice ?? ""),
-    String(filters.maxPrice ?? ""),
-    filters.category ?? "",
-    filters.inStock ? "1" : "0",
-    filters.onSale ? "1" : "0",
+    filters.q ?? '',
+    String(filters.minPrice ?? ''),
+    String(filters.maxPrice ?? ''),
+    filters.category ?? '',
+    filters.inStock ? '1' : '0',
+    filters.onSale ? '1' : '0',
     filters.sort,
     String(filters.page),
     String(filters.pageSize),

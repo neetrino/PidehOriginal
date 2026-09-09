@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 export const DROPDOWN_ANIMATION_MS = 280;
 
@@ -28,7 +28,7 @@ type SelectDropdownProps = {
    * `brand` — Pideh cream panel, ink border, offset shadow (storefront).
    * Default keeps the neutral admin/forms chrome.
    */
-  tone?: "default" | "brand";
+  tone?: 'default' | 'brand';
 };
 
 export function SelectDropdown({
@@ -37,24 +37,22 @@ export function SelectDropdown({
   value,
   allLabel,
   options,
-  className = "",
+  className = '',
   disabled = false,
   onValueChange,
   deferChange = true,
   trigger,
-  tone = "default",
+  tone = 'default',
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const [elevated, setElevated] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const pendingChangeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listId = useId();
-  const isBrand = tone === "brand";
+  const isBrand = tone === 'brand';
 
   const selectedLabel =
-    options.find((option) => option.value === value)?.label ??
-    allLabel ??
-    value;
+    options.find((option) => option.value === value)?.label ?? allLabel ?? value;
 
   useEffect(() => {
     return () => {
@@ -83,14 +81,14 @@ export function SelectDropdown({
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === 'Escape') setOpen(false);
     }
 
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [open]);
 
@@ -110,18 +108,15 @@ export function SelectDropdown({
   }
 
   return (
-    <div
-      ref={rootRef}
-      className={`relative ${elevated ? "z-50" : "z-0"} ${className}`}
-    >
+    <div ref={rootRef} className={`relative ${elevated ? 'z-50' : 'z-0'} ${className}`}>
       {name ? <input type="hidden" name={name} value={value} /> : null}
       <button
         type="button"
         disabled={disabled}
         className={
           trigger
-            ? "w-full rounded-[30px] outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b00] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            : "flex h-11 w-full items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+            ? 'w-full rounded-[30px] outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b00] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+            : 'flex h-11 w-full items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50'
         }
         aria-label={ariaLabel}
         aria-haspopup="listbox"
@@ -133,7 +128,7 @@ export function SelectDropdown({
           <>
             <span className="min-w-0 truncate">{selectedLabel}</span>
             <ChevronDown
-              className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
+              className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? 'rotate-180' : ''}`}
               aria-hidden
             />
           </>
@@ -142,38 +137,32 @@ export function SelectDropdown({
 
       <div
         className={`absolute top-[calc(100%+0.5rem)] z-[100] grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isBrand ? "left-0 w-max min-w-full" : "left-0 w-full"
+          isBrand ? 'left-0 w-max min-w-full' : 'left-0 w-full'
         } ${
           open
-            ? "translate-y-0 grid-rows-[1fr] opacity-100"
-            : "pointer-events-none -translate-y-1 grid-rows-[0fr] opacity-0"
+            ? 'translate-y-0 grid-rows-[1fr] opacity-100'
+            : 'pointer-events-none -translate-y-1 grid-rows-[0fr] opacity-0'
         }`}
         style={{ transitionDuration: `${DROPDOWN_ANIMATION_MS}ms` }}
         aria-hidden={!open}
       >
-        <div
-          className={
-            isBrand
-              ? "min-h-0 overflow-hidden pr-2 pb-2"
-              : "min-h-0 overflow-hidden"
-          }
-        >
+        <div className={isBrand ? 'min-h-0 overflow-hidden pr-2 pb-2' : 'min-h-0 overflow-hidden'}>
           <div
             id={listId}
             role="listbox"
             aria-label={ariaLabel}
             className={
               isBrand
-                ? "max-h-72 overflow-y-auto rounded-[20px] border-2 border-[#1e1e1e] bg-[#fff8e7] p-1.5 shadow-[5px_5px_0_#1e1e1e]"
-                : "max-h-72 overflow-y-auto rounded-2xl border border-gray-100 bg-white py-2 shadow-lg"
+                ? 'max-h-72 overflow-y-auto rounded-[20px] border-2 border-[#1e1e1e] bg-[#fff8e7] p-1.5 shadow-[5px_5px_0_#1e1e1e]'
+                : 'max-h-72 overflow-y-auto rounded-2xl border border-gray-100 bg-white py-2 shadow-lg'
             }
           >
             {allLabel !== undefined ? (
               <SelectDropdownOptionRow
                 label={allLabel}
-                selected={value === ""}
+                selected={value === ''}
                 tone={tone}
-                onSelect={() => selectValue("")}
+                onSelect={() => selectValue('')}
               />
             ) : null}
             {options.map((option) => (
@@ -196,16 +185,16 @@ type SelectDropdownOptionRowProps = {
   label: string;
   selected: boolean;
   onSelect: () => void;
-  tone?: "default" | "brand";
+  tone?: 'default' | 'brand';
 };
 
 export function SelectDropdownOptionRow({
   label,
   selected,
   onSelect,
-  tone = "default",
+  tone = 'default',
 }: SelectDropdownOptionRowProps) {
-  const isBrand = tone === "brand";
+  const isBrand = tone === 'brand';
 
   return (
     <button
@@ -215,9 +204,9 @@ export function SelectDropdownOptionRow({
       className={
         isBrand
           ? selected
-            ? "flex w-full items-center gap-3 rounded-[14px] px-3 py-2.5 text-left text-sm font-semibold whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12"
-            : "flex w-full items-center gap-3 rounded-[14px] px-3 py-2.5 text-left text-sm font-medium whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12"
-          : "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-800 hover:bg-gray-50"
+            ? 'flex w-full items-center gap-3 rounded-[14px] px-3 py-2.5 text-left text-sm font-semibold whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12'
+            : 'flex w-full items-center gap-3 rounded-[14px] px-3 py-2.5 text-left text-sm font-medium whitespace-nowrap text-[#1e1e1e] transition-colors hover:bg-[#ff6b00]/12'
+          : 'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-800 hover:bg-gray-50'
       }
       onClick={onSelect}
     >
@@ -225,11 +214,11 @@ export function SelectDropdownOptionRow({
         className={
           selected
             ? isBrand
-              ? "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 border-[#1e1e1e] bg-[#ff6b00] text-white"
-              : "flex h-4 w-4 shrink-0 items-center justify-center rounded border border-gray-900 bg-gray-900 text-white"
+              ? 'flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 border-[#1e1e1e] bg-[#ff6b00] text-white'
+              : 'flex h-4 w-4 shrink-0 items-center justify-center rounded border border-gray-900 bg-gray-900 text-white'
             : isBrand
-              ? "flex h-[18px] w-[18px] shrink-0 rounded-[5px] border-2 border-[#1e1e1e]/35 bg-white"
-              : "flex h-4 w-4 shrink-0 rounded border border-gray-300 bg-white"
+              ? 'flex h-[18px] w-[18px] shrink-0 rounded-[5px] border-2 border-[#1e1e1e]/35 bg-white'
+              : 'flex h-4 w-4 shrink-0 rounded border border-gray-300 bg-white'
         }
         aria-hidden
       >
@@ -245,7 +234,7 @@ export function SelectDropdownOptionRow({
           </svg>
         ) : null}
       </span>
-      <span className={isBrand ? "shrink-0" : "min-w-0 truncate"}>{label}</span>
+      <span className={isBrand ? 'shrink-0' : 'min-w-0 truncate'}>{label}</span>
     </button>
   );
 }

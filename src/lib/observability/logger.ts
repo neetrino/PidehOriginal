@@ -1,4 +1,4 @@
-type LogLevel = "debug" | "info" | "warn" | "error";
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 type LogFields = Record<string, string | number | boolean | null | undefined>;
 
@@ -12,12 +12,12 @@ function write(level: LogLevel, message: string, fields?: LogFields): void {
 
   const line = JSON.stringify(entry);
 
-  if (level === "error") {
+  if (level === 'error') {
     console.error(line);
     return;
   }
 
-  if (level === "warn") {
+  if (level === 'warn') {
     console.warn(line);
     return;
   }
@@ -28,19 +28,19 @@ function write(level: LogLevel, message: string, fields?: LogFields): void {
 
 export const logger = {
   debug(message: string, fields?: LogFields): void {
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === 'production') {
       return;
     }
 
-    write("debug", message, fields);
+    write('debug', message, fields);
   },
   info(message: string, fields?: LogFields): void {
-    write("info", message, fields);
+    write('info', message, fields);
   },
   warn(message: string, fields?: LogFields): void {
-    write("warn", message, fields);
+    write('warn', message, fields);
   },
   error(message: string, fields?: LogFields): void {
-    write("error", message, fields);
+    write('error', message, fields);
   },
 };

@@ -1,10 +1,10 @@
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { Suspense } from 'react';
+import { notFound } from 'next/navigation';
 
-import { LoginForm } from "@/features/auth/ui/LoginForm";
-import { LoginScene } from "@/features/auth/ui/LoginScene";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { LoginForm } from '@/features/auth/ui/LoginForm';
+import { LoginScene } from '@/features/auth/ui/LoginScene';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type LoginPageProps = {
   params: Promise<{ locale: string }>;

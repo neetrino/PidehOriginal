@@ -1,5 +1,5 @@
 /** Public order numbers: p100, p101, … (sequential, starting at 100). */
-export const ORDER_NUMBER_PREFIX = "p";
+export const ORDER_NUMBER_PREFIX = 'p';
 export const ORDER_NUMBER_START = 100;
 
 /** Stable advisory-lock key for serializing order-number allocation. */
@@ -10,7 +10,7 @@ const ORDER_NUMBER_PATTERN = /^p(\d+)$/;
 /** Formats a sequence integer as a public order number. */
 export function formatOrderNumber(sequence: number): string {
   if (!Number.isInteger(sequence) || sequence < 1) {
-    throw new Error("Order sequence must be a positive integer.");
+    throw new Error('Order sequence must be a positive integer.');
   }
   return `${ORDER_NUMBER_PREFIX}${sequence}`;
 }
@@ -32,14 +32,11 @@ export function parseOrderSequence(orderNumber: string): number | null {
  * Next sequence given the current max `pN` value in the DB.
  * Starts at {@link ORDER_NUMBER_START} when none exist yet.
  */
-export function nextOrderSequence(
-  maxExisting: number | string | null | undefined,
-): number {
+export function nextOrderSequence(maxExisting: number | string | null | undefined): number {
   if (maxExisting === null || maxExisting === undefined) {
     return ORDER_NUMBER_START;
   }
-  const parsed =
-    typeof maxExisting === "number" ? maxExisting : Number(maxExisting);
+  const parsed = typeof maxExisting === 'number' ? maxExisting : Number(maxExisting);
   if (!Number.isFinite(parsed)) {
     return ORDER_NUMBER_START;
   }

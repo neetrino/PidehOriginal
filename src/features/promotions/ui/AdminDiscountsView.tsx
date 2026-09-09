@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import type { AdminDiscountsBoard } from "@/features/promotions/application/discounts-board";
-import { CategoryDiscountsSection } from "@/features/promotions/ui/CategoryDiscountsSection";
-import { DiscountInfoCard } from "@/features/promotions/ui/DiscountInfoCard";
-import { GlobalDiscountCard } from "@/features/promotions/ui/GlobalDiscountCard";
-import { ProductDiscountsSection } from "@/features/promotions/ui/ProductDiscountsSection";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { AdminDiscountsBoard } from '@/features/promotions/application/discounts-board';
+import { CategoryDiscountsSection } from '@/features/promotions/ui/CategoryDiscountsSection';
+import { DiscountInfoCard } from '@/features/promotions/ui/DiscountInfoCard';
+import { GlobalDiscountCard } from '@/features/promotions/ui/GlobalDiscountCard';
+import { ProductDiscountsSection } from '@/features/promotions/ui/ProductDiscountsSection';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminDiscountsViewCopy = {
-  discounts: Dictionary["admin"]["discounts"];
-  common: Dictionary["admin"]["common"];
+  discounts: Dictionary['admin']['discounts'];
+  common: Dictionary['admin']['common'];
 };
 
 type AdminDiscountsViewProps = {
@@ -18,11 +18,7 @@ type AdminDiscountsViewProps = {
   copy: AdminDiscountsViewCopy;
 };
 
-export function AdminDiscountsView({
-  locale,
-  board,
-  copy,
-}: AdminDiscountsViewProps) {
+export function AdminDiscountsView({ locale, board, copy }: AdminDiscountsViewProps) {
   return (
     <div className="flex w-full flex-col gap-6">
       <div className="grid w-full gap-6 lg:grid-cols-2">

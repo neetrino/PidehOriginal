@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { animate, useInView, useReducedMotion } from "motion/react";
-import { useEffect, useMemo, useRef } from "react";
+import { animate, useInView, useReducedMotion } from 'motion/react';
+import { useEffect, useMemo, useRef } from 'react';
 
-import type { DripWaveSpec } from "@/features/home/ui/wave-paths";
+import type { DripWaveSpec } from '@/features/home/ui/wave-paths';
 
 type SwimDripWaveProps = {
   spec: DripWaveSpec;
@@ -32,7 +32,7 @@ type CompiledCrest = {
 const compiledCache = new Map<string, CompiledCrest>();
 
 function viewBoxWidth(viewBox: string): number {
-  const width = Number(viewBox.split(" ")[2]);
+  const width = Number(viewBox.split(' ')[2]);
   return Number.isFinite(width) && width > 0 ? width : 1;
 }
 
@@ -44,19 +44,11 @@ function easeOutCubic(value: number): number {
   return 1 - (1 - value) ** 3;
 }
 
-function swellY(
-  targetY: number,
-  nx: number,
-  horizon: number,
-  progress: number,
-): number {
+function swellY(targetY: number, nx: number, horizon: number, progress: number): number {
   const local = clamp01((progress - SWELL_SPREAD * nx) / (1 - SWELL_SPREAD));
   const swell = easeOutCubic(local);
   const roll =
-    Math.sin(nx * Math.PI * 3 + progress * Math.PI) *
-    ROLL_AMPLITUDE *
-    swell *
-    (1 - swell);
+    Math.sin(nx * Math.PI * 3 + progress * Math.PI) * ROLL_AMPLITUDE * swell * (1 - swell);
   return horizon + (targetY - horizon) * swell + roll;
 }
 
@@ -73,7 +65,7 @@ function compileCrestPath(full: string, width: number): CompiledCrest {
   let pendingX: number | null = null;
 
   for (let index = 0; index < tokens.length; index += 1) {
-    const token = tokens[index] ?? "";
+    const token = tokens[index] ?? '';
     if (/^[A-Za-z]$/.test(token)) {
       continue;
     }
@@ -100,27 +92,21 @@ function compileCrestPath(full: string, width: number): CompiledCrest {
   return compiled;
 }
 
-function buildCrestPath(
-  compiled: CompiledCrest,
-  horizon: number,
-  progress: number,
-): string {
+function buildCrestPath(compiled: CompiledCrest, horizon: number, progress: number): string {
   if (progress >= 1) {
     // Final frame uses original token strings (already in compiled.tokens).
     const finalTokens = compiled.tokens.slice();
     for (const slot of compiled.slots) {
       finalTokens[slot.tokenIndex] = String(slot.targetY);
     }
-    return finalTokens.join(" ");
+    return finalTokens.join(' ');
   }
 
   const tokens = compiled.tokens.slice();
   for (const slot of compiled.slots) {
-    tokens[slot.tokenIndex] = String(
-      swellY(slot.targetY, slot.nx, horizon, progress),
-    );
+    tokens[slot.tokenIndex] = String(swellY(slot.targetY, slot.nx, horizon, progress));
   }
-  return tokens.join(" ");
+  return tokens.join(' ');
 }
 
 /**
@@ -128,20 +114,17 @@ function buildCrestPath(
  * plays once and stays. Path morphing updates the DOM directly (throttled)
  * so React/Motion does not rebuild SVG props every frame.
  */
-export function SwimDripWave({ spec, className = "" }: SwimDripWaveProps) {
+export function SwimDripWave({ spec, className = '' }: SwimDripWaveProps) {
   const reduceMotion = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const inView = useInView(rootRef, {
     once: true,
     amount: 0.15,
-    margin: "0px 0px 20% 0px",
+    margin: '0px 0px 20% 0px',
   });
   const width = viewBoxWidth(spec.viewBox);
-  const compiled = useMemo(
-    () => compileCrestPath(spec.full, width),
-    [spec.full, width],
-  );
+  const compiled = useMemo(() => compileCrestPath(spec.full, width), [spec.full, width]);
   const flatPath = useMemo(
     () => buildCrestPath(compiled, spec.horizon, 0),
     [compiled, spec.horizon],
@@ -167,13 +150,10 @@ export function SwimDripWave({ spec, className = "" }: SwimDripWaveProps) {
           return;
         }
         lastPaint = now;
-        pathEl.setAttribute(
-          "d",
-          buildCrestPath(compiled, spec.horizon, clamp01(progress)),
-        );
+        pathEl.setAttribute('d', buildCrestPath(compiled, spec.horizon, clamp01(progress)));
       },
       onComplete: () => {
-        pathEl.setAttribute("d", spec.full);
+        pathEl.setAttribute('d', spec.full);
       },
     });
 
@@ -191,11 +171,7 @@ export function SwimDripWave({ spec, className = "" }: SwimDripWaveProps) {
         fill="none"
         preserveAspectRatio="none"
       >
-        <path
-          ref={pathRef}
-          d={reduceMotion ? spec.full : flatPath}
-          fill={spec.fill}
-        />
+        <path ref={pathRef} d={reduceMotion ? spec.full : flatPath} fill={spec.fill} />
       </svg>
     </div>
   );

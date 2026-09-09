@@ -1,25 +1,22 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import {
-  ADMIN_LABEL,
-  ADMIN_TEXTAREA,
-} from "@/features/admin/ui/admin-form-classes";
-import { changePaymentStatusAction } from "@/features/orders/application/change-payment-status";
-import type { PaymentStatus } from "@/features/orders/domain/payment-status";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import { ADMIN_LABEL, ADMIN_TEXTAREA } from '@/features/admin/ui/admin-form-classes';
+import { changePaymentStatusAction } from '@/features/orders/application/change-payment-status';
+import type { PaymentStatus } from '@/features/orders/domain/payment-status';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ChangePaymentStatusFormProps = {
   locale: string;
   orderNumber: string;
   currentStatus: PaymentStatus;
   eligibleStatuses: PaymentStatus[];
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
 export function ChangePaymentStatusForm({
@@ -31,13 +28,11 @@ export function ChangePaymentStatusForm({
 }: ChangePaymentStatusFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [toStatus, setToStatus] = useState(eligibleStatuses[0] ?? "");
+  const [toStatus, setToStatus] = useState(eligibleStatuses[0] ?? '');
   const [isPending, startTransition] = useTransition();
 
   if (eligibleStatuses.length === 0) {
-    return (
-      <p className="text-sm text-gray-600">{copy.orders.changePayment.terminal}</p>
-    );
+    return <p className="text-sm text-gray-600">{copy.orders.changePayment.terminal}</p>;
   }
 
   return (
@@ -47,7 +42,7 @@ export function ChangePaymentStatusForm({
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          const noteRaw = String(formData.get("note") ?? "").trim();
+          const noteRaw = String(formData.get('note') ?? '').trim();
 
           startTransition(async () => {
             setError(null);
@@ -67,7 +62,7 @@ export function ChangePaymentStatusForm({
         }}
       >
         <p className="text-sm text-gray-700">
-          {copy.common.current.replace("{value}", currentStatus)}
+          {copy.common.current.replace('{value}', currentStatus)}
         </p>
         <div>
           <span className={ADMIN_LABEL}>{copy.orders.changePayment.newPaymentStatus}</span>

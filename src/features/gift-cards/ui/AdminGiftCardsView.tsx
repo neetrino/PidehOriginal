@@ -1,16 +1,13 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useState, useTransition } from "react";
-import { Check, Copy, Mail, Plus, Power } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useState, useTransition } from 'react';
+import { Check, Copy, Mail, Plus, Power } from 'lucide-react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { ADMIN_PAGE_SUBTITLE, ADMIN_PAGE_TITLE } from '@/features/admin/ui/admin-form-classes';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -21,20 +18,20 @@ import {
   ADMIN_TABLE_TD,
   ADMIN_TABLE_TH,
   ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
+} from '@/features/admin/ui/admin-table-classes';
 import {
   adminActivateGiftCardAction,
   adminDisableGiftCardAction,
   adminResendGiftCardEmailAction,
-} from "@/features/gift-cards/application/admin-actions";
-import type { GiftCardListItem } from "@/features/gift-cards/application/queries";
-import { GiftCardDrawer } from "@/features/gift-cards/ui/GiftCardDrawer";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import { formatMoneyAmount } from "@/lib/money/format";
+} from '@/features/gift-cards/application/admin-actions';
+import type { GiftCardListItem } from '@/features/gift-cards/application/queries';
+import { GiftCardDrawer } from '@/features/gift-cards/ui/GiftCardDrawer';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import { formatMoneyAmount } from '@/lib/money/format';
 
 type AdminGiftCardsViewCopy = {
-  giftCards: Dictionary["admin"]["giftCards"];
-  common: Dictionary["admin"]["common"];
+  giftCards: Dictionary['admin']['giftCards'];
+  common: Dictionary['admin']['common'];
 };
 
 type AdminGiftCardsViewProps = {
@@ -44,12 +41,7 @@ type AdminGiftCardsViewProps = {
   copy: AdminGiftCardsViewCopy;
 };
 
-export function AdminGiftCardsView({
-  locale,
-  cards,
-  presets,
-  copy,
-}: AdminGiftCardsViewProps) {
+export function AdminGiftCardsView({ locale, cards, presets, copy }: AdminGiftCardsViewProps) {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerKey, setDrawerKey] = useState(0);
@@ -64,9 +56,7 @@ export function AdminGiftCardsView({
         await action();
         router.refresh();
       } catch (caught) {
-        setError(
-          caught instanceof Error ? caught.message : copy.common.actionFailed,
-        );
+        setError(caught instanceof Error ? caught.message : copy.common.actionFailed);
       }
     });
   }
@@ -104,12 +94,8 @@ export function AdminGiftCardsView({
                 <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.code}</th>
                 <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.balance}</th>
                 <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.status}</th>
-                <th className={ADMIN_TABLE_TH}>
-                  {copy.giftCards.table.recipient}
-                </th>
-                <th className={ADMIN_TABLE_TH}>
-                  {copy.giftCards.table.purchaser}
-                </th>
+                <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.recipient}</th>
+                <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.purchaser}</th>
                 <th className={ADMIN_TABLE_TH}>{copy.common.actions}</th>
               </tr>
             </thead>
@@ -134,9 +120,9 @@ export function AdminGiftCardsView({
                       </span>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
-                      {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
+                      {formatMoneyAmount(card.balanceAmount, 'AMD', locale)}
                       <span className="block text-xs text-gray-500">
-                        / {formatMoneyAmount(card.initialAmount, "AMD", locale)}
+                        / {formatMoneyAmount(card.initialAmount, 'AMD', locale)}
                       </span>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
@@ -144,15 +130,11 @@ export function AdminGiftCardsView({
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <div className="text-sm">{card.recipientName}</div>
-                      <div className="text-xs text-gray-500">
-                        {card.recipientEmail}
-                      </div>
+                      <div className="text-xs text-gray-500">{card.recipientEmail}</div>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <div className="text-sm">{card.purchaserName}</div>
-                      <div className="text-xs text-gray-500">
-                        {card.purchaserEmail ?? "—"}
-                      </div>
+                      <div className="text-xs text-gray-500">{card.purchaserEmail ?? '—'}</div>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <div className="flex flex-wrap gap-1">
@@ -161,10 +143,7 @@ export function AdminGiftCardsView({
                           variant="secondary"
                           size="sm"
                           disabled={isPending}
-                          aria-label={copy.giftCards.table.copyAria.replace(
-                            "{code}",
-                            card.code,
-                          )}
+                          aria-label={copy.giftCards.table.copyAria.replace('{code}', card.code)}
                           onClick={() => {
                             void navigator.clipboard.writeText(card.code);
                             setCopiedId(card.id);
@@ -176,7 +155,7 @@ export function AdminGiftCardsView({
                             <Copy className="h-4 w-4" />
                           )}
                         </Button>
-                        {card.status === "PENDING_PAYMENT" ? (
+                        {card.status === 'PENDING_PAYMENT' ? (
                           <Button
                             type="button"
                             variant="secondary"
@@ -184,10 +163,9 @@ export function AdminGiftCardsView({
                             disabled={isPending}
                             onClick={() =>
                               runAction(async () => {
-                                const result = await adminActivateGiftCardAction(
-                                  locale,
-                                  { id: card.id },
-                                );
+                                const result = await adminActivateGiftCardAction(locale, {
+                                  id: card.id,
+                                });
                                 if (!result.ok) {
                                   throw new Error(result.error.message);
                                 }
@@ -197,7 +175,7 @@ export function AdminGiftCardsView({
                             {copy.giftCards.activate}
                           </Button>
                         ) : null}
-                        {card.status === "ACTIVE" || card.status === "USED" ? (
+                        {card.status === 'ACTIVE' || card.status === 'USED' ? (
                           <Button
                             type="button"
                             variant="secondary"
@@ -206,10 +184,9 @@ export function AdminGiftCardsView({
                             aria-label={copy.giftCards.table.resendAria}
                             onClick={() =>
                               runAction(async () => {
-                                const result =
-                                  await adminResendGiftCardEmailAction(locale, {
-                                    id: card.id,
-                                  });
+                                const result = await adminResendGiftCardEmailAction(locale, {
+                                  id: card.id,
+                                });
                                 if (!result.ok) {
                                   throw new Error(result.error.message);
                                 }
@@ -219,7 +196,7 @@ export function AdminGiftCardsView({
                             <Mail className="h-4 w-4" />
                           </Button>
                         ) : null}
-                        {card.status !== "DISABLED" ? (
+                        {card.status !== 'DISABLED' ? (
                           <Button
                             type="button"
                             variant="secondary"
@@ -228,10 +205,9 @@ export function AdminGiftCardsView({
                             aria-label={copy.giftCards.table.disableAria}
                             onClick={() =>
                               runAction(async () => {
-                                const result = await adminDisableGiftCardAction(
-                                  locale,
-                                  { id: card.id },
-                                );
+                                const result = await adminDisableGiftCardAction(locale, {
+                                  id: card.id,
+                                });
                                 if (!result.ok) {
                                   throw new Error(result.error.message);
                                 }

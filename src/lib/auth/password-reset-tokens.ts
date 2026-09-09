@@ -1,15 +1,15 @@
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes } from 'node:crypto';
 
-import type { RedisClient } from "@/lib/redis/types";
+import type { RedisClient } from '@/lib/redis/types';
 
 /** Password-reset link lifetime. Align with ops if abuse patterns change. */
 export const PASSWORD_RESET_TTL_SECONDS = 60 * 60;
 
-const TOKEN_KEY_PREFIX = "auth:reset:token:";
-const USER_KEY_PREFIX = "auth:reset:user:";
+const TOKEN_KEY_PREFIX = 'auth:reset:token:';
+const USER_KEY_PREFIX = 'auth:reset:user:';
 
 function hashToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex");
+  return createHash('sha256').update(token).digest('hex');
 }
 
 function tokenKey(tokenHash: string): string {
@@ -24,11 +24,8 @@ function userKey(userId: string): string {
  * Issues a high-entropy password-reset token for the user.
  * Stores only the hash in Redis with TTL; any previous token is revoked.
  */
-export async function issuePasswordResetToken(
-  redis: RedisClient,
-  userId: string,
-): Promise<string> {
-  const rawToken = randomBytes(32).toString("base64url");
+export async function issuePasswordResetToken(redis: RedisClient, userId: string): Promise<string> {
+  const rawToken = randomBytes(32).toString('base64url');
   const tokenHash = hashToken(rawToken);
 
   const previousHash = await redis.get(userKey(userId));

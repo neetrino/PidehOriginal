@@ -1,19 +1,17 @@
-"use server";
+'use server';
 
-import { and, eq, isNull } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { and, eq, isNull } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { getDb } from "@/db/client";
-import { addresses } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
-import {
-  addressFormSchema,
-  addressIdSchema,
-} from "@/features/profile/schemas/address";
-import { requireUser } from "@/lib/auth/policies";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+import { getDb } from '@/db/client';
+import { addresses } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
+import { DEFAULT_DELIVERY_CITY } from '@/features/delivery/domain/service-area';
+import { addressFormSchema, addressIdSchema } from '@/features/profile/schemas/address';
+import { requireUser } from '@/lib/auth/policies';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 type AddressMutationOk = { addressId: string };
 
@@ -33,9 +31,7 @@ async function clearDefaultFlags(
       isDefaultBilling: false,
       updatedAt: new Date(),
     })
-    .where(
-      and(eq(addresses.userId, userId), isNull(addresses.archivedAt)),
-    );
+    .where(and(eq(addresses.userId, userId), isNull(addresses.archivedAt)));
 }
 
 /**
@@ -47,12 +43,12 @@ export async function createCustomerAddressAction(
   input: unknown,
 ): Promise<Result<AddressMutationOk>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = addressFormSchema.safeParse(input);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Please check the address fields.");
+    return err('VALIDATION_ERROR', 'Please check the address fields.');
   }
 
   const user = await requireUser(locale);
@@ -62,9 +58,7 @@ export async function createCustomerAddressAction(
       const existing = await tx
         .select({ id: addresses.id })
         .from(addresses)
-        .where(
-          and(eq(addresses.userId, user.id), isNull(addresses.archivedAt)),
-        )
+        .where(and(eq(addresses.userId, user.id), isNull(addresses.archivedAt)))
         .limit(1);
 
       const makeDefault = parsed.data.isDefault || existing.length === 0;
@@ -79,8 +73,8 @@ export async function createCustomerAddressAction(
         recipientFirstName: user.firstName,
         recipientLastName: user.lastName,
         phone: parsed.data.phone,
-        countryCode: "AM",
-        city: parsed.data.city,
+        countryCode: 'AM',
+        city: DEFAULT_DELIVERY_CITY,
         line1: parsed.data.line1,
         isDefaultShipping: makeDefault,
         isDefaultBilling: makeDefault,
@@ -92,7 +86,7 @@ export async function createCustomerAddressAction(
     revalidateAddressPaths(locale);
     return ok({ addressId });
   } catch {
-    return err("SAVE_FAILED", "Unable to save address.");
+    return err('SAVE_FAILED', 'Unable to save address.');
   }
 }
 
@@ -105,13 +99,13 @@ export async function updateCustomerAddressAction(
   input: unknown,
 ): Promise<Result<AddressMutationOk>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const idParsed = addressIdSchema.safeParse({ addressId });
   const parsed = addressFormSchema.safeParse(input);
   if (!idParsed.success || !parsed.success) {
-    return err("VALIDATION_ERROR", "Please check the address fields.");
+    return err('VALIDATION_ERROR', 'Please check the address fields.');
   }
 
   const user = await requireUser(locale);
@@ -144,7 +138,6 @@ export async function updateCustomerAddressAction(
           recipientFirstName: user.firstName,
           recipientLastName: user.lastName,
           phone: parsed.data.phone,
-          city: parsed.data.city,
           line1: parsed.data.line1,
           isDefaultShipping: parsed.data.isDefault,
           isDefaultBilling: parsed.data.isDefault,
@@ -156,13 +149,13 @@ export async function updateCustomerAddressAction(
     });
 
     if (!result) {
-      return err("NOT_FOUND", "Address not found.");
+      return err('NOT_FOUND', 'Address not found.');
     }
 
     revalidateAddressPaths(locale);
     return ok({ addressId: result });
   } catch {
-    return err("SAVE_FAILED", "Unable to save address.");
+    return err('SAVE_FAILED', 'Unable to save address.');
   }
 }
 
@@ -172,12 +165,12 @@ export async function deleteCustomerAddressAction(
   addressId: string,
 ): Promise<Result<AddressMutationOk>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const idParsed = addressIdSchema.safeParse({ addressId });
   if (!idParsed.success) {
-    return err("VALIDATION_ERROR", "Invalid address.");
+    return err('VALIDATION_ERROR', 'Invalid address.');
   }
 
   const user = await requireUser(locale);
@@ -195,7 +188,7 @@ export async function deleteCustomerAddressAction(
     .limit(1);
 
   if (!owned) {
-    return err("NOT_FOUND", "Address not found.");
+    return err('NOT_FOUND', 'Address not found.');
   }
 
   await getDb()
@@ -218,12 +211,12 @@ export async function setDefaultCustomerAddressAction(
   addressId: string,
 ): Promise<Result<AddressMutationOk>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const idParsed = addressIdSchema.safeParse({ addressId });
   if (!idParsed.success) {
-    return err("VALIDATION_ERROR", "Invalid address.");
+    return err('VALIDATION_ERROR', 'Invalid address.');
   }
 
   const user = await requireUser(locale);
@@ -260,12 +253,12 @@ export async function setDefaultCustomerAddressAction(
     });
 
     if (!result) {
-      return err("NOT_FOUND", "Address not found.");
+      return err('NOT_FOUND', 'Address not found.');
     }
 
     revalidateAddressPaths(locale);
     return ok({ addressId: result });
   } catch {
-    return err("SAVE_FAILED", "Unable to set default address.");
+    return err('SAVE_FAILED', 'Unable to set default address.');
   }
 }

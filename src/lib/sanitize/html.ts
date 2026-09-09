@@ -1,31 +1,30 @@
 const ALLOWED_TAGS = new Set([
-  "p",
-  "br",
-  "strong",
-  "em",
-  "ul",
-  "ol",
-  "li",
-  "h2",
-  "h3",
-  "a",
-  "blockquote",
+  'p',
+  'br',
+  'strong',
+  'em',
+  'ul',
+  'ol',
+  'li',
+  'h2',
+  'h3',
+  'a',
+  'blockquote',
 ]);
 
-const VOID_TAGS = new Set(["br"]);
+const VOID_TAGS = new Set(['br']);
 
 const TAG_REGEX = /<\/?([a-zA-Z][\w:-]*)\b([^>]*)>/g;
-const EVENT_HANDLER_REGEX =
-  /\s(on[a-z]+)\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi;
+const EVENT_HANDLER_REGEX = /\s(on[a-z]+)\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi;
 
 function stripScriptAndStyle(html: string): string {
   return html
-    .replace(/<script\b[\s\S]*?<\/script>/gi, "")
-    .replace(/<style\b[\s\S]*?<\/style>/gi, "");
+    .replace(/<script\b[\s\S]*?<\/script>/gi, '')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, '');
 }
 
 function stripEventHandlers(html: string): string {
-  return html.replace(EVENT_HANDLER_REGEX, "");
+  return html.replace(EVENT_HANDLER_REGEX, '');
 }
 
 function parseHref(attrs: string): string | null {
@@ -42,16 +41,16 @@ function isSafeHref(href: string): boolean {
     return false;
   }
 
-  const lower = value.toLowerCase().replace(/\s+/g, "");
+  const lower = value.toLowerCase().replace(/\s+/g, '');
   if (
-    lower.startsWith("javascript:") ||
-    lower.startsWith("data:") ||
-    lower.startsWith("vbscript:")
+    lower.startsWith('javascript:') ||
+    lower.startsWith('data:') ||
+    lower.startsWith('vbscript:')
   ) {
     return false;
   }
 
-  if (value.startsWith("/") && !value.startsWith("//")) {
+  if (value.startsWith('/') && !value.startsWith('//')) {
     return true;
   }
 
@@ -60,10 +59,10 @@ function isSafeHref(href: string): boolean {
 
 function escapeHtmlAttr(value: string): string {
   return value
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 /** Allowlists blog HTML and strips scripts, styles, and unsafe attributes. */
@@ -71,7 +70,7 @@ export function sanitizeBlogHtml(html: string): string {
   let input = stripScriptAndStyle(html);
   input = stripEventHandlers(input);
 
-  let result = "";
+  let result = '';
   let lastIndex = 0;
   const openTags: string[] = [];
   let match: RegExpExecArray | null;
@@ -81,9 +80,9 @@ export function sanitizeBlogHtml(html: string): string {
     result += input.slice(lastIndex, match.index);
 
     const full = match[0];
-    const isClosing = full.startsWith("</");
-    const tag = (match[1] ?? "").toLowerCase();
-    const attrs = match[2] ?? "";
+    const isClosing = full.startsWith('</');
+    const tag = (match[1] ?? '').toLowerCase();
+    const attrs = match[2] ?? '';
 
     if (isClosing) {
       if (ALLOWED_TAGS.has(tag) && !VOID_TAGS.has(tag)) {
@@ -96,7 +95,7 @@ export function sanitizeBlogHtml(html: string): string {
     } else if (ALLOWED_TAGS.has(tag)) {
       if (VOID_TAGS.has(tag)) {
         result += `<${tag}>`;
-      } else if (tag === "a") {
+      } else if (tag === 'a') {
         const href = parseHref(attrs);
         if (href && isSafeHref(href)) {
           result += `<a href="${escapeHtmlAttr(href)}">`;

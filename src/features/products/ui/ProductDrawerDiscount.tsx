@@ -1,27 +1,21 @@
-"use client";
+'use client';
 
-import { Calendar } from "lucide-react";
-import {
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
-import { createPortal } from "react-dom";
+import { Calendar } from 'lucide-react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { ADMIN_INPUT, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import type {
   ProductDiscountDraft,
   ProductDiscountType,
-} from "@/features/products/types/product-discount";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/products/types/product-discount';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ProductDrawerDiscountProps = {
   value: ProductDiscountDraft | null;
   disabled?: boolean;
   onChange: (next: ProductDiscountDraft | null) => void;
-  copy: Dictionary["admin"]["products"]["discount"];
+  copy: Dictionary['admin']['products']['discount'];
 };
 
 type AnchoredStyle = {
@@ -35,10 +29,10 @@ const SCHEDULE_PANEL_WIDTH = 320;
 const SCHEDULE_PANEL_ESTIMATE_HEIGHT = 240;
 
 function toLocalInput(iso: string | null): string {
-  if (!iso) return "";
+  if (!iso) return '';
   const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
@@ -51,21 +45,16 @@ function fromLocalInput(local: string): string | null {
 
 function schedulePanelStyle(anchor: DOMRect): AnchoredStyle {
   const width = Math.min(SCHEDULE_PANEL_WIDTH, window.innerWidth - 24);
-  const left = Math.max(
-    12,
-    Math.min(anchor.right - width, window.innerWidth - width - 12),
-  );
+  const left = Math.max(12, Math.min(anchor.right - width, window.innerWidth - width - 12));
   const spaceBelow = window.innerHeight - anchor.bottom;
-  const openAbove =
-    spaceBelow < SCHEDULE_PANEL_ESTIMATE_HEIGHT &&
-    anchor.top > spaceBelow;
+  const openAbove = spaceBelow < SCHEDULE_PANEL_ESTIMATE_HEIGHT && anchor.top > spaceBelow;
 
   if (openAbove) {
     return {
       top: anchor.top - 8,
       left,
       width,
-      transform: "translateY(-100%)",
+      transform: 'translateY(-100%)',
     };
   }
 
@@ -84,11 +73,9 @@ export function ProductDrawerDiscount({
 }: ProductDrawerDiscountProps) {
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [typeMenuOpen, setTypeMenuOpen] = useState(false);
-  const [type, setType] = useState<ProductDiscountType>(
-    value?.type ?? "PERCENTAGE",
-  );
+  const [type, setType] = useState<ProductDiscountType>(value?.type ?? 'PERCENTAGE');
   const [amount, setAmount] = useState(
-    value?.value != null && value.value > 0 ? String(value.value) : "",
+    value?.value != null && value.value > 0 ? String(value.value) : '',
   );
   const [startsAt, setStartsAt] = useState<string | null>(value?.startsAt ?? null);
   const [endsAt, setEndsAt] = useState<string | null>(value?.endsAt ?? null);
@@ -107,8 +94,8 @@ export function ProductDrawerDiscount({
   }, []);
 
   useEffect(() => {
-    setType(value?.type ?? "PERCENTAGE");
-    setAmount(value?.value != null && value.value > 0 ? String(value.value) : "");
+    setType(value?.type ?? 'PERCENTAGE');
+    setAmount(value?.value != null && value.value > 0 ? String(value.value) : '');
     setStartsAt(value?.startsAt ?? null);
     setEndsAt(value?.endsAt ?? null);
   }, [value]);
@@ -126,11 +113,11 @@ export function ProductDrawerDiscount({
     }
 
     updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
     return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
     };
   }, [scheduleOpen]);
 
@@ -146,17 +133,17 @@ export function ProductDrawerDiscount({
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         setTypeMenuOpen(false);
         setScheduleOpen(false);
       }
     }
 
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [typeMenuOpen, scheduleOpen]);
 
@@ -263,12 +250,12 @@ export function ProductDrawerDiscount({
             }}
             className="flex h-11 w-14 shrink-0 items-center justify-center border-r border-gray-200 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 disabled:opacity-40"
           >
-            {type === "PERCENTAGE" ? "%" : "֏"}
+            {type === 'PERCENTAGE' ? '%' : '֏'}
           </button>
           <input
             type="number"
             min={0}
-            max={type === "PERCENTAGE" ? 100 : undefined}
+            max={type === 'PERCENTAGE' ? 100 : undefined}
             value={amount}
             disabled={disabled}
             placeholder={copy.placeholder}
@@ -293,9 +280,7 @@ export function ProductDrawerDiscount({
             setScheduleOpen((open) => !open);
           }}
           className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border bg-white shadow-sm transition hover:bg-gray-50 disabled:opacity-40 ${
-            hasSchedule
-              ? "border-[#ff6b00] text-[#ff6b00]"
-              : "border-gray-200 text-gray-500"
+            hasSchedule ? 'border-[#ff6b00] text-[#ff6b00]' : 'border-gray-200 text-gray-500'
           }`}
         >
           <Calendar className="h-4 w-4" aria-hidden />
@@ -308,12 +293,10 @@ export function ProductDrawerDiscount({
           role="listbox"
           className="absolute left-0 z-20 mt-1 w-28 overflow-hidden rounded-xl bg-gray-800 py-1 text-sm text-white shadow-lg"
         >
-          {(
-            [
-              { type: "PERCENTAGE" as const, label: "%" },
-              { type: "FIXED" as const, label: "֏" },
-            ]
-          ).map((option) => (
+          {[
+            { type: 'PERCENTAGE' as const, label: '%' },
+            { type: 'FIXED' as const, label: '֏' },
+          ].map((option) => (
             <li key={option.type} role="option" aria-selected={type === option.type}>
               <button
                 type="button"

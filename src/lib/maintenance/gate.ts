@@ -1,8 +1,8 @@
-import "server-only";
+import 'server-only';
 
-import { getStoreMaintenance } from "@/features/settings/application/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale } from "@/lib/i18n/config";
+import { getStoreMaintenance } from '@/features/settings/application/queries';
+import { getCurrentUser } from '@/lib/auth/session';
+import { isLocale } from '@/lib/i18n/config';
 
 export type MaintenanceGateState = {
   showMaintenance: boolean;
@@ -10,23 +10,21 @@ export type MaintenanceGateState = {
 };
 
 function isMaintenanceBypassPath(pathname: string): boolean {
-  if (pathname.startsWith("/api")) {
+  if (pathname.startsWith('/api')) {
     return true;
   }
 
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = pathname.split('/').filter(Boolean);
   if (segments.length === 0) {
     return false;
   }
 
-  const section = isLocale(segments[0] ?? "") ? segments[1] : segments[0];
-  return section === "admin" || section === "login" || section === "register";
+  const section = isLocale(segments[0] ?? '') ? segments[1] : segments[0];
+  return section === 'admin' || section === 'login' || section === 'register';
 }
 
 /** Returns whether the storefront should show the maintenance screen. */
-export async function getMaintenanceGateState(
-  pathname: string,
-): Promise<MaintenanceGateState> {
+export async function getMaintenanceGateState(pathname: string): Promise<MaintenanceGateState> {
   if (isMaintenanceBypassPath(pathname)) {
     return { showMaintenance: false };
   }
@@ -37,7 +35,7 @@ export async function getMaintenanceGateState(
   }
 
   const user = await getCurrentUser();
-  if (user?.role === "ADMIN" && user.status === "ACTIVE") {
+  if (user?.role === 'ADMIN' && user.status === 'ACTIVE') {
     return { showMaintenance: false };
   }
 

@@ -1,13 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
-import {
-  CATALOG_PAGE_SIZES,
-  type CatalogFilters,
-} from "@/features/products/schemas/catalog-list";
-import type { CatalogProduct } from "@/features/products/types";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
+import { listCatalogProducts } from '@/features/products/application/list-catalog-products';
+import { CATALOG_PAGE_SIZES, type CatalogFilters } from '@/features/products/schemas/catalog-list';
+import type { CatalogProduct } from '@/features/products/types';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 /** Products shown per category block on the mobile menu (Figma 366:464 = 2×2). */
 export const CATALOG_SECTION_PRODUCT_LIMIT = 4;

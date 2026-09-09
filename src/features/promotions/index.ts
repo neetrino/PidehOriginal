@@ -4,27 +4,27 @@ export {
   duplicatePromotionAction,
   togglePromotionAction,
   updatePromotionAction,
-} from "@/features/promotions/application/upsert-promotion";
+} from '@/features/promotions/application/upsert-promotion';
 export {
   saveCategoryDiscountsAction,
   setGlobalDiscountAction,
   upsertTargetDiscountAction,
-} from "@/features/promotions/application/manage-discounts";
+} from '@/features/promotions/application/manage-discounts';
 export {
   resolveProductPrice,
   resolveProductPrices,
-} from "@/features/promotions/application/resolve-product-prices";
+} from '@/features/promotions/application/resolve-product-prices';
 export {
   getAdminDiscountsBoard,
   type AdminDiscountsBoard,
   type DiscountBoardCategory,
   type DiscountBoardProduct,
-} from "@/features/promotions/application/discounts-board";
+} from '@/features/promotions/application/discounts-board';
 export {
   applyPercentageToListPrice,
   pickAutomaticDiscountPercent,
   resolveCatalogPrice,
-} from "@/features/promotions/domain/resolve-automatic-discount";
+} from '@/features/promotions/domain/resolve-automatic-discount';
 export {
   getAdminPromotionById,
   listAdminPromotions,
@@ -33,7 +33,7 @@ export {
   listPromotionTargetOptions,
   listPromotionUserIds,
   type UserAssignedCoupon,
-} from "@/features/promotions/application/queries";
+} from '@/features/promotions/application/queries';
 export {
   normalizePromotionCode,
   validatePromotionRules,
@@ -41,15 +41,14 @@ export {
   DISCOUNT_TYPES,
   type PromotionKind,
   type DiscountType,
-} from "@/features/promotions/domain/promotion-rules";
+} from '@/features/promotions/domain/promotion-rules';
 export {
   evaluateCouponDiscount,
   isCouponUserEligible,
   couponDiscountErrorMessage,
-} from "@/features/promotions/domain/evaluate-coupon";
+} from '@/features/promotions/domain/evaluate-coupon';
 export {
   adminPromotionsFilterSchema,
   upsertPromotionSchema,
   togglePromotionSchema,
-} from "@/features/promotions/schemas/admin-promotions";
-
+} from '@/features/promotions/schemas/admin-promotions';

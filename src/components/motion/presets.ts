@@ -1,9 +1,9 @@
-import type { Transition, Variants } from "motion/react";
+import type { Transition, Variants } from 'motion/react';
 
 export const VIEWPORT_ONCE = { once: true, amount: 0.25 } as const;
 
 export const springSoft: Transition = {
-  type: "spring",
+  type: 'spring',
   stiffness: 90,
   damping: 20,
   mass: 0.9,

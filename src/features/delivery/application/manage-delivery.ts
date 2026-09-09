@@ -1,18 +1,15 @@
-"use server";
+'use server';
 
-import { eq, max } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { eq, max } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { getDb } from "@/db/client";
-import { deliveryRules } from "@/db/schema";
-import {
-  deliveryLocationSchema,
-  type DeliveryLocationInput,
-} from "@/features/delivery/schemas";
-import { requireAdmin } from "@/lib/auth/policies";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+import { getDb } from '@/db/client';
+import { deliveryRules } from '@/db/schema';
+import { deliveryLocationSchema, type DeliveryLocationInput } from '@/features/delivery/schemas';
+import { requireAdmin } from '@/lib/auth/policies';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 function revalidateDelivery(locale: string): void {
   revalidatePath(`/${locale}/admin/delivery`);
@@ -34,14 +31,14 @@ export async function createDeliveryLocationAction(
   raw: DeliveryLocationInput,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   await requireAdmin(locale as Locale);
 
   const parsed = deliveryLocationSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION", "Invalid delivery location.");
+    return err('VALIDATION', 'Invalid delivery location.');
   }
 
   const data = parsed.data;
@@ -50,15 +47,17 @@ export async function createDeliveryLocationAction(
     .from(deliveryRules);
 
   const id = createId();
-  await getDb().insert(deliveryRules).values({
-    id,
-    countryCode: normalizeCountry(data.country),
-    city: data.city.trim(),
-    priceAmount: data.priceAmount,
-    freeThresholdAmount: data.freeThresholdAmount,
-    isActive: true,
-    priority: (maxPriority?.value ?? 0) + 1,
-  });
+  await getDb()
+    .insert(deliveryRules)
+    .values({
+      id,
+      countryCode: normalizeCountry(data.country),
+      city: data.city.trim(),
+      priceAmount: data.priceAmount,
+      freeThresholdAmount: data.freeThresholdAmount,
+      isActive: true,
+      priority: (maxPriority?.value ?? 0) + 1,
+    });
 
   revalidateDelivery(locale);
   return ok({ id });
@@ -71,14 +70,14 @@ export async function updateDeliveryLocationAction(
   raw: DeliveryLocationInput,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   await requireAdmin(locale as Locale);
 
   const parsed = deliveryLocationSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION", "Invalid delivery location.");
+    return err('VALIDATION', 'Invalid delivery location.');
   }
 
   const data = parsed.data;
@@ -89,7 +88,7 @@ export async function updateDeliveryLocationAction(
     .limit(1);
 
   if (!existing) {
-    return err("NOT_FOUND", "Delivery location not found.");
+    return err('NOT_FOUND', 'Delivery location not found.');
   }
 
   await getDb()
@@ -113,7 +112,7 @@ export async function deleteDeliveryLocationAction(
   id: string,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   await requireAdmin(locale as Locale);
@@ -125,7 +124,7 @@ export async function deleteDeliveryLocationAction(
     .limit(1);
 
   if (!existing) {
-    return err("NOT_FOUND", "Delivery location not found.");
+    return err('NOT_FOUND', 'Delivery location not found.');
   }
 
   await getDb()

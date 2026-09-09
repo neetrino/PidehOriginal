@@ -1,4 +1,4 @@
-import { ShopCatalogSkeleton } from "@/components/loading/storefront-skeletons";
+import { ShopCatalogSkeleton } from '@/components/loading/storefront-skeletons';
 
 export default function ProductsLoading() {
   return (

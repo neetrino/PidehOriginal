@@ -1,23 +1,20 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
-import { getCartWithItems } from "@/features/cart/cart";
-import { getUserBonusBalance } from "@/features/bonuses/application/queries";
-import { getGroupOrderCheckoutUiFlags } from "@/features/checkout/application/group-order-checkout-context";
-import { getCheckoutOrderProducts } from "@/features/checkout/application/get-checkout-order-products";
-import { CheckoutForm } from "@/features/checkout/ui/CheckoutForm";
-import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
-import { listActiveCashChangeDenominations } from "@/features/delivery/domain/cash-change";
-import { getDefaultShippingAddress } from "@/features/profile/application/address-queries";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
-import {
-  getStoreBonusSettings,
-  getStoreIdentity,
-} from "@/features/settings/application/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+import { cartLineUnitAmount } from '@/features/cart/domain/line-price';
+import { getCartWithItems } from '@/features/cart/cart';
+import { getUserBonusBalance } from '@/features/bonuses/application/queries';
+import { getGroupOrderCheckoutUiFlags } from '@/features/checkout/application/group-order-checkout-context';
+import { getCheckoutOrderProducts } from '@/features/checkout/application/get-checkout-order-products';
+import { CheckoutForm } from '@/features/checkout/ui/CheckoutForm';
+import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
+import { listActiveCashChangeDenominations } from '@/features/delivery/domain/cash-change';
+import { getDefaultShippingAddress } from '@/features/profile/application/address-queries';
+import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
+import { getStoreBonusSettings, getStoreIdentity } from '@/features/settings/application/queries';
+import { getCurrentUser } from '@/lib/auth/session';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 type CheckoutPageProps = {
   params: Promise<{ locale: string }>;
@@ -40,19 +37,18 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       getStoreIdentity(),
       getGroupOrderCheckoutUiFlags(),
     ]);
-  const [defaultAddress, prices, orderProducts, bonusAvailableBalance] =
-    await Promise.all([
-      user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
-      resolveProductPrices(
-        items.map(({ product }) => ({
-          id: product.id,
-          priceAmount: product.priceAmount,
-          compareAtAmount: product.compareAtAmount,
-        })),
-      ),
-      getCheckoutOrderProducts(rawLocale, items),
-      user ? getUserBonusBalance(user.id) : Promise.resolve(null),
-    ]);
+  const [defaultAddress, prices, orderProducts, bonusAvailableBalance] = await Promise.all([
+    user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
+    resolveProductPrices(
+      items.map(({ product }) => ({
+        id: product.id,
+        priceAmount: product.priceAmount,
+        compareAtAmount: product.compareAtAmount,
+      })),
+    ),
+    getCheckoutOrderProducts(rawLocale, items),
+    user ? getUserBonusBalance(user.id) : Promise.resolve(null),
+  ]);
   const subtotal = items.reduce((sum, { item, product, modifiers }) => {
     const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
     return sum + item.quantity * cartLineUnitAmount(base, modifiers);
@@ -63,13 +59,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   ).map((item) => ({
     id: item.id,
     amount: item.amount,
-    imageUrl: item.imageObjectKey
-      ? mediaPublicUrl(item.imageObjectKey)
-      : null,
+    imageUrl: item.imageObjectKey ? mediaPublicUrl(item.imageObjectKey) : null,
   }));
 
-  const storePickupAddress =
-    deliverySettings.originAddress.trim() || storeIdentity.name || null;
+  const storePickupAddress = deliverySettings.originAddress.trim() || storeIdentity.name || null;
 
   return (
     <CheckoutForm
@@ -77,17 +70,11 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       productsHref={`/${rawLocale}/products`}
       hasItems={items.length > 0}
       orderProducts={orderProducts}
-      defaultFirstName={
-        defaultAddress?.recipientFirstName ?? user?.firstName ?? ""
-      }
-      defaultLastName={
-        defaultAddress?.recipientLastName ?? user?.lastName ?? ""
-      }
-      defaultEmail={user?.email ?? ""}
-      defaultPhone={defaultAddress?.phone ?? user?.phone ?? ""}
-      defaultLine1={
-        groupFlags.defaultDeliveryAddress ?? defaultAddress?.line1 ?? ""
-      }
+      defaultFirstName={defaultAddress?.recipientFirstName ?? user?.firstName ?? ''}
+      defaultLastName={defaultAddress?.recipientLastName ?? user?.lastName ?? ''}
+      defaultEmail={user?.email ?? ''}
+      defaultPhone={defaultAddress?.phone ?? user?.phone ?? ''}
+      defaultLine1={groupFlags.defaultDeliveryAddress ?? defaultAddress?.line1 ?? ''}
       subtotalAmount={subtotal}
       deliverySchedule={deliverySettings.schedule}
       cashChangeOptions={cashChangeOptions}

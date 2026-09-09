@@ -1,14 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import {
-  DeleteObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-import { logger } from "@/lib/observability/logger";
-import type { ObjectStorageAdapter } from "@/lib/r2/types";
+import { logger } from '@/lib/observability/logger';
+import type { ObjectStorageAdapter } from '@/lib/r2/types';
 
 export type R2AdapterConfig = {
   accountId: string;
@@ -23,16 +19,13 @@ export type R2AdapterConfig = {
 const PRESIGN_TTL_SECONDS = 15 * 60;
 
 /** Cloudflare R2 adapter (S3-compatible API). */
-export function createR2ObjectStorageAdapter(
-  config: R2AdapterConfig,
-): ObjectStorageAdapter {
+export function createR2ObjectStorageAdapter(config: R2AdapterConfig): ObjectStorageAdapter {
   const endpoint =
-    config.endpoint?.replace(/\/$/, "") ??
-    `https://${config.accountId}.r2.cloudflarestorage.com`;
-  const publicBaseUrl = config.publicBaseUrl.replace(/\/$/, "");
+    config.endpoint?.replace(/\/$/, '') ?? `https://${config.accountId}.r2.cloudflarestorage.com`;
+  const publicBaseUrl = config.publicBaseUrl.replace(/\/$/, '');
 
   const client = new S3Client({
-    region: "auto",
+    region: 'auto',
     endpoint,
     credentials: {
       accessKeyId: config.accessKeyId,
@@ -41,7 +34,7 @@ export function createR2ObjectStorageAdapter(
   });
 
   return {
-    name: "cloudflare-r2",
+    name: 'cloudflare-r2',
     async createPresignedUpload({ objectKey, contentType }) {
       const command = new PutObjectCommand({
         Bucket: config.bucketName,
@@ -68,15 +61,15 @@ export function createR2ObjectStorageAdapter(
           }),
         );
       } catch (error) {
-        logger.error("r2.put_object_failed", {
+        logger.error('r2.put_object_failed', {
           objectKey,
-          message: error instanceof Error ? error.message : "unknown",
+          message: error instanceof Error ? error.message : 'unknown',
         });
         throw error;
       }
     },
     buildPublicUrl(objectKey) {
-      const key = objectKey.replace(/^\//, "");
+      const key = objectKey.replace(/^\//, '');
       return `${publicBaseUrl}/${key}`;
     },
     async deleteObject(objectKey) {
@@ -88,9 +81,9 @@ export function createR2ObjectStorageAdapter(
           }),
         );
       } catch (error) {
-        logger.warn("r2.delete_object_failed", {
+        logger.warn('r2.delete_object_failed', {
           objectKey,
-          message: error instanceof Error ? error.message : "unknown",
+          message: error instanceof Error ? error.message : 'unknown',
         });
       }
     },

@@ -1,14 +1,11 @@
-"use client";
+'use client';
 
-import { annotate } from "rough-notation";
-import { useEffect, useRef } from "react";
-import { useReducedMotion } from "motion/react";
+import { annotate } from 'rough-notation';
+import { useEffect, useRef } from 'react';
+import { useReducedMotion } from 'motion/react';
 
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
+import { ADMIN_PAGE_SUBTITLE, ADMIN_PAGE_TITLE } from '@/features/admin/ui/admin-form-classes';
+import { useAdminSidebarCollapse } from '@/features/admin/ui/AdminSidebarCollapseContext';
 
 const SIDEBAR_WIDTH_MS = 240;
 
@@ -18,11 +15,7 @@ type AdminPageHeadingProps = {
   className?: string;
 };
 
-export function AdminPageHeading({
-  title,
-  description,
-  className,
-}: AdminPageHeadingProps) {
+export function AdminPageHeading({ title, description, className }: AdminPageHeadingProps) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const reduceMotion = useReducedMotion();
   const { collapsed } = useAdminSidebarCollapse();
@@ -36,8 +29,8 @@ export function AdminPageHeading({
 
     function paint(): ReturnType<typeof annotate> {
       const mark = annotate(heading, {
-        type: "highlight",
-        color: "#ffd54a",
+        type: 'highlight',
+        color: '#ffd54a',
         animate: !reduceMotion,
         animationDuration: 800,
       });
@@ -58,13 +51,11 @@ export function AdminPageHeading({
   }, [reduceMotion, title, collapsed]);
 
   return (
-    <div className={["relative", className].filter(Boolean).join(" ")}>
+    <div className={['relative', className].filter(Boolean).join(' ')}>
       <h1 ref={titleRef} className={ADMIN_PAGE_TITLE}>
         {title}
       </h1>
-      {description ? (
-        <p className={`mt-3 ${ADMIN_PAGE_SUBTITLE}`}>{description}</p>
-      ) : null}
+      {description ? <p className={`mt-3 ${ADMIN_PAGE_SUBTITLE}`}>{description}</p> : null}
     </div>
   );
 }

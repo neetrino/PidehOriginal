@@ -1,10 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { eq } from "drizzle-orm";
-import { cache } from "react";
+import { eq } from 'drizzle-orm';
+import { cache } from 'react';
 
-import { getDb } from "@/db/client";
-import { storeSettings } from "@/db/schema";
+import { getDb } from '@/db/client';
+import { storeSettings } from '@/db/schema';
 import {
   parseBonusSettings,
   parseFxRates,
@@ -23,7 +23,7 @@ import {
   type StoreRevenue,
   type StoreStacking,
   type StoreSettingKey,
-} from "@/features/settings/domain/store-settings";
+} from '@/features/settings/domain/store-settings';
 
 const getSettingValue = cache(
   async (key: StoreSettingKey): Promise<Record<string, unknown> | null> => {
@@ -38,44 +38,38 @@ const getSettingValue = cache(
 );
 
 export async function getStoreIdentity(): Promise<StoreIdentity> {
-  return parseIdentity(await getSettingValue("store.identity"));
+  return parseIdentity(await getSettingValue('store.identity'));
 }
 
-export const getStoreMaintenance = cache(
-  async (): Promise<StoreMaintenance> => {
-    return parseMaintenance(await getSettingValue("store.maintenance"));
-  },
-);
+export const getStoreMaintenance = cache(async (): Promise<StoreMaintenance> => {
+  return parseMaintenance(await getSettingValue('store.maintenance'));
+});
 
 export async function getStoreStacking(): Promise<StoreStacking> {
-  return parseStacking(await getSettingValue("store.stacking"));
+  return parseStacking(await getSettingValue('store.stacking'));
 }
 
 export async function getStoreRevenue(): Promise<StoreRevenue> {
   return {
-    statuses: parseRevenueStatuses(await getSettingValue("store.revenue")),
+    statuses: parseRevenueStatuses(await getSettingValue('store.revenue')),
   };
 }
 
-export const getStoreGlobalDiscount = cache(
-  async (): Promise<StoreGlobalDiscount> => {
-    return parseGlobalDiscount(await getSettingValue("store.globalDiscount"));
-  },
-);
+export const getStoreGlobalDiscount = cache(async (): Promise<StoreGlobalDiscount> => {
+  return parseGlobalDiscount(await getSettingValue('store.globalDiscount'));
+});
 
 export const getStoreFxRates = cache(async (): Promise<StoreFxRates> => {
-  return parseFxRates(await getSettingValue("store.fxRates"));
+  return parseFxRates(await getSettingValue('store.fxRates'));
 });
 
 export const getStoreBonusSettings = cache(async (): Promise<BonusSettings> => {
-  return parseBonusSettings(await getSettingValue("store.bonuses"));
+  return parseBonusSettings(await getSettingValue('store.bonuses'));
 });
 
-export const getStoreGiftCardSettings = cache(
-  async (): Promise<GiftCardSettings> => {
-    return parseGiftCardSettings(await getSettingValue("store.giftCards"));
-  },
-);
+export const getStoreGiftCardSettings = cache(async (): Promise<GiftCardSettings> => {
+  return parseGiftCardSettings(await getSettingValue('store.giftCards'));
+});
 
 export async function getAllStoreSettings(): Promise<{
   identity: StoreIdentity;
@@ -88,27 +82,18 @@ export async function getAllStoreSettings(): Promise<{
   branding: Record<string, unknown>;
   social: Record<string, unknown>;
 }> {
-  const [
-    identity,
-    maintenance,
-    stacking,
-    revenue,
-    fxRates,
-    bonuses,
-    giftCards,
-    branding,
-    social,
-  ] = await Promise.all([
-    getStoreIdentity(),
-    getStoreMaintenance(),
-    getStoreStacking(),
-    getStoreRevenue(),
-    getStoreFxRates(),
-    getStoreBonusSettings(),
-    getStoreGiftCardSettings(),
-    getSettingValue("store.branding"),
-    getSettingValue("store.social"),
-  ]);
+  const [identity, maintenance, stacking, revenue, fxRates, bonuses, giftCards, branding, social] =
+    await Promise.all([
+      getStoreIdentity(),
+      getStoreMaintenance(),
+      getStoreStacking(),
+      getStoreRevenue(),
+      getStoreFxRates(),
+      getStoreBonusSettings(),
+      getStoreGiftCardSettings(),
+      getSettingValue('store.branding'),
+      getSettingValue('store.social'),
+    ]);
 
   return {
     identity,

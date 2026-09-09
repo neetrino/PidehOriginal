@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { Info } from "lucide-react";
+import Link from 'next/link';
+import { Info } from 'lucide-react';
 
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type DiscountInfoCardProps = {
   locale: string;
-  copy: Dictionary["admin"]["discounts"]["info"];
+  copy: Dictionary['admin']['discounts']['info'];
 };
 
 export function DiscountInfoCard({ locale, copy }: DiscountInfoCardProps) {

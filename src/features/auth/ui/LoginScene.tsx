@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { LoginHeat } from "@/features/auth/ui/LoginHeat";
+import { LoginHeat } from '@/features/auth/ui/LoginHeat';
 
 type LoginSceneProps = {
   title: string;

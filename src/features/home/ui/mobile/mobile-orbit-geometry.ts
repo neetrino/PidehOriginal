@@ -1,4 +1,4 @@
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 
 type ArcSlot = {
   nodeId: string;
@@ -28,7 +28,7 @@ export const ORBIT_PIXEL_PRECISION = 4;
  */
 export const MOBILE_ARC_SLOTS: readonly ArcSlot[] = [
   {
-    nodeId: "260:464",
+    nodeId: '260:464',
     src: MOBILE_HOME_ASSETS.catDrink,
     left: -6,
     top: 189,
@@ -39,7 +39,7 @@ export const MOBILE_ARC_SLOTS: readonly ArcSlot[] = [
     rotate: 38.3,
   },
   {
-    nodeId: "260:451",
+    nodeId: '260:451',
     src: MOBILE_HOME_ASSETS.catSandwich,
     left: 64,
     top: 259,
@@ -50,7 +50,7 @@ export const MOBILE_ARC_SLOTS: readonly ArcSlot[] = [
     rotate: 27.65,
   },
   {
-    nodeId: "260:400",
+    nodeId: '260:400',
     src: MOBILE_HOME_ASSETS.catPide,
     left: 192,
     top: 268,
@@ -61,7 +61,7 @@ export const MOBILE_ARC_SLOTS: readonly ArcSlot[] = [
     rotate: 0,
   },
   {
-    nodeId: "260:441",
+    nodeId: '260:441',
     src: MOBILE_HOME_ASSETS.catSnack,
     left: 307,
     top: 248,
@@ -72,7 +72,7 @@ export const MOBILE_ARC_SLOTS: readonly ArcSlot[] = [
     rotate: -26.28,
   },
   {
-    nodeId: "260:996",
+    nodeId: '260:996',
     src: MOBILE_HOME_ASSETS.catBurger,
     left: 379,
     top: 194,
@@ -89,7 +89,7 @@ export const MOBILE_CENTER_SLOT = 2;
 export const MOBILE_ORBIT_MOVE_MS = 750;
 
 /** Hide the upper orbit path behind / above the white drip. */
-export const ORBIT_CLIP = "inset(168px -80px 0 -80px)";
+export const ORBIT_CLIP = 'inset(168px -80px 0 -80px)';
 
 export type OrbitPose = {
   angleDeg: number;
@@ -118,10 +118,7 @@ export type OrbitNodeStyle = {
   zIndex: number;
 };
 
-export function normalizePixel(
-  value: number,
-  precision: number = ORBIT_PIXEL_PRECISION,
-): number {
+export function normalizePixel(value: number, precision: number = ORBIT_PIXEL_PRECISION): number {
   const factor = 10 ** precision;
   return Math.round(value * factor) / factor;
 }
@@ -146,11 +143,7 @@ function isWrapEdgePair(a: number, b: number): boolean {
   return (a === 0 && b === last) || (a === last && b === 0);
 }
 
-function neighborAngleDelta(
-  fromDeg: number,
-  toDeg: number,
-  throughInvisible: boolean,
-): number {
+function neighborAngleDelta(fromDeg: number, toDeg: number, throughInvisible: boolean): number {
   const short = shortestAngleDelta(fromDeg, toDeg);
   if (!throughInvisible || short === 0) {
     return short;
@@ -174,8 +167,7 @@ function buildPoses(): readonly OrbitPose[] {
     };
   });
 
-  const radius =
-    polars.reduce((sum, pose) => sum + pose.radius, 0) / polars.length;
+  const radius = polars.reduce((sum, pose) => sum + pose.radius, 0) / polars.length;
 
   return polars.map((pose) => ({
     ...pose,
@@ -231,19 +223,12 @@ export function calculateOrbitPosition(pose: OrbitPose): {
 } {
   const rad = (pose.angleDeg * Math.PI) / 180;
   return {
-    left: normalizePixel(
-      ORBIT_CX + pose.radius * Math.cos(rad) - pose.frameW / 2,
-    ),
-    top: normalizePixel(
-      ORBIT_CY + pose.radius * Math.sin(rad) - pose.frameH / 2,
-    ),
+    left: normalizePixel(ORBIT_CX + pose.radius * Math.cos(rad) - pose.frameW / 2),
+    top: normalizePixel(ORBIT_CY + pose.radius * Math.sin(rad) - pose.frameH / 2),
   };
 }
 
-export function getOrbitNodeGeometry(
-  pose: OrbitPose,
-  isCenter: boolean,
-): OrbitNodeGeometry {
+export function getOrbitNodeGeometry(pose: OrbitPose, isCenter: boolean): OrbitNodeGeometry {
   const { left, top } = calculateOrbitPosition(pose);
   return {
     left,
@@ -258,10 +243,7 @@ export function getOrbitNodeGeometry(
  * Deterministic CSS for the rider box. Always uses px strings so React SSR
  * markup and the first client fiber style props are byte-identical.
  */
-export function getOrbitNodeStyle(
-  pose: OrbitPose,
-  isCenter: boolean,
-): OrbitNodeStyle {
+export function getOrbitNodeStyle(pose: OrbitPose, isCenter: boolean): OrbitNodeStyle {
   const geometry = getOrbitNodeGeometry(pose, isCenter);
   return {
     left: toCssPx(geometry.left),

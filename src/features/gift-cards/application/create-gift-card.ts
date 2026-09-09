@@ -1,18 +1,18 @@
-import "server-only";
+import 'server-only';
 
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm';
 
-import { giftCards, users } from "@/db/schema";
-import type { DbTransaction } from "@/db/transaction";
-import { issueGiftCardBalance } from "@/features/gift-cards/application/gift-card-ledger";
-import { sendGiftCardEmail } from "@/features/gift-cards/application/send-gift-card-email";
-import { generateGiftCardCode } from "@/features/gift-cards/domain/generate-code";
+import { giftCards, users } from '@/db/schema';
+import type { DbTransaction } from '@/db/transaction';
+import { issueGiftCardBalance } from '@/features/gift-cards/application/gift-card-ledger';
+import { sendGiftCardEmail } from '@/features/gift-cards/application/send-gift-card-email';
+import { generateGiftCardCode } from '@/features/gift-cards/domain/generate-code';
 import {
   normalizeGiftCardCode,
   resolveGiftCardExpiresAt,
   type GiftCardSettings,
-} from "@/features/gift-cards/domain/gift-card-rules";
-import { createId } from "@/lib/id";
+} from '@/features/gift-cards/domain/gift-card-rules';
+import { createId } from '@/lib/id';
 
 const MAX_CODE_ATTEMPTS = 8;
 
@@ -28,13 +28,10 @@ async function allocateUniqueCode(tx: DbTransaction): Promise<string> {
       return code;
     }
   }
-  throw new Error("GIFT_CARD_CODE_COLLISION");
+  throw new Error('GIFT_CARD_CODE_COLLISION');
 }
 
-async function resolveRecipientUserId(
-  tx: DbTransaction,
-  email: string,
-): Promise<string | null> {
+async function resolveRecipientUserId(tx: DbTransaction, email: string): Promise<string | null> {
   const [user] = await tx
     .select({ id: users.id })
     .from(users)
@@ -71,16 +68,15 @@ export async function createGiftCardRecord(
   const recipientEmail = input.recipientEmail.trim().toLowerCase();
   const recipientUserId = await resolveRecipientUserId(input.tx, recipientEmail);
   const expiresAt =
-    input.expiresAt ??
-    resolveGiftCardExpiresAt(now, input.settings.defaultExpiryDays);
+    input.expiresAt ?? resolveGiftCardExpiresAt(now, input.settings.defaultExpiryDays);
 
   await input.tx.insert(giftCards).values({
     id,
     code,
     initialAmount: input.amount,
     balanceAmount: 0,
-    currency: "AMD",
-    status: "PENDING_PAYMENT",
+    currency: 'AMD',
+    status: 'PENDING_PAYMENT',
     purchaserUserId: input.purchaserUserId ?? null,
     recipientUserId,
     purchaserName: input.purchaserName.trim(),
@@ -114,17 +110,17 @@ export async function activateGiftCardRecord(input: {
     .select()
     .from(giftCards)
     .where(eq(giftCards.id, input.giftCardId))
-    .for("update")
+    .for('update')
     .limit(1);
 
   if (!card) {
-    throw new Error("GIFT_CARD_NOT_FOUND");
+    throw new Error('GIFT_CARD_NOT_FOUND');
   }
-  if (card.status === "DISABLED" || card.status === "EXPIRED") {
-    throw new Error("GIFT_CARD_NOT_ACTIVATABLE");
+  if (card.status === 'DISABLED' || card.status === 'EXPIRED') {
+    throw new Error('GIFT_CARD_NOT_ACTIVATABLE');
   }
 
-  if (card.status === "PENDING_PAYMENT") {
+  if (card.status === 'PENDING_PAYMENT') {
     await issueGiftCardBalance({
       tx: input.tx,
       giftCardId: card.id,

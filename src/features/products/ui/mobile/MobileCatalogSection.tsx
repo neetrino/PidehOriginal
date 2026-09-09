@@ -1,12 +1,12 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
+import { AppLink } from '@/components/ui/AppLink';
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 import {
   MobileProductGrid,
   type MobileGridProduct,
-} from "@/features/home/ui/mobile/MobileProductGrid";
-import type { Locale } from "@/lib/i18n/config";
+} from '@/features/home/ui/mobile/MobileProductGrid';
+import type { Locale } from '@/lib/i18n/config';
 
 type MobileCatalogSectionProps = {
   locale: Locale;

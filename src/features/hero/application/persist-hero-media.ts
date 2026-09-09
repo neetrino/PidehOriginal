@@ -1,15 +1,12 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { getProviders } from "@/config/providers";
-import { getDb } from "@/db/client";
-import { mediaAssets } from "@/db/schema";
-import { createId } from "@/lib/id";
-import {
-  extensionForImageMime,
-  validateImageFile,
-} from "@/lib/media/image-file";
+import { getProviders } from '@/config/providers';
+import { getDb } from '@/db/client';
+import { mediaAssets } from '@/db/schema';
+import { createId } from '@/lib/id';
+import { extensionForImageMime, validateImageFile } from '@/lib/media/image-file';
 
 /** Saves a desktop hero image for a slide via object storage. */
 export async function persistHeroImage(
@@ -26,21 +23,11 @@ export async function persistHeroImage(
   const existing = await db
     .select({ objectKey: mediaAssets.objectKey })
     .from(mediaAssets)
-    .where(
-      and(
-        eq(mediaAssets.heroSlideId, heroSlideId),
-        eq(mediaAssets.role, "HERO_DESKTOP"),
-      ),
-    );
+    .where(and(eq(mediaAssets.heroSlideId, heroSlideId), eq(mediaAssets.role, 'HERO_DESKTOP')));
 
   await db
     .delete(mediaAssets)
-    .where(
-      and(
-        eq(mediaAssets.heroSlideId, heroSlideId),
-        eq(mediaAssets.role, "HERO_DESKTOP"),
-      ),
-    );
+    .where(and(eq(mediaAssets.heroSlideId, heroSlideId), eq(mediaAssets.role, 'HERO_DESKTOP')));
   await Promise.all(existing.map((row) => storage.deleteObject(row.objectKey)));
 
   const id = createId();
@@ -56,8 +43,8 @@ export async function persistHeroImage(
     objectKey,
     mimeType: file.type,
     byteSize: file.size,
-    uploadStatus: "READY",
-    role: "HERO_DESKTOP",
+    uploadStatus: 'READY',
+    role: 'HERO_DESKTOP',
     sortOrder: 0,
     isPrimary: true,
     heroSlideId,
@@ -73,20 +60,10 @@ export async function removeHeroImage(heroSlideId: string): Promise<void> {
   const existing = await db
     .select({ objectKey: mediaAssets.objectKey })
     .from(mediaAssets)
-    .where(
-      and(
-        eq(mediaAssets.heroSlideId, heroSlideId),
-        eq(mediaAssets.role, "HERO_DESKTOP"),
-      ),
-    );
+    .where(and(eq(mediaAssets.heroSlideId, heroSlideId), eq(mediaAssets.role, 'HERO_DESKTOP')));
 
   await db
     .delete(mediaAssets)
-    .where(
-      and(
-        eq(mediaAssets.heroSlideId, heroSlideId),
-        eq(mediaAssets.role, "HERO_DESKTOP"),
-      ),
-    );
+    .where(and(eq(mediaAssets.heroSlideId, heroSlideId), eq(mediaAssets.role, 'HERO_DESKTOP')));
   await Promise.all(existing.map((row) => storage.deleteObject(row.objectKey)));
 }

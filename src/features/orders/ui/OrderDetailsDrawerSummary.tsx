@@ -1,26 +1,23 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
-import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
+} from '@/features/admin/ui/status-badge';
+import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
 import {
   formatOrderDrawerMoney,
   formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/orders/ui/order-drawer-format';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type OrderDetailsDrawerSummaryProps = {
   detail: AdminOrderDetailView;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-export function OrderDetailsDrawerSummary({
-  detail,
-  copy,
-}: OrderDetailsDrawerSummaryProps) {
+export function OrderDetailsDrawerSummary({ detail, copy }: OrderDetailsDrawerSummaryProps) {
   const d = copy.orders.drawer;
   return (
     <div className="rounded-2xl border border-gray-200 px-5 py-4">
@@ -31,17 +28,12 @@ export function OrderDetailsDrawerSummary({
             <DetailRow label={d.orderNumber} value={detail.orderNumber} />
             <DetailRow
               label={d.total}
-              value={formatOrderDrawerMoney(
-                detail.totalAmount,
-                detail.baseCurrency,
-              )}
+              value={formatOrderDrawerMoney(detail.totalAmount, detail.baseCurrency)}
             />
             <DetailRow
               label={d.status}
               value={
-                <span
-                  className={`${ADMIN_BADGE} ${orderStatusBadgeClass(detail.status)}`}
-                >
+                <span className={`${ADMIN_BADGE} ${orderStatusBadgeClass(detail.status)}`}>
                   {formatOrderStatusLabel(detail.status)}
                 </span>
               }
@@ -49,9 +41,7 @@ export function OrderDetailsDrawerSummary({
             <DetailRow
               label={d.payment}
               value={
-                <span
-                  className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(detail.paymentStatus)}`}
-                >
+                <span className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(detail.paymentStatus)}`}>
                   {formatOrderStatusLabel(detail.paymentStatus)}
                 </span>
               }
@@ -60,9 +50,7 @@ export function OrderDetailsDrawerSummary({
         </section>
 
         <section>
-          <h3 className="mb-4 text-base font-semibold text-gray-900">
-            {d.customer}
-          </h3>
+          <h3 className="mb-4 text-base font-semibold text-gray-900">{d.customer}</h3>
           <dl className="space-y-3 text-sm">
             <DetailRow label={d.name} value={detail.contactName} />
             <DetailRow label={d.phoneNumber} value={detail.contactPhone} />
@@ -74,13 +62,7 @@ export function OrderDetailsDrawerSummary({
   );
 }
 
-function DetailRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: ReactNode;
-}) {
+function DetailRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
       <dt className="text-gray-500">{label}</dt>

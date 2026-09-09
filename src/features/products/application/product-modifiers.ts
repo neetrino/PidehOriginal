@@ -1,24 +1,21 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import {
-  productModifierLinks,
-  productModifiers,
-} from "@/db/schema";
+import { getDb } from '@/db/client';
+import { productModifierLinks, productModifiers } from '@/db/schema';
 import type {
   ProductModifierKind,
   ProductModifierOption,
   ProductModifierRow,
-} from "@/features/products/types/modifiers";
-import { createId } from "@/lib/id";
+} from '@/features/products/types/modifiers';
+import { createId } from '@/lib/id';
 
 export type {
   ProductModifierKind,
   ProductModifierOption,
   ProductModifierRow,
-} from "@/features/products/types/modifiers";
+} from '@/features/products/types/modifiers';
 
 /** Lists the global modifier library (active first, then name). */
 export async function listProductModifierLibrary(): Promise<ProductModifierRow[]> {
@@ -53,9 +50,7 @@ export async function listModifiersForProductAdmin(
     .from(productModifierLinks)
     .where(eq(productModifierLinks.productId, productId));
 
-  const linkMap = new Map(
-    links.map((link) => [link.modifierId, link.sortOrder] as const),
-  );
+  const linkMap = new Map(links.map((link) => [link.modifierId, link.sortOrder] as const));
 
   return library.map((row) => ({
     ...row,
@@ -77,16 +72,8 @@ export async function listLinkedModifiersForProduct(
       isActive: productModifiers.isActive,
     })
     .from(productModifierLinks)
-    .innerJoin(
-      productModifiers,
-      eq(productModifierLinks.modifierId, productModifiers.id),
-    )
-    .where(
-      and(
-        eq(productModifierLinks.productId, productId),
-        eq(productModifiers.isActive, true),
-      ),
-    )
+    .innerJoin(productModifiers, eq(productModifierLinks.modifierId, productModifiers.id))
+    .where(and(eq(productModifierLinks.productId, productId), eq(productModifiers.isActive, true)))
     .orderBy(asc(productModifierLinks.sortOrder), asc(productModifiers.name));
 
   return rows;
@@ -99,8 +86,7 @@ export async function ensureProductModifier(input: {
   priceAmount: number;
 }): Promise<ProductModifierRow> {
   const name = input.name.trim();
-  const priceAmount =
-    input.kind === "EXCEPTION" ? 0 : Math.max(0, Math.floor(input.priceAmount));
+  const priceAmount = input.kind === 'EXCEPTION' ? 0 : Math.max(0, Math.floor(input.priceAmount));
 
   const [existing] = await getDb()
     .select({
@@ -111,19 +97,11 @@ export async function ensureProductModifier(input: {
       isActive: productModifiers.isActive,
     })
     .from(productModifiers)
-    .where(
-      and(
-        eq(productModifiers.kind, input.kind),
-        eq(productModifiers.name, name),
-      ),
-    )
+    .where(and(eq(productModifiers.kind, input.kind), eq(productModifiers.name, name)))
     .limit(1);
 
   if (existing) {
-    if (
-      !existing.isActive ||
-      (input.kind === "ADDITION" && existing.priceAmount !== priceAmount)
-    ) {
+    if (!existing.isActive || (input.kind === 'ADDITION' && existing.priceAmount !== priceAmount)) {
       const [updated] = await getDb()
         .update(productModifiers)
         .set({
@@ -162,7 +140,7 @@ export async function ensureProductModifier(input: {
     });
 
   if (!created) {
-    throw new Error("Unable to create product modifier.");
+    throw new Error('Unable to create product modifier.');
   }
   return created;
 }
@@ -180,53 +158,46 @@ export async function syncProductModifierLinks(
       .where(inArray(productModifiers.id, uniqueIds));
 
     if (found.length !== uniqueIds.length) {
-      return "One or more modifiers were not found.";
+      return 'One or more modifiers were not found.';
     }
     if (found.some((row) => !row.isActive)) {
-      return "One or more modifiers are inactive.";
+      return 'One or more modifiers are inactive.';
     }
   }
 
-  await getDb()
-    .delete(productModifierLinks)
-    .where(eq(productModifierLinks.productId, productId));
+  await getDb().delete(productModifierLinks).where(eq(productModifierLinks.productId, productId));
 
   if (uniqueIds.length === 0) return null;
 
-  await getDb().insert(productModifierLinks).values(
-    uniqueIds.map((modifierId, index) => ({
-      id: createId(),
-      productId,
-      modifierId,
-      sortOrder: index,
-    })),
-  );
+  await getDb()
+    .insert(productModifierLinks)
+    .values(
+      uniqueIds.map((modifierId, index) => ({
+        id: createId(),
+        productId,
+        modifierId,
+        sortOrder: index,
+      })),
+    );
 
   return null;
 }
 
 /** Soft-deletes a library modifier (keeps historical order snapshots). */
-export async function deactivateProductModifier(
-  modifierId: string,
-): Promise<void> {
+export async function deactivateProductModifier(modifierId: string): Promise<void> {
   await getDb()
     .update(productModifiers)
     .set({ isActive: false, updatedAt: new Date() })
     .where(eq(productModifiers.id, modifierId));
 
-  await getDb()
-    .delete(productModifierLinks)
-    .where(eq(productModifierLinks.modifierId, modifierId));
+  await getDb().delete(productModifierLinks).where(eq(productModifierLinks.modifierId, modifierId));
 }
 
 /** Validates selected modifier IDs are linked+active for the product. */
 export async function resolveSelectedModifiersForProduct(
   productId: string,
   modifierIds: ReadonlyArray<string>,
-): Promise<
-  | { ok: true; modifiers: ProductModifierRow[] }
-  | { ok: false; error: string }
-> {
+): Promise<{ ok: true; modifiers: ProductModifierRow[] } | { ok: false; error: string }> {
   const uniqueIds = [...new Set(modifierIds)];
   if (uniqueIds.length === 0) {
     return { ok: true, modifiers: [] };
@@ -239,7 +210,7 @@ export async function resolveSelectedModifiersForProduct(
   for (const id of uniqueIds) {
     const row = byId.get(id);
     if (!row) {
-      return { ok: false, error: "Invalid product modifier selection." };
+      return { ok: false, error: 'Invalid product modifier selection.' };
     }
     resolved.push(row);
   }

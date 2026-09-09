@@ -1,4 +1,4 @@
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 
 type MobileEllipse3469Props = {
   className?: string;
@@ -9,7 +9,7 @@ type MobileEllipse3469Props = {
  * Uses the flattened Figma export of the visible band (440×361): the group
  * sits at `top: -280` / 641×641 in Dev Mode; only y=0…361 is on-screen.
  */
-export function MobileEllipse3469({ className = "" }: MobileEllipse3469Props) {
+export function MobileEllipse3469({ className = '' }: MobileEllipse3469Props) {
   return (
     <div
       aria-hidden="true"

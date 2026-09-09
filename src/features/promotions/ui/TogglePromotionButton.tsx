@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { togglePromotionAction } from "@/features/promotions/application/upsert-promotion";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { togglePromotionAction } from '@/features/promotions/application/upsert-promotion';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type TogglePromotionButtonCopy = {
-  toggle: Dictionary["admin"]["discounts"]["toggle"];
-  common: Dictionary["admin"]["common"];
+  toggle: Dictionary['admin']['discounts']['toggle'];
+  common: Dictionary['admin']['common'];
 };
 
 type TogglePromotionButtonProps = {

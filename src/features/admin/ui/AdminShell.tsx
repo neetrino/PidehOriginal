@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { AdminSidebar } from "@/features/admin/ui/AdminSidebar";
-import { AdminSidebarCollapseProvider } from "@/features/admin/ui/AdminSidebarCollapseContext";
+import { AdminSidebar } from '@/features/admin/ui/AdminSidebar';
+import { AdminSidebarCollapseProvider } from '@/features/admin/ui/AdminSidebarCollapseContext';
 import {
   ADMIN_MAIN_COLUMN,
   ADMIN_MAIN_INNER,
   ADMIN_PAGE_SHELL,
-} from "@/features/admin/ui/admin-shell-classes";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-shell-classes';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminShellProps = {
   locale: string;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
   children: ReactNode;
 };
 

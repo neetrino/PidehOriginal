@@ -1,20 +1,8 @@
-import "server-only";
+import 'server-only';
 
-import {
-  and,
-  count,
-  desc,
-  eq,
-  gte,
-  ilike,
-  inArray,
-  lte,
-  or,
-  sql,
-  type SQL,
-} from "drizzle-orm";
+import { and, count, desc, eq, gte, ilike, inArray, lte, or, sql, type SQL } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
+import { getDb } from '@/db/client';
 import {
   orderEvents,
   orderItemModifiers,
@@ -23,15 +11,15 @@ import {
   payments,
   products,
   users,
-} from "@/db/schema";
-import { customerVisibleOrdersWhere } from "@/features/orders/application/customer-order-access";
+} from '@/db/schema';
+import { customerVisibleOrdersWhere } from '@/features/orders/application/customer-order-access';
 import {
   customerFacingBonusEarnedSql,
   customerFacingOrderAmountSql,
-} from "@/features/orders/application/customer-facing-order-amount-sql";
-import type { OrderStatus } from "@/features/orders/domain/order-status";
-import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status";
-import { getStoreRevenue } from "@/features/settings/application/queries";
+} from '@/features/orders/application/customer-facing-order-amount-sql';
+import type { OrderStatus } from '@/features/orders/domain/order-status';
+import type { AdminOrdersFilter } from '@/features/orders/schemas/change-status';
+import { getStoreRevenue } from '@/features/settings/application/queries';
 
 const PAGE_SIZE = 20;
 
@@ -52,7 +40,7 @@ export type AdminOrderListItem = {
 
 export type OrderItemModifierSnapshot = {
   id: string;
-  kind: "ADDITION" | "EXCEPTION";
+  kind: 'ADDITION' | 'EXCEPTION';
   name: string;
   unitPriceAmount: number;
 };
@@ -71,9 +59,9 @@ export type AdminOrderDetail = {
 function buildOrderFilters(filters: AdminOrdersFilter): SQL | undefined {
   const conditions: SQL[] = [];
 
-  if (filters.archived === "active") {
+  if (filters.archived === 'active') {
     conditions.push(eq(orders.isArchived, false));
-  } else if (filters.archived === "archived") {
+  } else if (filters.archived === 'archived') {
     conditions.push(eq(orders.isArchived, true));
   }
 
@@ -86,15 +74,11 @@ function buildOrderFilters(filters: AdminOrdersFilter): SQL | undefined {
   }
 
   if (filters.dateFrom) {
-    conditions.push(
-      gte(orders.placedAt, new Date(`${filters.dateFrom}T00:00:00.000Z`)),
-    );
+    conditions.push(gte(orders.placedAt, new Date(`${filters.dateFrom}T00:00:00.000Z`)));
   }
 
   if (filters.dateTo) {
-    conditions.push(
-      lte(orders.placedAt, new Date(`${filters.dateTo}T23:59:59.999Z`)),
-    );
+    conditions.push(lte(orders.placedAt, new Date(`${filters.dateTo}T23:59:59.999Z`)));
   }
 
   if (filters.q) {
@@ -198,9 +182,7 @@ export async function listCustomerOrders(
 }
 
 /** Loads a single order with line items and immutable event history. */
-export async function getAdminOrderByNumber(
-  orderNumber: string,
-): Promise<AdminOrderDetail | null> {
+export async function getAdminOrderByNumber(orderNumber: string): Promise<AdminOrderDetail | null> {
   const [order] = await getDb()
     .select()
     .from(orders)
@@ -212,10 +194,7 @@ export async function getAdminOrderByNumber(
   }
 
   const [items, events, paymentRows] = await Promise.all([
-    getDb()
-      .select()
-      .from(orderItems)
-      .where(eq(orderItems.orderId, order.id)),
+    getDb().select().from(orderItems).where(eq(orderItems.orderId, order.id)),
     getDb()
       .select()
       .from(orderEvents)
@@ -280,7 +259,10 @@ export type DashboardMetrics = {
   previousTo: string;
 };
 
-function periodBounds(from: string, to: string): {
+function periodBounds(
+  from: string,
+  to: string,
+): {
   start: Date;
   end: Date;
   previousStart: Date;
@@ -323,10 +305,7 @@ export async function getAdminDashboardMetrics(input: {
     topProductRows,
   ] = await Promise.all([
     getDb().select({ value: count() }).from(users),
-    getDb()
-      .select({ value: count() })
-      .from(products)
-      .where(eq(products.status, "ACTIVE")),
+    getDb().select({ value: count() }).from(products).where(eq(products.status, 'ACTIVE')),
     getDb()
       .select({ value: count() })
       .from(orders)
@@ -339,9 +318,7 @@ export async function getAdminDashboardMetrics(input: {
       ),
     getDb()
       .select({
-        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(
-          Number,
-        ),
+        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(Number),
       })
       .from(orders)
       .where(
@@ -354,9 +331,7 @@ export async function getAdminDashboardMetrics(input: {
       ),
     getDb()
       .select({
-        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(
-          Number,
-        ),
+        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(Number),
       })
       .from(orders)
       .where(
@@ -390,9 +365,7 @@ export async function getAdminDashboardMetrics(input: {
       .select({
         productId: orderItems.productId,
         title: orderItems.productTitleSnapshot,
-        quantity: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(
-          Number,
-        ),
+        quantity: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(Number),
       })
       .from(orderItems)
       .innerJoin(orders, eq(orderItems.orderId, orders.id))
@@ -417,7 +390,7 @@ export async function getAdminDashboardMetrics(input: {
     previousRevenueAmount: previousRevenueRow?.value ?? 0,
     recentOrders,
     topProducts: topProductRows.map((row) => ({
-      productId: row.productId ?? "unknown",
+      productId: row.productId ?? 'unknown',
       title: row.title,
       quantity: row.quantity,
     })),

@@ -1,33 +1,26 @@
-"use server";
+'use server';
 
-import { eq, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { eq, sql } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import {
-  auditLogs,
-  orderEvents,
-  orderItems,
-  orders,
-  products,
-  stockMovements,
-} from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
-import { applyBonusSideEffectsOnStatusChange } from "@/features/bonuses/application/apply-order-status-bonuses";
-import { applyGiftCardSideEffectsOnStatusChange } from "@/features/gift-cards/application/apply-order-status-gift-cards";
+import { auditLogs, orderEvents, orderItems, orders, products, stockMovements } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
+import { applyBonusSideEffectsOnStatusChange } from '@/features/bonuses/application/apply-order-status-bonuses';
+import { applyGiftCardSideEffectsOnStatusChange } from '@/features/gift-cards/application/apply-order-status-gift-cards';
 import {
   canTransitionOrderStatus,
   isOrderStatus,
   shouldRestoreStockOnCancel,
   type OrderStatus,
-} from "@/features/orders/domain/order-status";
+} from '@/features/orders/domain/order-status';
 import {
   bulkChangeOrderStatusSchema,
   type BulkChangeOrderStatusInput,
-} from "@/features/orders/schemas/change-status";
-import { requireAdmin } from "@/lib/auth/policies";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/features/orders/schemas/change-status';
+import { requireAdmin } from '@/lib/auth/policies';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 /** Bulk-applies an eligible status transition to selected orders. */
 export async function bulkChangeOrderStatusAction(
@@ -35,12 +28,12 @@ export async function bulkChangeOrderStatusAction(
   raw: BulkChangeOrderStatusInput,
 ): Promise<Result<{ updated: number; skipped: number }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = bulkChangeOrderStatusSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid bulk payload.");
+    return err('VALIDATION_ERROR', 'Invalid bulk payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -54,7 +47,7 @@ export async function bulkChangeOrderStatusAction(
           .select()
           .from(orders)
           .where(eq(orders.orderNumber, orderNumber))
-          .for("update")
+          .for('update')
           .limit(1);
 
         if (!existing || existing.isArchived) {
@@ -76,10 +69,7 @@ export async function bulkChangeOrderStatusAction(
           .set({ status: toStatus, updatedAt: now })
           .where(eq(orders.id, existing.id));
 
-        if (
-          toStatus === "CANCELLED" &&
-          shouldRestoreStockOnCancel(existing.status)
-        ) {
+        if (toStatus === 'CANCELLED' && shouldRestoreStockOnCancel(existing.status)) {
           const items = await tx
             .select()
             .from(orderItems)
@@ -91,7 +81,7 @@ export async function bulkChangeOrderStatusAction(
               .select()
               .from(products)
               .where(eq(products.id, item.productId))
-              .for("update")
+              .for('update')
               .limit(1);
             if (!locked) continue;
             const nextStock = locked.stockOnHand + item.quantity;
@@ -107,7 +97,7 @@ export async function bulkChangeOrderStatusAction(
               id: createId(),
               productId: locked.id,
               delta: item.quantity,
-              reason: "CANCEL",
+              reason: 'CANCEL',
               orderId: existing.id,
               resultingBalance: nextStock,
               correlationId: existing.orderNumber,
@@ -118,12 +108,12 @@ export async function bulkChangeOrderStatusAction(
         await tx.insert(orderEvents).values({
           id: createId(),
           orderId: existing.id,
-          eventType: "STATUS_CHANGE",
+          eventType: 'STATUS_CHANGE',
           fromState: existing.status,
           toState: toStatus,
           actorUserId: actor.id,
           isCustomerVisible: true,
-          payload: { source: "bulk" },
+          payload: { source: 'bulk' },
         });
 
         await applyBonusSideEffectsOnStatusChange({
@@ -159,8 +149,8 @@ export async function bulkChangeOrderStatusAction(
         await tx.insert(auditLogs).values({
           id: createId(),
           actorUserId: actor.id,
-          action: "order.bulk_change_status",
-          targetType: "order",
+          action: 'order.bulk_change_status',
+          targetType: 'order',
           targetId: existing.id,
           beforeDiff: { status: existing.status },
           afterDiff: { status: toStatus },

@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { Info, X } from "lucide-react";
-import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "motion/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useId, useState, useTransition } from "react";
-import { createPortal } from "react-dom";
+import { Info, X } from 'lucide-react';
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useId, useState, useTransition } from 'react';
+import { createPortal } from 'react-dom';
 
-import { PidehPillButton } from "@/components/brand/PidehPillButton";
-import { createGroupOrderAction } from "@/features/group-orders/actions";
-import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
-import { GroupOrderPaymentOption } from "@/features/group-orders/ui/GroupOrderPaymentOption";
-import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { PidehPillButton } from '@/components/brand/PidehPillButton';
+import { createGroupOrderAction } from '@/features/group-orders/actions';
+import type { GroupOrderPaymentMode } from '@/features/group-orders/domain/status';
+import { GroupOrderPaymentOption } from '@/features/group-orders/ui/GroupOrderPaymentOption';
+import type { Locale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 const PANEL_EASE = [0.22, 1, 0.36, 1] as const;
 
-type GroupOrderLabels = Dictionary["groupOrder"];
+type GroupOrderLabels = Dictionary['groupOrder'];
 
 type CreateGroupOrderModalProps = {
   open: boolean;
@@ -30,7 +30,7 @@ export function CreateGroupOrderModal({
   onClose,
   locale,
   labels,
-  defaultName = "",
+  defaultName = '',
 }: CreateGroupOrderModalProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -59,25 +59,24 @@ export function CreateGroupOrderModal({
 function CreateGroupOrderDialog({
   locale,
   labels,
-  defaultName = "",
+  defaultName = '',
   onClose,
-}: Omit<CreateGroupOrderModalProps, "open">) {
+}: Omit<CreateGroupOrderModalProps, 'open'>) {
   const router = useRouter();
   const titleId = useId();
   const descriptionId = useId();
   const reduceMotion = useReducedMotion();
   const [pending, startTransition] = useTransition();
-  const [paymentMode, setPaymentMode] =
-    useState<GroupOrderPaymentMode>("ORGANIZER_PAYS_ALL");
+  const [paymentMode, setPaymentMode] = useState<GroupOrderPaymentMode>('ORGANIZER_PAYS_ALL');
   const [name, setName] = useState(defaultName);
-  const [spendLimit, setSpendLimit] = useState("");
+  const [spendLimit, setSpendLimit] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   useModalLock(pending, onClose);
 
   function submit(): void {
     const spendLimitAmount = parseSpendLimit(paymentMode, spendLimit);
-    if (spendLimitAmount === "invalid") {
+    if (spendLimitAmount === 'invalid') {
       setError(labels.errorGeneric);
       return;
     }
@@ -131,30 +130,27 @@ function CreateGroupOrderDialog({
           >
             {labels.createTitle}
           </h2>
-          <p
-            id={descriptionId}
-            className="mt-2 pr-6 text-sm leading-relaxed text-pideh-muted"
-          >
+          <p id={descriptionId} className="mt-2 pr-6 text-sm leading-relaxed text-pideh-muted">
             {labels.createDescription}
           </p>
         </div>
         <div className="flex min-h-0 flex-1 flex-col px-6 pb-6 pt-5">
-        <GroupOrderCreateFields
-          labels={labels}
-          name={name}
-          spendLimit={spendLimit}
-          paymentMode={paymentMode}
-          error={error}
-          onNameChange={setName}
-          onSpendLimitChange={setSpendLimit}
-          onPaymentModeChange={setPaymentMode}
-        />
-        <PidehPillButton
-          label={labels.start}
-          onClick={submit}
-          disabled={pending || !name.trim()}
-          className="mt-5 w-full"
-        />
+          <GroupOrderCreateFields
+            labels={labels}
+            name={name}
+            spendLimit={spendLimit}
+            paymentMode={paymentMode}
+            error={error}
+            onNameChange={setName}
+            onSpendLimitChange={setSpendLimit}
+            onPaymentModeChange={setPaymentMode}
+          />
+          <PidehPillButton
+            label={labels.start}
+            onClick={submit}
+            disabled={pending || !name.trim()}
+            className="mt-5 w-full"
+          />
         </div>
       </motion.div>
     </motion.div>
@@ -198,11 +194,11 @@ function GroupOrderCreateFields({
         <fieldset className="space-y-3">
           <legend className="sr-only">{labels.createTitle}</legend>
           <GroupOrderPaymentOption
-            selected={paymentMode === "ORGANIZER_PAYS_ALL"}
+            selected={paymentMode === 'ORGANIZER_PAYS_ALL'}
             title={labels.paymentModeOrganizer}
             hint={labels.paymentModeOrganizerHint}
             icon="user"
-            onSelect={() => onPaymentModeChange("ORGANIZER_PAYS_ALL")}
+            onSelect={() => onPaymentModeChange('ORGANIZER_PAYS_ALL')}
           >
             <div className="flex items-center rounded-full border border-pideh-orange/25 bg-pideh-cream px-4 py-2.5">
               <input
@@ -216,10 +212,10 @@ function GroupOrderCreateFields({
             </div>
           </GroupOrderPaymentOption>
           <GroupOrderPaymentOption
-            selected={paymentMode === "SPLIT_PER_PARTICIPANT"}
+            selected={paymentMode === 'SPLIT_PER_PARTICIPANT'}
             title={labels.paymentModeSplit}
             icon="users"
-            onSelect={() => onPaymentModeChange("SPLIT_PER_PARTICIPANT")}
+            onSelect={() => onPaymentModeChange('SPLIT_PER_PARTICIPANT')}
           />
         </fieldset>
       </LayoutGroup>
@@ -236,13 +232,7 @@ function GroupOrderCreateFields({
   );
 }
 
-function CloseButton({
-  label,
-  onClose,
-}: {
-  label: string;
-  onClose: () => void;
-}) {
+function CloseButton({ label, onClose }: { label: string; onClose: () => void }) {
   return (
     <button
       type="button"
@@ -258,27 +248,27 @@ function CloseButton({
 function parseSpendLimit(
   paymentMode: GroupOrderPaymentMode,
   spendLimit: string,
-): number | null | "invalid" {
+): number | null | 'invalid' {
   const limitRaw = spendLimit.trim();
-  if (paymentMode !== "ORGANIZER_PAYS_ALL" || !limitRaw) return null;
+  if (paymentMode !== 'ORGANIZER_PAYS_ALL' || !limitRaw) return null;
   const amount = Number.parseInt(limitRaw, 10);
-  if (!Number.isInteger(amount) || amount < 1) return "invalid";
+  if (!Number.isInteger(amount) || amount < 1) return 'invalid';
   return amount;
 }
 
 function useModalLock(pending: boolean, onClose: () => void): void {
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape" && !pending) onClose();
+      if (event.key === 'Escape' && !pending) onClose();
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [pending, onClose]);
 }

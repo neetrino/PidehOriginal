@@ -1,9 +1,9 @@
-import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
-import { cardShelf } from "@/components/motion/presets";
-import { AppLink } from "@/components/ui/AppLink";
-import { HomeProductCard } from "@/features/home/ui/HomeProductCard";
-import type { CatalogProduct } from "@/features/products/types";
-import type { Locale } from "@/lib/i18n/config";
+import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
+import { cardShelf } from '@/components/motion/presets';
+import { AppLink } from '@/components/ui/AppLink';
+import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
+import type { CatalogProduct } from '@/features/products/types';
+import type { Locale } from '@/lib/i18n/config';
 
 type PricedProduct = {
   product: CatalogProduct;
@@ -56,7 +56,7 @@ export function ShopProductGrid({
     return (
       <div className="rounded-[26px] bg-white px-6 py-16 text-center shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
         <h2 className="text-lg font-semibold text-[#1e1e1e]">{emptyTitle}</h2>
-        <p className="mt-2 text-sm text-[#6b6b6b]">{emptyDescription}</p>
+        <p className="font-noto-armenian mt-2 text-sm text-[#6b6b6b]">{emptyDescription}</p>
       </div>
     );
   }
@@ -131,15 +131,10 @@ function ShopPagination({
   totalPages,
   pageHref,
 }: ShopPaginationProps) {
-  const status = pageStatus
-    .replace("{page}", String(page))
-    .replace("{total}", String(totalPages));
+  const status = pageStatus.replace('{page}', String(page)).replace('{total}', String(totalPages));
 
   return (
-    <nav
-      aria-label={paginationLabel}
-      className="mt-10 flex items-center justify-center gap-4"
-    >
+    <nav aria-label={paginationLabel} className="mt-10 flex items-center justify-center gap-4">
       {page > 1 ? (
         <AppLink
           href={pageHref(page - 1)}
@@ -150,9 +145,7 @@ function ShopPagination({
           {previousPage}
         </AppLink>
       ) : (
-        <span className="rounded-[30px] px-4 py-2 text-sm text-[#ff6b00]/40">
-          {previousPage}
-        </span>
+        <span className="rounded-[30px] px-4 py-2 text-sm text-[#ff6b00]/40">{previousPage}</span>
       )}
       <span className="text-sm font-medium text-[#1e1e1e]">{status}</span>
       {page < totalPages ? (
@@ -165,9 +158,7 @@ function ShopPagination({
           {nextPage}
         </AppLink>
       ) : (
-        <span className="rounded-[30px] px-4 py-2 text-sm text-[#ff6b00]/40">
-          {nextPage}
-        </span>
+        <span className="rounded-[30px] px-4 py-2 text-sm text-[#ff6b00]/40">{nextPage}</span>
       )}
     </nav>
   );

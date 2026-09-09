@@ -31,46 +31,46 @@
 
 ## 3. Canonical 38-table inventory
 
-| # | Table | Domain | Նշանակություն |
-|---:|---|---|---|
-| 1 | `users` | Identity | Account, credentials, profile, role, status, `bonus_balance` |
-| 2 | `sessions` | Identity | Revocable database sessions |
-| 3 | `addresses` | Customer | Saved shipping/billing addresses |
-| 4 | `media_assets` | Media | R2 object metadata, owner, role, ordering |
-| 5 | `store_settings` | System | Typed public store configuration |
-| 6 | `products` | Catalog | Product, translations, price, current stock |
-| 7 | `categories` | Catalog | Hierarchy և translations |
-| 8 | `product_categories` | Catalog | Product/category many-to-many կապ |
-| 9 | `product_modifiers` | Catalog | Global additions (priced) և exceptions (unpriced) |
-| 10 | `product_modifier_links` | Catalog | Product↔modifier availability |
-| 11 | `stock_movements` | Inventory | Immutable stock ledger |
-| 12 | `bonus_transactions` | Loyalty | Immutable bonus ledger (1 pt = 1 AMD); balance cached on `users.bonus_balance` |
-| 13 | `gift_cards` | Gift cards | Face value + residual balance, purchaser/recipient, status lifecycle |
-| 14 | `gift_card_transactions` | Gift cards | Immutable gift-card money ledger |
-| 15 | `hero_slides` | Content | Hero configuration և translations |
-| 16 | `store_popups` | Content | Storefront promo image popups (at most one active) |
-| 17 | `blog_posts` | Content | Blog content, translations և tags |
-| 18 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
-| 19 | `cart_items` | Commerce | Cart product quantities + selection key |
-| 20 | `cart_item_modifiers` | Commerce | Selected modifiers on a cart line |
-| 21 | `wishlist_items` | Commerce | Customer wishlist entries |
-| 22 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
-| 23 | `promotion_users` | Pricing | User-restricted promotion allowlist |
-| 24 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
-| 25 | `orders` | Orders | Order, address/money/promotion/bonus/gift-card snapshots, idempotency |
-| 26 | `order_items` | Orders | Immutable purchased-item snapshots |
-| 27 | `order_item_modifiers` | Orders | Immutable addition/exception snapshots |
-| 28 | `order_events` | Orders | Status, notes և payment provider events |
-| 29 | `payments` | Payments | Payment attempts/current provider state |
-| 30 | `reviews` | Engagement | Verified-purchase reviews/moderation |
-| 31 | `contact_messages` | Support | Contact inbox |
-| 32 | `audit_logs` | Security | Immutable admin/security audit |
-| 33 | `outbox_events` | Reliability | Reliable post-commit email/provider/cache work |
-| 34 | `group_orders` | Group orders | Shared invite session, payment mode, delivery snapshot |
-| 35 | `group_order_participants` | Group orders | Organizer/guest participants, shares, payment status |
-| 36 | `group_order_items` | Group orders | Per-participant merchandise lines |
-| 37 | `group_order_item_modifiers` | Group orders | Modifier snapshots on group lines |
-| 38 | `group_order_events` | Group orders | Group-session audit trail |
+|   # | Table                        | Domain       | Նշանակություն                                                                  |
+| --: | ---------------------------- | ------------ | ------------------------------------------------------------------------------ |
+|   1 | `users`                      | Identity     | Account, credentials, profile, role, status, `bonus_balance`                   |
+|   2 | `sessions`                   | Identity     | Revocable database sessions                                                    |
+|   3 | `addresses`                  | Customer     | Saved shipping/billing addresses                                               |
+|   4 | `media_assets`               | Media        | R2 object metadata, owner, role, ordering                                      |
+|   5 | `store_settings`             | System       | Typed public store configuration                                               |
+|   6 | `products`                   | Catalog      | Product, translations, price, current stock                                    |
+|   7 | `categories`                 | Catalog      | Hierarchy և translations                                                       |
+|   8 | `product_categories`         | Catalog      | Product/category many-to-many կապ                                              |
+|   9 | `product_modifiers`          | Catalog      | Global additions (priced) և exceptions (unpriced)                              |
+|  10 | `product_modifier_links`     | Catalog      | Product↔modifier availability                                                  |
+|  11 | `stock_movements`            | Inventory    | Immutable stock ledger                                                         |
+|  12 | `bonus_transactions`         | Loyalty      | Immutable bonus ledger (1 pt = 1 AMD); balance cached on `users.bonus_balance` |
+|  13 | `gift_cards`                 | Gift cards   | Face value + residual balance, purchaser/recipient, status lifecycle           |
+|  14 | `gift_card_transactions`     | Gift cards   | Immutable gift-card money ledger                                               |
+|  15 | `hero_slides`                | Content      | Hero configuration և translations                                              |
+|  16 | `store_popups`               | Content      | Storefront promo image popups (at most one active)                             |
+|  17 | `blog_posts`                 | Content      | Blog content, translations և tags                                              |
+|  18 | `carts`                      | Commerce     | Guest/customer cart identity/lifecycle                                         |
+|  19 | `cart_items`                 | Commerce     | Cart product quantities + selection key                                        |
+|  20 | `cart_item_modifiers`        | Commerce     | Selected modifiers on a cart line                                              |
+|  21 | `wishlist_items`             | Commerce     | Customer wishlist entries                                                      |
+|  22 | `promotions`                 | Pricing      | Coupons և automatic discounts մեկ rule model-ում                               |
+|  23 | `promotion_users`            | Pricing      | User-restricted promotion allowlist                                            |
+|  24 | `delivery_rules`             | Fulfillment  | Location-based delivery pricing                                                |
+|  25 | `orders`                     | Orders       | Order, address/money/promotion/bonus/gift-card snapshots, idempotency          |
+|  26 | `order_items`                | Orders       | Immutable purchased-item snapshots                                             |
+|  27 | `order_item_modifiers`       | Orders       | Immutable addition/exception snapshots                                         |
+|  28 | `order_events`               | Orders       | Status, notes և payment provider events                                        |
+|  29 | `payments`                   | Payments     | Payment attempts/current provider state                                        |
+|  30 | `reviews`                    | Engagement   | Verified-purchase reviews/moderation                                           |
+|  31 | `contact_messages`           | Support      | Contact inbox                                                                  |
+|  32 | `audit_logs`                 | Security     | Immutable admin/security audit                                                 |
+|  33 | `outbox_events`              | Reliability  | Reliable post-commit email/provider/cache work                                 |
+|  34 | `group_orders`               | Group orders | Shared invite session, payment mode, delivery snapshot                         |
+|  35 | `group_order_participants`   | Group orders | Organizer/guest participants, shares, payment status                           |
+|  36 | `group_order_items`          | Group orders | Per-participant merchandise lines                                              |
+|  37 | `group_order_item_modifiers` | Group orders | Modifier snapshots on group lines                                              |
+|  38 | `group_order_events`         | Group orders | Group-session audit trail                                                      |
 
 ### Count assumptions
 
@@ -84,15 +84,15 @@
 
 ### 4.1 `users`
 
-| Column group | Պարտադիր fields/constraints |
-|---|---|
-| Identity | `id`, normalized `email` UNIQUE, nullable verified timestamp |
-| Credentials | `password_hash` Argon2id, password-updated timestamp |
-| Profile | first/last name, normalized phone |
-| Loyalty | `bonus_balance` (≥0, 1 point = 1 AMD); ledger in `bonus_transactions` |
-| Authorization | role `ADMIN`/`CUSTOMER`, status `ACTIVE`/`SUSPENDED`/`ANONYMIZED` |
-| Consent | terms accepted timestamp/version |
-| Lifecycle | last login, created/updated/anonymized timestamps |
+| Column group  | Պարտադիր fields/constraints                                           |
+| ------------- | --------------------------------------------------------------------- |
+| Identity      | `id`, normalized `email` UNIQUE, nullable verified timestamp          |
+| Credentials   | `password_hash` Argon2id, password-updated timestamp                  |
+| Profile       | first/last name, normalized phone                                     |
+| Loyalty       | `bonus_balance` (≥0, 1 point = 1 AMD); ledger in `bonus_transactions` |
+| Authorization | role `ADMIN`/`CUSTOMER`, status `ACTIVE`/`SUSPENDED`/`ANONYMIZED`     |
+| Consent       | terms accepted timestamp/version                                      |
+| Lifecycle     | last login, created/updated/anonymized timestamps                     |
 
 Last active admin invariant-ը application transaction + row/advisory lock strategy ունի։ Concurrent demotion/suspension-ը չի կարող համակարգը թողնել առանց active admin-ի։
 
@@ -154,14 +154,14 @@ Typed key/value model՝ store identity, public contacts/address, locales/currenc
 
 ### 6.1 `products`
 
-| Group | Fields/invariants |
-|---|---|
-| Identity | ID, normalized SKU UNIQUE |
-| Translations | `translations JSONB` — optional per-locale objects (`hy`/`en`/`ru`) with title, slug, description, SEO |
-| Pricing | base/compare-at AMD integer amounts, non-negative checks |
-| Inventory | `stock_on_hand`, low-stock threshold, optional optimistic version; non-negative առանց backorder approval-ի |
-| Lifecycle | draft/active/archived, featured/upcoming, timestamps/deleted_at |
-| Presentation | badge label translations/style/position |
+| Group        | Fields/invariants                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------------- |
+| Identity     | ID, normalized SKU UNIQUE                                                                                  |
+| Translations | `translations JSONB` — optional per-locale objects (`hy`/`en`/`ru`) with title, slug, description, SEO     |
+| Pricing      | base/compare-at AMD integer amounts, non-negative checks                                                   |
+| Inventory    | `stock_on_hand`, low-stock threshold, optional optimistic version; non-negative առանց backorder approval-ի |
+| Lifecycle    | draft/active/archived, featured/upcoming, timestamps/deleted_at                                            |
+| Presentation | badge label translations/style/position                                                                    |
 
 Translation JSON schema-ն թույլ է տալիս partial locales (`DEC-017`)։ Publish-ին պարտադիր է առնվազն մեկ լրիվ locale object; բացակա locale-ը այդ storefront լեզվում չի ցուցադրվում։ Fixed locale slug uniqueness-ը enforce է արվում expression unique indexes-ով միայն առկա locale keys-ի համար, օրինակ `translations->'hy'->>'slug'`։
 
@@ -233,15 +233,15 @@ Direct `(user_id, product_id)` unique relation և timestamps։ Առանձին `w
 
 Մեկ rule model coupons և automatic product/category discounts-ի համար։
 
-| Field | Behavior |
-|---|---|
-| `kind` | `COUPON` կամ `AUTOMATIC` |
-| `code` | Coupon-ի համար normalized/unique, automatic-ի համար NULL |
-| target | nullable `product_id` կամ `category_id`; order-level coupon-ի համար երկուսն էլ NULL |
-| discount | `PERCENTAGE`/`FIXED`, value, optional max amount |
-| eligibility | minimum order, total/per-user limits, `used_count` |
-| schedule | start/end, active, priority |
-| stacking | validated policy flag/metadata |
+| Field       | Behavior                                                                            |
+| ----------- | ----------------------------------------------------------------------------------- |
+| `kind`      | `COUPON` կամ `AUTOMATIC`                                                            |
+| `code`      | Coupon-ի համար normalized/unique, automatic-ի համար NULL                            |
+| target      | nullable `product_id` կամ `category_id`; order-level coupon-ի համար երկուսն էլ NULL |
+| discount    | `PERCENTAGE`/`FIXED`, value, optional max amount                                    |
+| eligibility | minimum order, total/per-user limits, `used_count`                                  |
+| schedule    | start/end, active, priority                                                         |
+| stacking    | validated policy flag/metadata                                                      |
 
 DB `CHECK` constraints՝
 
@@ -266,19 +266,19 @@ Composite unique `(promotion_id, user_id)` allowlist։ Zero rows նշանակո�
 
 ### 10.1 `orders`
 
-| Group | Պարտադիր snapshot/data |
-|---|---|
-| Identity | ID, unique order number, nullable user, guest/customer contact snapshot |
-| State | order status, payment status, archive flag, placed/updated timestamps |
-| Money | base/display currency, exchange-rate source/effective/rate snapshot, subtotal/discount/tax/delivery/bonus/gift-card/total |
-| Address | `shipping_address JSONB`, `billing_address JSONB` immutable validated snapshots |
-| Promotion | nullable `promotion_id`, code/type/value/discount amount snapshot |
-| Loyalty | `bonus_redeemed_amount`, `bonus_earned_amount` snapshots |
-| Gift card | nullable `gift_card_id`, `gift_card_code_snapshot`, `gift_card_amount` |
-| Delivery | nullable rule ID + label/estimate/price snapshot |
-| Idempotency | checkout scope hash + idempotency key hash + request fingerprint UNIQUE |
-| Context | locale, correlation ID |
-| Group order | nullable `group_order_id` when the order was created from a group session |
+| Group       | Պարտադիր snapshot/data                                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Identity    | ID, unique order number, nullable user, guest/customer contact snapshot                                                   |
+| State       | order status, payment status, archive flag, placed/updated timestamps                                                     |
+| Money       | base/display currency, exchange-rate source/effective/rate snapshot, subtotal/discount/tax/delivery/bonus/gift-card/total |
+| Address     | `shipping_address JSONB`, `billing_address JSONB` immutable validated snapshots                                           |
+| Promotion   | nullable `promotion_id`, code/type/value/discount amount snapshot                                                         |
+| Loyalty     | `bonus_redeemed_amount`, `bonus_earned_amount` snapshots                                                                  |
+| Gift card   | nullable `gift_card_id`, `gift_card_code_snapshot`, `gift_card_amount`                                                    |
+| Delivery    | nullable rule ID + label/estimate/price snapshot                                                                          |
+| Idempotency | checkout scope hash + idempotency key hash + request fingerprint UNIQUE                                                   |
+| Context     | locale, correlation ID                                                                                                    |
+| Group order | nullable `group_order_id` when the order was created from a group session                                                 |
 
 Order JSON snapshots-ը versioned Zod schema ունեն։ Client total/stock/promotion/delivery տվյալները authoritative չեն։
 
@@ -352,17 +352,17 @@ Redis loss-ը չի կորցնում order/cart/product/user durable source of tr
 
 ## 14. Foreign-key delete policy
 
-| Relationship | Policy |
-|---|---|
-| User → sessions | `CASCADE` թույլատրելի է ephemeral sessions-ի համար |
-| User → addresses/cart/wishlist | account anonymization transaction; hard delete միայն safe ephemeral rows-ի համար |
-| User → orders/reviews/audit | Retain/restrict; anonymize PII, ոչ cascade |
-| Product → categories/media/stock | Archive product; physical cleanup միայն explicit maintenance-ում |
-| Product → order items/stock movements | Retain/restrict historical references |
-| Category → children/product relations | Reassign/archive, default `RESTRICT` |
-| Order → items/events/payments | `RESTRICT`; order hard delete արգելված է |
-| Promotion → orders | Retain reference/snapshot; archive promotion |
-| Media owner → asset | Replace/archive workflow; R2 delete միայն DB commit-ից հետո |
+| Relationship                          | Policy                                                                           |
+| ------------------------------------- | -------------------------------------------------------------------------------- |
+| User → sessions                       | `CASCADE` թույլատրելի է ephemeral sessions-ի համար                               |
+| User → addresses/cart/wishlist        | account anonymization transaction; hard delete միայն safe ephemeral rows-ի համար |
+| User → orders/reviews/audit           | Retain/restrict; anonymize PII, ոչ cascade                                       |
+| Product → categories/media/stock      | Archive product; physical cleanup միայն explicit maintenance-ում                 |
+| Product → order items/stock movements | Retain/restrict historical references                                            |
+| Category → children/product relations | Reassign/archive, default `RESTRICT`                                             |
+| Order → items/events/payments         | `RESTRICT`; order hard delete արգելված է                                         |
+| Promotion → orders                    | Retain reference/snapshot; archive promotion                                     |
+| Media owner → asset                   | Replace/archive workflow; R2 delete միայն DB commit-ից հետո                      |
 
 ## 15. Minimum indexes/constraints
 
@@ -387,16 +387,16 @@ Actual indexes-ը validate են արվում representative data-ի `EXPLAIN (AN
 
 ## 16. Tables intentionally not merged
 
-| Tables | Պատճառ |
-|---|---|
-| `orders` / `order_items` | One-to-many snapshots, analytics, returns/refunds extensibility |
-| `products` / `stock_movements` | Current state vs immutable reconciliation ledger |
-| `carts` / `cart_items` | Cart lifecycle vs item quantities/uniqueness |
-| `products` / `categories` | Many-to-many և independent hierarchy/lifecycle |
-| `orders` / `payments` | Multiple attempts/providers և webhook reconciliation |
-| `order_events` / `audit_logs` | Customer-facing domain history vs global sensitive audit |
-| `audit_logs` / `outbox_events` | Immutable evidence vs mutable retry queue |
-| `users` / `addresses` | Multiple saved addresses և independent defaults |
+| Tables                         | Պատճառ                                                          |
+| ------------------------------ | --------------------------------------------------------------- |
+| `orders` / `order_items`       | One-to-many snapshots, analytics, returns/refunds extensibility |
+| `products` / `stock_movements` | Current state vs immutable reconciliation ledger                |
+| `carts` / `cart_items`         | Cart lifecycle vs item quantities/uniqueness                    |
+| `products` / `categories`      | Many-to-many և independent hierarchy/lifecycle                  |
+| `orders` / `payments`          | Multiple attempts/providers և webhook reconciliation            |
+| `order_events` / `audit_logs`  | Customer-facing domain history vs global sensitive audit        |
+| `audit_logs` / `outbox_events` | Immutable evidence vs mutable retry queue                       |
+| `users` / `addresses`          | Multiple saved addresses և independent defaults                 |
 
 ## 17. Optional future tables — canonical 25-ի մեջ չեն
 

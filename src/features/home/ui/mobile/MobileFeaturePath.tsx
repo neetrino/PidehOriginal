@@ -1,4 +1,4 @@
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 
 /**
  * Figma Vector 5 (266:428) — yellow winding path behind the “why us” icons.

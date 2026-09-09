@@ -1,19 +1,17 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { promotions } from "@/db/schema";
+import { getDb } from '@/db/client';
+import { promotions } from '@/db/schema';
 import type {
   AdminProductDiscount,
   ProductDiscountDraft,
-} from "@/features/products/types/product-discount";
-import { createId } from "@/lib/id";
+} from '@/features/products/types/product-discount';
+import { createId } from '@/lib/id';
 
 /** Loads the product-scoped AUTOMATIC promotion, if any. */
-export async function getProductDiscount(
-  productId: string,
-): Promise<AdminProductDiscount | null> {
+export async function getProductDiscount(productId: string): Promise<AdminProductDiscount | null> {
   const [row] = await getDb()
     .select({
       discountType: promotions.discountType,
@@ -25,7 +23,7 @@ export async function getProductDiscount(
     .from(promotions)
     .where(
       and(
-        eq(promotions.kind, "AUTOMATIC"),
+        eq(promotions.kind, 'AUTOMATIC'),
         eq(promotions.productId, productId),
         isNull(promotions.categoryId),
       ),
@@ -61,7 +59,7 @@ export async function loadProductDiscounts(
     .from(promotions)
     .where(
       and(
-        eq(promotions.kind, "AUTOMATIC"),
+        eq(promotions.kind, 'AUTOMATIC'),
         isNull(promotions.categoryId),
         eq(promotions.isActive, true),
       ),
@@ -93,7 +91,7 @@ export async function syncProductDiscount(
     .from(promotions)
     .where(
       and(
-        eq(promotions.kind, "AUTOMATIC"),
+        eq(promotions.kind, 'AUTOMATIC'),
         eq(promotions.productId, productId),
         isNull(promotions.categoryId),
       ),
@@ -107,8 +105,8 @@ export async function syncProductDiscount(
     return null;
   }
 
-  if (draft.type === "PERCENTAGE" && (draft.value < 1 || draft.value > 100)) {
-    return "Percentage discount must be between 1 and 100.";
+  if (draft.type === 'PERCENTAGE' && (draft.value < 1 || draft.value > 100)) {
+    return 'Percentage discount must be between 1 and 100.';
   }
 
   if (draft.startsAt && draft.endsAt) {
@@ -119,7 +117,7 @@ export async function syncProductDiscount(
       Number.isNaN(end.getTime()) ||
       end.getTime() <= start.getTime()
     ) {
-      return "Discount end must be after start.";
+      return 'Discount end must be after start.';
     }
   }
 
@@ -145,7 +143,7 @@ export async function syncProductDiscount(
 
   await getDb().insert(promotions).values({
     id: createId(),
-    kind: "AUTOMATIC",
+    kind: 'AUTOMATIC',
     code: null,
     productId,
     categoryId: null,

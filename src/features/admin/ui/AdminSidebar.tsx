@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import {
   getAdminMenuItems,
   isAdminTabActive,
   type AdminMenuItem,
-} from "@/features/admin/ui/admin-menu.config";
-import { AdminMenuDrawer } from "@/features/admin/ui/AdminMenuDrawer";
-import { AdminSidebarBackdrop } from "@/features/admin/ui/AdminSidebarBackdrop";
-import { AdminSidebarBrand } from "@/features/admin/ui/AdminSidebarBrand";
-import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
+} from '@/features/admin/ui/admin-menu.config';
+import { AdminMenuDrawer } from '@/features/admin/ui/AdminMenuDrawer';
+import { AdminSidebarBackdrop } from '@/features/admin/ui/AdminSidebarBackdrop';
+import { AdminSidebarBrand } from '@/features/admin/ui/AdminSidebarBrand';
+import { useAdminSidebarCollapse } from '@/features/admin/ui/AdminSidebarCollapseContext';
 import {
   ADMIN_SIDEBAR_ASIDE,
   ADMIN_SIDEBAR_MOBILE_DRAWER_WRAP,
   ADMIN_SIDEBAR_NAV,
-} from "@/features/admin/ui/admin-shell-classes";
-import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-shell-classes';
+import { useAdminProductsSubnavExpanded } from '@/features/admin/ui/useAdminProductsSubnavExpanded';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminSidebarProps = {
   locale: string;
-  shell: Dictionary["admin"]["shell"];
-  nav: Dictionary["admin"]["nav"];
+  shell: Dictionary['admin']['shell'];
+  nav: Dictionary['admin']['nav'];
 };
 
 function isNestedVisible(
@@ -33,7 +33,7 @@ function isNestedVisible(
   collapsed: boolean,
   productsNestedExpanded: boolean,
 ): boolean {
-  if (tab.parentGroupId !== "products") return true;
+  if (tab.parentGroupId !== 'products') return true;
   if (collapsed) return true;
   if (isAdminTabActive(tab.href, pathname, locale)) return true;
   return productsNestedExpanded;
@@ -43,10 +43,12 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
   const pathname = usePathname() ?? `/${locale}/admin`;
   const tabs = getAdminMenuItems(locale, nav);
   const { collapsed } = useAdminSidebarCollapse();
-  const [productsNestedExpanded, toggleProductsNested] =
-    useAdminProductsSubnavExpanded(pathname, locale);
+  const [productsNestedExpanded, toggleProductsNested] = useAdminProductsSubnavExpanded(
+    pathname,
+    locale,
+  );
 
-  const asideWidthClass = collapsed ? "lg:w-16" : "lg:w-64";
+  const asideWidthClass = collapsed ? 'lg:w-16' : 'lg:w-64';
 
   return (
     <>
@@ -64,111 +66,90 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
       <aside className={`${ADMIN_SIDEBAR_ASIDE} ${asideWidthClass}`}>
         <AdminSidebarBackdrop />
         <div className="relative z-10 flex min-h-0 flex-1 flex-col">
-        <AdminSidebarBrand locale={locale} shell={shell} />
-        <nav
-          className={`${ADMIN_SIDEBAR_NAV} ${collapsed ? "px-1" : "px-2"}`}
-        >
-          {tabs.map((tab) => {
-            if (
-              !isNestedVisible(
-                tab,
-                pathname,
-                locale,
-                collapsed,
-                productsNestedExpanded,
-              )
-            ) {
-              return null;
-            }
+          <AdminSidebarBrand locale={locale} shell={shell} />
+          <nav className={`${ADMIN_SIDEBAR_NAV} ${collapsed ? 'px-1' : 'px-2'}`}>
+            {tabs.map((tab) => {
+              if (!isNestedVisible(tab, pathname, locale, collapsed, productsNestedExpanded)) {
+                return null;
+              }
 
-            const isActive = isAdminTabActive(tab.href, pathname, locale);
-            const rowClasses = `flex w-full items-center rounded-full text-sm font-bold transition-all ${
-              collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
-            } ${tab.isSubCategory && !collapsed ? "pl-12" : ""} ${
-              isActive
-                ? "bg-[#ff6b00] text-white shadow-[0_8px_24px_rgba(255,107,0,0.45)]"
-                : "text-white/80 hover:bg-white/12 hover:text-white"
-            }`;
+              const isActive = isAdminTabActive(tab.href, pathname, locale);
+              const rowClasses = `flex w-full items-center rounded-full text-sm font-bold transition-all ${
+                collapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'
+              } ${tab.isSubCategory && !collapsed ? 'pl-12' : ''} ${
+                isActive
+                  ? 'bg-[#ff6b00] text-white shadow-[0_8px_24px_rgba(255,107,0,0.45)]'
+                  : 'text-white/80 hover:bg-white/12 hover:text-white'
+              }`;
 
-            if (tab.id === "products" && !collapsed) {
+              if (tab.id === 'products' && !collapsed) {
+                return (
+                  <div
+                    key={tab.id}
+                    className={`flex w-full min-w-0 overflow-hidden rounded-full ${
+                      isActive
+                        ? 'bg-[#ff6b00] text-white shadow-[0_8px_24px_rgba(255,107,0,0.45)]'
+                        : 'bg-transparent'
+                    }`}
+                  >
+                    <Link
+                      href={tab.href}
+                      title={tab.label}
+                      className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left text-sm font-bold transition-all ${
+                        isActive
+                          ? 'text-white hover:bg-[#e85f00]'
+                          : 'text-white/70 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      <span className={`shrink-0 ${isActive ? 'text-white' : 'text-white/45'}`}>
+                        {tab.icon}
+                      </span>
+                      <span className="min-w-0 truncate">{tab.label}</span>
+                    </Link>
+                    <button
+                      type="button"
+                      aria-expanded={productsNestedExpanded}
+                      aria-label={shell.toggleProductSubpages}
+                      title={shell.toggleProductSubpages}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        toggleProductsNested();
+                      }}
+                      className={`shrink-0 border-l px-2 py-3 transition-colors ${
+                        isActive
+                          ? 'border-white/25 text-white hover:bg-white/10'
+                          : 'border-white/10 text-white/60 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      <svg
+                        className={`h-5 w-5 transition-transform ${productsNestedExpanded ? '' : '-rotate-90'}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                );
+              }
+
               return (
-                <div
-                  key={tab.id}
-                  className={`flex w-full min-w-0 overflow-hidden rounded-full ${
-                    isActive
-                      ? "bg-[#ff6b00] text-white shadow-[0_8px_24px_rgba(255,107,0,0.45)]"
-                      : "bg-transparent"
-                  }`}
-                >
-                  <Link
-                    href={tab.href}
-                    title={tab.label}
-                    className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left text-sm font-bold transition-all ${
-                      isActive
-                        ? "text-white hover:bg-[#e85f00]"
-                        : "text-white/70 hover:bg-white/10 hover:text-white"
-                    }`}
-                  >
-                    <span
-                      className={`shrink-0 ${isActive ? "text-white" : "text-white/45"}`}
-                    >
-                      {tab.icon}
-                    </span>
-                    <span className="min-w-0 truncate">{tab.label}</span>
-                  </Link>
-                  <button
-                    type="button"
-                    aria-expanded={productsNestedExpanded}
-                    aria-label={shell.toggleProductSubpages}
-                    title={shell.toggleProductSubpages}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      toggleProductsNested();
-                    }}
-                    className={`shrink-0 border-l px-2 py-3 transition-colors ${
-                      isActive
-                        ? "border-white/25 text-white hover:bg-white/10"
-                        : "border-white/10 text-white/60 hover:bg-white/10 hover:text-white"
-                    }`}
-                  >
-                    <svg
-                      className={`h-5 w-5 transition-transform ${productsNestedExpanded ? "" : "-rotate-90"}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                <Link key={tab.id} href={tab.href} title={tab.label} className={rowClasses}>
+                  <span className={`shrink-0 ${isActive ? 'text-white' : 'text-white/45'}`}>
+                    {tab.icon}
+                  </span>
+                  {collapsed ? null : <span className="min-w-0 truncate">{tab.label}</span>}
+                </Link>
               );
-            }
-
-            return (
-              <Link
-                key={tab.id}
-                href={tab.href}
-                title={tab.label}
-                className={rowClasses}
-              >
-                <span
-                  className={`shrink-0 ${isActive ? "text-white" : "text-white/45"}`}
-                >
-                  {tab.icon}
-                </span>
-                {collapsed ? null : (
-                  <span className="min-w-0 truncate">{tab.label}</span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
+            })}
+          </nav>
         </div>
       </aside>
     </>

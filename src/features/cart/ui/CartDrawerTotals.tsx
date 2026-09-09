@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { CartMoneyFlow } from "@/features/cart/ui/CartMoneyFlow";
-import type { Currency } from "@/lib/money/currency";
+import { AppLink } from '@/components/ui/AppLink';
+import { CartMoneyFlow } from '@/features/cart/ui/CartMoneyFlow';
+import type { Currency } from '@/lib/money/currency';
 
 type CartDrawerTotalsProps = {
   currency: Currency;

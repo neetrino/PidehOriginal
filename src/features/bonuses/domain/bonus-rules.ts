@@ -46,26 +46,16 @@ export function calculateMaxRedeemAmount(input: {
   availableBalance: number;
   maxRedeemPercent: number;
 }): number {
-  const { eligibleMerchandiseAmount, availableBalance, maxRedeemPercent } =
-    input;
-  if (
-    eligibleMerchandiseAmount <= 0 ||
-    availableBalance <= 0 ||
-    maxRedeemPercent <= 0
-  ) {
+  const { eligibleMerchandiseAmount, availableBalance, maxRedeemPercent } = input;
+  if (eligibleMerchandiseAmount <= 0 || availableBalance <= 0 || maxRedeemPercent <= 0) {
     return 0;
   }
-  const cap = Math.floor(
-    (eligibleMerchandiseAmount * maxRedeemPercent) / 100,
-  );
+  const cap = Math.floor((eligibleMerchandiseAmount * maxRedeemPercent) / 100);
   return Math.min(availableBalance, cap, eligibleMerchandiseAmount);
 }
 
 /** Clamp a requested redeem amount to the allowed maximum. */
-export function clampBonusRedeemRequest(
-  requested: number,
-  maxAllowed: number,
-): number {
+export function clampBonusRedeemRequest(requested: number, maxAllowed: number): number {
   if (!Number.isInteger(requested) || requested <= 0) {
     return 0;
   }
@@ -73,17 +63,11 @@ export function clampBonusRedeemRequest(
 }
 
 /** Apply a signed delta without going below zero. */
-export function nextBonusBalance(
-  currentBalance: number,
-  delta: number,
-): number {
+export function nextBonusBalance(currentBalance: number, delta: number): number {
   return Math.max(0, currentBalance + delta);
 }
 
-export function resolveEarnExpiresAt(
-  now: Date,
-  expiryDays: number | null,
-): Date | null {
+export function resolveEarnExpiresAt(now: Date, expiryDays: number | null): Date | null {
   if (expiryDays == null || expiryDays <= 0) {
     return null;
   }

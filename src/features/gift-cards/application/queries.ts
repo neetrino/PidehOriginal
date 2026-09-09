@@ -1,9 +1,9 @@
-import "server-only";
+import 'server-only';
 
-import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, or, sql } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { giftCardTransactions, giftCards, users } from "@/db/schema";
+import { getDb } from '@/db/client';
+import { giftCardTransactions, giftCards, users } from '@/db/schema';
 import {
   isGiftCardRecipientActor,
   isGiftCardRedeemable,
@@ -11,7 +11,7 @@ import {
   normalizeGiftCardCode,
   resolveCustomerGiftCardBucket,
   type CustomerGiftCardBucket,
-} from "@/features/gift-cards/domain/gift-card-rules";
+} from '@/features/gift-cards/domain/gift-card-rules';
 
 export type GiftCardRedeemActor = {
   id: string;
@@ -20,7 +20,7 @@ export type GiftCardRedeemActor = {
 
 export type GiftCardTransactionView = {
   id: string;
-  type: "ISSUE" | "REDEEM" | "REVERSAL" | "ADJUST";
+  type: 'ISSUE' | 'REDEEM' | 'REVERSAL' | 'ADJUST';
   delta: number;
   resultingBalance: number;
   orderId: string | null;
@@ -33,7 +33,7 @@ export type GiftCardListItem = {
   code: string;
   initialAmount: number;
   balanceAmount: number;
-  status: "PENDING_PAYMENT" | "ACTIVE" | "USED" | "EXPIRED" | "DISABLED";
+  status: 'PENDING_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED' | 'DISABLED';
   purchaserName: string;
   purchaserEmail: string | null;
   recipientName: string;
@@ -79,9 +79,7 @@ const listColumns = {
   createdAt: giftCards.createdAt,
 };
 
-export async function findGiftCardByCode(
-  rawCode: string,
-): Promise<GiftCardListItem | null> {
+export async function findGiftCardByCode(rawCode: string): Promise<GiftCardListItem | null> {
   const code = normalizeGiftCardCode(rawCode);
   if (!code) {
     return null;
@@ -94,9 +92,7 @@ export async function findGiftCardByCode(
   return row ?? null;
 }
 
-export async function getGiftCardDetail(
-  id: string,
-): Promise<GiftCardDetail | null> {
+export async function getGiftCardDetail(id: string): Promise<GiftCardDetail | null> {
   const [row] = await getDb()
     .select({
       ...listColumns,
@@ -167,7 +163,7 @@ export async function listCustomerGiftCards(
 
 export type AdminGiftCardFilters = {
   q?: string;
-  status?: GiftCardListItem["status"];
+  status?: GiftCardListItem['status'];
   limit?: number;
   offset?: number;
 };
@@ -311,7 +307,7 @@ export async function evaluateGiftCardForRedeem(
         status: card.status,
         balanceAmount: card.balanceAmount,
         expiresAt: card.expiresAt,
-        recipientDenied: actor ? "mismatch" : "unauthenticated",
+        recipientDenied: actor ? 'mismatch' : 'unauthenticated',
       }),
     };
   }
@@ -328,10 +324,7 @@ export async function evaluateGiftCardForRedeem(
   };
 }
 
-export async function linkRecipientUserByEmail(
-  giftCardId: string,
-  email: string,
-): Promise<void> {
+export async function linkRecipientUserByEmail(giftCardId: string, email: string): Promise<void> {
   const normalized = email.trim().toLowerCase();
   if (!normalized) {
     return;
@@ -347,7 +340,5 @@ export async function linkRecipientUserByEmail(
   await getDb()
     .update(giftCards)
     .set({ recipientUserId: user.id, updatedAt: new Date() })
-    .where(
-      and(eq(giftCards.id, giftCardId), sql`${giftCards.recipientUserId} is null`),
-    );
+    .where(and(eq(giftCards.id, giftCardId), sql`${giftCards.recipientUserId} is null`));
 }

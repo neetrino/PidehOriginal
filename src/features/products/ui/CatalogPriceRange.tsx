@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useId, useState } from "react";
-import { ChevronUp } from "lucide-react";
+import { useId, useState } from 'react';
+import { ChevronUp } from 'lucide-react';
 
-import type { CatalogPriceBounds } from "@/features/products/application/catalog-price-bounds";
-import { CATALOG_PRICE_FILTER_MAX } from "@/features/products/schemas/catalog-list";
-import type { Currency } from "@/lib/money/currency";
-import { currencySymbols } from "@/lib/money/currency";
+import type { CatalogPriceBounds } from '@/features/products/application/catalog-price-bounds';
+import { CATALOG_PRICE_FILTER_MAX } from '@/features/products/schemas/catalog-list';
+import type { Currency } from '@/lib/money/currency';
+import { currencySymbols } from '@/lib/money/currency';
 
 type CatalogPriceRangeProps = {
   label: string;
@@ -22,11 +22,11 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function formatAmount(value: number): string {
-  return value.toLocaleString("en-US");
+  return value.toLocaleString('en-US');
 }
 
 function digitsOnly(raw: string): string {
-  return raw.replace(/[^\d]/g, "");
+  return raw.replace(/[^\d]/g, '');
 }
 
 function parseAmount(raw: string): number | null {
@@ -57,17 +57,11 @@ export function CatalogPriceRange({
   const maxPercent = ((maxValue - sliderMin) / span) * 100;
 
   function commitMin(next: number): void {
-    onRangeChange(
-      clamp(next, 0, Math.min(maxValue, CATALOG_PRICE_FILTER_MAX)),
-      maxValue,
-    );
+    onRangeChange(clamp(next, 0, Math.min(maxValue, CATALOG_PRICE_FILTER_MAX)), maxValue);
   }
 
   function commitMax(next: number): void {
-    onRangeChange(
-      minValue,
-      clamp(next, minValue, CATALOG_PRICE_FILTER_MAX),
-    );
+    onRangeChange(minValue, clamp(next, minValue, CATALOG_PRICE_FILTER_MAX));
   }
 
   return (
@@ -79,11 +73,9 @@ export function CatalogPriceRange({
         aria-controls={baseId}
         onClick={() => setOpen((current) => !current)}
       >
-        <span className="text-sm font-semibold tracking-wide text-gray-900 uppercase">
-          {label}
-        </span>
+        <span className="text-sm font-semibold tracking-wide text-gray-900 uppercase">{label}</span>
         <ChevronUp
-          className={`size-4 text-gray-400 transition-transform ${open ? "" : "rotate-180"}`}
+          className={`size-4 text-gray-400 transition-transform ${open ? '' : 'rotate-180'}`}
           aria-hidden
         />
       </button>
@@ -137,12 +129,12 @@ export function CatalogPriceRange({
                 onFocus={() => setMinDraft(String(minValue))}
                 onChange={(event) => setMinDraft(digitsOnly(event.target.value))}
                 onBlur={() => {
-                  const parsed = parseAmount(minDraft ?? "");
+                  const parsed = parseAmount(minDraft ?? '');
                   setMinDraft(null);
                   if (parsed != null) commitMin(parsed);
                 }}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter") {
+                  if (event.key === 'Enter') {
                     event.currentTarget.blur();
                     return;
                   }
@@ -174,12 +166,12 @@ export function CatalogPriceRange({
                 onFocus={() => setMaxDraft(String(maxValue))}
                 onChange={(event) => setMaxDraft(digitsOnly(event.target.value))}
                 onBlur={() => {
-                  const parsed = parseAmount(maxDraft ?? "");
+                  const parsed = parseAmount(maxDraft ?? '');
                   setMaxDraft(null);
                   if (parsed != null) commitMax(parsed);
                 }}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter") {
+                  if (event.key === 'Enter') {
                     event.currentTarget.blur();
                     return;
                   }

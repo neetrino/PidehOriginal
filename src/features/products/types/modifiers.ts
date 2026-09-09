@@ -1,4 +1,4 @@
-export type ProductModifierKind = "ADDITION" | "EXCEPTION";
+export type ProductModifierKind = 'ADDITION' | 'EXCEPTION';
 
 export type ProductModifierRow = {
   id: string;

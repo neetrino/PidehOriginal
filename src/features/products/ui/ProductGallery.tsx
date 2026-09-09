@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useState } from "react";
+import Image from 'next/image';
+import { useState } from 'react';
 
-import type { ProductGalleryImage } from "@/features/products/types";
+import type { ProductGalleryImage } from '@/features/products/types';
 
 type ProductGalleryProps = {
   images: ProductGalleryImage[];
@@ -21,8 +21,7 @@ export function ProductGallery({
   outOfStockLabel,
 }: ProductGalleryProps) {
   const [selectedId, setSelectedId] = useState(images[0]?.id ?? null);
-  const selected =
-    images.find((image) => image.id === selectedId) ?? images[0] ?? null;
+  const selected = images.find((image) => image.id === selectedId) ?? images[0] ?? null;
 
   return (
     <div className="flex flex-col gap-3">
@@ -90,17 +89,11 @@ function GalleryThumb({
         aria-pressed={isActive}
         className={`relative h-16 w-16 overflow-hidden rounded-[12px] bg-[#fff3e0] transition ${
           isActive
-            ? "ring-2 ring-white ring-offset-2 ring-offset-[#ff6b00]"
-            : "opacity-80 hover:opacity-100"
+            ? 'ring-2 ring-white ring-offset-2 ring-offset-[#ff6b00]'
+            : 'opacity-80 hover:opacity-100'
         }`}
       >
-        <Image
-          src={image.url}
-          alt=""
-          fill
-          sizes="64px"
-          className="object-cover"
-        />
+        <Image src={image.url} alt="" fill sizes="64px" className="object-cover" />
       </button>
     </li>
   );

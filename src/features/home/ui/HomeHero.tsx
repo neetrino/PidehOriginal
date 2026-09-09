@@ -1,19 +1,15 @@
-"use client";
+'use client';
 
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 
-import { PidehPillButton } from "@/components/brand/PidehPillButton";
-import { springSoft } from "@/components/motion/presets";
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
-import { HomeHeroMedia } from "@/features/home/ui/HomeHeroMedia";
-import { HomeHeroTitle } from "@/features/home/ui/HomeHeroTitle";
-import type { StorefrontHeroSlide } from "@/features/hero/application/queries";
+import { PidehPillButton } from '@/components/brand/PidehPillButton';
+import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import { springSoft } from '@/components/motion/presets';
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
+import { HomeHeroMedia } from '@/features/home/ui/HomeHeroMedia';
+import { HomeHeroTitle } from '@/features/home/ui/HomeHeroTitle';
+import type { StorefrontHeroSlide } from '@/features/hero/application/queries';
 
 type HomeHeroProps = {
   slides: StorefrontHeroSlide[];
@@ -41,7 +37,7 @@ export function HomeHero({
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end start"],
+    offset: ['start start', 'end start'],
   });
   const mediaY = useTransform(scrollYProgress, [0, 1], [0, 72]);
   const hasSlides = slides.length > 0;
@@ -62,10 +58,7 @@ export function HomeHero({
   const title = active?.copy.title ?? fallbackTitle;
   const ctaLabel = active?.copy.buttonLabel ?? fallbackCtaLabel;
   const ctaHref = active?.copy.buttonUrl ?? fallbackCtaHref;
-  const heroImage =
-    active?.desktopImageUrl ??
-    active?.mobileImageUrl ??
-    PIDEH_ASSETS.foodPide;
+  const heroImage = active?.desktopImageUrl ?? active?.mobileImageUrl ?? PIDEH_ASSETS.foodPide;
 
   const titleParts = title.split(/\n| \| /);
   const line1 = titleParts[0]?.trim() || fallbackTitle;
@@ -76,7 +69,7 @@ export function HomeHero({
       ref={sectionRef}
       className="relative min-h-[863px] overflow-x-clip overflow-y-visible bg-pideh-orange pt-[100px] pb-28 md:pb-36"
     >
-      <div className="relative z-10 mx-auto flex max-w-[1440px] flex-col items-center px-4 text-center">
+      <div className={`relative z-10 flex flex-col items-center text-center ${PAGE_CONTAINER}`}>
         <motion.div
           className="relative w-full max-w-[1100px] overflow-visible pt-6 md:min-h-[520px] md:pt-8"
           style={reduceMotion ? undefined : { y: mediaY }}
@@ -111,8 +104,8 @@ export function HomeHero({
                 aria-current={slideIndex === index}
                 className={
                   slideIndex === index
-                    ? "h-2.5 w-8 rounded-full bg-white"
-                    : "h-2.5 w-2.5 rounded-full bg-white/50"
+                    ? 'h-2.5 w-8 rounded-full bg-white'
+                    : 'h-2.5 w-2.5 rounded-full bg-white/50'
                 }
                 onClick={() => setIndex(slideIndex)}
               />

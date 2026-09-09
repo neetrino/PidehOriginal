@@ -1,16 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { ChevronRight, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { ChevronRight, GripVertical, Pencil, Plus, Trash2 } from 'lucide-react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import {
-  ADMIN_INPUT,
-} from "@/features/admin/ui/admin-form-classes";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { ADMIN_INPUT } from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -23,19 +21,16 @@ import {
   ADMIN_TABLE_TH,
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
-import {
-  deleteCategoryAction,
-  reorderCategoriesAction,
-} from "@/features/categories/actions";
-import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
-import { AddCategoryDrawer } from "@/features/categories/ui/AddCategoryDrawer";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-table-classes';
+import { deleteCategoryAction, reorderCategoriesAction } from '@/features/categories/actions';
+import type { AdminCategoryListItem } from '@/features/categories/application/list-admin-categories';
+import { AddCategoryDrawer } from '@/features/categories/ui/AddCategoryDrawer';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type CategoriesViewCopy = {
-  categories: Dictionary["admin"]["categories"];
-  common: Dictionary["admin"]["common"];
-  confirm: Dictionary["admin"]["confirm"];
+  categories: Dictionary['admin']['categories'];
+  common: Dictionary['admin']['common'];
+  confirm: Dictionary['admin']['confirm'];
 };
 
 type AdminCategoriesViewProps = {
@@ -61,24 +56,16 @@ function moveItem<T>(list: T[], fromIndex: number, toIndex: number): T[] {
   return next;
 }
 
-function sameOrder(
-  left: AdminCategoryListItem[],
-  right: AdminCategoryListItem[],
-): boolean {
+function sameOrder(left: AdminCategoryListItem[], right: AdminCategoryListItem[]): boolean {
   if (left.length !== right.length) return false;
   return left.every((item, index) => item.id === right[index]?.id);
 }
 
-export function AdminCategoriesView({
-  locale,
-  categories,
-  copy,
-}: AdminCategoriesViewProps) {
+export function AdminCategoriesView({ locale, categories, copy }: AdminCategoriesViewProps) {
   const router = useRouter();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editingCategory, setEditingCategory] =
-    useState<AdminCategoryListItem | null>(null);
+  const [editingCategory, setEditingCategory] = useState<AdminCategoryListItem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [pendingDelete, setPendingDelete] = useState<{
@@ -105,9 +92,7 @@ export function AdminCategoriesView({
 
   const visible = useMemo(() => {
     if (!isFiltering) return ordered;
-    return ordered.filter((category) =>
-      category.title.toLowerCase().includes(needle),
-    );
+    return ordered.filter((category) => category.title.toLowerCase().includes(needle));
   }, [ordered, isFiltering, needle]);
 
   function requestDelete(categoryId: string, categoryTitle: string): void {
@@ -156,9 +141,7 @@ export function AdminCategoriesView({
   function reorderToward(targetId: string): void {
     if (!draggingId || isFiltering || draggingId === targetId) return;
     setOrdered((current) => {
-      const fromIndex = current.findIndex(
-        (category) => category.id === draggingId,
-      );
+      const fromIndex = current.findIndex((category) => category.id === draggingId);
       const toIndex = current.findIndex((category) => category.id === targetId);
       if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return current;
       const next = moveItem(current, fromIndex, toIndex);
@@ -194,9 +177,7 @@ export function AdminCategoriesView({
       />
 
       {isFiltering ? (
-        <p className="mb-3 text-xs text-gray-500">
-          {copy.categories.clearSearchToReorder}
-        </p>
+        <p className="mb-3 text-xs text-gray-500">{copy.categories.clearSearchToReorder}</p>
       ) : null}
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
@@ -204,9 +185,7 @@ export function AdminCategoriesView({
       <Card className={ADMIN_TABLE_CARD}>
         {visible.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {categories.length === 0
-              ? copy.categories.empty
-              : copy.categories.noMatch}
+            {categories.length === 0 ? copy.categories.empty : copy.categories.noMatch}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
@@ -231,12 +210,12 @@ export function AdminCategoriesView({
                     <tr
                       key={category.id}
                       className={`${ADMIN_TABLE_ROW} ${
-                        isDragging ? "bg-gray-50 opacity-50 shadow-sm" : ""
+                        isDragging ? 'bg-gray-50 opacity-50 shadow-sm' : ''
                       }`}
                       onDragOver={(event) => {
                         if (isFiltering || !draggingId) return;
                         event.preventDefault();
-                        event.dataTransfer.dropEffect = "move";
+                        event.dataTransfer.dropEffect = 'move';
                         reorderToward(category.id);
                       }}
                       onDrop={(event) => {
@@ -255,11 +234,8 @@ export function AdminCategoriesView({
                               event.preventDefault();
                               return;
                             }
-                            event.dataTransfer.effectAllowed = "move";
-                            event.dataTransfer.setData(
-                              "text/plain",
-                              category.id,
-                            );
+                            event.dataTransfer.effectAllowed = 'move';
+                            event.dataTransfer.setData('text/plain', category.id);
                             dragOriginRef.current = orderedRef.current;
                             persistedRef.current = false;
                             setDraggingId(category.id);
@@ -270,7 +246,7 @@ export function AdminCategoriesView({
                           }}
                           className="inline-flex cursor-grab touch-none text-gray-400 active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-40"
                           aria-label={copy.categories.reorderItemAria.replace(
-                            "{title}",
+                            '{title}',
                             category.title,
                           )}
                         >
@@ -292,9 +268,7 @@ export function AdminCategoriesView({
                         </div>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
-                        <p className="font-medium text-gray-900">
-                          {category.title}
-                        </p>
+                        <p className="font-medium text-gray-900">{category.title}</p>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
                         <span className="text-sm text-gray-500">
@@ -306,10 +280,7 @@ export function AdminCategoriesView({
                           <button
                             type="button"
                             className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                            aria-label={copy.categories.editAria.replace(
-                              "{title}",
-                              category.title,
-                            )}
+                            aria-label={copy.categories.editAria.replace('{title}', category.title)}
                             onClick={() => {
                               setEditingCategory(category);
                               setDrawerOpen(true);
@@ -320,12 +291,10 @@ export function AdminCategoriesView({
                           <button
                             type="button"
                             disabled={isPending}
-                            onClick={() =>
-                              requestDelete(category.id, category.title)
-                            }
+                            onClick={() => requestDelete(category.id, category.title)}
                             className="rounded p-1.5 text-red-600 hover:bg-red-50"
                             aria-label={copy.categories.deleteAria.replace(
-                              "{title}",
+                              '{title}',
                               category.title,
                             )}
                           >
@@ -335,7 +304,7 @@ export function AdminCategoriesView({
                             <span
                               className="ml-1 text-gray-400"
                               aria-label={copy.categories.subcategoriesAria.replace(
-                                "{count}",
+                                '{count}',
                                 String(category.childCount),
                               )}
                             >
@@ -373,9 +342,9 @@ export function AdminCategoriesView({
         description={
           pendingDelete
             ? copy.confirm.deleteEntity
-                .replace("{entity}", copy.confirm.entityLabels.category)
-                .replace("{name}", pendingDelete.title)
-            : ""
+                .replace('{entity}', copy.confirm.entityLabels.category)
+                .replace('{name}', pendingDelete.title)
+            : ''
         }
         isPending={isPending}
         onClose={() => {

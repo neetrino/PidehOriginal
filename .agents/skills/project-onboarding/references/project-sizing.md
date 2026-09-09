@@ -4,11 +4,11 @@ Open this reference while onboarding a project whose size is not set, or when th
 
 ## Criteria (rule of thumb)
 
-| Size | Timeline | Team | Features (rough) | Layout |
-|------|----------|------|-------------------|--------|
-| **A** | 1–3 mo | 1–2 | ~5–15 | Simple (`app`, `components`, `lib`) |
-| **B** | 3–6 mo | 2–5 | ~15–50 | Feature-based (`features/*`, `shared/*`) |
-| **C** | 6+ mo | 5+ | 50+ | Monorepo (`apps/*`, `packages/*`) |
+| Size  | Timeline | Team | Features (rough) | Layout                                   |
+| ----- | -------- | ---- | ---------------- | ---------------------------------------- |
+| **A** | 1–3 mo   | 1–2  | ~5–15            | Simple (`app`, `components`, `lib`)      |
+| **B** | 3–6 mo   | 2–5  | ~15–50           | Feature-based (`features/*`, `shared/*`) |
+| **C** | 6+ mo    | 5+   | 50+              | Monorepo (`apps/*`, `packages/*`)        |
 
 ## Proposal format
 

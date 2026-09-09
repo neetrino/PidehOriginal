@@ -1,10 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { neon } from "@neondatabase/serverless";
-import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
+import { neon } from '@neondatabase/serverless';
+import { drizzle, type NeonHttpDatabase } from 'drizzle-orm/neon-http';
 
-import { requireDatabaseUrl } from "@/config/env";
-import * as schema from "@/db/schema";
+import { requireDatabaseUrl } from '@/config/env';
+import * as schema from '@/db/schema';
 
 export type Database = NeonHttpDatabase<typeof schema>;
 

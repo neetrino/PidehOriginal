@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { motion, useReducedMotion } from "motion/react";
-import type { FormEvent } from "react";
-import { useState, useTransition } from "react";
+import { motion, useReducedMotion } from 'motion/react';
+import type { FormEvent } from 'react';
+import { useState, useTransition } from 'react';
 
-import { springSoft } from "@/components/motion/presets";
-import { submitContactMessageAction } from "@/features/contact/application/submit-contact";
+import { springSoft } from '@/components/motion/presets';
+import { submitContactMessageAction } from '@/features/contact/application/submit-contact';
 
 type ContactFormCopy = {
   name: string;
@@ -23,16 +23,16 @@ type ContactFormProps = {
 };
 
 const fieldClassName =
-  "w-full border-0 border-b-2 border-pideh-ink/15 bg-transparent px-0 py-3 text-lg text-pideh-ink outline-none transition placeholder:text-pideh-ink/30 focus:border-pideh-orange disabled:opacity-60";
+  'w-full border-0 border-b-2 border-pideh-ink/15 bg-transparent px-0 py-3 text-lg text-pideh-ink outline-none transition placeholder:text-pideh-ink/30 focus:border-pideh-orange disabled:opacity-60';
 
 function readContactForm(form: HTMLFormElement) {
   const formData = new FormData(form);
   return {
-    name: String(formData.get("name") ?? ""),
-    email: String(formData.get("email") ?? ""),
-    phone: String(formData.get("phone") ?? "") || undefined,
-    message: String(formData.get("message") ?? ""),
-    companyWebsite: String(formData.get("companyWebsite") ?? ""),
+    name: String(formData.get('name') ?? ''),
+    email: String(formData.get('email') ?? ''),
+    phone: String(formData.get('phone') ?? '') || undefined,
+    message: String(formData.get('message') ?? ''),
+    companyWebsite: String(formData.get('companyWebsite') ?? ''),
   };
 }
 
@@ -71,10 +71,7 @@ export function ContactForm({ copy }: ContactFormProps) {
 
   return (
     <div className="relative">
-      <div
-        aria-hidden="true"
-        className="absolute inset-3 rotate-2 rounded-[2px] bg-pideh-yellow"
-      />
+      <div aria-hidden="true" className="absolute inset-3 rotate-2 rounded-[2px] bg-pideh-yellow" />
       <form
         onSubmit={onSubmit}
         className="relative overflow-hidden rounded-[2px] bg-white px-8 py-8 shadow-[12px_18px_0_0_rgba(30,30,30,0.18)] sm:px-10 sm:py-10"

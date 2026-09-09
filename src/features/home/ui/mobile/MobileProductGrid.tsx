@@ -1,6 +1,6 @@
-import { MobileFrame440 } from "@/features/home/ui/mobile/MobileFrame440";
-import { MobileProductCard } from "@/features/home/ui/mobile/MobileProductCard";
-import type { Locale } from "@/lib/i18n/config";
+import { MobileFrame440 } from '@/features/home/ui/mobile/MobileFrame440';
+import { MobileProductCard } from '@/features/home/ui/mobile/MobileProductCard';
+import type { Locale } from '@/lib/i18n/config';
 
 export type MobileGridProduct = {
   id: string;
@@ -53,10 +53,7 @@ export function MobileProductGrid({
       <div className="box-border px-[14px]">
         <div className="grid grid-cols-2 gap-x-[11px] gap-y-0">
           {products.map((product, index) => (
-            <div
-              key={product.id}
-              className="relative flex h-[372px] justify-center pt-4"
-            >
+            <div key={product.id} className="relative flex h-[372px] justify-center pt-4">
               <MobileProductCard
                 href={product.href}
                 title={product.title}

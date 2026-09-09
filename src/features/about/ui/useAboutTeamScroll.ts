@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useReducedMotion } from "motion/react";
-import type { RefObject } from "react";
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useReducedMotion } from 'motion/react';
+import type { RefObject } from 'react';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -18,10 +18,10 @@ function animateGallerySlides(section: HTMLElement, cards: HTMLElement[]): void 
   });
 
   const timeline = gsap.timeline({
-    defaults: { ease: "none" },
+    defaults: { ease: 'none' },
     scrollTrigger: {
       trigger: section,
-      start: "top top",
+      start: 'top top',
       end: () => `+=${cards.length * window.innerHeight}`,
       pin: true,
       scrub: 1.1,
@@ -42,9 +42,7 @@ function animateGallerySlides(section: HTMLElement, cards: HTMLElement[]): void 
   });
 }
 
-export function useAboutTeamScroll(
-  sectionRef: RefObject<HTMLElement | null>,
-): void {
+export function useAboutTeamScroll(sectionRef: RefObject<HTMLElement | null>): void {
   const reduceMotion = useReducedMotion();
 
   useGSAP(
@@ -53,7 +51,7 @@ export function useAboutTeamScroll(
       if (reduceMotion || !section) {
         return;
       }
-      const cards = gsap.utils.toArray<HTMLElement>("[data-team-card]");
+      const cards = gsap.utils.toArray<HTMLElement>('[data-team-card]');
       if (cards.length === 0) {
         return;
       }

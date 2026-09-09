@@ -1,9 +1,9 @@
-"use server";
+'use server';
 
-import { z } from "zod";
+import { z } from 'zod';
 
-import { reverseGeocode } from "@/lib/maps/google-maps";
-import { logger } from "@/lib/observability/logger";
+import { reverseGeocode } from '@/lib/maps/google-maps';
+import { logger } from '@/lib/observability/logger';
 
 const reverseGeocodeSchema = z.object({
   lat: z.number().finite().min(-90).max(90),
@@ -25,7 +25,7 @@ export async function reverseGeocodeAddressAction(
 ): Promise<ReverseGeocodeAddressResult> {
   const parsed = reverseGeocodeSchema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, error: "Invalid map coordinates." };
+    return { ok: false, error: 'Invalid map coordinates.' };
   }
 
   try {
@@ -38,15 +38,13 @@ export async function reverseGeocodeAddressAction(
       lng: parsed.data.lng,
     };
   } catch (error) {
-    logger.warn("delivery.reverse_geocode_failed", {
-      message: error instanceof Error ? error.message : "unknown",
+    logger.warn('delivery.reverse_geocode_failed', {
+      message: error instanceof Error ? error.message : 'unknown',
     });
     return {
       ok: false,
       error:
-        error instanceof Error
-          ? error.message
-          : "Unable to resolve address for this map point.",
+        error instanceof Error ? error.message : 'Unable to resolve address for this map point.',
     };
   }
 }

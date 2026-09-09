@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { ArrowRight, ShoppingBag } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
-import { annotate } from "rough-notation";
-import { useEffect, useRef } from "react";
+import { ArrowRight, ShoppingBag } from 'lucide-react';
+import { motion, useReducedMotion } from 'motion/react';
+import { annotate } from 'rough-notation';
+import { useEffect, useRef } from 'react';
 
-import { AppLink } from "@/components/ui/AppLink";
-import type { Locale } from "@/lib/i18n/config";
+import { AppLink } from '@/components/ui/AppLink';
+import type { Locale } from '@/lib/i18n/config';
 
 type CartDrawerEmptyProps = {
   locale: Locale;
@@ -32,8 +32,8 @@ export function CartDrawerEmpty({
       return;
     }
     const mark = annotate(titleEl, {
-      type: "underline",
-      color: "#ff6b00",
+      type: 'underline',
+      color: '#ff6b00',
       animate: !reduceMotion,
       animationDuration: 700,
       padding: 4,
@@ -48,15 +48,12 @@ export function CartDrawerEmpty({
       <motion.div
         className="flex size-28 items-center justify-center rounded-full bg-[#ff6b00] text-white shadow-[0_12px_28px_rgba(255,107,0,0.35)]"
         animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
-        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
       >
         <ShoppingBag className="size-12" aria-hidden />
       </motion.div>
       <div className="relative mt-6">
-        <p
-          ref={titleRef}
-          className="inline-block text-xl font-bold text-[#1e1e1e]"
-        >
+        <p ref={titleRef} className="inline-block text-xl font-bold text-[#1e1e1e]">
           {empty}
         </p>
       </div>

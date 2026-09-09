@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useMemo, useState, useTransition, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useMemo, useState, useTransition, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Button } from "@/components/ui/Button";
-import { purchaseGiftCardAction } from "@/features/gift-cards/application/admin-actions";
-import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
-import type { GiftCardSettings } from "@/features/gift-cards/domain/gift-card-rules";
-import type { Locale } from "@/lib/i18n/config";
-import { formatMoneyAmount } from "@/lib/money/format";
+import { Button } from '@/components/ui/Button';
+import { purchaseGiftCardAction } from '@/features/gift-cards/application/admin-actions';
+import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
+import type { GiftCardSettings } from '@/features/gift-cards/domain/gift-card-rules';
+import type { Locale } from '@/lib/i18n/config';
+import { formatMoneyAmount } from '@/lib/money/format';
 
 type BuyGiftCardFormCopy = {
   title: string;
@@ -45,7 +45,7 @@ export function BuyGiftCardForm({
 }: BuyGiftCardFormProps) {
   const router = useRouter();
   const [amount, setAmount] = useState(settings.presets[0] ?? settings.minAmount);
-  const [customAmount, setCustomAmount] = useState("");
+  const [customAmount, setCustomAmount] = useState('');
   const [useCustom, setUseCustom] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -69,16 +69,16 @@ export function BuyGiftCardForm({
       const result = await purchaseGiftCardAction({
         locale,
         amount: resolvedAmount,
-        recipientName: String(data.get("recipientName") ?? ""),
-        recipientEmail: String(data.get("recipientEmail") ?? ""),
-        recipientPhone: String(data.get("recipientPhone") ?? "") || undefined,
-        purchaserName: String(data.get("purchaserName") ?? ""),
-        message: String(data.get("message") ?? "") || undefined,
-        scheduledSendAt: String(data.get("scheduledSendAt") ?? "")
-          ? new Date(String(data.get("scheduledSendAt"))).toISOString()
+        recipientName: String(data.get('recipientName') ?? ''),
+        recipientEmail: String(data.get('recipientEmail') ?? ''),
+        recipientPhone: String(data.get('recipientPhone') ?? '') || undefined,
+        purchaserName: String(data.get('purchaserName') ?? ''),
+        message: String(data.get('message') ?? '') || undefined,
+        scheduledSendAt: String(data.get('scheduledSendAt') ?? '')
+          ? new Date(String(data.get('scheduledSendAt'))).toISOString()
           : null,
         paymentMethod: String(
-          data.get("paymentMethod") ?? "cash_on_delivery",
+          data.get('paymentMethod') ?? 'cash_on_delivery',
         ) as CheckoutPaymentMethod,
       });
 
@@ -108,11 +108,11 @@ export function BuyGiftCardForm({
               }}
               className={
                 !useCustom && amount === preset
-                  ? "rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm text-white"
-                  : "rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-400"
+                  ? 'rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm text-white'
+                  : 'rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-400'
               }
             >
-              {formatMoneyAmount(preset, "AMD", locale)}
+              {formatMoneyAmount(preset, 'AMD', locale)}
             </button>
           ))}
           <button
@@ -120,8 +120,8 @@ export function BuyGiftCardForm({
             onClick={() => setUseCustom(true)}
             className={
               useCustom
-                ? "rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm text-white"
-                : "rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-400"
+                ? 'rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm text-white'
+                : 'rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-400'
             }
           >
             {copy.customAmount}

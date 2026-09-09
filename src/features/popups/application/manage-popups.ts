@@ -1,18 +1,15 @@
-"use server";
+'use server';
 
-import { eq, ne } from "drizzle-orm";
-import { revalidatePath, updateTag } from "next/cache";
+import { eq, ne } from 'drizzle-orm';
+import { revalidatePath, updateTag } from 'next/cache';
 
-import { auditLogs, mediaAssets, storePopups } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
+import { auditLogs, mediaAssets, storePopups } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
 import {
   persistPopupImage,
   removePopupImage,
-} from "@/features/popups/application/persist-popup-media";
-import {
-  popupRuleErrorMessage,
-  validatePopupFields,
-} from "@/features/popups/domain/popup-rules";
+} from '@/features/popups/application/persist-popup-media';
+import { popupRuleErrorMessage, validatePopupFields } from '@/features/popups/domain/popup-rules';
 import {
   deletePopupSchema,
   togglePopupSchema,
@@ -20,31 +17,31 @@ import {
   type DeletePopupInput,
   type TogglePopupInput,
   type UpsertPopupInput,
-} from "@/features/popups/schemas";
-import { requireAdmin } from "@/lib/auth/policies";
-import { CACHE_TAGS } from "@/lib/cache/tags";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/features/popups/schemas';
+import { requireAdmin } from '@/lib/auth/policies';
+import { CACHE_TAGS } from '@/lib/cache/tags';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 function parseDrawerFormData(formData: FormData): UpsertPopupInput | null {
-  const linkRaw = String(formData.get("linkUrl") ?? "").trim();
+  const linkRaw = String(formData.get('linkUrl') ?? '').trim();
   const parsed = upsertPopupSchema.safeParse({
-    title: formData.get("title"),
+    title: formData.get('title'),
     linkUrl: linkRaw || undefined,
   });
   return parsed.success ? parsed.data : null;
 }
 
 function normalizeLinkUrl(linkUrl: string | undefined): string | null {
-  const trimmed = linkUrl?.trim() ?? "";
+  const trimmed = linkUrl?.trim() ?? '';
   return trimmed.length > 0 ? trimmed : null;
 }
 
 function revalidatePopups(locale: string): void {
   revalidatePath(`/${locale}/admin/popups`);
-  for (const loc of ["hy", "en", "ru"] as const) {
-    revalidatePath(`/${loc}`, "layout");
+  for (const loc of ['hy', 'en', 'ru'] as const) {
+    revalidatePath(`/${loc}`, 'layout');
   }
   updateTag(CACHE_TAGS.popups);
 }
@@ -55,12 +52,12 @@ export async function createPopupAction(
   formData: FormData,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const data = parseDrawerFormData(formData);
   if (!data) {
-    return err("VALIDATION_ERROR", "Invalid popup payload.");
+    return err('VALIDATION_ERROR', 'Invalid popup payload.');
   }
 
   const ruleError = validatePopupFields(data);
@@ -68,9 +65,9 @@ export async function createPopupAction(
     return err(ruleError, popupRuleErrorMessage(ruleError));
   }
 
-  const image = formData.get("image");
+  const image = formData.get('image');
   if (!(image instanceof File) || image.size === 0) {
-    return err("IMAGE_REQUIRED", "Popup image is required.");
+    return err('IMAGE_REQUIRED', 'Popup image is required.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -89,8 +86,8 @@ export async function createPopupAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "popup.create",
-        targetType: "store_popup",
+        action: 'popup.create',
+        targetType: 'store_popup',
         targetId: id,
         afterDiff: {
           title: data.title.trim(),
@@ -103,13 +100,13 @@ export async function createPopupAction(
 
     const mediaResult = await persistPopupImage(id, image);
     if (mediaResult.error) {
-      return err("VALIDATION_ERROR", mediaResult.error);
+      return err('VALIDATION_ERROR', mediaResult.error);
     }
 
     revalidatePopups(locale);
     return ok({ id });
   } catch {
-    return err("POPUP_CREATE_FAILED", "Unable to create popup.");
+    return err('POPUP_CREATE_FAILED', 'Unable to create popup.');
   }
 }
 
@@ -120,12 +117,12 @@ export async function updatePopupAction(
   formData: FormData,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const data = parseDrawerFormData(formData);
   if (!data) {
-    return err("VALIDATION_ERROR", "Invalid popup payload.");
+    return err('VALIDATION_ERROR', 'Invalid popup payload.');
   }
 
   const ruleError = validatePopupFields(data);
@@ -135,12 +132,12 @@ export async function updatePopupAction(
 
   const actor = await requireAdmin(locale as Locale);
   const linkUrl = normalizeLinkUrl(data.linkUrl);
-  const removeImage = formData.get("removeImage") === "1";
-  const image = formData.get("image");
+  const removeImage = formData.get('removeImage') === '1';
+  const image = formData.get('image');
   const hasNewImage = image instanceof File && image.size > 0;
 
   if (removeImage && !hasNewImage) {
-    return err("IMAGE_REQUIRED", "Popup image is required.");
+    return err('IMAGE_REQUIRED', 'Popup image is required.');
   }
 
   try {
@@ -149,11 +146,11 @@ export async function updatePopupAction(
         .select()
         .from(storePopups)
         .where(eq(storePopups.id, popupId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
       await tx
@@ -168,8 +165,8 @@ export async function updatePopupAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "popup.update",
-        targetType: "store_popup",
+        action: 'popup.update',
+        targetType: 'store_popup',
         targetId: popupId,
         beforeDiff: {
           title: existing.title,
@@ -192,17 +189,17 @@ export async function updatePopupAction(
     if (hasNewImage && image instanceof File) {
       const mediaResult = await persistPopupImage(popupId, image);
       if (mediaResult.error) {
-        return err("VALIDATION_ERROR", mediaResult.error);
+        return err('VALIDATION_ERROR', mediaResult.error);
       }
     }
 
     revalidatePopups(locale);
     return ok({ id: popupId });
   } catch (error) {
-    if (error instanceof Error && error.message === "NOT_FOUND") {
-      return err("NOT_FOUND", "Popup not found.");
+    if (error instanceof Error && error.message === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Popup not found.');
     }
-    return err("POPUP_UPDATE_FAILED", "Unable to update popup.");
+    return err('POPUP_UPDATE_FAILED', 'Unable to update popup.');
   }
 }
 
@@ -212,12 +209,12 @@ export async function togglePopupAction(
   raw: TogglePopupInput,
 ): Promise<Result<{ id: string; isActive: boolean }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = togglePopupSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid toggle payload.");
+    return err('VALIDATION_ERROR', 'Invalid toggle payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -228,11 +225,11 @@ export async function togglePopupAction(
         .select()
         .from(storePopups)
         .where(eq(storePopups.id, parsed.data.popupId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
       if (parsed.data.isActive) {
@@ -243,7 +240,7 @@ export async function togglePopupAction(
           .limit(1);
 
         if (!media) {
-          throw new Error("IMAGE_REQUIRED");
+          throw new Error('IMAGE_REQUIRED');
         }
 
         await tx
@@ -260,8 +257,8 @@ export async function togglePopupAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "popup.toggle",
-        targetType: "store_popup",
+        action: 'popup.toggle',
+        targetType: 'store_popup',
         targetId: existing.id,
         beforeDiff: { isActive: existing.isActive },
         afterDiff: { isActive: parsed.data.isActive },
@@ -274,13 +271,13 @@ export async function togglePopupAction(
     revalidatePopups(locale);
     return ok(result);
   } catch (error) {
-    if (error instanceof Error && error.message === "NOT_FOUND") {
-      return err("NOT_FOUND", "Popup not found.");
+    if (error instanceof Error && error.message === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Popup not found.');
     }
-    if (error instanceof Error && error.message === "IMAGE_REQUIRED") {
-      return err("IMAGE_REQUIRED", "Popup image is required before activation.");
+    if (error instanceof Error && error.message === 'IMAGE_REQUIRED') {
+      return err('IMAGE_REQUIRED', 'Popup image is required before activation.');
     }
-    return err("POPUP_TOGGLE_FAILED", "Unable to toggle popup.");
+    return err('POPUP_TOGGLE_FAILED', 'Unable to toggle popup.');
   }
 }
 
@@ -290,12 +287,12 @@ export async function deletePopupAction(
   raw: DeletePopupInput,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = deletePopupSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid delete payload.");
+    return err('VALIDATION_ERROR', 'Invalid delete payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -306,24 +303,22 @@ export async function deletePopupAction(
         .select()
         .from(storePopups)
         .where(eq(storePopups.id, parsed.data.popupId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
-      await tx
-        .delete(mediaAssets)
-        .where(eq(mediaAssets.popupId, existing.id));
+      await tx.delete(mediaAssets).where(eq(mediaAssets.popupId, existing.id));
 
       await tx.delete(storePopups).where(eq(storePopups.id, existing.id));
 
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "popup.delete",
-        targetType: "store_popup",
+        action: 'popup.delete',
+        targetType: 'store_popup',
         targetId: existing.id,
         beforeDiff: {
           title: existing.title,
@@ -336,9 +331,9 @@ export async function deletePopupAction(
     revalidatePopups(locale);
     return ok({ id: parsed.data.popupId });
   } catch (error) {
-    if (error instanceof Error && error.message === "NOT_FOUND") {
-      return err("NOT_FOUND", "Popup not found.");
+    if (error instanceof Error && error.message === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Popup not found.');
     }
-    return err("POPUP_DELETE_FAILED", "Unable to delete popup.");
+    return err('POPUP_DELETE_FAILED', 'Unable to delete popup.');
   }
 }

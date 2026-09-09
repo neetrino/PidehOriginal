@@ -1,33 +1,33 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
-describe("getDictionary", () => {
-  it("merges namespace files into the storefront dictionary shape", () => {
-    const dictionary = getDictionary("en");
+describe('getDictionary', () => {
+  it('merges namespace files into the storefront dictionary shape', () => {
+    const dictionary = getDictionary('en');
 
-    expect(dictionary.brand).toBe("Pideh");
-    expect(dictionary.nav.home).toBe("Home");
-    expect(dictionary.home.title).toBe("Pideh");
-    expect(dictionary.contact.title).toBe("Contact");
-    expect(dictionary.cartDrawer.title).toBe("Shopping Cart");
-    expect(dictionary.cartDrawer.groupOrder).toBe("Group order");
-    expect(dictionary.checkout.title).toBe("Checkout");
-    expect(dictionary.groupOrder.createButton).toBe("Group order");
+    expect(dictionary.brand).toBe('Pideh');
+    expect(dictionary.nav.home).toBe('Home');
+    expect(dictionary.home.title).toBe('Pideh');
+    expect(dictionary.contact.title).toBe('Contact');
+    expect(dictionary.cartDrawer.title).toBe('Shopping Cart');
+    expect(dictionary.cartDrawer.groupOrder).toBe('Group order');
+    expect(dictionary.checkout.title).toBe('Checkout');
+    expect(dictionary.groupOrder.createButton).toBe('Group order');
     expect(dictionary.groupOrder.cancelledAlert).toBe(
-      "The group order was cancelled because the group owner left.",
+      'The group order was cancelled because the group owner left.',
     );
-    expect(dictionary.groupOrder.spendLimitExceededAlert).toContain("{amount}");
+    expect(dictionary.groupOrder.spendLimitExceededAlert).toContain('{amount}');
   });
 
-  it("loads Armenian and Russian namespaces", () => {
-    expect(getDictionary("hy").nav.home).toBe("Գլխավոր");
-    expect(getDictionary("ru").nav.home).toBe("Главная");
+  it('loads Armenian and Russian namespaces', () => {
+    expect(getDictionary('hy').nav.home).toBe('Գլխավոր');
+    expect(getDictionary('ru').nav.home).toBe('Главная');
   });
 
-  it("exposes admin.nav.dashboard for all locales", () => {
-    expect(getDictionary("en").admin.nav.dashboard).toBe("Dashboard");
-    expect(typeof getDictionary("hy").admin.nav.dashboard).toBe("string");
-    expect(typeof getDictionary("ru").admin.nav.dashboard).toBe("string");
+  it('exposes admin.nav.dashboard for all locales', () => {
+    expect(getDictionary('en').admin.nav.dashboard).toBe('Dashboard');
+    expect(typeof getDictionary('hy').admin.nav.dashboard).toBe('string');
+    expect(typeof getDictionary('ru').admin.nav.dashboard).toBe('string');
   });
 });

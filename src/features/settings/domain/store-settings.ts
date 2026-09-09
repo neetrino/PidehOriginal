@@ -1,33 +1,27 @@
-import {
-  DEFAULT_BONUS_SETTINGS,
-  type BonusSettings,
-} from "@/features/bonuses/domain/bonus-rules";
+import { DEFAULT_BONUS_SETTINGS, type BonusSettings } from '@/features/bonuses/domain/bonus-rules';
 import {
   DEFAULT_GIFT_CARD_SETTINGS,
   type GiftCardSettings,
-} from "@/features/gift-cards/domain/gift-card-rules";
-import { ORDER_STATUSES, type OrderStatus } from "@/features/orders/domain/order-status";
-import { DEFAULT_RATES_FROM_AMD } from "@/lib/fx/default-rates";
-import {
-  normalizeRateDecimalString,
-  parseRateToFixed,
-} from "@/lib/money/convert";
+} from '@/features/gift-cards/domain/gift-card-rules';
+import { ORDER_STATUSES, type OrderStatus } from '@/features/orders/domain/order-status';
+import { DEFAULT_RATES_FROM_AMD } from '@/lib/fx/default-rates';
+import { normalizeRateDecimalString, parseRateToFixed } from '@/lib/money/convert';
 
 export type { BonusSettings, GiftCardSettings };
 export { DEFAULT_BONUS_SETTINGS, DEFAULT_GIFT_CARD_SETTINGS };
 
 export const STORE_SETTING_KEYS = [
-  "store.identity",
-  "store.branding",
-  "store.social",
-  "store.maintenance",
-  "store.stacking",
-  "store.revenue",
-  "store.globalDiscount",
-  "store.fxRates",
-  "store.delivery",
-  "store.bonuses",
-  "store.giftCards",
+  'store.identity',
+  'store.branding',
+  'store.social',
+  'store.maintenance',
+  'store.stacking',
+  'store.revenue',
+  'store.globalDiscount',
+  'store.fxRates',
+  'store.delivery',
+  'store.bonuses',
+  'store.giftCards',
 ] as const;
 
 export type StoreSettingKey = (typeof STORE_SETTING_KEYS)[number];
@@ -80,7 +74,7 @@ export const DEFAULT_FX_RATES: StoreFxRates = {
 };
 
 function isPositiveRateString(value: unknown): value is string {
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     return false;
   }
   try {
@@ -92,10 +86,10 @@ function isPositiveRateString(value: unknown): value is string {
 }
 
 export const DEFAULT_REVENUE_STATUSES: OrderStatus[] = [
-  "CONFIRMED",
-  "PROCESSING",
-  "SHIPPED",
-  "DELIVERED",
+  'CONFIRMED',
+  'PROCESSING',
+  'SHIPPED',
+  'DELIVERED',
 ];
 
 export function isStoreSettingKey(value: string): value is StoreSettingKey {
@@ -103,7 +97,7 @@ export function isStoreSettingKey(value: string): value is StoreSettingKey {
 }
 
 export function parseRevenueStatuses(value: unknown): OrderStatus[] {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return [...DEFAULT_REVENUE_STATUSES];
   }
 
@@ -114,57 +108,51 @@ export function parseRevenueStatuses(value: unknown): OrderStatus[] {
 
   const parsed = statuses.filter(
     (item): item is OrderStatus =>
-      typeof item === "string" &&
+      typeof item === 'string' &&
       (ORDER_STATUSES as readonly string[]).includes(item) &&
-      item !== "CANCELLED" &&
-      item !== "REFUNDED" &&
-      item !== "PENDING",
+      item !== 'CANCELLED' &&
+      item !== 'REFUNDED' &&
+      item !== 'PENDING',
   );
 
   return parsed.length > 0 ? parsed : [...DEFAULT_REVENUE_STATUSES];
 }
 
 export function parseMaintenance(value: unknown): StoreMaintenance {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return { enabled: false };
   }
 
   const record = value as Record<string, unknown>;
   return {
     enabled: record.enabled === true,
-    message:
-      typeof record.message === "string" ? record.message.slice(0, 500) : undefined,
+    message: typeof record.message === 'string' ? record.message.slice(0, 500) : undefined,
   };
 }
 
 export function parseStacking(value: unknown): StoreStacking {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return { allowCouponWithAutomatic: false };
   }
 
   return {
     allowCouponWithAutomatic:
-      (value as { allowCouponWithAutomatic?: unknown }).allowCouponWithAutomatic ===
-      true,
+      (value as { allowCouponWithAutomatic?: unknown }).allowCouponWithAutomatic === true,
   };
 }
 
 export function parseGlobalDiscount(value: unknown): StoreGlobalDiscount {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return { percentage: null };
   }
 
   const raw = (value as { percentage?: unknown }).percentage;
-  if (raw === null || raw === undefined || raw === "") {
+  if (raw === null || raw === undefined || raw === '') {
     return { percentage: null };
   }
 
-  const percentage = typeof raw === "number" ? raw : Number(raw);
-  if (
-    !Number.isInteger(percentage) ||
-    percentage < 1 ||
-    percentage > 100
-  ) {
+  const percentage = typeof raw === 'number' ? raw : Number(raw);
+  if (!Number.isInteger(percentage) || percentage < 1 || percentage > 100) {
     return { percentage: null };
   }
 
@@ -172,27 +160,26 @@ export function parseGlobalDiscount(value: unknown): StoreGlobalDiscount {
 }
 
 export function parseIdentity(value: unknown): StoreIdentity {
-  if (!value || typeof value !== "object") {
-    return { name: "White Shop", supportEmail: "support@example.com" };
+  if (!value || typeof value !== 'object') {
+    return { name: 'White Shop', supportEmail: 'support@example.com' };
   }
 
   const record = value as Record<string, unknown>;
   return {
     name:
-      typeof record.name === "string" && record.name.trim()
+      typeof record.name === 'string' && record.name.trim()
         ? record.name.trim().slice(0, 120)
-        : "White Shop",
+        : 'White Shop',
     supportEmail:
-      typeof record.supportEmail === "string" && record.supportEmail.includes("@")
+      typeof record.supportEmail === 'string' && record.supportEmail.includes('@')
         ? record.supportEmail.trim().toLowerCase().slice(0, 254)
-        : "support@example.com",
-    phone:
-      typeof record.phone === "string" ? record.phone.trim().slice(0, 40) : undefined,
+        : 'support@example.com',
+    phone: typeof record.phone === 'string' ? record.phone.trim().slice(0, 40) : undefined,
   };
 }
 
 export function parseFxRates(value: unknown): StoreFxRates {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return { ...DEFAULT_FX_RATES };
   }
 
@@ -207,13 +194,8 @@ export function parseFxRates(value: unknown): StoreFxRates {
   };
 }
 
-function parsePercentInRange(
-  value: unknown,
-  fallback: number,
-  min: number,
-  max: number,
-): number {
-  const percentage = typeof value === "number" ? value : Number(value);
+function parsePercentInRange(value: unknown, fallback: number, min: number, max: number): number {
+  const percentage = typeof value === 'number' ? value : Number(value);
   if (!Number.isInteger(percentage) || percentage < min || percentage > max) {
     return fallback;
   }
@@ -221,19 +203,18 @@ function parsePercentInRange(
 }
 
 export function parseBonusSettings(value: unknown): BonusSettings {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return { ...DEFAULT_BONUS_SETTINGS };
   }
 
   const record = value as Record<string, unknown>;
   const expiryRaw = record.expiryDays;
   let expiryDays: number | null = DEFAULT_BONUS_SETTINGS.expiryDays;
-  if (expiryRaw === null || expiryRaw === undefined || expiryRaw === "") {
+  if (expiryRaw === null || expiryRaw === undefined || expiryRaw === '') {
     expiryDays = null;
   } else {
-    const days = typeof expiryRaw === "number" ? expiryRaw : Number(expiryRaw);
-    expiryDays =
-      Number.isInteger(days) && days > 0 && days <= 3650 ? days : null;
+    const days = typeof expiryRaw === 'number' ? expiryRaw : Number(expiryRaw);
+    expiryDays = Number.isInteger(days) && days > 0 && days <= 3650 ? days : null;
   }
 
   return {
@@ -254,7 +235,7 @@ export function parseBonusSettings(value: unknown): BonusSettings {
 }
 
 export function parseGiftCardSettings(value: unknown): GiftCardSettings {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return {
       presets: [...DEFAULT_GIFT_CARD_SETTINGS.presets],
       minAmount: DEFAULT_GIFT_CARD_SETTINGS.minAmount,
@@ -267,9 +248,7 @@ export function parseGiftCardSettings(value: unknown): GiftCardSettings {
   const presetsRaw = record.presets;
   const presets =
     Array.isArray(presetsRaw) &&
-    presetsRaw.every(
-      (item) => Number.isInteger(item) && (item as number) > 0,
-    )
+    presetsRaw.every((item) => Number.isInteger(item) && (item as number) > 0)
       ? (presetsRaw as number[])
       : [...DEFAULT_GIFT_CARD_SETTINGS.presets];
 
@@ -287,14 +266,12 @@ export function parseGiftCardSettings(value: unknown): GiftCardSettings {
   );
 
   const expiryRaw = record.defaultExpiryDays;
-  let defaultExpiryDays: number | null =
-    DEFAULT_GIFT_CARD_SETTINGS.defaultExpiryDays;
-  if (expiryRaw === null || expiryRaw === undefined || expiryRaw === "") {
+  let defaultExpiryDays: number | null = DEFAULT_GIFT_CARD_SETTINGS.defaultExpiryDays;
+  if (expiryRaw === null || expiryRaw === undefined || expiryRaw === '') {
     defaultExpiryDays = null;
   } else {
-    const days = typeof expiryRaw === "number" ? expiryRaw : Number(expiryRaw);
-    defaultExpiryDays =
-      Number.isInteger(days) && days > 0 && days <= 3650 ? days : null;
+    const days = typeof expiryRaw === 'number' ? expiryRaw : Number(expiryRaw);
+    defaultExpiryDays = Number.isInteger(days) && days > 0 && days <= 3650 ? days : null;
   }
 
   return { presets, minAmount, maxAmount, defaultExpiryDays };

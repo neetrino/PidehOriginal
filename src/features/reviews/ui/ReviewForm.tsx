@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { RatingStars } from "@/features/products/ui/ProductReviewRating";
-import { submitReviewAction } from "@/features/reviews/application/submit-review";
-import { updateReviewAction } from "@/features/reviews/application/update-review";
-import { StarRatingInput } from "@/features/reviews/ui/StarRatingInput";
-import type { Locale } from "@/lib/i18n/config";
+import { RatingStars } from '@/features/products/ui/ProductReviewRating';
+import { submitReviewAction } from '@/features/reviews/application/submit-review';
+import { updateReviewAction } from '@/features/reviews/application/update-review';
+import { StarRatingInput } from '@/features/reviews/ui/StarRatingInput';
+import type { Locale } from '@/lib/i18n/config';
 
 type ReviewFormLabels = {
   title: string;
@@ -39,7 +39,7 @@ export function ReviewForm({
   onCancel,
   reviewId,
   initialRating = 0,
-  initialComment = "",
+  initialComment = '',
 }: ReviewFormProps) {
   const router = useRouter();
   const isEdit = Boolean(reviewId);
@@ -97,9 +97,7 @@ export function ReviewForm({
         });
       }}
     >
-      <h3 className="text-xl font-bold text-gray-900 md:text-2xl">
-        {labels.title}
-      </h3>
+      <h3 className="text-xl font-bold text-gray-900 md:text-2xl">{labels.title}</h3>
 
       <StarRatingInput
         value={rating}

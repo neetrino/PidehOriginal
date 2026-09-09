@@ -1,5 +1,5 @@
-import { MobileBranchCard } from "@/features/home/ui/mobile/MobileBranchCard";
-import { MobileFrame440 } from "@/features/home/ui/mobile/MobileFrame440";
+import { MobileBranchCard } from '@/features/home/ui/mobile/MobileBranchCard';
+import { MobileFrame440 } from '@/features/home/ui/mobile/MobileFrame440';
 
 type BranchItem = {
   id: string;
@@ -22,11 +22,7 @@ const BRANCHES_BAND_HEIGHT = 460;
  *
  * @see https://www.figma.com/design/zyLVZFDhohLYxwuohIrPDN/Pideh-Dev?node-id=268-589
  */
-export function MobileHomeBranches({
-  titleLine1,
-  titleLine2,
-  branches,
-}: MobileHomeBranchesProps) {
+export function MobileHomeBranches({ titleLine1, titleLine2, branches }: MobileHomeBranchesProps) {
   return (
     <MobileFrame440 height={BRANCHES_BAND_HEIGHT} className="relative z-10">
       <section

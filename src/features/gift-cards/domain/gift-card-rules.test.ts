@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 
 import {
   DEFAULT_GIFT_CARD_SETTINGS,
@@ -15,24 +15,20 @@ import {
   resolveCustomerGiftCardBucket,
   resolveGiftCardExpiresAt,
   resolveGiftCardStatusAfterBalance,
-} from "@/features/gift-cards/domain/gift-card-rules";
+} from '@/features/gift-cards/domain/gift-card-rules';
 
-describe("gift-card-rules", () => {
-  it("normalizes codes", () => {
-    expect(normalizeGiftCardCode(" pid-8f4d-2x91 ")).toBe("PID-8F4D-2X91");
+describe('gift-card-rules', () => {
+  it('normalizes codes', () => {
+    expect(normalizeGiftCardCode(' pid-8f4d-2x91 ')).toBe('PID-8F4D-2X91');
   });
 
-  it("validates amounts against settings", () => {
-    expect(isValidGiftCardAmount(20_000, DEFAULT_GIFT_CARD_SETTINGS)).toBe(
-      true,
-    );
+  it('validates amounts against settings', () => {
+    expect(isValidGiftCardAmount(20_000, DEFAULT_GIFT_CARD_SETTINGS)).toBe(true);
     expect(isValidGiftCardAmount(500, DEFAULT_GIFT_CARD_SETTINGS)).toBe(false);
-    expect(isValidGiftCardAmount(20_000.5, DEFAULT_GIFT_CARD_SETTINGS)).toBe(
-      false,
-    );
+    expect(isValidGiftCardAmount(20_000.5, DEFAULT_GIFT_CARD_SETTINGS)).toBe(false);
   });
 
-  it("calculates partial redeem and remaining payable", () => {
+  it('calculates partial redeem and remaining payable', () => {
     expect(
       calculateGiftCardRedeemAmount({
         balanceAmount: 20_000,
@@ -41,8 +37,8 @@ describe("gift-card-rules", () => {
     ).toBe(18_000);
 
     const preview = buildGiftCardRedeemPreview({
-      giftCardId: "g1",
-      code: "PID-AAAA-BBBB",
+      giftCardId: 'g1',
+      code: 'PID-AAAA-BBBB',
       initialAmount: 20_000,
       balanceAmount: 20_000,
       payableBeforeGiftCard: 18_000,
@@ -52,10 +48,10 @@ describe("gift-card-rules", () => {
     expect(preview.payableAfter).toBe(0);
   });
 
-  it("keeps residual when card exceeds order", () => {
+  it('keeps residual when card exceeds order', () => {
     const preview = buildGiftCardRedeemPreview({
-      giftCardId: "g1",
-      code: "PID-AAAA-BBBB",
+      giftCardId: 'g1',
+      code: 'PID-AAAA-BBBB',
       initialAmount: 20_000,
       balanceAmount: 20_000,
       payableBeforeGiftCard: 15_000,
@@ -65,121 +61,119 @@ describe("gift-card-rules", () => {
     expect(preview.payableAfter).toBe(0);
   });
 
-  it("rejects expired, disabled, and empty cards", () => {
+  it('rejects expired, disabled, and empty cards', () => {
     expect(
       isGiftCardRedeemable({
-        status: "ACTIVE",
+        status: 'ACTIVE',
         balanceAmount: 1000,
         expiresAt: null,
       }),
     ).toBe(true);
     expect(
       isGiftCardRedeemable({
-        status: "DISABLED",
+        status: 'DISABLED',
         balanceAmount: 1000,
         expiresAt: null,
       }),
     ).toBe(false);
     expect(
       isGiftCardRedeemable({
-        status: "ACTIVE",
+        status: 'ACTIVE',
         balanceAmount: 0,
         expiresAt: null,
       }),
     ).toBe(false);
     expect(
       isGiftCardRedeemable({
-        status: "ACTIVE",
+        status: 'ACTIVE',
         balanceAmount: 1000,
-        expiresAt: new Date("2020-01-01T00:00:00.000Z"),
-        now: new Date("2026-01-01T00:00:00.000Z"),
+        expiresAt: new Date('2020-01-01T00:00:00.000Z'),
+        now: new Date('2026-01-01T00:00:00.000Z'),
       }),
     ).toBe(false);
   });
 
-  it("explains why a card cannot be redeemed", () => {
-    expect(giftCardRedeemErrorMessage({ found: false })).toBe(
-      "Gift card code was not found.",
-    );
+  it('explains why a card cannot be redeemed', () => {
+    expect(giftCardRedeemErrorMessage({ found: false })).toBe('Gift card code was not found.');
     expect(
       giftCardRedeemErrorMessage({
         found: true,
-        status: "PENDING_PAYMENT",
+        status: 'PENDING_PAYMENT',
         balanceAmount: 0,
         expiresAt: null,
       }),
-    ).toBe("Gift card is pending payment and cannot be used yet.");
+    ).toBe('Gift card is pending payment and cannot be used yet.');
     expect(
       giftCardRedeemErrorMessage({
         found: true,
-        status: "USED",
+        status: 'USED',
         balanceAmount: 0,
         expiresAt: null,
       }),
-    ).toBe("Gift card has no remaining balance.");
+    ).toBe('Gift card has no remaining balance.');
     expect(
       giftCardRedeemErrorMessage({
         found: true,
-        status: "ACTIVE",
+        status: 'ACTIVE',
         balanceAmount: 1000,
         expiresAt: null,
-        recipientDenied: "unauthenticated",
+        recipientDenied: 'unauthenticated',
       }),
-    ).toBe("Sign in with the recipient account to use this gift card.");
+    ).toBe('Sign in with the recipient account to use this gift card.');
     expect(
       giftCardRedeemErrorMessage({
         found: true,
-        status: "ACTIVE",
+        status: 'ACTIVE',
         balanceAmount: 1000,
         expiresAt: null,
-        recipientDenied: "mismatch",
+        recipientDenied: 'mismatch',
       }),
-    ).toBe("This gift card can only be used by the recipient.");
+    ).toBe('This gift card can only be used by the recipient.');
   });
 
-  it("allows only the recipient actor to redeem", () => {
+  it('allows only the recipient actor to redeem', () => {
     expect(
       isGiftCardRecipientActor({
         actor: null,
-        recipientUserId: "u1",
-        recipientEmail: "a@example.com",
+        recipientUserId: 'u1',
+        recipientEmail: 'a@example.com',
       }),
     ).toBe(false);
     expect(
       isGiftCardRecipientActor({
-        actor: { id: "u2", email: "other@example.com" },
-        recipientUserId: "u1",
-        recipientEmail: "a@example.com",
+        actor: { id: 'u2', email: 'other@example.com' },
+        recipientUserId: 'u1',
+        recipientEmail: 'a@example.com',
       }),
     ).toBe(false);
     expect(
       isGiftCardRecipientActor({
-        actor: { id: "u1", email: "other@example.com" },
-        recipientUserId: "u1",
-        recipientEmail: "a@example.com",
+        actor: { id: 'u1', email: 'other@example.com' },
+        recipientUserId: 'u1',
+        recipientEmail: 'a@example.com',
       }),
     ).toBe(true);
     expect(
       isGiftCardRecipientActor({
-        actor: { id: "u9", email: "A@Example.com" },
+        actor: { id: 'u9', email: 'A@Example.com' },
         recipientUserId: null,
-        recipientEmail: "a@example.com",
+        recipientEmail: 'a@example.com',
       }),
     ).toBe(true);
   });
 
-  it("updates status from balance", () => {
-    expect(resolveGiftCardStatusAfterBalance(0, "ACTIVE")).toBe("USED");
-    expect(resolveGiftCardStatusAfterBalance(100, "USED")).toBe("ACTIVE");
-    expect(resolveGiftCardStatusAfterBalance(0, "DISABLED")).toBe("DISABLED");
+  it('updates status from balance', () => {
+    expect(resolveGiftCardStatusAfterBalance(0, 'ACTIVE')).toBe('USED');
+    expect(resolveGiftCardStatusAfterBalance(100, 'USED')).toBe('ACTIVE');
+    expect(resolveGiftCardStatusAfterBalance(0, 'DISABLED')).toBe('DISABLED');
   });
 
-  it("never lets balance go negative", () => {
+  it('never lets balance go negative', () => {
     expect(nextGiftCardBalance(100, -150)).toBe(0);
     expect(nextGiftCardBalance(100, 50)).toBe(150);
   });
 
-  it("excludes gift-card-paid merchandise from bonus earn base", () => {
+  it('excludes gift-card-paid merchandise from bonus earn base', () => {
     expect(
       bonusEligibleAfterGiftCard({
         subtotalAmount: 18_000,
@@ -189,90 +183,88 @@ describe("gift-card-rules", () => {
     ).toBe(3_000);
   });
 
-  it("resolves expiry from days", () => {
-    const now = new Date("2026-01-01T00:00:00.000Z");
+  it('resolves expiry from days', () => {
+    const now = new Date('2026-01-01T00:00:00.000Z');
     expect(resolveGiftCardExpiresAt(now, null)).toBeNull();
-    expect(resolveGiftCardExpiresAt(now, 365)?.toISOString()).toBe(
-      "2027-01-01T00:00:00.000Z",
-    );
+    expect(resolveGiftCardExpiresAt(now, 365)?.toISOString()).toBe('2027-01-01T00:00:00.000Z');
   });
 
-  it("targets ledger net by order status", () => {
+  it('targets ledger net by order status', () => {
     expect(
       giftCardLedgerTargetNet({
         giftCardAmount: 15_000,
-        orderStatus: "PENDING",
+        orderStatus: 'PENDING',
       }),
     ).toBe(-15_000);
     expect(
       giftCardLedgerTargetNet({
         giftCardAmount: 15_000,
-        orderStatus: "DELIVERED",
+        orderStatus: 'DELIVERED',
       }),
     ).toBe(-15_000);
     expect(
       giftCardLedgerTargetNet({
         giftCardAmount: 15_000,
-        orderStatus: "CANCELLED",
+        orderStatus: 'CANCELLED',
       }),
     ).toBe(0);
     expect(
       giftCardLedgerTargetNet({
         giftCardAmount: 15_000,
-        orderStatus: "REFUNDED",
+        orderStatus: 'REFUNDED',
       }),
     ).toBe(0);
   });
 
-  it("classifies customer gift-card profile buckets", () => {
-    const actor = { id: "user-1", email: "me@example.com" };
+  it('classifies customer gift-card profile buckets', () => {
+    const actor = { id: 'user-1', email: 'me@example.com' };
 
     expect(
       resolveCustomerGiftCardBucket({
         actor,
-        purchaserUserId: "user-2",
-        purchaserEmail: "other@example.com",
-        recipientUserId: "user-1",
-        recipientEmail: "me@example.com",
-        status: "ACTIVE",
+        purchaserUserId: 'user-2',
+        purchaserEmail: 'other@example.com',
+        recipientUserId: 'user-1',
+        recipientEmail: 'me@example.com',
+        status: 'ACTIVE',
         balanceAmount: 10_000,
       }),
-    ).toBe("mine");
+    ).toBe('mine');
 
     expect(
       resolveCustomerGiftCardBucket({
         actor,
-        purchaserUserId: "user-2",
-        purchaserEmail: "other@example.com",
-        recipientUserId: "user-1",
-        recipientEmail: "me@example.com",
-        status: "USED",
+        purchaserUserId: 'user-2',
+        purchaserEmail: 'other@example.com',
+        recipientUserId: 'user-1',
+        recipientEmail: 'me@example.com',
+        status: 'USED',
         balanceAmount: 0,
       }),
-    ).toBe("usedByMe");
+    ).toBe('usedByMe');
 
     expect(
       resolveCustomerGiftCardBucket({
         actor,
-        purchaserUserId: "user-1",
-        purchaserEmail: "me@example.com",
-        recipientUserId: "user-3",
-        recipientEmail: "friend@example.com",
-        status: "ACTIVE",
+        purchaserUserId: 'user-1',
+        purchaserEmail: 'me@example.com',
+        recipientUserId: 'user-3',
+        recipientEmail: 'friend@example.com',
+        status: 'ACTIVE',
         balanceAmount: 20_000,
       }),
-    ).toBe("boughtForOthers");
+    ).toBe('boughtForOthers');
 
     expect(
       resolveCustomerGiftCardBucket({
         actor,
-        purchaserUserId: "user-1",
-        purchaserEmail: "me@example.com",
-        recipientUserId: "user-1",
-        recipientEmail: "me@example.com",
-        status: "ACTIVE",
+        purchaserUserId: 'user-1',
+        purchaserEmail: 'me@example.com',
+        recipientUserId: 'user-1',
+        recipientEmail: 'me@example.com',
+        status: 'ACTIVE',
         balanceAmount: 5_000,
       }),
-    ).toBe("mine");
+    ).toBe('mine');
   });
 });

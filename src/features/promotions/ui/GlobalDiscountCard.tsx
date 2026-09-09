@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { Percent } from "lucide-react";
+import { useEffect, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { Percent } from 'lucide-react';
 
-import { Button } from "@/components/ui/Button";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
-import { setGlobalDiscountAction } from "@/features/promotions/application/manage-discounts";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { ADMIN_INPUT } from '@/features/admin/ui/admin-form-classes';
+import { setGlobalDiscountAction } from '@/features/promotions/application/manage-discounts';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 const QUICK_PERCENTS = [10, 20, 30, 50] as const;
 
 type GlobalDiscountCardCopy = {
-  global: Dictionary["admin"]["discounts"]["global"];
-  common: Dictionary["admin"]["common"];
+  global: Dictionary['admin']['discounts']['global'];
+  common: Dictionary['admin']['common'];
 };
 
 type GlobalDiscountCardProps = {
@@ -22,30 +22,24 @@ type GlobalDiscountCardProps = {
   copy: GlobalDiscountCardCopy;
 };
 
-export function GlobalDiscountCard({
-  locale,
-  initialPercent,
-  copy,
-}: GlobalDiscountCardProps) {
+export function GlobalDiscountCard({ locale, initialPercent, copy }: GlobalDiscountCardProps) {
   const router = useRouter();
-  const [value, setValue] = useState(
-    initialPercent != null ? String(initialPercent) : "",
-  );
+  const [value, setValue] = useState(initialPercent != null ? String(initialPercent) : '');
   const [saved, setSaved] = useState(initialPercent);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    setValue(initialPercent != null ? String(initialPercent) : "");
+    setValue(initialPercent != null ? String(initialPercent) : '');
     setSaved(initialPercent);
   }, [initialPercent]);
 
-  function parseInput(): number | null | "invalid" {
+  function parseInput(): number | null | 'invalid' {
     const trimmed = value.trim();
     if (!trimmed) return null;
     const next = Number(trimmed);
-    if (!Number.isInteger(next) || next < 1 || next > 100) return "invalid";
+    if (!Number.isInteger(next) || next < 1 || next > 100) return 'invalid';
     return next;
   }
 
@@ -59,16 +53,11 @@ export function GlobalDiscountCard({
         return;
       }
       setSaved(result.value.percentage);
-      setValue(
-        result.value.percentage != null ? String(result.value.percentage) : "",
-      );
+      setValue(result.value.percentage != null ? String(result.value.percentage) : '');
       setMessage(
         result.value.percentage == null
           ? copy.global.cleared
-          : copy.global.setTo.replace(
-              "{percent}",
-              String(result.value.percentage),
-            ),
+          : copy.global.setTo.replace('{percent}', String(result.value.percentage)),
       );
       router.refresh();
     });
@@ -81,9 +70,7 @@ export function GlobalDiscountCard({
           <Percent className="h-5 w-5" aria-hidden />
         </span>
         <div>
-          <h2 className="text-base font-semibold text-gray-900">
-            {copy.global.title}
-          </h2>
+          <h2 className="text-base font-semibold text-gray-900">{copy.global.title}</h2>
           <p className="text-sm text-gray-500">{copy.global.forAllProducts}</p>
         </div>
       </div>
@@ -115,7 +102,7 @@ export function GlobalDiscountCard({
           disabled={isPending}
           onClick={() => {
             const parsed = parseInput();
-            if (parsed === "invalid") {
+            if (parsed === 'invalid') {
               setError(copy.global.invalidPercent);
               return;
             }
@@ -129,7 +116,7 @@ export function GlobalDiscountCard({
       <p className="mt-3 text-sm text-gray-500">
         {saved == null
           ? copy.global.noGlobalDiscount
-          : copy.global.activeGlobalDiscount.replace("{percent}", String(saved))}
+          : copy.global.activeGlobalDiscount.replace('{percent}', String(saved))}
       </p>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -148,7 +135,7 @@ export function GlobalDiscountCard({
           type="button"
           disabled={isPending}
           onClick={() => {
-            setValue(saved != null ? String(saved) : "");
+            setValue(saved != null ? String(saved) : '');
             setError(null);
             setMessage(null);
           }}

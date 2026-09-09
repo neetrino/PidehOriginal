@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import NumberFlow from "@number-flow/react";
+import NumberFlow from '@number-flow/react';
 
-import type { Currency } from "@/lib/money/currency";
-import { getCurrencyMeta } from "@/lib/money/currency-meta";
+import type { Currency } from '@/lib/money/currency';
+import { getCurrencyMeta } from '@/lib/money/currency-meta';
 
 type CartMoneyFlowProps = {
   amount: number;
@@ -11,11 +11,7 @@ type CartMoneyFlowProps = {
   className?: string;
 };
 
-export function CartMoneyFlow({
-  amount,
-  currency,
-  className,
-}: CartMoneyFlowProps) {
+export function CartMoneyFlow({ amount, currency, className }: CartMoneyFlowProps) {
   const meta = getCurrencyMeta(currency);
   const major = amount / 10 ** meta.scale;
 
@@ -29,7 +25,7 @@ export function CartMoneyFlow({
           maximumFractionDigits: meta.fractionDigits,
         }}
         respectMotionPreference
-        transformTiming={{ duration: 480, easing: "ease-out" }}
+        transformTiming={{ duration: 480, easing: 'ease-out' }}
       />
     </span>
   );

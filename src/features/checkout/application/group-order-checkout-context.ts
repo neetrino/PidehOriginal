@@ -1,14 +1,14 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { groupOrderParticipants, groupOrders } from "@/db/schema";
-import { assertOrganizerAccess } from "@/features/group-orders/application/access";
-import { isSuccessfulParticipantPayment } from "@/features/group-orders/domain/spend-limit";
-import { peekGroupOrderSession } from "@/features/group-orders/session";
+import { getDb } from '@/db/client';
+import { groupOrderParticipants, groupOrders } from '@/db/schema';
+import { assertOrganizerAccess } from '@/features/group-orders/application/access';
+import { isSuccessfulParticipantPayment } from '@/features/group-orders/domain/spend-limit';
+import { peekGroupOrderSession } from '@/features/group-orders/session';
 
 export type GroupOrderCheckoutParticipant = {
   id: string;
-  role: "ORGANIZER" | "PARTICIPANT";
+  role: 'ORGANIZER' | 'PARTICIPANT';
   finalAmount: number;
   paymentId: string | null;
   paymentStatus: string;
@@ -19,7 +19,7 @@ export type GroupOrderCheckoutContext =
       active: true;
       inviteToken: string;
       groupOrderId: string;
-      paymentMode: "ORGANIZER_PAYS_ALL" | "SPLIT_PER_PARTICIPANT";
+      paymentMode: 'ORGANIZER_PAYS_ALL' | 'SPLIT_PER_PARTICIPANT';
       /**
        * SPLIT: other members already paid on the group page; organizer pays
        * `organizerPayableAmount` at checkout. Always false for organizer-pays-all.
@@ -44,7 +44,7 @@ export async function resolveGroupOrderCheckoutContext(): Promise<GroupOrderChec
 
   const access = await assertOrganizerAccess(session.inviteToken);
   if (!access.ok) return { active: false };
-  if (access.groupOrder.status !== "CHECKOUT") return { active: false };
+  if (access.groupOrder.status !== 'CHECKOUT') return { active: false };
 
   const db = getDb();
   const participants = await db
@@ -59,17 +59,15 @@ export async function resolveGroupOrderCheckoutContext(): Promise<GroupOrderChec
     .where(
       and(
         eq(groupOrderParticipants.groupOrderId, access.groupOrder.id),
-        eq(groupOrderParticipants.status, "ACTIVE"),
+        eq(groupOrderParticipants.status, 'ACTIVE'),
       ),
     );
 
-  const organizer = participants.find((p) => p.role === "ORGANIZER");
-  const others = participants.filter((p) => p.role !== "ORGANIZER");
-  const owingOthers = others.filter(
-    (p) => p.finalAmount > 0 && p.paymentStatus !== "NOT_REQUIRED",
-  );
+  const organizer = participants.find((p) => p.role === 'ORGANIZER');
+  const others = participants.filter((p) => p.role !== 'ORGANIZER');
+  const owingOthers = others.filter((p) => p.finalAmount > 0 && p.paymentStatus !== 'NOT_REQUIRED');
   const splitOthersPrepaid =
-    access.groupOrder.paymentMode === "SPLIT_PER_PARTICIPANT" &&
+    access.groupOrder.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
     owingOthers.length > 0 &&
     owingOthers.every((p) => isSuccessfulParticipantPayment(p.paymentStatus));
 

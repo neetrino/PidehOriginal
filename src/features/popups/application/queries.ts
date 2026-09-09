@@ -1,16 +1,13 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
+import { and, asc, desc, eq, inArray } from 'drizzle-orm';
+import { unstable_cache } from 'next/cache';
 
-import { getDb } from "@/db/client";
-import { mediaAssets, storePopups } from "@/db/schema";
-import {
-  CACHE_TAGS,
-  PUBLIC_CACHE_REVALIDATE_SECONDS,
-} from "@/lib/cache/tags";
-import { mediaPublicUrl } from "@/lib/media/public-url";
-import { logger } from "@/lib/observability/logger";
+import { getDb } from '@/db/client';
+import { mediaAssets, storePopups } from '@/db/schema';
+import { CACHE_TAGS, PUBLIC_CACHE_REVALIDATE_SECONDS } from '@/lib/cache/tags';
+import { mediaPublicUrl } from '@/lib/media/public-url';
+import { logger } from '@/lib/observability/logger';
 
 export type AdminPopupListItem = {
   id: string;
@@ -28,9 +25,7 @@ export type StorefrontPopup = {
   imageUrl: string;
 };
 
-async function loadPopupImageUrls(
-  popupIds: string[],
-): Promise<Map<string, string>> {
+async function loadPopupImageUrls(popupIds: string[]): Promise<Map<string, string>> {
   const map = new Map<string, string>();
   if (popupIds.length === 0) {
     return map;
@@ -45,8 +40,8 @@ async function loadPopupImageUrls(
     .where(
       and(
         inArray(mediaAssets.popupId, popupIds),
-        eq(mediaAssets.uploadStatus, "READY"),
-        eq(mediaAssets.role, "POPUP"),
+        eq(mediaAssets.uploadStatus, 'READY'),
+        eq(mediaAssets.role, 'POPUP'),
       ),
     );
 
@@ -61,10 +56,7 @@ async function loadPopupImageUrls(
 
 /** Lists all storefront popups for admin CMS. */
 export async function listAdminPopups(): Promise<AdminPopupListItem[]> {
-  const rows = await getDb()
-    .select()
-    .from(storePopups)
-    .orderBy(desc(storePopups.createdAt));
+  const rows = await getDb().select().from(storePopups).orderBy(desc(storePopups.createdAt));
 
   const images = await loadPopupImageUrls(rows.map((row) => row.id));
 
@@ -105,7 +97,7 @@ async function loadActiveStorefrontPopup(): Promise<StorefrontPopup | null> {
     };
   } catch (error: unknown) {
     if (isUndefinedRelationError(error)) {
-      logger.warn("popups.store_popups_missing");
+      logger.warn('popups.store_popups_missing');
       return null;
     }
     throw error;
@@ -114,28 +106,24 @@ async function loadActiveStorefrontPopup(): Promise<StorefrontPopup | null> {
 
 /** Active popup for storefront overlay (null when none or missing image). */
 export async function getActiveStorefrontPopup(): Promise<StorefrontPopup | null> {
-  return unstable_cache(
-    async () => loadActiveStorefrontPopup(),
-    ["active-storefront-popup"],
-    {
-      tags: [CACHE_TAGS.popups],
-      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
-    },
-  )();
+  return unstable_cache(async () => loadActiveStorefrontPopup(), ['active-storefront-popup'], {
+    tags: [CACHE_TAGS.popups],
+    revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+  })();
 }
 
 function isUndefinedRelationError(error: unknown): boolean {
   let current: unknown = error;
   for (let depth = 0; depth < 5; depth += 1) {
     if (
-      typeof current === "object" &&
+      typeof current === 'object' &&
       current !== null &&
-      "code" in current &&
-      current.code === "42P01"
+      'code' in current &&
+      current.code === '42P01'
     ) {
       return true;
     }
-    if (typeof current === "object" && current !== null && "cause" in current) {
+    if (typeof current === 'object' && current !== null && 'cause' in current) {
       current = current.cause;
       continue;
     }

@@ -1,9 +1,9 @@
-"use server";
+'use server';
 
-import { getEnv } from "@/config/env";
-import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
-import { geocodeAddress } from "@/lib/maps/google-maps";
-import { logger } from "@/lib/observability/logger";
+import { getEnv } from '@/config/env';
+import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
+import { geocodeAddress } from '@/lib/maps/google-maps';
+import { logger } from '@/lib/observability/logger';
 
 const YEREVAN_CENTER = { lat: 40.1792, lng: 44.4991 } as const;
 
@@ -27,7 +27,7 @@ export async function getMapPickerConfigAction(
   if (!apiKey) {
     return {
       ok: false,
-      error: "Google Maps is not configured.",
+      error: 'Google Maps is not configured.',
     };
   }
 
@@ -45,8 +45,8 @@ export async function getMapPickerConfigAction(
       center = geocoded.location;
       zoom = 16;
     } catch (error) {
-      logger.warn("delivery.map_picker_hint_geocode_failed", {
-        message: error instanceof Error ? error.message : "unknown",
+      logger.warn('delivery.map_picker_hint_geocode_failed', {
+        message: error instanceof Error ? error.message : 'unknown',
       });
     }
   }

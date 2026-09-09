@@ -1,15 +1,13 @@
-import "server-only";
+import 'server-only';
 
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Foundation env contract. Provider secrets become required when the
  * corresponding feature is wired (auth, DB, Redis, R2, email).
  */
 const envSchema = z.object({
-  NODE_ENV: z
-    .enum(["development", "test", "production"])
-    .default("development"),
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   NEXT_PUBLIC_APP_URL: z.string().url(),
   AUTH_SECRET: z.string().min(1).optional(),
   DATABASE_URL: z.string().min(1).optional(),
@@ -39,9 +37,7 @@ function optionalEnv(value: string | undefined): string | undefined {
 }
 
 function resolvePublicBaseUrl(): string | undefined {
-  return optionalEnv(
-    process.env.R2_PUBLIC_BASE_URL || process.env.R2_PUBLIC_URL,
-  );
+  return optionalEnv(process.env.R2_PUBLIC_BASE_URL || process.env.R2_PUBLIC_URL);
 }
 
 export function getEnv(): AppEnv {
@@ -69,8 +65,8 @@ export function getEnv(): AppEnv {
 
   if (!parsed.success) {
     const details = parsed.error.issues
-      .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-      .join("; ");
+      .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+      .join('; ');
     throw new Error(`Invalid environment configuration: ${details}`);
   }
 
@@ -83,7 +79,7 @@ export function requireDatabaseUrl(): string {
   const { DATABASE_URL } = getEnv();
 
   if (!DATABASE_URL) {
-    throw new Error("DATABASE_URL is required");
+    throw new Error('DATABASE_URL is required');
   }
 
   return DATABASE_URL;

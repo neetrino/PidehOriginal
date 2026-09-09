@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { PROFILE_PANEL } from "@/features/profile/ui/profile-ui-classes";
+import { PROFILE_PANEL } from '@/features/profile/ui/profile-ui-classes';
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
+} from '@/features/admin/ui/status-badge';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_FOOTER_ROUNDED_B,
@@ -16,13 +16,13 @@ import {
   ADMIN_TABLE_TD,
   ADMIN_TABLE_TH,
   ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
+} from '@/features/admin/ui/admin-table-classes';
 import {
   formatOrderDrawerMoney,
   formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
-import { formatYerevanDateTime } from "@/features/delivery/domain/delivery-schedule";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/orders/ui/order-drawer-format';
+import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type CustomerOrderRow = {
   id: string;
@@ -39,14 +39,10 @@ type CustomerOrderRow = {
 type CustomerOrdersTableProps = {
   orders: CustomerOrderRow[];
   onOpenOrder: (orderNumber: string) => void;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-export function CustomerOrdersTable({
-  orders,
-  onOpenOrder,
-  copy,
-}: CustomerOrdersTableProps) {
+export function CustomerOrdersTable({ orders, onOpenOrder, copy }: CustomerOrdersTableProps) {
   const table = copy.orders.table;
 
   return (
@@ -70,7 +66,7 @@ export function CustomerOrdersTable({
                 className={`${ADMIN_TABLE_ROW} cursor-pointer`}
                 onClick={() => onOpenOrder(order.orderNumber)}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
+                  if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
                     onOpenOrder(order.orderNumber);
                   }
@@ -80,14 +76,10 @@ export function CustomerOrdersTable({
                 aria-label={order.orderNumber}
               >
                 <td className={ADMIN_TABLE_TD}>
-                  <span className="font-bold text-[#ff6b00]">
-                    {order.orderNumber}
-                  </span>
+                  <span className="font-bold text-[#ff6b00]">{order.orderNumber}</span>
                 </td>
                 <td className={ADMIN_TABLE_TD}>
-                  <span
-                    className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-                  >
+                  <span className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}>
                     {formatOrderStatusLabel(order.status)}
                   </span>
                 </td>
@@ -100,10 +92,7 @@ export function CustomerOrdersTable({
                 </td>
                 <td className={ADMIN_TABLE_TD}>
                   <span className="font-medium text-gray-900">
-                    {formatOrderDrawerMoney(
-                      order.totalAmount,
-                      order.baseCurrency,
-                    )}
+                    {formatOrderDrawerMoney(order.totalAmount, order.baseCurrency)}
                   </span>
                 </td>
                 <td className={ADMIN_TABLE_TD}>
@@ -131,7 +120,7 @@ export function CustomerOrdersTable({
       ) : (
         <div className={ADMIN_TABLE_FOOTER_ROUNDED_B}>
           <p className="text-sm text-[#1e1e1e]/65">
-            Showing {orders.length} order{orders.length === 1 ? "" : "s"}
+            Showing {orders.length} order{orders.length === 1 ? '' : 's'}
           </p>
         </div>
       )}

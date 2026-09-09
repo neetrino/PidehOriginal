@@ -1,26 +1,20 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type FormEvent,
-} from "react";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
-import { AppLink } from "@/components/ui/AppLink";
+import { AppLink } from '@/components/ui/AppLink';
 import {
   MOBILE_ORBIT_MOVE_MS,
   MOBILE_SLOT_COUNT,
   MobileCategoryOrbit,
   mobileActiveCategoryTitle,
   type OrbitCategoryItem,
-} from "@/features/home/ui/mobile/MobileCategoryOrbit";
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
-import { catalogHref } from "@/features/products/application/catalog-search-params";
-import type { Locale } from "@/lib/i18n/config";
+} from '@/features/home/ui/mobile/MobileCategoryOrbit';
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
+import { catalogHref } from '@/features/products/application/catalog-search-params';
+import type { Locale } from '@/lib/i18n/config';
 
 type CategoryItem = {
   id: string;
@@ -84,7 +78,7 @@ export function MobileHomeHero({
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const productsHref = `/${locale}/products`;
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [spin, setSpin] = useState(0);
   const [orbitBusy, setOrbitBusy] = useState(false);
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -125,7 +119,7 @@ export function MobileHomeHero({
     router.push(
       catalogHref(locale, {
         q: trimmed || undefined,
-        sort: "newest",
+        sort: 'newest',
         page: 1,
         pageSize: 24,
       }),
@@ -177,11 +171,7 @@ export function MobileHomeHero({
         </p>
       </div>
 
-      <MobileCategoryOrbit
-        spin={spin}
-        productsHref={productsHref}
-        categories={orbitCategories}
-      />
+      <MobileCategoryOrbit spin={spin} productsHref={productsHref} categories={orbitCategories} />
 
       {/* Arrows — 260:379 */}
       <div className="absolute top-[384px] left-1/2 z-40 flex h-[47px] w-[108px] -translate-x-1/2 items-center gap-1.5">

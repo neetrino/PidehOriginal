@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Button } from "@/components/ui/Button";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
-import type { DiscountBoardProduct } from "@/features/promotions/application/discounts-board";
-import { upsertTargetDiscountAction } from "@/features/promotions/application/manage-discounts";
-import { currencySymbols, isCurrency } from "@/lib/money/currency";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { ADMIN_INPUT } from '@/features/admin/ui/admin-form-classes';
+import type { DiscountBoardProduct } from '@/features/promotions/application/discounts-board';
+import { upsertTargetDiscountAction } from '@/features/promotions/application/manage-discounts';
+import { currencySymbols, isCurrency } from '@/lib/money/currency';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ProductDiscountsSectionCopy = {
-  products: Dictionary["admin"]["discounts"]["products"];
-  common: Dictionary["admin"]["common"];
+  products: Dictionary['admin']['discounts']['products'];
+  common: Dictionary['admin']['common'];
 };
 
 type ProductDiscountsSectionProps = {
@@ -21,40 +21,32 @@ type ProductDiscountsSectionProps = {
   copy: ProductDiscountsSectionCopy;
 };
 
-function formatPrice(amount: number, currency = "AMD"): string {
+function formatPrice(amount: number, currency = 'AMD'): string {
   const symbol = isCurrency(currency) ? currencySymbols[currency] : currency;
-  return `${symbol}${amount.toLocaleString("en-US")}`;
+  return `${symbol}${amount.toLocaleString('en-US')}`;
 }
 
-function parsePercent(raw: string): number | null | "invalid" {
+function parsePercent(raw: string): number | null | 'invalid' {
   const trimmed = raw.trim();
   if (!trimmed) return null;
   const next = Number(trimmed);
-  if (!Number.isInteger(next) || next < 1 || next > 100) return "invalid";
+  if (!Number.isInteger(next) || next < 1 || next > 100) return 'invalid';
   return next;
 }
 
-function draftsFromProducts(
-  products: DiscountBoardProduct[],
-): Record<string, string> {
+function draftsFromProducts(products: DiscountBoardProduct[]): Record<string, string> {
   return Object.fromEntries(
     products.map((product) => [
       product.id,
-      product.discountPercent != null ? String(product.discountPercent) : "",
+      product.discountPercent != null ? String(product.discountPercent) : '',
     ]),
   );
 }
 
-export function ProductDiscountsSection({
-  locale,
-  products,
-  copy,
-}: ProductDiscountsSectionProps) {
+export function ProductDiscountsSection({ locale, products, copy }: ProductDiscountsSectionProps) {
   const router = useRouter();
-  const [query, setQuery] = useState("");
-  const [drafts, setDrafts] = useState<Record<string, string>>(() =>
-    draftsFromProducts(products),
-  );
+  const [query, setQuery] = useState('');
+  const [drafts, setDrafts] = useState<Record<string, string>>(() => draftsFromProducts(products));
 
   useEffect(() => {
     setDrafts(draftsFromProducts(products));
@@ -76,9 +68,9 @@ export function ProductDiscountsSection({
   }, [products, query]);
 
   function saveOne(productId: string, title: string): void {
-    const parsed = parsePercent(drafts[productId] ?? "");
-    if (parsed === "invalid") {
-      setError(copy.products.invalidPercent.replace("{title}", title));
+    const parsed = parsePercent(drafts[productId] ?? '');
+    if (parsed === 'invalid') {
+      setError(copy.products.invalidPercent.replace('{title}', title));
       return;
     }
 
@@ -87,7 +79,7 @@ export function ProductDiscountsSection({
       setError(null);
       setMessage(null);
       const result = await upsertTargetDiscountAction(locale, {
-        target: "product",
+        target: 'product',
         targetId: productId,
         percentage: parsed,
       });
@@ -98,10 +90,8 @@ export function ProductDiscountsSection({
       }
       setMessage(
         parsed == null
-          ? copy.products.cleared.replace("{title}", title)
-          : copy.products.saved
-              .replace("{percent}", String(parsed))
-              .replace("{title}", title),
+          ? copy.products.cleared.replace('{title}', title)
+          : copy.products.saved.replace('{percent}', String(parsed)).replace('{title}', title),
       );
       router.refresh();
     });
@@ -110,9 +100,7 @@ export function ProductDiscountsSection({
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4">
-        <h2 className="text-base font-semibold text-gray-900">
-          {copy.products.title}
-        </h2>
+        <h2 className="text-base font-semibold text-gray-900">{copy.products.title}</h2>
         <p className="text-sm text-gray-500">{copy.products.subtitle}</p>
       </div>
 
@@ -151,15 +139,10 @@ export function ProductDiscountsSection({
                       className="h-12 w-12 shrink-0 rounded-md object-cover"
                     />
                   ) : (
-                    <span
-                      className="h-12 w-12 shrink-0 rounded-md bg-gray-100"
-                      aria-hidden
-                    />
+                    <span className="h-12 w-12 shrink-0 rounded-md bg-gray-100" aria-hidden />
                   )}
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-gray-900">
-                      {product.title}
-                    </p>
+                    <p className="truncate text-sm font-medium text-gray-900">{product.title}</p>
                     <p className="text-xs text-gray-500">
                       {formatPrice(product.priceAmount)} · {product.sku}
                     </p>
@@ -167,14 +150,8 @@ export function ProductDiscountsSection({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <label
-                    className="sr-only"
-                    htmlFor={`product-discount-${product.id}`}
-                  >
-                    {copy.products.discountForAria.replace(
-                      "{title}",
-                      product.title,
-                    )}
+                  <label className="sr-only" htmlFor={`product-discount-${product.id}`}>
+                    {copy.products.discountForAria.replace('{title}', product.title)}
                   </label>
                   <input
                     id={`product-discount-${product.id}`}
@@ -183,7 +160,7 @@ export function ProductDiscountsSection({
                     max={100}
                     inputMode="numeric"
                     disabled={isPending}
-                    value={drafts[product.id] ?? ""}
+                    value={drafts[product.id] ?? ''}
                     onChange={(event) =>
                       setDrafts((prev) => ({
                         ...prev,

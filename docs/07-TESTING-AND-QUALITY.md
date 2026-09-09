@@ -24,19 +24,19 @@
 
 ## 3. Unit test matrix
 
-| Domain | Minimum cases |
-|---|---|
-| Money | Integer arithmetic, currency scale, conversion direction, rounding, safe bounds, formatting input |
-| Discounts | Product vs category priority, fixed/percent, dates, ties, cap at price, inactive rules |
-| Coupons | Eligibility, normalized code, min order, max discount, user/total limit, expiry, stacking |
-| Delivery | City > Region > Country, priority ties, free threshold, no-match, inactive rules |
-| Slugs | Unicode/transliteration policy, normalization, empty/reserved values, uniqueness retry mapping |
-| Permissions | Guest/customer/admin, suspended user, ownership, last-admin behavior |
-| Stock | Add/update clamp policy, decrement, insufficient stock, movement reason/result |
-| Order totals | Item lines, subtotal, discount, tax, delivery, total snapshots, invariant checks |
-| Exchange rates | Fresh/stale/fallback snapshots, unsupported currency, deterministic rate snapshot |
-| State machines | Allowed/forbidden order/payment/review transitions |
-| Sanitization | Allowed/removed rich-text constructs, script/URL payloads |
+| Domain         | Minimum cases                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| Money          | Integer arithmetic, currency scale, conversion direction, rounding, safe bounds, formatting input |
+| Discounts      | Product vs category priority, fixed/percent, dates, ties, cap at price, inactive rules            |
+| Coupons        | Eligibility, normalized code, min order, max discount, user/total limit, expiry, stacking         |
+| Delivery       | City > Region > Country, priority ties, free threshold, no-match, inactive rules                  |
+| Slugs          | Unicode/transliteration policy, normalization, empty/reserved values, uniqueness retry mapping    |
+| Permissions    | Guest/customer/admin, suspended user, ownership, last-admin behavior                              |
+| Stock          | Add/update clamp policy, decrement, insufficient stock, movement reason/result                    |
+| Order totals   | Item lines, subtotal, discount, tax, delivery, total snapshots, invariant checks                  |
+| Exchange rates | Fresh/stale/fallback snapshots, unsupported currency, deterministic rate snapshot                 |
+| State machines | Allowed/forbidden order/payment/review transitions                                                |
+| Sanitization   | Allowed/removed rich-text constructs, script/URL payloads                                         |
 
 Boundary values և invalid inputs յուրաքանչյուր pure function-ի test suite-ի մաս են։
 
@@ -97,20 +97,20 @@ Boundary values և invalid inputs յուրաքանչյուր pure function-ի te
 
 ## 6. Playwright critical journeys
 
-| ID | Journey | Required assertions |
-|---|---|---|
-| E2E-001 | Customer register → verify → login | Real persistence/session, generic negative auth |
-| E2E-002 | Browse/search/filter/sort/page products | URL persistence, server results, mobile filters |
-| E2E-003 | Product detail → quantity → cart | Gallery, stock bound, card/action navigation |
-| E2E-004 | Guest cart → login merge | Quantities/ownership merged once |
-| E2E-005 | Checkout COD | Address/delivery/coupon, order snapshots, cart cleared |
-| E2E-006 | Duplicate Place Order | One order only, same confirmation |
-| E2E-007 | Customer profile/orders/addresses | Ownership, defaults, detail drawer keyboard |
-| E2E-008 | Verified purchase review | Eligibility, pending moderation, admin approval/public display |
-| E2E-009 | Admin product creation | Three locales, images, inventory, public appearance |
-| E2E-010 | Admin order status update | History/audit/customer view updated |
-| E2E-011 | Locale switching | Equivalent route/slug/query params and `<html lang>` |
-| E2E-012 | Responsive/keyboard smoke | Header, filters, checkout, admin drawer at mobile/desktop |
+| ID      | Journey                                 | Required assertions                                            |
+| ------- | --------------------------------------- | -------------------------------------------------------------- |
+| E2E-001 | Customer register → verify → login      | Real persistence/session, generic negative auth                |
+| E2E-002 | Browse/search/filter/sort/page products | URL persistence, server results, mobile filters                |
+| E2E-003 | Product detail → quantity → cart        | Gallery, stock bound, card/action navigation                   |
+| E2E-004 | Guest cart → login merge                | Quantities/ownership merged once                               |
+| E2E-005 | Checkout COD                            | Address/delivery/coupon, order snapshots, cart cleared         |
+| E2E-006 | Duplicate Place Order                   | One order only, same confirmation                              |
+| E2E-007 | Customer profile/orders/addresses       | Ownership, defaults, detail drawer keyboard                    |
+| E2E-008 | Verified purchase review                | Eligibility, pending moderation, admin approval/public display |
+| E2E-009 | Admin product creation                  | Three locales, images, inventory, public appearance            |
+| E2E-010 | Admin order status update               | History/audit/customer view updated                            |
+| E2E-011 | Locale switching                        | Equivalent route/slug/query params and `<html lang>`           |
+| E2E-012 | Responsive/keyboard smoke               | Header, filters, checkout, admin drawer at mobile/desktop      |
 
 Online payment provider-ի ավելացման դեպքում առանձին sandbox callback/webhook E2E կամ integration suite պարտադիր է։
 

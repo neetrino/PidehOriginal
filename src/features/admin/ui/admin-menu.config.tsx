@@ -1,6 +1,6 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 export type AdminMenuItem = {
   id: string;
@@ -8,7 +8,7 @@ export type AdminMenuItem = {
   href: string;
   icon: ReactNode;
   isSubCategory?: boolean;
-  parentGroupId?: "products";
+  parentGroupId?: 'products';
 };
 
 function MenuIcon({ d }: { d: string }) {
@@ -41,13 +41,13 @@ function SettingsIcon() {
 /** Admin nav for capabilities that exist in this project (no brands/attributes). */
 export function getAdminMenuItems(
   locale: string,
-  nav: Dictionary["admin"]["nav"],
+  nav: Dictionary['admin']['nav'],
 ): AdminMenuItem[] {
   const base = `/${locale}/admin`;
 
   return [
     {
-      id: "dashboard",
+      id: 'dashboard',
       label: nav.dashboard,
       href: base,
       icon: (
@@ -55,7 +55,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "orders",
+      id: 'orders',
       label: nav.orders,
       href: `${base}/orders`,
       icon: (
@@ -63,7 +63,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "group-orders",
+      id: 'group-orders',
       label: nav.groupOrders,
       href: `${base}/group-orders`,
       icon: (
@@ -71,25 +71,23 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "products",
+      id: 'products',
       label: nav.products,
       href: `${base}/products`,
-      icon: (
-        <MenuIcon d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-      ),
+      icon: <MenuIcon d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />,
     },
     {
-      id: "categories",
+      id: 'categories',
       label: nav.categories,
       href: `${base}/categories`,
       isSubCategory: true,
-      parentGroupId: "products",
+      parentGroupId: 'products',
       icon: (
         <MenuIcon d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
       ),
     },
     {
-      id: "delivery",
+      id: 'delivery',
       label: nav.delivery,
       href: `${base}/delivery`,
       icon: (
@@ -97,7 +95,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "discounts",
+      id: 'discounts',
       label: nav.discounts,
       href: `${base}/discounts`,
       icon: (
@@ -105,7 +103,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "coupons",
+      id: 'coupons',
       label: nav.coupons,
       href: `${base}/coupons`,
       icon: (
@@ -113,7 +111,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "gift-cards",
+      id: 'gift-cards',
       label: nav.giftCards,
       href: `${base}/gift-cards`,
       icon: (
@@ -121,7 +119,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "users",
+      id: 'users',
       label: nav.users,
       href: `${base}/users`,
       icon: (
@@ -129,7 +127,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "analytics",
+      id: 'analytics',
       label: nav.analytics,
       href: `${base}/analytics`,
       icon: (
@@ -137,7 +135,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "hero",
+      id: 'hero',
       label: nav.hero,
       href: `${base}/hero`,
       icon: (
@@ -145,7 +143,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "popups",
+      id: 'popups',
       label: nav.popups,
       href: `${base}/popups`,
       icon: (
@@ -153,7 +151,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "blog",
+      id: 'blog',
       label: nav.blog,
       href: `${base}/blog`,
       icon: (
@@ -161,7 +159,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "messages",
+      id: 'messages',
       label: nav.messages,
       href: `${base}/messages`,
       icon: (
@@ -169,7 +167,7 @@ export function getAdminMenuItems(
       ),
     },
     {
-      id: "settings",
+      id: 'settings',
       label: nav.settings,
       href: `${base}/settings`,
       icon: <SettingsIcon />,

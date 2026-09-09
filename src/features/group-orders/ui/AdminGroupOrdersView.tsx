@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { SideSheet } from "@/components/ui/SideSheet";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { SideSheet } from '@/components/ui/SideSheet';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -23,43 +23,35 @@ import {
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_TH_METRIC,
   ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
-import {
-  ADMIN_BADGE,
-  groupOrderStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
+} from '@/features/admin/ui/admin-table-classes';
+import { ADMIN_BADGE, groupOrderStatusBadgeClass } from '@/features/admin/ui/status-badge';
 import {
   adminCancelGroupOrderAction,
   adminCloseJoinsAction,
   adminMarkParticipantPaidAction,
   getAdminGroupOrderDetailAction,
-} from "@/features/group-orders/actions";
+} from '@/features/group-orders/actions';
 import type {
   AdminGroupOrderListItem,
   GroupOrderDetailView,
-} from "@/features/group-orders/application/queries";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
-import { formatMoneyAmount } from "@/lib/money/format";
-import type { Currency } from "@/lib/money/currency";
+} from '@/features/group-orders/application/queries';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import { formatMoneyAmount } from '@/lib/money/format';
+import type { Currency } from '@/lib/money/currency';
 
 type AdminGroupOrdersViewProps = {
   locale: Locale;
   currency: Currency;
   rows: AdminGroupOrderListItem[];
-  copy: Dictionary["admin"]["groupOrders"];
+  copy: Dictionary['admin']['groupOrders'];
 };
 
 function shortId(id: string): string {
-  return id.replace(/-/g, "").slice(0, 8).toUpperCase();
+  return id.replace(/-/g, '').slice(0, 8).toUpperCase();
 }
 
-export function AdminGroupOrdersView({
-  locale,
-  currency,
-  rows,
-  copy,
-}: AdminGroupOrdersViewProps) {
+export function AdminGroupOrdersView({ locale, currency, rows, copy }: AdminGroupOrdersViewProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [detail, setDetail] = useState<GroupOrderDetailView | null>(null);
@@ -67,8 +59,7 @@ export function AdminGroupOrdersView({
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const allIds = rows.map((row) => row.id);
-  const allSelected =
-    allIds.length > 0 && allIds.every((id) => selected.has(id));
+  const allSelected = allIds.length > 0 && allIds.every((id) => selected.has(id));
 
   function toggleOne(id: string): void {
     setSelected((prev) => {
@@ -94,22 +85,16 @@ export function AdminGroupOrdersView({
     });
   }
 
-  function run(
-    action: () => Promise<{ ok: boolean; error?: string }>,
-  ): void {
+  function run(action: () => Promise<{ ok: boolean; error?: string }>): void {
     setError(null);
     startTransition(async () => {
       const result = await action();
       if (!result.ok) {
-        setError(result.error ?? "Action failed.");
+        setError(result.error ?? 'Action failed.');
         return;
       }
       if (detail) {
-        const refreshed = await getAdminGroupOrderDetailAction(
-          detail.id,
-          locale,
-          currency,
-        );
+        const refreshed = await getAdminGroupOrderDetailAction(detail.id, locale, currency);
         setDetail(refreshed);
       }
       router.refresh();
@@ -121,7 +106,7 @@ export function AdminGroupOrdersView({
 
   return (
     <>
-      <Card className={`mt-4 ${ADMIN_TABLE_CARD} ${pending ? "opacity-70" : ""}`}>
+      <Card className={`mt-4 ${ADMIN_TABLE_CARD} ${pending ? 'opacity-70' : ''}`}>
         <div className={ADMIN_TABLE_OUTER_SCROLL}>
           <table className={ADMIN_TABLE}>
             <thead className={ADMIN_TABLE_THEAD}>
@@ -165,13 +150,11 @@ export function AdminGroupOrdersView({
                         checked={selected.has(row.id)}
                         onChange={() => toggleOne(row.id)}
                         disabled={pending}
-                        aria-label={t.selectOneAria.replace("{id}", idLabel)}
+                        aria-label={t.selectOneAria.replace('{id}', idLabel)}
                       />
                     </td>
                     <td className={ADMIN_TABLE_TD}>
-                      <span className="font-mono text-xs text-gray-900">
-                        {idLabel}
-                      </span>
+                      <span className="font-mono text-xs text-gray-900">{idLabel}</span>
                     </td>
                     <td className={ADMIN_TABLE_TD}>{row.organizerDisplayName}</td>
                     <td className={ADMIN_TABLE_TD_METRIC}>
@@ -187,18 +170,12 @@ export function AdminGroupOrdersView({
                       <p className="text-xs text-gray-500">{row.createdDate}</p>
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
-                      <span
-                        className={`${ADMIN_BADGE} ${groupOrderStatusBadgeClass(row.status)}`}
-                      >
+                      <span className={`${ADMIN_BADGE} ${groupOrderStatusBadgeClass(row.status)}`}>
                         {row.status}
                       </span>
                     </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      {row.participantCount}
-                    </td>
-                    <td className={`${ADMIN_TABLE_TD} text-xs`}>
-                      {row.paymentMode}
-                    </td>
+                    <td className={ADMIN_TABLE_TD_CENTER}>{row.participantCount}</td>
+                    <td className={`${ADMIN_TABLE_TD} text-xs`}>{row.paymentMode}</td>
                   </tr>
                 );
               })}
@@ -206,9 +183,7 @@ export function AdminGroupOrdersView({
           </table>
         </div>
         {rows.length === 0 ? (
-          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {t.empty}
-          </p>
+          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>{t.empty}</p>
         ) : null}
       </Card>
 
@@ -240,44 +215,38 @@ export function AdminGroupOrdersView({
                 </p>
                 <p className="mt-1 text-gray-600">
                   {d.deliveryTotal
-                    .replace("{delivery}", detail.deliveryFormatted)
-                    .replace("{total}", detail.grandTotalFormatted)}
+                    .replace('{delivery}', detail.deliveryFormatted)
+                    .replace('{total}', detail.grandTotalFormatted)}
                 </p>
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">
-                  {d.participants}
-                </h3>
+                <h3 className="mb-2 font-semibold text-gray-900">{d.participants}</h3>
                 <ul className="space-y-3">
                   {detail.participants.map((p) => (
-                    <li
-                      key={p.id}
-                      className="rounded-xl border border-gray-200 p-3"
-                    >
+                    <li key={p.id} className="rounded-xl border border-gray-200 p-3">
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-medium">{p.displayName}</p>
                           <p className="text-xs text-gray-500">
                             {d.subtotalDeliveryFinal
-                              .replace("{subtotal}", p.subtotalFormatted)
-                              .replace("{delivery}", p.deliveryShareFormatted)
-                              .replace("{final}", p.finalAmountFormatted)}
+                              .replace('{subtotal}', p.subtotalFormatted)
+                              .replace('{delivery}', p.deliveryShareFormatted)
+                              .replace('{final}', p.finalAmountFormatted)}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {d.payment.replace("{status}", p.paymentStatus)}
+                            {d.payment.replace('{status}', p.paymentStatus)}
                           </p>
                           <ul className="mt-2 space-y-1 text-xs text-gray-600">
                             {p.items.map((item) => (
                               <li key={item.id}>
-                                {item.title} × {item.quantity} —{" "}
-                                {item.lineTotalFormatted}
+                                {item.title} × {item.quantity} — {item.lineTotalFormatted}
                               </li>
                             ))}
                           </ul>
                         </div>
-                        {p.paymentStatus !== "PAID" &&
-                        p.paymentStatus !== "MARKED_RECEIVED" &&
+                        {p.paymentStatus !== 'PAID' &&
+                        p.paymentStatus !== 'MARKED_RECEIVED' &&
                         p.finalAmount > 0 ? (
                           <Button
                             type="button"
@@ -309,11 +278,10 @@ export function AdminGroupOrdersView({
                 <ul className="space-y-1 text-xs text-gray-500">
                   {detail.events.map((event) => (
                     <li key={event.id}>
-                      {new Date(event.createdAt).toLocaleString()} —{" "}
-                      {event.eventType}
+                      {new Date(event.createdAt).toLocaleString()} — {event.eventType}
                       {event.fromState || event.toState
-                        ? ` (${event.fromState ?? "—"} → ${event.toState ?? "—"})`
-                        : ""}
+                        ? ` (${event.fromState ?? '—'} → ${event.toState ?? '—'})`
+                        : ''}
                     </li>
                   ))}
                 </ul>
@@ -332,9 +300,7 @@ export function AdminGroupOrdersView({
                 size="sm"
                 variant="secondary"
                 onClick={() =>
-                  run(async () =>
-                    adminCloseJoinsAction({ groupOrderId: detail.id }, locale),
-                  )
+                  run(async () => adminCloseJoinsAction({ groupOrderId: detail.id }, locale))
                 }
               >
                 {d.closeJoins}
@@ -344,12 +310,7 @@ export function AdminGroupOrdersView({
                 size="sm"
                 variant="danger"
                 onClick={() =>
-                  run(async () =>
-                    adminCancelGroupOrderAction(
-                      { groupOrderId: detail.id },
-                      locale,
-                    ),
-                  )
+                  run(async () => adminCancelGroupOrderAction({ groupOrderId: detail.id }, locale))
                 }
               >
                 {d.cancel}

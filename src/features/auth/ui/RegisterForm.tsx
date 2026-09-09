@@ -1,23 +1,20 @@
-"use client";
+'use client';
 
-import { useActionState } from "react";
+import { useActionState } from 'react';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { type AuthActionState } from "@/features/auth/login-action";
-import { registerAction } from "@/features/auth/register-action";
-import {
-  AUTH_INPUT_CLASS,
-  AUTH_LABEL_CLASS,
-} from "@/features/auth/ui/auth-field-styles";
-import { PasswordField } from "@/features/auth/ui/PasswordField";
-import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { AppLink } from '@/components/ui/AppLink';
+import { type AuthActionState } from '@/features/auth/login-action';
+import { registerAction } from '@/features/auth/register-action';
+import { AUTH_INPUT_CLASS, AUTH_LABEL_CLASS } from '@/features/auth/ui/auth-field-styles';
+import { PasswordField } from '@/features/auth/ui/PasswordField';
+import type { Locale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 const initialState: AuthActionState = {};
 
 type RegisterFormProps = {
   locale: Locale;
-  dictionary: Dictionary["auth"];
+  dictionary: Dictionary['auth'];
 };
 
 export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
@@ -29,21 +26,11 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className={AUTH_LABEL_CLASS}>
           {dictionary.firstName}
-          <input
-            required
-            name="firstName"
-            autoComplete="given-name"
-            className={AUTH_INPUT_CLASS}
-          />
+          <input required name="firstName" autoComplete="given-name" className={AUTH_INPUT_CLASS} />
         </label>
         <label className={AUTH_LABEL_CLASS}>
           {dictionary.lastName}
-          <input
-            required
-            name="lastName"
-            autoComplete="family-name"
-            className={AUTH_INPUT_CLASS}
-          />
+          <input required name="lastName" autoComplete="family-name" className={AUTH_INPUT_CLASS} />
         </label>
       </div>
 
@@ -60,13 +47,7 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
 
       <label className={AUTH_LABEL_CLASS}>
         {dictionary.phone}
-        <input
-          required
-          name="phone"
-          type="tel"
-          autoComplete="tel"
-          className={AUTH_INPUT_CLASS}
-        />
+        <input required name="phone" type="tel" autoComplete="tel" className={AUTH_INPUT_CLASS} />
       </label>
 
       <PasswordField
@@ -100,13 +81,11 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         disabled={isPending}
         className="h-12 rounded-full bg-[#ff6b00] px-4 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-60"
       >
-        {isPending
-          ? dictionary.submittingRegister
-          : dictionary.submitRegister}
+        {isPending ? dictionary.submittingRegister : dictionary.submitRegister}
       </button>
 
       <p className="text-center text-sm text-[#1e1e1e]/70">
-        {dictionary.hasAccount}{" "}
+        {dictionary.hasAccount}{' '}
         <AppLink
           href={`/${locale}/login`}
           prefetchPolicy="intent"

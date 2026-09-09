@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
-import type {
-  ProductGalleryImage,
-  ProductModifierChoice,
-} from "@/features/products/types";
-import { ProductGallery } from "@/features/products/ui/ProductGallery";
+import { useRef } from 'react';
+
+import { flyToCart } from '@/features/cart/ui/fly-to-cart';
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
+import type { ProductGalleryImage, ProductModifierChoice } from '@/features/products/types';
+import { ProductGallery } from '@/features/products/ui/ProductGallery';
 import {
   ProductInfoCard,
   type ProductInfoCardLabels,
-} from "@/features/products/ui/ProductInfoCard";
+} from '@/features/products/ui/ProductInfoCard';
 import {
   ProductModifierCheckTags,
   toggleModifierId,
-} from "@/features/products/ui/ProductModifierCheckTags";
-import { ProductSectionHeading } from "@/features/products/ui/ProductSectionHeading";
-import { useProductConfigurator } from "@/features/products/ui/use-product-configurator";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
+} from '@/features/products/ui/ProductModifierCheckTags';
+import { ProductSectionHeading } from '@/features/products/ui/ProductSectionHeading';
+import { useProductConfigurator } from '@/features/products/ui/use-product-configurator';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 type ConfiguratorLabels = ProductInfoCardLabels & {
   additions: string;
@@ -65,6 +65,7 @@ export function ProductDetailConfigurator(props: ProductDetailConfiguratorProps)
     wishlistLabel,
     labels,
   } = props;
+  const galleryRef = useRef<HTMLDivElement>(null);
   const state = useProductConfigurator({
     locale,
     currency,
@@ -74,27 +75,26 @@ export function ProductDetailConfigurator(props: ProductDetailConfiguratorProps)
     basePriceAmount,
     compareAtAmount,
     additions,
-    addedLabel: labels.added,
     errorLabel: labels.error,
+    onAdded: () => flyToCart(galleryRef.current),
   });
   const extraHint =
     state.extraHintPrice == null
       ? null
-      : labels.extraPriceHint.replace(
-          "{price}",
-          state.formatAmount(state.extraHintPrice),
-        );
+      : labels.extraPriceHint.replace('{price}', state.formatAmount(state.extraHintPrice));
 
   return (
     <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start lg:gap-8">
       <div className="flex flex-col gap-8">
-        <ProductGallery
-          images={images}
-          title={title}
-          discountPercent={discountPercent}
-          inStock={!state.disabled}
-          outOfStockLabel={labels.outOfStock}
-        />
+        <div ref={galleryRef}>
+          <ProductGallery
+            images={images}
+            title={title}
+            discountPercent={discountPercent}
+            inStock={!state.disabled}
+            outOfStockLabel={labels.outOfStock}
+          />
+        </div>
         <ModifierBlocks
           additions={additions}
           exceptions={exceptions}
@@ -103,12 +103,8 @@ export function ProductDetailConfigurator(props: ProductDetailConfiguratorProps)
           extraHint={extraHint}
           disabled={state.disabled || state.pending}
           labels={labels}
-          onToggleAddition={(id) =>
-            state.setAdditionIds((cur) => toggleModifierId(cur, id))
-          }
-          onToggleException={(id) =>
-            state.setExceptionIds((cur) => toggleModifierId(cur, id))
-          }
+          onToggleAddition={(id) => state.setAdditionIds((cur) => toggleModifierId(cur, id))}
+          onToggleException={(id) => state.setExceptionIds((cur) => toggleModifierId(cur, id))}
         />
       </div>
       <ProductInfoCard
@@ -143,7 +139,7 @@ function ModifierBlocks({
   exceptionIds: string[];
   extraHint: string | null;
   disabled: boolean;
-  labels: Pick<ConfiguratorLabels, "additions" | "exceptions">;
+  labels: Pick<ConfiguratorLabels, 'additions' | 'exceptions'>;
   onToggleAddition: (id: string) => void;
   onToggleException: (id: string) => void;
 }) {

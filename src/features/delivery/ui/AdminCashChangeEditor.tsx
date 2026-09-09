@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
+import { Button } from '@/components/ui/Button';
 import {
   ADMIN_CHECKBOX,
   ADMIN_CHECKBOX_LABEL,
   ADMIN_INPUT,
   ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
-import { uploadCashChangeImageAction } from "@/features/delivery/application/upload-cash-change-image";
-import type { CashChangeDenomination } from "@/features/delivery/domain/cash-change";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import { formatMoneyAmount } from "@/lib/money/format";
+} from '@/features/admin/ui/admin-form-classes';
+import { uploadCashChangeImageAction } from '@/features/delivery/application/upload-cash-change-image';
+import type { CashChangeDenomination } from '@/features/delivery/domain/cash-change';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import { formatMoneyAmount } from '@/lib/money/format';
 
-type CashChangeCopy = Dictionary["admin"]["delivery"]["cashChange"];
+type CashChangeCopy = Dictionary['admin']['delivery']['cashChange'];
 
 type AdminCashChangeEditorProps = {
   locale: string;
@@ -40,13 +40,8 @@ export function AdminCashChangeEditor({
   const [error, setError] = useState<string | null>(null);
   const [isUploading, startUpload] = useTransition();
 
-  function updateItem(
-    id: string,
-    patch: Partial<CashChangeDenomination>,
-  ): void {
-    onChange(
-      value.map((item) => (item.id === id ? { ...item, ...patch } : item)),
-    );
+  function updateItem(id: string, patch: Partial<CashChangeDenomination>): void {
+    onChange(value.map((item) => (item.id === id ? { ...item, ...patch } : item)));
   }
 
   function addItem(): void {
@@ -82,7 +77,7 @@ export function AdminCashChangeEditor({
 
     startUpload(async () => {
       const formData = new FormData();
-      formData.set("file", file);
+      formData.set('file', file);
       const result = await uploadCashChangeImageAction(locale, formData);
       if (!result.ok) {
         setError(result.error.message);
@@ -96,7 +91,7 @@ export function AdminCashChangeEditor({
       });
       setUploadTargetId(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+        fileInputRef.current.value = '';
       }
     });
   }
@@ -129,15 +124,9 @@ export function AdminCashChangeEditor({
               <div className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-50">
                 {previewUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element -- remote/local object URL
-                  <img
-                    src={previewUrl}
-                    alt=""
-                    className="h-full w-full object-contain"
-                  />
+                  <img src={previewUrl} alt="" className="h-full w-full object-contain" />
                 ) : (
-                  <span className="px-2 text-center text-xs text-gray-400">
-                    {copy.noImage}
-                  </span>
+                  <span className="px-2 text-center text-xs text-gray-400">{copy.noImage}</span>
                 )}
               </div>
 
@@ -148,7 +137,7 @@ export function AdminCashChangeEditor({
                     type="number"
                     min={1}
                     step={1}
-                    value={item.amount > 0 ? String(item.amount) : ""}
+                    value={item.amount > 0 ? String(item.amount) : ''}
                     onChange={(event) =>
                       updateItem(item.id, {
                         amount: Number(event.target.value) || 0,
@@ -160,7 +149,7 @@ export function AdminCashChangeEditor({
                   />
                   {item.amount > 0 ? (
                     <span className="mt-1 block text-xs text-gray-500">
-                      {formatMoneyAmount(item.amount, "AMD", locale)}
+                      {formatMoneyAmount(item.amount, 'AMD', locale)}
                     </span>
                   ) : null}
                 </label>
@@ -169,9 +158,7 @@ export function AdminCashChangeEditor({
                   <input
                     type="checkbox"
                     checked={item.isActive}
-                    onChange={(event) =>
-                      updateItem(item.id, { isActive: event.target.checked })
-                    }
+                    onChange={(event) => updateItem(item.id, { isActive: event.target.checked })}
                     disabled={disabled || isUploading}
                     className={ADMIN_CHECKBOX}
                   />

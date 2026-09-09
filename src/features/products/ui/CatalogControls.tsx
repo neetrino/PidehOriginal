@@ -1,14 +1,14 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { RevealOnView } from "@/components/motion/RevealOnView";
-import { pillPop } from "@/components/motion/presets";
+import { RevealOnView } from '@/components/motion/RevealOnView';
+import { pillPop } from '@/components/motion/presets';
 import {
   CatalogActiveChips,
   type CatalogChipLabels,
-} from "@/features/products/ui/CatalogActiveChips";
-import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
-import { ShopCategoryChips } from "@/features/products/ui/ShopCategoryChips";
-import { ShopSortButton } from "@/features/products/ui/ShopSortButton";
+} from '@/features/products/ui/CatalogActiveChips';
+import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
+import { ShopCategoryChips } from '@/features/products/ui/ShopCategoryChips';
+import { ShopSortButton } from '@/features/products/ui/ShopSortButton';
 
 export type CatalogLabels = CatalogChipLabels & {
   allChip: string;
@@ -44,9 +44,7 @@ export function CatalogControls({
   children,
 }: CatalogControlsProps) {
   const resultsLabel =
-    total === 1
-      ? labels.resultsCountOne
-      : labels.resultsCount.replace("{count}", String(total));
+    total === 1 ? labels.resultsCountOne : labels.resultsCount.replace('{count}', String(total));
 
   return (
     <div className="flex flex-col gap-6">

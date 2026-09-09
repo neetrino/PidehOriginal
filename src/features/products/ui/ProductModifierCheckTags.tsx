@@ -1,4 +1,4 @@
-import type { ProductModifierChoice } from "@/features/products/types";
+import type { ProductModifierChoice } from '@/features/products/types';
 
 type ProductModifierCheckTagsProps = {
   options: readonly ProductModifierChoice[];
@@ -18,11 +18,7 @@ export function ProductModifierCheckTags({
   const selected = new Set(selectedIds);
 
   return (
-    <div
-      role="group"
-      aria-label={groupLabel}
-      className="flex flex-wrap gap-2.5"
-    >
+    <div role="group" aria-label={groupLabel} className="flex flex-wrap gap-2.5">
       {options.map((option) => {
         const isOn = selected.has(option.id);
         return (
@@ -38,7 +34,7 @@ export function ProductModifierCheckTags({
             <span
               aria-hidden
               className={`size-4 shrink-0 rounded-[4px] border border-[#ff6b00] ${
-                isOn ? "bg-[#ff6b00]" : "bg-white"
+                isOn ? 'bg-[#ff6b00]' : 'bg-white'
               }`}
             />
             {option.name}
@@ -49,11 +45,6 @@ export function ProductModifierCheckTags({
   );
 }
 
-export function toggleModifierId(
-  current: readonly string[],
-  id: string,
-): string[] {
-  return current.includes(id)
-    ? current.filter((value) => value !== id)
-    : [...current, id];
+export function toggleModifierId(current: readonly string[], id: string): string[] {
+  return current.includes(id) ? current.filter((value) => value !== id) : [...current, id];
 }

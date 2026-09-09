@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
+import Link from 'next/link';
+import { useState } from 'react';
 
-import { ReviewForm } from "@/features/reviews/ui/ReviewForm";
-import type { Locale } from "@/lib/i18n/config";
+import { ReviewForm } from '@/features/reviews/ui/ReviewForm';
+import type { Locale } from '@/lib/i18n/config';
 
 type ProductWriteReviewCtaProps = {
   locale: Locale;
@@ -32,7 +32,7 @@ type ProductWriteReviewCtaProps = {
 };
 
 const ctaClassName =
-  "inline-flex items-center justify-center rounded-full bg-gray-900 px-10 py-3 text-base font-semibold text-white transition hover:bg-gray-800";
+  'inline-flex items-center justify-center rounded-full bg-gray-900 px-10 py-3 text-base font-semibold text-white transition hover:bg-gray-800';
 
 export function ProductWriteReviewCta({
   locale,
@@ -78,15 +78,9 @@ export function ProductWriteReviewCta({
     return (
       <div className="mt-2 flex flex-col items-center gap-6">
         {showEmptyPrompt ? (
-          <p className="max-w-xl text-center text-base text-gray-700">
-            {labels.emptyPrompt}
-          </p>
+          <p className="max-w-xl text-center text-base text-gray-700">{labels.emptyPrompt}</p>
         ) : null}
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className={ctaClassName}
-        >
+        <button type="button" onClick={() => setOpen(true)} className={ctaClassName}>
           {labels.writeReview}
         </button>
       </div>
@@ -96,16 +90,13 @@ export function ProductWriteReviewCta({
   return (
     <div className="mt-2 flex flex-col items-center gap-6">
       {showEmptyPrompt ? (
-        <p className="max-w-xl text-center text-base text-gray-700">
-          {labels.emptyPrompt}
-        </p>
+        <p className="max-w-xl text-center text-base text-gray-700">{labels.emptyPrompt}</p>
       ) : null}
       <Link href={loginHref} className={ctaClassName}>
         {labels.writeReview}
       </Link>
       <p className="text-sm text-gray-500">
-        <span className="font-medium text-gray-800">{labels.signIn}</span>{" "}
-        {labels.signInToReview}
+        <span className="font-medium text-gray-800">{labels.signIn}</span> {labels.signInToReview}
       </p>
     </div>
   );

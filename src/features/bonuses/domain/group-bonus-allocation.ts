@@ -25,20 +25,14 @@ export function allocateParticipantBonusBases(input: {
   remainderUserId: string | null;
 }): AllocatedBonusBase[] {
   const { eligibleMerchandiseAmount, remainderUserId } = input;
-  if (
-    !Number.isInteger(eligibleMerchandiseAmount) ||
-    eligibleMerchandiseAmount <= 0
-  ) {
+  if (!Number.isInteger(eligibleMerchandiseAmount) || eligibleMerchandiseAmount <= 0) {
     return [];
   }
 
   const merged = new Map<string, number>();
   for (const share of input.shares) {
     if (share.merchandiseAmount <= 0) continue;
-    merged.set(
-      share.userId,
-      (merged.get(share.userId) ?? 0) + share.merchandiseAmount,
-    );
+    merged.set(share.userId, (merged.get(share.userId) ?? 0) + share.merchandiseAmount);
   }
 
   if (merged.size === 0) {
@@ -64,9 +58,7 @@ export function allocateParticipantBonusBases(input: {
     const isLast = index === orderedIds.length - 1;
     const eligibleAmount = isLast
       ? eligibleMerchandiseAmount - allocated
-      : Math.floor(
-          (eligibleMerchandiseAmount * merchandiseAmount) / totalMerch,
-        );
+      : Math.floor((eligibleMerchandiseAmount * merchandiseAmount) / totalMerch);
     allocated += eligibleAmount;
     if (eligibleAmount > 0) {
       result.push({ userId, eligibleAmount });

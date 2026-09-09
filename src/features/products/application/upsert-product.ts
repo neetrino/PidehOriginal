@@ -1,25 +1,25 @@
-"use server";
+'use server';
 
-import { and, eq, inArray, isNull } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { and, eq, inArray, isNull } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
-import { getDb } from "@/db/client";
+import { getDb } from '@/db/client';
 import {
   categories,
   productCategories,
   products,
   stockMovements,
   type TranslationsJson,
-} from "@/db/schema";
-import { persistProductMedia } from "@/features/products/application/persist-product-media";
-import { syncProductModifierLinks } from "@/features/products/application/product-modifiers";
-import { syncProductDiscount } from "@/features/products/application/sync-product-discount";
-import { requireAdmin } from "@/lib/auth/policies";
-import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
-import { createId } from "@/lib/id";
-import { isLocale, locales, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/db/schema';
+import { persistProductMedia } from '@/features/products/application/persist-product-media';
+import { syncProductModifierLinks } from '@/features/products/application/product-modifiers';
+import { syncProductDiscount } from '@/features/products/application/sync-product-discount';
+import { requireAdmin } from '@/lib/auth/policies';
+import { invalidateProductsCache } from '@/lib/cache/invalidate-public';
+import { createId } from '@/lib/id';
+import { isLocale, locales, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 const productUpsertSchema = z.object({
   sku: z.string().trim().min(1).max(120),
@@ -32,13 +32,13 @@ const productUpsertSchema = z.object({
   modifierIds: z.array(z.string().uuid()),
   discount: z
     .object({
-      type: z.enum(["PERCENTAGE", "FIXED"]),
+      type: z.enum(['PERCENTAGE', 'FIXED']),
       value: z.number().int().positive(),
       startsAt: z.string().nullable(),
       endsAt: z.string().nullable(),
     })
     .nullable(),
-  status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]),
+  status: z.enum(['DRAFT', 'ACTIVE', 'ARCHIVED']),
   primaryExistingId: z.string().uuid().nullable(),
   primaryNewIndex: z.number().int().nullable(),
   removeImageIds: z.array(z.string().uuid()),
@@ -74,8 +74,8 @@ function revalidateProducts(
 }
 
 function parsePayload(formData: FormData): ProductUpsertInput | null {
-  const raw = formData.get("data");
-  if (typeof raw !== "string") return null;
+  const raw = formData.get('data');
+  if (typeof raw !== 'string') return null;
   try {
     return productUpsertSchema.parse(JSON.parse(raw));
   } catch {
@@ -85,7 +85,7 @@ function parsePayload(formData: FormData): ProductUpsertInput | null {
 
 function collectImageFiles(formData: FormData): File[] {
   return formData
-    .getAll("images")
+    .getAll('images')
     .filter((entry): entry is File => entry instanceof File && entry.size > 0);
 }
 
@@ -98,32 +98,27 @@ async function syncProductCategories(
     const found = await getDb()
       .select({ id: categories.id })
       .from(categories)
-      .where(
-        and(
-          inArray(categories.id, uniqueIds),
-          isNull(categories.deletedAt),
-        ),
-      );
+      .where(and(inArray(categories.id, uniqueIds), isNull(categories.deletedAt)));
     if (found.length !== uniqueIds.length) {
-      return "One or more categories were not found.";
+      return 'One or more categories were not found.';
     }
   }
 
-  await getDb()
-    .delete(productCategories)
-    .where(eq(productCategories.productId, productId));
+  await getDb().delete(productCategories).where(eq(productCategories.productId, productId));
 
   if (uniqueIds.length === 0) return null;
 
-  await getDb().insert(productCategories).values(
-    uniqueIds.map((categoryId, index) => ({
-      id: createId(),
-      productId,
-      categoryId,
-      isPrimary: index === 0,
-      sortOrder: index,
-    })),
-  );
+  await getDb()
+    .insert(productCategories)
+    .values(
+      uniqueIds.map((categoryId, index) => ({
+        id: createId(),
+        productId,
+        categoryId,
+        isPrimary: index === 0,
+        sortOrder: index,
+      })),
+    );
 
   return null;
 }
@@ -134,51 +129,50 @@ export async function createProductFromDrawerAction(
   formData: FormData,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const data = parsePayload(formData);
   if (!data) {
-    return err("VALIDATION_ERROR", "Invalid product payload.");
+    return err('VALIDATION_ERROR', 'Invalid product payload.');
   }
 
   if (
-    data.discount?.type === "PERCENTAGE" &&
+    data.discount?.type === 'PERCENTAGE' &&
     (data.discount.value < 1 || data.discount.value > 100)
   ) {
-    return err(
-      "VALIDATION_ERROR",
-      "Percentage discount must be between 1 and 100.",
-    );
+    return err('VALIDATION_ERROR', 'Percentage discount must be between 1 and 100.');
   }
 
   const actor = await requireAdmin(locale as Locale);
   const id = createId();
   const files = collectImageFiles(formData);
 
-  await getDb().insert(products).values({
-    id,
-    sku: data.sku,
-    priceAmount: data.priceAmount,
-    compareAtAmount: null,
-    stockOnHand: data.stockOnHand,
-    status: data.status,
-    translations: buildTranslations(data),
-  });
+  await getDb()
+    .insert(products)
+    .values({
+      id,
+      sku: data.sku,
+      priceAmount: data.priceAmount,
+      compareAtAmount: null,
+      stockOnHand: data.stockOnHand,
+      status: data.status,
+      translations: buildTranslations(data),
+    });
 
   const categoryError = await syncProductCategories(id, data.categoryIds);
   if (categoryError) {
-    return err("VALIDATION_ERROR", categoryError);
+    return err('VALIDATION_ERROR', categoryError);
   }
 
   const modifierError = await syncProductModifierLinks(id, data.modifierIds);
   if (modifierError) {
-    return err("VALIDATION_ERROR", modifierError);
+    return err('VALIDATION_ERROR', modifierError);
   }
 
   const discountError = await syncProductDiscount(id, data.discount);
   if (discountError) {
-    return err("VALIDATION_ERROR", discountError);
+    return err('VALIDATION_ERROR', discountError);
   }
 
   if (data.stockOnHand > 0) {
@@ -186,7 +180,7 @@ export async function createProductFromDrawerAction(
       id: createId(),
       productId: id,
       delta: data.stockOnHand,
-      reason: "ADMIN_ADJUSTMENT",
+      reason: 'ADMIN_ADJUSTMENT',
       actorUserId: actor.id,
       resultingBalance: data.stockOnHand,
     });
@@ -200,7 +194,7 @@ export async function createProductFromDrawerAction(
     removeImageIds: [],
   });
   if (mediaResult.error) {
-    return err("VALIDATION_ERROR", mediaResult.error);
+    return err('VALIDATION_ERROR', mediaResult.error);
   }
 
   revalidateProducts(locale, { id, slug: data.slug });
@@ -214,22 +208,19 @@ export async function updateProductFromDrawerAction(
   formData: FormData,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const data = parsePayload(formData);
   if (!data) {
-    return err("VALIDATION_ERROR", "Invalid product payload.");
+    return err('VALIDATION_ERROR', 'Invalid product payload.');
   }
 
   if (
-    data.discount?.type === "PERCENTAGE" &&
+    data.discount?.type === 'PERCENTAGE' &&
     (data.discount.value < 1 || data.discount.value > 100)
   ) {
-    return err(
-      "VALIDATION_ERROR",
-      "Percentage discount must be between 1 and 100.",
-    );
+    return err('VALIDATION_ERROR', 'Percentage discount must be between 1 and 100.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -247,7 +238,7 @@ export async function updateProductFromDrawerAction(
     .limit(1);
 
   if (!existing) {
-    return err("NOT_FOUND", "Product not found.");
+    return err('NOT_FOUND', 'Product not found.');
   }
 
   await getDb()
@@ -262,25 +253,19 @@ export async function updateProductFromDrawerAction(
     })
     .where(eq(products.id, existing.id));
 
-  const categoryError = await syncProductCategories(
-    existing.id,
-    data.categoryIds,
-  );
+  const categoryError = await syncProductCategories(existing.id, data.categoryIds);
   if (categoryError) {
-    return err("VALIDATION_ERROR", categoryError);
+    return err('VALIDATION_ERROR', categoryError);
   }
 
-  const modifierError = await syncProductModifierLinks(
-    existing.id,
-    data.modifierIds,
-  );
+  const modifierError = await syncProductModifierLinks(existing.id, data.modifierIds);
   if (modifierError) {
-    return err("VALIDATION_ERROR", modifierError);
+    return err('VALIDATION_ERROR', modifierError);
   }
 
   const discountError = await syncProductDiscount(existing.id, data.discount);
   if (discountError) {
-    return err("VALIDATION_ERROR", discountError);
+    return err('VALIDATION_ERROR', discountError);
   }
 
   const delta = data.stockOnHand - existing.stockOnHand;
@@ -289,7 +274,7 @@ export async function updateProductFromDrawerAction(
       id: createId(),
       productId: existing.id,
       delta,
-      reason: "ADMIN_ADJUSTMENT",
+      reason: 'ADMIN_ADJUSTMENT',
       actorUserId: actor.id,
       resultingBalance: data.stockOnHand,
     });
@@ -303,7 +288,7 @@ export async function updateProductFromDrawerAction(
     removeImageIds: data.removeImageIds,
   });
   if (mediaResult.error) {
-    return err("VALIDATION_ERROR", mediaResult.error);
+    return err('VALIDATION_ERROR', mediaResult.error);
   }
 
   const previousSlug =

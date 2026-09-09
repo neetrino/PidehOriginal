@@ -1,10 +1,10 @@
-import Image from "next/image";
-import { notFound } from "next/navigation";
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { listPublishedBlogPosts } from "@/features/blog/application/queries";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { AppLink } from '@/components/ui/AppLink';
+import { listPublishedBlogPosts } from '@/features/blog/application/queries';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type BlogPageProps = {
   params: Promise<{ locale: string }>;
@@ -22,16 +22,11 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-3xl font-semibold tracking-tight">
-        {dictionary.nav.blog}
-      </h1>
+      <h1 className="text-3xl font-semibold tracking-tight">{dictionary.nav.blog}</h1>
 
       <div className="flex flex-col gap-4">
         {posts.map((post) => (
-          <article
-            key={post.id}
-            className="flex flex-col gap-4 border p-4 sm:flex-row"
-          >
+          <article key={post.id} className="flex flex-col gap-4 border p-4 sm:flex-row">
             {post.coverUrl ? (
               <AppLink
                 href={`/${rawLocale}/blog/${post.copy.slug}`}
@@ -58,9 +53,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                 </AppLink>
               </h2>
               {post.publishedAt ? (
-                <p className="text-sm text-[var(--muted)]">
-                  {post.publishedAt.slice(0, 10)}
-                </p>
+                <p className="text-sm text-[var(--muted)]">{post.publishedAt.slice(0, 10)}</p>
               ) : null}
               {post.copy.excerpt ? (
                 <p className="mt-2 text-[var(--muted)]">{post.copy.excerpt}</p>
@@ -68,9 +61,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
             </div>
           </article>
         ))}
-        {posts.length === 0 ? (
-          <p className="text-[var(--muted)]">{dictionary.blog.empty}</p>
-        ) : null}
+        {posts.length === 0 ? <p className="text-[var(--muted)]">{dictionary.blog.empty}</p> : null}
       </div>
     </section>
   );

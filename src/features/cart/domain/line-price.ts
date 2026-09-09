@@ -1,7 +1,7 @@
-import { sumAdditionPrices } from "@/features/products/domain/modifier-selection";
+import { sumAdditionPrices } from '@/features/products/domain/modifier-selection';
 
 type PricedModifier = {
-  kind: "ADDITION" | "EXCEPTION";
+  kind: 'ADDITION' | 'EXCEPTION';
   priceAmount: number;
 };
 

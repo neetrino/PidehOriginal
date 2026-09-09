@@ -1,12 +1,12 @@
-import { Suspense } from "react";
+import { Suspense } from 'react';
 
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { getStorefrontCartItemCount } from "@/features/cart/get-cart-drawer-view";
-import { getWishlistCount } from "@/features/wishlist/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
+import { getStorefrontCartItemCount } from '@/features/cart/get-cart-drawer-view';
+import { getWishlistCount } from '@/features/wishlist/queries';
+import { getCurrentUser } from '@/lib/auth/session';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 type MobileBottomNavIslandProps = {
   locale: Locale;
@@ -23,11 +23,7 @@ function MobileBottomNavFallback() {
   );
 }
 
-async function MobileBottomNavAsync({
-  locale,
-  currency,
-  dictionary,
-}: MobileBottomNavIslandProps) {
+async function MobileBottomNavAsync({ locale, currency, dictionary }: MobileBottomNavIslandProps) {
   const [user, cartItemCount, wishlistCount] = await Promise.all([
     getCurrentUser(),
     getStorefrontCartItemCount(),
@@ -56,11 +52,7 @@ export function MobileBottomNavIsland({
 }: MobileBottomNavIslandProps) {
   return (
     <Suspense fallback={<MobileBottomNavFallback />}>
-      <MobileBottomNavAsync
-        locale={locale}
-        currency={currency}
-        dictionary={dictionary}
-      />
+      <MobileBottomNavAsync locale={locale} currency={currency} dictionary={dictionary} />
     </Suspense>
   );
 }

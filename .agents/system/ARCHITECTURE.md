@@ -32,10 +32,10 @@ Skill behavior remains in `SKILL.md`; catalog files do not duplicate workflow in
 
 ## Decision guide
 
-| Question | Type |
-| --- | --- |
-| “Always do it this way” | Rule |
-| “For this task, perform these steps” | Skill |
+| Question                                     | Type      |
+| -------------------------------------------- | --------- |
+| “Always do it this way”                      | Rule      |
+| “For this task, perform these steps”         | Skill     |
 | “Open this detailed information when needed” | Reference |
 
 ## Current structure

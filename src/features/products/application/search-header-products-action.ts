@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
-import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
+import { listCatalogProducts } from '@/features/products/application/list-catalog-products';
 import {
   DEFAULT_CATALOG_SORT,
   catalogFiltersSchema,
-} from "@/features/products/schemas/catalog-list";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { createDisplayPriceFormatter } from "@/lib/money/display-price";
-import { isCurrency, type Currency } from "@/lib/money/currency";
+} from '@/features/products/schemas/catalog-list';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { createDisplayPriceFormatter } from '@/lib/money/display-price';
+import { isCurrency, type Currency } from '@/lib/money/currency';
 
 export type HeaderSearchProduct = {
   id: string;
@@ -36,15 +36,15 @@ export async function searchHeaderProductsAction(
   rawQuery: string,
 ): Promise<HeaderSearchResult> {
   if (!isLocale(locale)) {
-    throw new Error("Invalid locale.");
+    throw new Error('Invalid locale.');
   }
   if (!isCurrency(currency)) {
-    throw new Error("Invalid currency.");
+    throw new Error('Invalid currency.');
   }
 
   const query = rawQuery.trim().slice(0, 100);
   if (!query) {
-    return { products: [], total: 0, query: "" };
+    return { products: [], total: 0, query: '' };
   }
 
   const filters = catalogFiltersSchema.parse({
@@ -64,9 +64,7 @@ export async function searchHeaderProductsAction(
     total: catalog.total,
     products: catalog.products.map((product) => {
       const compareAt =
-        product.compareAtAmount != null
-          ? formatPrice(product.compareAtAmount)
-          : null;
+        product.compareAtAmount != null ? formatPrice(product.compareAtAmount) : null;
 
       return {
         id: product.id,

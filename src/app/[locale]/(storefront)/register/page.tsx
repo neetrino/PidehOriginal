@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { LoginScene } from "@/features/auth/ui/LoginScene";
-import { RegisterForm } from "@/features/auth/ui/RegisterForm";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { LoginScene } from '@/features/auth/ui/LoginScene';
+import { RegisterForm } from '@/features/auth/ui/RegisterForm';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type RegisterPageProps = {
   params: Promise<{ locale: string }>;

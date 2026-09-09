@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useMap } from "react-leaflet";
+import { useEffect } from 'react';
+import { useMap } from 'react-leaflet';
 
-import type { ContactBranchId } from "@/features/contact/ui/contact-locations";
-import { CONTACT_BRANCHES } from "@/features/contact/ui/contact-locations";
+import type { ContactBranchId } from '@/features/contact/ui/contact-locations';
+import { CONTACT_BRANCHES } from '@/features/contact/ui/contact-locations';
 
 type ContactMapControlsProps = {
   zoomInLabel: string;
@@ -15,13 +15,10 @@ type FlyToActiveBranchProps = {
   branchId: ContactBranchId | null;
 };
 
-export function ContactMapControls({
-  zoomInLabel,
-  zoomOutLabel,
-}: ContactMapControlsProps) {
+export function ContactMapControls({ zoomInLabel, zoomOutLabel }: ContactMapControlsProps) {
   const map = useMap();
   const buttonClass =
-    "flex size-10 items-center justify-center rounded-full bg-pideh-orange text-lg font-bold text-white shadow-[0_8px_20px_rgba(30,30,30,0.25)]";
+    'flex size-10 items-center justify-center rounded-full bg-pideh-orange text-lg font-bold text-white shadow-[0_8px_20px_rgba(30,30,30,0.25)]';
 
   return (
     <div className="absolute right-4 bottom-4 z-10 flex flex-col gap-2">

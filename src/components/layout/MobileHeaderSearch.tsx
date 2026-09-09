@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useRef, useState, type FormEvent } from "react";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useRef, useState, type FormEvent } from 'react';
 
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
-import { catalogHref } from "@/features/products/application/catalog-search-params";
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
+import { catalogHref } from '@/features/products/application/catalog-search-params';
 import {
   DEFAULT_CATALOG_PAGE_SIZE,
   DEFAULT_CATALOG_SORT,
-} from "@/features/products/schemas/catalog-list";
-import type { Locale } from "@/lib/i18n/config";
+} from '@/features/products/schemas/catalog-list';
+import type { Locale } from '@/lib/i18n/config';
 
 type MobileHeaderSearchProps = {
   locale: Locale;
@@ -31,7 +31,7 @@ export function MobileHeaderSearch({
 }: MobileHeaderSearchProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();

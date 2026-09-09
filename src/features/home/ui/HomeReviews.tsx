@@ -1,10 +1,8 @@
-import { RevealOnView } from "@/components/motion/RevealOnView";
-import { titleSweep } from "@/components/motion/presets";
-import {
-  HomeReviewsCarousel,
-  type HomeReviewItem,
-} from "@/features/home/ui/HomeReviewsCarousel";
-import { HomeYellowWave } from "@/features/home/ui/HomeYellowWave";
+import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import { RevealOnView } from '@/components/motion/RevealOnView';
+import { titleSweep } from '@/components/motion/presets';
+import { HomeReviewsCarousel, type HomeReviewItem } from '@/features/home/ui/HomeReviewsCarousel';
+import { HomeYellowWave } from '@/features/home/ui/HomeYellowWave';
 
 type HomeReviewsProps = {
   title: string;
@@ -18,7 +16,7 @@ export function HomeReviews({ title, reviews }: HomeReviewsProps) {
   return (
     <section
       className="relative z-[15] overflow-x-clip bg-[#ff6b00] pb-32 md:pb-44"
-      style={{ clipPath: "inset(-81px 0 0 0)" }}
+      style={{ clipPath: 'inset(-81px 0 0 0)' }}
     >
       <div
         aria-hidden="true"
@@ -31,12 +29,12 @@ export function HomeReviews({ title, reviews }: HomeReviewsProps) {
         className="pointer-events-none absolute inset-x-0 top-[22%] bottom-0 z-0 bg-[#ffcf48]"
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 pt-12 md:px-10 md:pt-16">
+      <div className={`relative z-10 pt-12 md:pt-16 ${PAGE_CONTAINER}`}>
         <RevealOnView className="mb-8 md:mb-10" variants={titleSweep}>
           <h2
             className="font-display text-[#ff6b00]"
             style={{
-              fontSize: "clamp(2.5rem, 9vw, 140px)",
+              fontSize: 'clamp(2.5rem, 9vw, 140px)',
               lineHeight: 0.78,
             }}
           >

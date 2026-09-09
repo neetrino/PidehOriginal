@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { annotate } from "rough-notation";
-import { useEffect, useRef } from "react";
-import { useReducedMotion } from "motion/react";
+import Image from 'next/image';
+import { annotate } from 'rough-notation';
+import { useEffect, useRef } from 'react';
+import { useReducedMotion } from 'motion/react';
 
-import { AppLink } from "@/components/ui/AppLink";
-import type { HeaderSearchProduct } from "@/features/products/application/search-header-products-action";
+import { AppLink } from '@/components/ui/AppLink';
+import type { HeaderSearchProduct } from '@/features/products/application/search-header-products-action';
 
 type HeaderSearchResultsProps = {
   idleLabel: string;
@@ -42,8 +42,8 @@ export function HeaderSearchResults({
     const el = idleRef.current;
     if (!el || !showIdle) return;
     const mark = annotate(el, {
-      type: "underline",
-      color: "#ff6b00",
+      type: 'underline',
+      color: '#ff6b00',
       animate: !reduceMotion,
       animationDuration: 700,
       padding: 3,
@@ -58,10 +58,7 @@ export function HeaderSearchResults({
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {showIdle ? (
           <div className="relative px-5 py-10">
-            <p
-              ref={idleRef}
-              className="text-center text-sm font-bold text-[#1e1e1e]"
-            >
+            <p ref={idleRef} className="text-center text-sm font-bold text-[#1e1e1e]">
               {idleLabel}
             </p>
           </div>
@@ -88,7 +85,7 @@ export function HeaderSearchResults({
         ) : null}
 
         {products.length > 0 ? (
-          <ul className={`space-y-1 px-2 py-2 ${pending ? "opacity-70" : ""}`}>
+          <ul className={`space-y-1 px-2 py-2 ${pending ? 'opacity-70' : ''}`}>
             {products.map((product) => (
               <li key={product.id}>
                 <AppLink
@@ -109,9 +106,7 @@ export function HeaderSearchResults({
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold text-[#1e1e1e]">
-                      {product.title}
-                    </p>
+                    <p className="truncate text-sm font-bold text-[#1e1e1e]">{product.title}</p>
                     <p className="mt-0.5 text-sm font-semibold text-[#ff6b00]">
                       {product.compareAtFormatted ? (
                         <>

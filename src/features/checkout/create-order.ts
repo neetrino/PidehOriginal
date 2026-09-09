@@ -1,11 +1,11 @@
-"use server";
+'use server';
 
-import { createHash } from "node:crypto";
+import { createHash } from 'node:crypto';
 
-import { and, eq, inArray, sql } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { and, eq, inArray, sql } from 'drizzle-orm';
+import { cookies } from 'next/headers';
 
-import { getProviders } from "@/config/providers";
+import { getProviders } from '@/config/providers';
 import {
   cartItems,
   carts,
@@ -23,107 +23,93 @@ import {
   promotions,
   stockMovements,
   users,
-} from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
-import {
-  getCartWithItems,
-  revalidateCartPaths,
-} from "@/features/cart/cart";
-import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
-import {
-  checkoutSchema,
-  type CheckoutInput,
-} from "@/features/checkout/schemas";
-import { toPaymentRecord } from "@/features/checkout/domain/payment-methods";
-import { STORE_PICKUP_LABEL } from "@/features/checkout/domain/shipping-methods";
-import { resolveGroupOrderCheckoutContext } from "@/features/checkout/application/group-order-checkout-context";
-import { getStoreIdentity } from "@/features/settings/application/queries";
-import { redeemBonusesForOrder } from "@/features/bonuses/application/bonus-ledger";
+} from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
+import { getCartWithItems, revalidateCartPaths } from '@/features/cart/cart';
+import { cartLineUnitAmount } from '@/features/cart/domain/line-price';
+import { checkoutSchema, type CheckoutInput } from '@/features/checkout/schemas';
+import { toPaymentRecord } from '@/features/checkout/domain/payment-methods';
+import { STORE_PICKUP_LABEL } from '@/features/checkout/domain/shipping-methods';
+import { resolveGroupOrderCheckoutContext } from '@/features/checkout/application/group-order-checkout-context';
+import { getStoreIdentity } from '@/features/settings/application/queries';
+import { redeemBonusesForOrder } from '@/features/bonuses/application/bonus-ledger';
 import {
   bonusEligibleMerchandiseAmount,
   calculateMaxRedeemAmount,
   clampBonusRedeemRequest,
-} from "@/features/bonuses/domain/bonus-rules";
-import { redeemGiftCardForOrder } from "@/features/gift-cards/application/gift-card-ledger";
+} from '@/features/bonuses/domain/bonus-rules';
+import { redeemGiftCardForOrder } from '@/features/gift-cards/application/gift-card-ledger';
 import {
   calculateGiftCardRedeemAmount,
   giftCardRedeemErrorMessage,
   isGiftCardRecipientActor,
   isGiftCardRedeemable,
   normalizeGiftCardCode,
-} from "@/features/gift-cards/domain/gift-card-rules";
-import { completeGroupOrderAfterStandardCheckout } from "@/features/group-orders/application/complete-after-checkout";
+} from '@/features/gift-cards/domain/gift-card-rules';
+import { completeGroupOrderAfterStandardCheckout } from '@/features/group-orders/application/complete-after-checkout';
 import {
   quoteDistanceDelivery,
   type DistanceDeliveryQuote,
-} from "@/features/delivery/application/quote-distance-delivery";
-import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
+} from '@/features/delivery/application/quote-distance-delivery';
+import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
+import { DEFAULT_DELIVERY_CITY } from '@/features/delivery/domain/service-area';
 import {
   findActiveCashChangeByAmount,
   listActiveCashChangeDenominations,
-} from "@/features/delivery/domain/cash-change";
+} from '@/features/delivery/domain/cash-change';
 import {
   formatDeliverySlotSnapshot,
   isDeliverySlotAvailable,
-} from "@/features/delivery/domain/delivery-schedule";
-import { loadPrimaryProductImageObjectKeys } from "@/features/orders/application/order-item-images";
+} from '@/features/delivery/domain/delivery-schedule';
+import { loadPrimaryProductImageObjectKeys } from '@/features/orders/application/order-item-images';
 import {
   ORDER_NUMBER_LOCK_KEY,
   formatOrderNumber,
   nextOrderSequence,
-} from "@/features/orders/domain/order-number";
+} from '@/features/orders/domain/order-number';
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
   isCouponUserEligible,
-} from "@/features/promotions/domain/evaluate-coupon";
-import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
-import { getStoreBonusSettings } from "@/features/settings/application/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { getCheckoutRateSnapshot } from "@/lib/fx/service";
-import { createId } from "@/lib/id";
-import { convertAmount } from "@/lib/money/convert";
-import { defaultCurrency } from "@/lib/money/currency";
-import {
-  CURRENCY_COOKIE_NAME,
-  parseCurrencyCookie,
-} from "@/lib/money/currency-cookie";
+} from '@/features/promotions/domain/evaluate-coupon';
+import { normalizePromotionCode } from '@/features/promotions/domain/promotion-rules';
+import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
+import { getStoreBonusSettings } from '@/features/settings/application/queries';
+import { getCurrentUser } from '@/lib/auth/session';
+import { getCheckoutRateSnapshot } from '@/lib/fx/service';
+import { createId } from '@/lib/id';
+import { convertAmount } from '@/lib/money/convert';
+import { defaultCurrency } from '@/lib/money/currency';
+import { CURRENCY_COOKIE_NAME, parseCurrencyCookie } from '@/lib/money/currency-cookie';
 
 function hashValue(value: string): string {
-  return createHash("sha256").update(value).digest("hex");
+  return createHash('sha256').update(value).digest('hex');
 }
 
-export type CreateOrderResult =
-  | { ok: true; orderNumber: string }
-  | { ok: false; error: string };
+export type CreateOrderResult = { ok: true; orderNumber: string } | { ok: false; error: string };
 
 /** Creates a COD order with server-side totals, stock decrement, and cart clear. */
-export async function createOrderAction(
-  raw: CheckoutInput,
-): Promise<CreateOrderResult> {
+export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrderResult> {
   const parsed = checkoutSchema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, error: "Invalid checkout data." };
+    return { ok: false, error: 'Invalid checkout data.' };
   }
 
   const input = parsed.data;
   const user = await getCurrentUser();
   const { cart, items } = await getCartWithItems();
   const cookieStore = await cookies();
-  const displayCurrency = parseCurrencyCookie(
-    cookieStore.get(CURRENCY_COOKIE_NAME)?.value,
-  );
+  const displayCurrency = parseCurrencyCookie(cookieStore.get(CURRENCY_COOKIE_NAME)?.value);
 
   if (items.length === 0 || !cart) {
-    return { ok: false, error: "Cart is empty." };
+    return { ok: false, error: 'Cart is empty.' };
   }
 
   let rateSnapshot;
   try {
     rateSnapshot = await getCheckoutRateSnapshot(displayCurrency);
   } catch {
-    return { ok: false, error: "Exchange rate unavailable. Try again shortly." };
+    return { ok: false, error: 'Exchange rate unavailable. Try again shortly.' };
   }
 
   let deliveryQuote: DistanceDeliveryQuote | null = null;
@@ -136,7 +122,7 @@ export async function createOrderAction(
     resolveGroupOrderCheckoutContext(),
   ]);
 
-  if (input.shippingMethod === "delivery") {
+  if (input.shippingMethod === 'delivery') {
     if (
       groupCheckout.active &&
       groupCheckout.deliveryAmount >= 0 &&
@@ -144,7 +130,7 @@ export async function createOrderAction(
     ) {
       deliveryQuote = {
         distanceMeters: 0,
-        distanceLabel: groupCheckout.deliveryDistanceLabel ?? "group-order",
+        distanceLabel: groupCheckout.deliveryDistanceLabel ?? 'group-order',
         pricePerKmAmount: 0,
         deliveryAmount: groupCheckout.deliveryAmount,
         destinationFormattedAddress: groupCheckout.deliveryAddress,
@@ -153,7 +139,7 @@ export async function createOrderAction(
       };
     } else {
       const quoted = await quoteDistanceDelivery(
-        input.line1 ?? "",
+        input.line1 ?? '',
         input.deliveryLat != null && input.deliveryLng != null
           ? { lat: input.deliveryLat, lng: input.deliveryLng }
           : null,
@@ -165,20 +151,20 @@ export async function createOrderAction(
     }
 
     const selectedSlot = {
-      date: input.scheduledDeliveryDate ?? "",
-      startTime: input.scheduledDeliveryStart ?? "",
-      endTime: input.scheduledDeliveryEnd ?? "",
+      date: input.scheduledDeliveryDate ?? '',
+      startTime: input.scheduledDeliveryStart ?? '',
+      endTime: input.scheduledDeliveryEnd ?? '',
     };
     if (!isDeliverySlotAvailable(deliverySettings.schedule, selectedSlot)) {
       return {
         ok: false,
-        error: "Selected delivery time is no longer available.",
+        error: 'Selected delivery time is no longer available.',
       };
     }
     deliverySlotSnapshot = formatDeliverySlotSnapshot(selectedSlot);
   }
 
-  if (input.paymentMethod === "cash_on_delivery") {
+  if (input.paymentMethod === 'cash_on_delivery') {
     const activeCashChange = listActiveCashChangeDenominations(
       deliverySettings.cashChangeDenominations,
     );
@@ -186,7 +172,7 @@ export async function createOrderAction(
       if (input.cashChangeAmount == null) {
         return {
           ok: false,
-          error: "Please select the banknote you will pay with.",
+          error: 'Please select the banknote you will pay with.',
         };
       }
       const matched = findActiveCashChangeByAmount(
@@ -196,7 +182,7 @@ export async function createOrderAction(
       if (!matched) {
         return {
           ok: false,
-          error: "Selected cash-change amount is no longer available.",
+          error: 'Selected cash-change amount is no longer available.',
         };
       }
       cashChangeAmount = matched.amount;
@@ -219,22 +205,16 @@ export async function createOrderAction(
       email: input.contactEmail.toLowerCase(),
       shippingMethod: input.shippingMethod,
       paymentMethod: input.paymentMethod,
-      line1: input.shippingMethod === "delivery" ? input.line1?.trim() : null,
+      line1: input.shippingMethod === 'delivery' ? input.line1?.trim() : null,
       deliveryAmount: deliveryQuote?.deliveryAmount ?? 0,
       distanceMeters: deliveryQuote?.distanceMeters ?? null,
       scheduledDeliveryDate:
-        input.shippingMethod === "delivery"
-          ? input.scheduledDeliveryDate
-          : null,
+        input.shippingMethod === 'delivery' ? input.scheduledDeliveryDate : null,
       scheduledDeliveryStart:
-        input.shippingMethod === "delivery"
-          ? input.scheduledDeliveryStart
-          : null,
+        input.shippingMethod === 'delivery' ? input.scheduledDeliveryStart : null,
       cashChangeAmount: cashChangeAmount ?? null,
       bonusRedeemAmount: input.bonusRedeemAmount ?? 0,
-      giftCardCode: input.giftCardCode
-        ? normalizeGiftCardCode(input.giftCardCode)
-        : null,
+      giftCardCode: input.giftCardCode ? normalizeGiftCardCode(input.giftCardCode) : null,
     }),
   );
 
@@ -257,28 +237,22 @@ export async function createOrderAction(
       }
 
       const pickupLine1 =
-        deliverySettings.originAddress.trim() ||
-        storeIdentity.name ||
-        "Store pickup";
+        deliverySettings.originAddress.trim() || storeIdentity.name || 'Store pickup';
 
       const address = {
         recipientFirstName: input.firstName,
         recipientLastName: input.lastName,
         phone: input.contactPhone,
-        countryCode:
-          deliveryQuote?.countryCode?.trim().toUpperCase().slice(0, 2) || "AM",
+        countryCode: deliveryQuote?.countryCode?.trim().toUpperCase().slice(0, 2) || 'AM',
         region: input.region,
-        city:
-          deliveryQuote?.city?.trim() || input.city?.trim() || "Yerevan",
+        city: deliveryQuote?.city?.trim() || input.city?.trim() || DEFAULT_DELIVERY_CITY,
         line1:
-          input.shippingMethod === "pickup"
+          input.shippingMethod === 'pickup'
             ? pickupLine1
-            : deliveryQuote?.destinationFormattedAddress ||
-              input.line1?.trim() ||
-              "",
+            : deliveryQuote?.destinationFormattedAddress || input.line1?.trim() || '',
         line2: input.line2,
         postalCode: input.postalCode,
-        ...(input.shippingMethod === "delivery"
+        ...(input.shippingMethod === 'delivery'
           ? {
               floor: input.floor?.trim() || undefined,
               intercomCode: input.intercomCode?.trim() || undefined,
@@ -316,7 +290,7 @@ export async function createOrderAction(
         participantNameSnapshot: string | null;
         modifiers: Array<{
           modifierId: string;
-          kind: "ADDITION" | "EXCEPTION";
+          kind: 'ADDITION' | 'EXCEPTION';
           name: string;
           unitPriceAmount: number;
         }>;
@@ -324,13 +298,10 @@ export async function createOrderAction(
 
       const qtyByProduct = new Map<string, number>();
       for (const { item, product } of items) {
-        if (product.status !== "ACTIVE") {
-          throw new Error("A product in the cart is unavailable.");
+        if (product.status !== 'ACTIVE') {
+          throw new Error('A product in the cart is unavailable.');
         }
-        qtyByProduct.set(
-          product.id,
-          (qtyByProduct.get(product.id) ?? 0) + item.quantity,
-        );
+        qtyByProduct.set(product.id, (qtyByProduct.get(product.id) ?? 0) + item.quantity);
       }
 
       const lockedById = new Map<string, typeof products.$inferSelect>();
@@ -339,11 +310,11 @@ export async function createOrderAction(
           .select()
           .from(products)
           .where(eq(products.id, productId))
-          .for("update")
+          .for('update')
           .limit(1);
 
         if (!locked || locked.stockOnHand < neededQty) {
-          throw new Error("Insufficient stock for one or more items.");
+          throw new Error('Insufficient stock for one or more items.');
         }
         lockedById.set(productId, locked);
       }
@@ -360,16 +331,13 @@ export async function createOrderAction(
       ]);
 
       const remainingStock = new Map(
-        [...lockedById.entries()].map(([id, product]) => [
-          id,
-          product.stockOnHand,
-        ]),
+        [...lockedById.entries()].map(([id, product]) => [id, product.stockOnHand]),
       );
 
       for (const { item, product, modifiers } of items) {
         const locked = lockedById.get(product.id);
         if (!locked) {
-          throw new Error("A product in the cart is unavailable.");
+          throw new Error('A product in the cart is unavailable.');
         }
 
         const resolved = pricedUnits.get(locked.id);
@@ -382,25 +350,16 @@ export async function createOrderAction(
         );
         const lineTotal = unitAmount * item.quantity;
         const unitDisplayAmount = Number(
-          convertAmount(
-            unitAmount,
-            rateSnapshot.rate,
-            defaultCurrency,
-            displayCurrency,
-          ).amount,
+          convertAmount(unitAmount, rateSnapshot.rate, defaultCurrency, displayCurrency).amount,
         );
         subtotal += lineTotal;
 
-        const nextStock =
-          (remainingStock.get(locked.id) ?? locked.stockOnHand) - item.quantity;
+        const nextStock = (remainingStock.get(locked.id) ?? locked.stockOnHand) - item.quantity;
         remainingStock.set(locked.id, nextStock);
 
         lineSnapshots.push({
           productId: locked.id,
-          title:
-            locked.translations.en?.title ??
-            locked.translations.hy?.title ??
-            locked.sku,
+          title: locked.translations.en?.title ?? locked.translations.hy?.title ?? locked.sku,
           sku: locked.sku,
           imageKey: primaryImageKeys.get(locked.id) ?? null,
           quantity: item.quantity,
@@ -415,8 +374,7 @@ export async function createOrderAction(
             modifierId: modifier.id,
             kind: modifier.kind,
             name: modifier.name,
-            unitPriceAmount:
-              modifier.kind === "ADDITION" ? modifier.priceAmount : 0,
+            unitPriceAmount: modifier.kind === 'ADDITION' ? modifier.priceAmount : 0,
           })),
         });
       }
@@ -438,20 +396,16 @@ export async function createOrderAction(
           .where(eq(groupOrderItems.groupOrderId, groupCheckout.groupOrderId));
 
         if (groupLines.length === 0) {
-          throw new Error("Group order has no items to checkout.");
+          throw new Error('Group order has no items to checkout.');
         }
 
         const missingImageProductIds = [
           ...new Set(
-            groupLines
-              .map((row) => row.product.id)
-              .filter((id) => !primaryImageKeys.has(id)),
+            groupLines.map((row) => row.product.id).filter((id) => !primaryImageKeys.has(id)),
           ),
         ];
         if (missingImageProductIds.length > 0) {
-          const extraKeys = await loadPrimaryProductImageObjectKeys(
-            missingImageProductIds,
-          );
+          const extraKeys = await loadPrimaryProductImageObjectKeys(missingImageProductIds);
           for (const [productId, objectKey] of extraKeys) {
             primaryImageKeys.set(productId, objectKey);
           }
@@ -464,12 +418,7 @@ export async function createOrderAction(
             : await tx
                 .select()
                 .from(groupOrderItemModifiers)
-                .where(
-                  inArray(
-                    groupOrderItemModifiers.groupOrderItemId,
-                    groupLineIds,
-                  ),
-                );
+                .where(inArray(groupOrderItemModifiers.groupOrderItemId, groupLineIds));
         const modsByGroupLine = new Map<string, typeof groupMods>();
         for (const mod of groupMods) {
           const list = modsByGroupLine.get(mod.groupOrderItemId) ?? [];
@@ -482,7 +431,7 @@ export async function createOrderAction(
         for (const row of groupLines) {
           const locked = lockedById.get(row.product.id);
           if (!locked) {
-            throw new Error("A product in the cart is unavailable.");
+            throw new Error('A product in the cart is unavailable.');
           }
           const resolved = pricedUnits.get(locked.id);
           const unitAmount = row.item.unitAmount;
@@ -494,21 +443,13 @@ export async function createOrderAction(
           );
           const lineTotal = row.item.lineTotalAmount;
           const unitDisplayAmount = Number(
-            convertAmount(
-              unitAmount,
-              rateSnapshot.rate,
-              defaultCurrency,
-              displayCurrency,
-            ).amount,
+            convertAmount(unitAmount, rateSnapshot.rate, defaultCurrency, displayCurrency).amount,
           );
           subtotal += lineTotal;
           const mods = modsByGroupLine.get(row.item.id) ?? [];
           lineSnapshots.push({
             productId: locked.id,
-            title:
-              locked.translations.en?.title ??
-              locked.translations.hy?.title ??
-              locked.sku,
+            title: locked.translations.en?.title ?? locked.translations.hy?.title ?? locked.sku,
             sku: locked.sku,
             imageKey: primaryImageKeys.get(locked.id) ?? null,
             quantity: row.item.quantity,
@@ -522,9 +463,7 @@ export async function createOrderAction(
             modifiers: mods.map((mod) => ({
               modifierId: mod.modifierId,
               kind:
-                mod.kindSnapshot === "EXCEPTION"
-                  ? ("EXCEPTION" as const)
-                  : ("ADDITION" as const),
+                mod.kindSnapshot === 'EXCEPTION' ? ('EXCEPTION' as const) : ('ADDITION' as const),
               name: mod.nameSnapshot,
               unitPriceAmount: mod.priceAmountSnapshot,
             })),
@@ -543,19 +482,15 @@ export async function createOrderAction(
         const [coupon] = await tx
           .select()
           .from(promotions)
-          .where(
-            and(eq(promotions.kind, "COUPON"), eq(promotions.code, code)),
-          )
-          .for("update")
+          .where(and(eq(promotions.kind, 'COUPON'), eq(promotions.code, code)))
+          .for('update')
           .limit(1);
 
         const nowCheck = new Date();
         const evaluated = evaluateCouponDiscount(coupon, subtotal, nowCheck);
         if (!evaluated.ok || !coupon) {
           throw new Error(
-            couponDiscountErrorMessage(
-              evaluated.ok ? "INVALID_OR_INACTIVE" : evaluated.error,
-            ),
+            couponDiscountErrorMessage(evaluated.ok ? 'INVALID_OR_INACTIVE' : evaluated.error),
           );
         }
 
@@ -569,7 +504,7 @@ export async function createOrderAction(
             user?.id,
           )
         ) {
-          throw new Error(couponDiscountErrorMessage("USER_NOT_ELIGIBLE"));
+          throw new Error(couponDiscountErrorMessage('USER_NOT_ELIGIBLE'));
         }
 
         discountAmount = evaluated.discountAmount;
@@ -584,10 +519,7 @@ export async function createOrderAction(
           .where(eq(promotions.id, coupon.id));
       }
 
-      const merchandiseAfterDiscount = bonusEligibleMerchandiseAmount(
-        subtotal,
-        discountAmount,
-      );
+      const merchandiseAfterDiscount = bonusEligibleMerchandiseAmount(subtotal, discountAmount);
       let bonusRedeemedAmount = 0;
       if (user?.id && (input.bonusRedeemAmount ?? 0) > 0) {
         const bonusSettings = await getStoreBonusSettings();
@@ -598,11 +530,11 @@ export async function createOrderAction(
           })
           .from(users)
           .where(eq(users.id, user.id))
-          .for("update")
+          .for('update')
           .limit(1);
 
         if (!lockedCustomer) {
-          throw new Error("Unable to apply bonuses.");
+          throw new Error('Unable to apply bonuses.');
         }
 
         const maxRedeem = calculateMaxRedeemAmount({
@@ -610,17 +542,13 @@ export async function createOrderAction(
           availableBalance: lockedCustomer.bonusBalance,
           maxRedeemPercent: bonusSettings.maxRedeemPercent,
         });
-        bonusRedeemedAmount = clampBonusRedeemRequest(
-          input.bonusRedeemAmount ?? 0,
-          maxRedeem,
-        );
+        bonusRedeemedAmount = clampBonusRedeemRequest(input.bonusRedeemAmount ?? 0, maxRedeem);
       } else if ((input.bonusRedeemAmount ?? 0) > 0 && !user?.id) {
-        throw new Error("Bonuses are available for registered customers only.");
+        throw new Error('Bonuses are available for registered customers only.');
       }
 
       const payableBeforeGiftCard =
-        Math.max(0, merchandiseAfterDiscount - bonusRedeemedAmount) +
-        deliveryAmount;
+        Math.max(0, merchandiseAfterDiscount - bonusRedeemedAmount) + deliveryAmount;
 
       let giftCardId: string | null = null;
       let giftCardCodeSnapshot: string | null = null;
@@ -631,7 +559,7 @@ export async function createOrderAction(
           .select()
           .from(giftCards)
           .where(eq(giftCards.code, code))
-          .for("update")
+          .for('update')
           .limit(1);
 
         if (
@@ -652,9 +580,7 @@ export async function createOrderAction(
           );
         }
 
-        const redeemActor = user
-          ? { id: user.id, email: user.email }
-          : null;
+        const redeemActor = user ? { id: user.id, email: user.email } : null;
         if (
           !isGiftCardRecipientActor({
             actor: redeemActor,
@@ -668,7 +594,7 @@ export async function createOrderAction(
               status: card.status,
               balanceAmount: card.balanceAmount,
               expiresAt: card.expiresAt,
-              recipientDenied: redeemActor ? "mismatch" : "unauthenticated",
+              recipientDenied: redeemActor ? 'mismatch' : 'unauthenticated',
             }),
           );
         }
@@ -678,7 +604,7 @@ export async function createOrderAction(
           payableBeforeGiftCard,
         });
         if (giftCardAmount <= 0) {
-          throw new Error("Gift card cannot be applied to this order.");
+          throw new Error('Gift card cannot be applied to this order.');
         }
 
         giftCardId = card.id;
@@ -688,20 +614,13 @@ export async function createOrderAction(
           await tx
             .update(giftCards)
             .set({ recipientUserId: user.id, updatedAt: new Date() })
-            .where(
-              and(
-                eq(giftCards.id, card.id),
-                sql`${giftCards.recipientUserId} is null`,
-              ),
-            );
+            .where(and(eq(giftCards.id, card.id), sql`${giftCards.recipientUserId} is null`));
         }
       }
 
       const totalAmount = Math.max(0, payableBeforeGiftCard - giftCardAmount);
       const orderId = createId();
-      await tx.execute(
-        sql`select pg_advisory_xact_lock(${ORDER_NUMBER_LOCK_KEY})`,
-      );
+      await tx.execute(sql`select pg_advisory_xact_lock(${ORDER_NUMBER_LOCK_KEY})`);
       const [maxRow] = await tx
         .select({
           maxSeq: sql<number | null>`max(cast(substring(${orders.orderNumber} from 2) as integer))`,
@@ -718,8 +637,8 @@ export async function createOrderAction(
         contactEmail: input.contactEmail.toLowerCase(),
         contactPhone: input.contactPhone,
         contactName,
-        status: "PENDING",
-        paymentStatus: "PENDING",
+        status: 'PENDING',
+        paymentStatus: 'PENDING',
         baseCurrency: defaultCurrency,
         displayCurrency,
         exchangeRate: rateSnapshot.rate,
@@ -744,13 +663,13 @@ export async function createOrderAction(
         promotionDiscountAmount: appliedPromotion ? discountAmount : null,
         deliveryRuleId: null,
         deliveryLabelSnapshot:
-          input.shippingMethod === "pickup"
+          input.shippingMethod === 'pickup'
             ? STORE_PICKUP_LABEL
             : deliveryQuote
               ? `Distance delivery (${deliveryQuote.distanceLabel})`
-              : "Delivery",
+              : 'Delivery',
         deliveryEstimateSnapshot:
-          input.shippingMethod === "pickup"
+          input.shippingMethod === 'pickup'
             ? storeIdentity.name
             : [
                 deliveryQuote
@@ -759,7 +678,7 @@ export async function createOrderAction(
                 deliverySlotSnapshot,
               ]
                 .filter(Boolean)
-                .join(" · ") || null,
+                .join(' · ') || null,
         idempotencyScopeHash: scopeHash,
         idempotencyKeyHash: keyHash,
         requestFingerprint: fingerprint,
@@ -832,13 +751,12 @@ export async function createOrderAction(
           })
           .where(eq(products.id, productId));
 
-        const orderedQty =
-          (qtyByProduct.get(productId) ?? 0);
+        const orderedQty = qtyByProduct.get(productId) ?? 0;
         await tx.insert(stockMovements).values({
           id: createId(),
           productId,
           delta: -orderedQty,
-          reason: "ORDER",
+          reason: 'ORDER',
           orderId,
           resultingBalance: nextStock,
           correlationId: number,
@@ -857,8 +775,7 @@ export async function createOrderAction(
       });
       const paymentRecord = toPaymentRecord(input.paymentMethod);
       const organizerParticipantId = groupCheckout.active
-        ? (groupCheckout.participants.find((p) => p.role === "ORGANIZER")?.id ??
-          null)
+        ? (groupCheckout.participants.find((p) => p.role === 'ORGANIZER')?.id ?? null)
         : null;
 
       await tx.insert(payments).values({
@@ -872,7 +789,7 @@ export async function createOrderAction(
             ? groupCheckout.organizerPayableAmount
             : totalAmount,
         currency: defaultCurrency,
-        status: "PENDING",
+        status: 'PENDING',
         attemptNumber: 1,
         groupOrderParticipantId: organizerParticipantId,
       });
@@ -880,18 +797,18 @@ export async function createOrderAction(
       await tx.insert(orderEvents).values({
         id: createId(),
         orderId,
-        eventType: "STATUS_CHANGE",
+        eventType: 'STATUS_CHANGE',
         fromState: null,
-        toState: "PENDING",
+        toState: 'PENDING',
         actorUserId: user?.id,
         isCustomerVisible: true,
-        payload: { source: "checkout" },
+        payload: { source: 'checkout' },
       });
 
       await tx.delete(cartItems).where(eq(cartItems.cartId, cart.id));
       await tx
         .update(carts)
-        .set({ status: "CONVERTED", updatedAt: now })
+        .set({ status: 'CONVERTED', updatedAt: now })
         .where(eq(carts.id, cart.id));
 
       await completeGroupOrderAfterStandardCheckout({
@@ -906,8 +823,7 @@ export async function createOrderAction(
     await revalidateCartPaths();
     return { ok: true, orderNumber };
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unable to place order.";
+    const message = error instanceof Error ? error.message : 'Unable to place order.';
     return { ok: false, error: message };
   }
 }

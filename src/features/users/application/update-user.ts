@@ -1,10 +1,10 @@
-"use server";
+'use server';
 
-import { and, count, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { and, count, eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { auditLogs, sessions, users } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
+import { auditLogs, sessions, users } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
 import {
   getEligibleUserStatuses,
   isUserRole,
@@ -13,7 +13,7 @@ import {
   wouldRemoveLastActiveAdmin,
   type UserRole,
   type UserStatus,
-} from "@/features/users/domain/user-lifecycle";
+} from '@/features/users/domain/user-lifecycle';
 import {
   updateUserRoleSchema,
   updateUserStatusSchema,
@@ -21,11 +21,11 @@ import {
   type UpdateUserRoleInput,
   type UpdateUserStatusInput,
   type BulkAnonymizeUsersInput,
-} from "@/features/users/schemas/admin-users";
-import { requireAdmin } from "@/lib/auth/policies";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/features/users/schemas/admin-users';
+import { requireAdmin } from '@/lib/auth/policies';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 async function countActiveAdmins(
   tx: Parameters<Parameters<typeof withTransaction>[0]>[0],
@@ -33,7 +33,7 @@ async function countActiveAdmins(
   const [row] = await tx
     .select({ value: count() })
     .from(users)
-    .where(and(eq(users.role, "ADMIN"), eq(users.status, "ACTIVE")));
+    .where(and(eq(users.role, 'ADMIN'), eq(users.status, 'ACTIVE')));
 
   return row?.value ?? 0;
 }
@@ -46,12 +46,12 @@ export async function updateUserRoleAction(
   raw: UpdateUserRoleInput,
 ): Promise<Result<{ userId: string; role: UserRole }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = updateUserRoleSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid role change payload.");
+    return err('VALIDATION_ERROR', 'Invalid role change payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -63,23 +63,23 @@ export async function updateUserRoleAction(
         .select()
         .from(users)
         .where(eq(users.id, userId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!target) {
-        throw new Error("USER_NOT_FOUND");
+        throw new Error('USER_NOT_FOUND');
       }
 
       if (!isUserRole(target.role) || !isUserStatus(target.status)) {
-        throw new Error("INVALID_USER_STATE");
+        throw new Error('INVALID_USER_STATE');
       }
 
-      if (target.status === "ANONYMIZED") {
-        throw new Error("USER_ANONYMIZED");
+      if (target.status === 'ANONYMIZED') {
+        throw new Error('USER_ANONYMIZED');
       }
 
       if (target.role === nextRole) {
-        throw new Error("SAME_ROLE");
+        throw new Error('SAME_ROLE');
       }
 
       const activeAdminCount = await countActiveAdmins(tx);
@@ -93,16 +93,13 @@ export async function updateUserRoleAction(
           activeAdminCount,
         })
       ) {
-        throw new Error("LAST_ADMIN");
+        throw new Error('LAST_ADMIN');
       }
 
       const now = new Date();
       const correlationId = createId();
 
-      await tx
-        .update(users)
-        .set({ role: nextRole, updatedAt: now })
-        .where(eq(users.id, target.id));
+      await tx.update(users).set({ role: nextRole, updatedAt: now }).where(eq(users.id, target.id));
 
       if (
         shouldRevokeSessions({
@@ -118,8 +115,8 @@ export async function updateUserRoleAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "user.change_role",
-        targetType: "user",
+        action: 'user.change_role',
+        targetType: 'user',
         targetId: target.id,
         beforeDiff: { role: target.role },
         afterDiff: { role: nextRole },
@@ -146,12 +143,12 @@ export async function updateUserStatusAction(
   raw: UpdateUserStatusInput,
 ): Promise<Result<{ userId: string; status: UserStatus }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = updateUserStatusSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid status change payload.");
+    return err('VALIDATION_ERROR', 'Invalid status change payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -163,24 +160,24 @@ export async function updateUserStatusAction(
         .select()
         .from(users)
         .where(eq(users.id, userId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!target) {
-        throw new Error("USER_NOT_FOUND");
+        throw new Error('USER_NOT_FOUND');
       }
 
       if (!isUserRole(target.role) || !isUserStatus(target.status)) {
-        throw new Error("INVALID_USER_STATE");
+        throw new Error('INVALID_USER_STATE');
       }
 
       if (target.status === nextStatus) {
-        throw new Error("SAME_STATUS");
+        throw new Error('SAME_STATUS');
       }
 
       const eligible = getEligibleUserStatuses(target.status);
       if (!eligible.includes(nextStatus)) {
-        throw new Error("INVALID_TRANSITION");
+        throw new Error('INVALID_TRANSITION');
       }
 
       const activeAdminCount = await countActiveAdmins(tx);
@@ -194,13 +191,12 @@ export async function updateUserStatusAction(
           activeAdminCount,
         })
       ) {
-        throw new Error("LAST_ADMIN");
+        throw new Error('LAST_ADMIN');
       }
 
       const now = new Date();
       const correlationId = createId();
-      const anonymizedAt =
-        nextStatus === "ANONYMIZED" ? now : target.anonymizedAt;
+      const anonymizedAt = nextStatus === 'ANONYMIZED' ? now : target.anonymizedAt;
 
       await tx
         .update(users)
@@ -208,11 +204,11 @@ export async function updateUserStatusAction(
           status: nextStatus,
           anonymizedAt,
           updatedAt: now,
-          ...(nextStatus === "ANONYMIZED"
+          ...(nextStatus === 'ANONYMIZED'
             ? {
                 email: `anonymized+${target.id}@invalid.local`,
-                firstName: "Anonymized",
-                lastName: "User",
+                firstName: 'Anonymized',
+                lastName: 'User',
                 phone: null,
               }
             : {}),
@@ -233,8 +229,8 @@ export async function updateUserStatusAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "user.change_status",
-        targetType: "user",
+        action: 'user.change_status',
+        targetType: 'user',
         targetId: target.id,
         beforeDiff: { status: target.status },
         afterDiff: { status: nextStatus },
@@ -261,12 +257,12 @@ export async function bulkAnonymizeUsersAction(
   raw: BulkAnonymizeUsersInput,
 ): Promise<Result<{ anonymized: number; skipped: number }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = bulkAnonymizeUsersSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid user selection.");
+    return err('VALIDATION_ERROR', 'Invalid user selection.');
   }
 
   let anonymized = 0;
@@ -275,7 +271,7 @@ export async function bulkAnonymizeUsersAction(
   for (const userId of parsed.data.userIds) {
     const result = await updateUserStatusAction(locale, {
       userId,
-      status: "ANONYMIZED",
+      status: 'ANONYMIZED',
     });
     if (result.ok) {
       anonymized += 1;
@@ -288,27 +284,24 @@ export async function bulkAnonymizeUsersAction(
 }
 
 function mapUserMutationError(error: unknown): Result<never> {
-  const code = error instanceof Error ? error.message : "UNKNOWN";
+  const code = error instanceof Error ? error.message : 'UNKNOWN';
 
   switch (code) {
-    case "USER_NOT_FOUND":
-      return err("USER_NOT_FOUND", "User not found.");
-    case "SAME_ROLE":
-      return err("SAME_ROLE", "User already has this role.");
-    case "SAME_STATUS":
-      return err("SAME_STATUS", "User already has this status.");
-    case "LAST_ADMIN":
-      return err(
-        "LAST_ADMIN",
-        "Cannot remove or disable the last active admin.",
-      );
-    case "USER_ANONYMIZED":
-      return err("USER_ANONYMIZED", "Anonymized users cannot be changed.");
-    case "INVALID_TRANSITION":
-      return err("INVALID_TRANSITION", "That status transition is not allowed.");
-    case "INVALID_USER_STATE":
-      return err("INVALID_USER_STATE", "User has an unknown role or status.");
+    case 'USER_NOT_FOUND':
+      return err('USER_NOT_FOUND', 'User not found.');
+    case 'SAME_ROLE':
+      return err('SAME_ROLE', 'User already has this role.');
+    case 'SAME_STATUS':
+      return err('SAME_STATUS', 'User already has this status.');
+    case 'LAST_ADMIN':
+      return err('LAST_ADMIN', 'Cannot remove or disable the last active admin.');
+    case 'USER_ANONYMIZED':
+      return err('USER_ANONYMIZED', 'Anonymized users cannot be changed.');
+    case 'INVALID_TRANSITION':
+      return err('INVALID_TRANSITION', 'That status transition is not allowed.');
+    case 'INVALID_USER_STATE':
+      return err('INVALID_USER_STATE', 'User has an unknown role or status.');
     default:
-      return err("USER_UPDATE_FAILED", "Unable to update user.");
+      return err('USER_UPDATE_FAILED', 'Unable to update user.');
   }
 }

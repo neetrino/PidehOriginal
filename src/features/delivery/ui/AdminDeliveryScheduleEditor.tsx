@@ -1,19 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import {
-  ADMIN_CHECKBOX,
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CHECKBOX, ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import type {
   DayHours,
   DeliveryScheduleSettings,
   IsoWeekday,
-} from "@/features/delivery/domain/delivery-schedule";
-import { timeToMinutes } from "@/features/delivery/domain/delivery-schedule";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/delivery/domain/delivery-schedule';
+import { timeToMinutes } from '@/features/delivery/domain/delivery-schedule';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 const WEEKDAYS: IsoWeekday[] = [1, 2, 3, 4, 5, 6, 7];
 
@@ -21,7 +17,7 @@ type AdminDeliveryScheduleEditorProps = {
   value: DeliveryScheduleSettings;
   onChange: (value: DeliveryScheduleSettings) => void;
   disabled?: boolean;
-  copy: Dictionary["admin"]["delivery"]["schedule"];
+  copy: Dictionary['admin']['delivery']['schedule'];
 };
 
 function toHHmm(value: string): string {
@@ -31,14 +27,14 @@ function toHHmm(value: string): string {
 function minutesToTime(total: number): string {
   const hours = Math.floor(total / 60);
   const minutes = total % 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
 /** Keeps close strictly after open for bookable days. */
 function withValidOpenClose(
   hours: DayHours,
-  patch: Partial<Pick<DayHours, "openTime" | "closeTime">>,
-): Pick<DayHours, "openTime" | "closeTime"> {
+  patch: Partial<Pick<DayHours, 'openTime' | 'closeTime'>>,
+): Pick<DayHours, 'openTime' | 'closeTime'> {
   const openTime = toHHmm(patch.openTime ?? hours.openTime);
   const closeTime = toHHmm(patch.closeTime ?? hours.closeTime);
   const openMinutes = timeToMinutes(openTime);
@@ -68,7 +64,7 @@ export function AdminDeliveryScheduleEditor({
   disabled = false,
   copy,
 }: AdminDeliveryScheduleEditorProps) {
-  const [closedDraft, setClosedDraft] = useState("");
+  const [closedDraft, setClosedDraft] = useState('');
 
   const weekdayLabels: Record<IsoWeekday, string> = {
     1: copy.monday,
@@ -82,7 +78,7 @@ export function AdminDeliveryScheduleEditor({
 
   function updateWeekly(
     day: IsoWeekday,
-    patch: Partial<DeliveryScheduleSettings["weekly"][IsoWeekday]>,
+    patch: Partial<DeliveryScheduleSettings['weekly'][IsoWeekday]>,
   ): void {
     const current = value.weekly[day];
     const nextHours: DayHours = { ...current, ...patch };
@@ -108,14 +104,14 @@ export function AdminDeliveryScheduleEditor({
     const date = closedDraft.trim();
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
     if (value.closedDates.includes(date)) {
-      setClosedDraft("");
+      setClosedDraft('');
       return;
     }
     onChange({
       ...value,
       closedDates: [...value.closedDates, date].sort(),
     });
-    setClosedDraft("");
+    setClosedDraft('');
   }
 
   return (
@@ -177,18 +173,14 @@ export function AdminDeliveryScheduleEditor({
               const hours = value.weekly[day];
               return (
                 <tr key={day} className="border-t border-gray-100">
-                  <td className="px-3 py-2 font-medium text-gray-900">
-                    {weekdayLabels[day]}
-                  </td>
+                  <td className="px-3 py-2 font-medium text-gray-900">{weekdayLabels[day]}</td>
                   <td className="px-3 py-2">
                     <input
                       type="checkbox"
                       checked={hours.isOpen}
                       disabled={disabled}
                       className={ADMIN_CHECKBOX}
-                      onChange={(event) =>
-                        updateWeekly(day, { isOpen: event.target.checked })
-                      }
+                      onChange={(event) => updateWeekly(day, { isOpen: event.target.checked })}
                     />
                   </td>
                   <td className="px-3 py-2">
@@ -257,13 +249,11 @@ export function AdminDeliveryScheduleEditor({
                   type="button"
                   disabled={disabled}
                   className="text-gray-500 hover:text-red-700"
-                  aria-label={copy.removeClosedDateAria.replace("{date}", date)}
+                  aria-label={copy.removeClosedDateAria.replace('{date}', date)}
                   onClick={() =>
                     onChange({
                       ...value,
-                      closedDates: value.closedDates.filter(
-                        (entry) => entry !== date,
-                      ),
+                      closedDates: value.closedDates.filter((entry) => entry !== date),
                     })
                   }
                 >

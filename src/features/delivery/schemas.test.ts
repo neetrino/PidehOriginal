@@ -1,11 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 
-import { deliverySettingsSchema } from "@/features/delivery/schemas";
-import { DEFAULT_DELIVERY_SCHEDULE } from "@/features/delivery/domain/delivery-schedule";
+import { deliverySettingsSchema } from '@/features/delivery/schemas';
+import { DEFAULT_DELIVERY_SCHEDULE } from '@/features/delivery/domain/delivery-schedule';
 
-describe("deliverySettingsSchema", () => {
+describe('deliverySettingsSchema', () => {
   const base = {
-    originAddress: "Yerevan, Armenia",
+    originAddress: 'Yerevan, Armenia',
     pricePerKmAmount: 1000,
     isActive: true,
     schedule: {
@@ -16,7 +16,7 @@ describe("deliverySettingsSchema", () => {
     },
     cashChangeDenominations: [
       {
-        id: "cash-change-10000",
+        id: 'cash-change-10000',
         amount: 10_000,
         imageObjectKey: null,
         isActive: true,
@@ -25,11 +25,11 @@ describe("deliverySettingsSchema", () => {
     ],
   };
 
-  it("accepts HH:mm times", () => {
+  it('accepts HH:mm times', () => {
     expect(deliverySettingsSchema.safeParse(base).success).toBe(true);
   });
 
-  it("accepts an explicit store map pin", () => {
+  it('accepts an explicit store map pin', () => {
     const parsed = deliverySettingsSchema.safeParse({
       ...base,
       originLat: 40.1792,
@@ -38,7 +38,7 @@ describe("deliverySettingsSchema", () => {
     expect(parsed.success).toBe(true);
   });
 
-  it("rejects a partial store map pin", () => {
+  it('rejects a partial store map pin', () => {
     const parsed = deliverySettingsSchema.safeParse({
       ...base,
       originLat: 40.1792,
@@ -46,14 +46,14 @@ describe("deliverySettingsSchema", () => {
     expect(parsed.success).toBe(false);
   });
 
-  it("normalizes HH:mm:ss from time inputs", () => {
+  it('normalizes HH:mm:ss from time inputs', () => {
     const parsed = deliverySettingsSchema.safeParse({
       ...base,
       schedule: {
         ...base.schedule,
         weekly: {
           ...base.schedule.weekly,
-          1: { isOpen: true, openTime: "10:00:00", closeTime: "22:30:00" },
+          1: { isOpen: true, openTime: '10:00:00', closeTime: '22:30:00' },
         },
       },
     });
@@ -62,8 +62,8 @@ describe("deliverySettingsSchema", () => {
     if (!parsed.success) return;
     expect(parsed.data.schedule.weekly[1]).toEqual({
       isOpen: true,
-      openTime: "10:00",
-      closeTime: "22:30",
+      openTime: '10:00',
+      closeTime: '22:30',
     });
   });
 });

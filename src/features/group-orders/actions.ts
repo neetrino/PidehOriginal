@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from 'next/cache';
 
-import { createGroupOrder, joinGroupOrder } from "@/features/group-orders/application/create-join";
+import { createGroupOrder, joinGroupOrder } from '@/features/group-orders/application/create-join';
 import {
   addGroupOrderItem,
   markParticipantItemsReady,
@@ -10,19 +10,19 @@ import {
   setGroupOrderDeliveryAmount,
   setGroupOrderDeliveryAddress,
   updateGroupOrderItemQuantity,
-} from "@/features/group-orders/application/items";
+} from '@/features/group-orders/application/items';
 import {
   cancelGroupOrder,
   lockGroupOrder,
   removeGroupOrderParticipant,
   setGroupOrderJoinsClosed,
   updateGroupOrderSpendLimit,
-} from "@/features/group-orders/application/manage";
+} from '@/features/group-orders/application/manage';
 import {
   getAdminGroupOrderDetail,
   getGroupOrderDetailByInvite,
   listAdminGroupOrders,
-} from "@/features/group-orders/application/queries";
+} from '@/features/group-orders/application/queries';
 import {
   addGroupOrderItemSchema,
   adminGroupOrderIdSchema,
@@ -39,34 +39,31 @@ import {
   setJoinsClosedSchema,
   updateGroupOrderItemQuantitySchema,
   updateSpendLimitSchema,
-} from "@/features/group-orders/schemas";
-import {
-  clearGroupOrderSession,
-  peekGroupOrderSession,
-} from "@/features/group-orders/session";
-import { markParticipantPaid } from "@/features/group-orders/application/manage";
-import { prepareGroupOrderCheckout } from "@/features/group-orders/application/prepare-checkout";
-import { completeParticipantCardPayment } from "@/features/group-orders/application/participant-payment";
-import { resolveActiveGroupOrderSession } from "@/features/group-orders/application/active-banner";
-import { requireAdmin } from "@/lib/auth/policies";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
-import { getDb } from "@/db/client";
-import { groupOrderParticipants, groupOrders } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
-import { appendGroupOrderEvent } from "@/features/group-orders/application/money";
-import { canTransitionGroupOrderStatus } from "@/features/group-orders/domain/status";
-import { getCurrentUser } from "@/lib/auth/session";
+} from '@/features/group-orders/schemas';
+import { clearGroupOrderSession, peekGroupOrderSession } from '@/features/group-orders/session';
+import { markParticipantPaid } from '@/features/group-orders/application/manage';
+import { prepareGroupOrderCheckout } from '@/features/group-orders/application/prepare-checkout';
+import { completeParticipantCardPayment } from '@/features/group-orders/application/participant-payment';
+import { resolveActiveGroupOrderSession } from '@/features/group-orders/application/active-banner';
+import { requireAdmin } from '@/lib/auth/policies';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
+import { getDb } from '@/db/client';
+import { groupOrderParticipants, groupOrders } from '@/db/schema';
+import { and, eq } from 'drizzle-orm';
+import { appendGroupOrderEvent } from '@/features/group-orders/application/money';
+import { canTransitionGroupOrderStatus } from '@/features/group-orders/domain/status';
+import { getCurrentUser } from '@/lib/auth/session';
 
 function revalidateGroupOrder(inviteToken: string): void {
-  revalidatePath(`/[locale]/group-orders/${inviteToken}`, "page");
-  revalidatePath("/[locale]/admin/group-orders", "page");
-  revalidatePath("/", "layout");
+  revalidatePath(`/[locale]/group-orders/${inviteToken}`, 'page');
+  revalidatePath('/[locale]/admin/group-orders', 'page');
+  revalidatePath('/', 'layout');
 }
 
 export async function createGroupOrderAction(raw: unknown) {
   const parsed = createGroupOrderSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await createGroupOrder(parsed.data);
   if (result.ok) revalidateGroupOrder(result.inviteToken);
   return result;
@@ -74,7 +71,7 @@ export async function createGroupOrderAction(raw: unknown) {
 
 export async function joinGroupOrderAction(raw: unknown) {
   const parsed = joinGroupOrderSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await joinGroupOrder(parsed.data);
   if (result.ok) revalidateGroupOrder(result.inviteToken);
   return result;
@@ -82,7 +79,7 @@ export async function joinGroupOrderAction(raw: unknown) {
 
 export async function addGroupOrderItemAction(raw: unknown) {
   const parsed = addGroupOrderItemSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await addGroupOrderItem(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;
@@ -90,7 +87,7 @@ export async function addGroupOrderItemAction(raw: unknown) {
 
 export async function updateGroupOrderItemQuantityAction(raw: unknown) {
   const parsed = updateGroupOrderItemQuantitySchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await updateGroupOrderItemQuantity(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;
@@ -98,7 +95,7 @@ export async function updateGroupOrderItemQuantityAction(raw: unknown) {
 
 export async function removeGroupOrderItemAction(raw: unknown) {
   const parsed = removeGroupOrderItemSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await removeGroupOrderItem({
     ...parsed.data,
     asOrganizer: true,
@@ -109,7 +106,7 @@ export async function removeGroupOrderItemAction(raw: unknown) {
 
 export async function markItemsReadyAction(raw: unknown) {
   const parsed = markItemsReadySchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await markParticipantItemsReady(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;
@@ -117,7 +114,7 @@ export async function markItemsReadyAction(raw: unknown) {
 
 export async function updateSpendLimitAction(raw: unknown) {
   const parsed = updateSpendLimitSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await updateGroupOrderSpendLimit(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;
@@ -125,7 +122,7 @@ export async function updateSpendLimitAction(raw: unknown) {
 
 export async function setJoinsClosedAction(raw: unknown) {
   const parsed = setJoinsClosedSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await setGroupOrderJoinsClosed(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;
@@ -133,7 +130,7 @@ export async function setJoinsClosedAction(raw: unknown) {
 
 export async function removeParticipantAction(raw: unknown) {
   const parsed = removeParticipantSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await removeGroupOrderParticipant(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;
@@ -141,7 +138,7 @@ export async function removeParticipantAction(raw: unknown) {
 
 export async function lockGroupOrderAction(raw: unknown) {
   const parsed = groupOrderInviteTokenSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await lockGroupOrder(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;
@@ -149,7 +146,7 @@ export async function lockGroupOrderAction(raw: unknown) {
 
 export async function cancelGroupOrderAction(raw: unknown) {
   const parsed = groupOrderInviteTokenSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await cancelGroupOrder(parsed.data);
   if (result.ok) {
     await clearGroupOrderSession();
@@ -160,7 +157,7 @@ export async function cancelGroupOrderAction(raw: unknown) {
 
 export async function setDeliveryAmountAction(raw: unknown) {
   const parsed = setDeliveryAmountSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await setGroupOrderDeliveryAmount(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;
@@ -168,7 +165,7 @@ export async function setDeliveryAmountAction(raw: unknown) {
 
 export async function setDeliveryAddressAction(raw: unknown) {
   const parsed = setDeliveryAddressSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await setGroupOrderDeliveryAddress(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;
@@ -200,20 +197,17 @@ export async function leaveGroupOrderSessionAction(): Promise<{
         groupOrderId: groupOrderParticipants.groupOrderId,
       })
       .from(groupOrderParticipants)
-      .innerJoin(
-        groupOrders,
-        eq(groupOrderParticipants.groupOrderId, groupOrders.id),
-      )
+      .innerJoin(groupOrders, eq(groupOrderParticipants.groupOrderId, groupOrders.id))
       .where(
         and(
           eq(groupOrders.inviteToken, session.inviteToken),
           eq(groupOrderParticipants.id, session.participantId),
-          eq(groupOrderParticipants.status, "ACTIVE"),
+          eq(groupOrderParticipants.status, 'ACTIVE'),
         ),
       )
       .limit(1);
 
-    if (participant?.role === "ORGANIZER") {
+    if (participant?.role === 'ORGANIZER') {
       const result = await cancelGroupOrder({
         inviteToken: session.inviteToken,
       });
@@ -225,7 +219,7 @@ export async function leaveGroupOrderSessionAction(): Promise<{
   }
 
   await clearGroupOrderSession();
-  revalidatePath("/", "layout");
+  revalidatePath('/', 'layout');
   return { ok: true as const, cancelled };
 }
 
@@ -248,13 +242,10 @@ export async function getAdminGroupOrderDetailAction(
   return getAdminGroupOrderDetail({ groupOrderId, locale, currency });
 }
 
-export async function adminCancelGroupOrderAction(
-  raw: unknown,
-  locale: Locale,
-) {
+export async function adminCancelGroupOrderAction(raw: unknown, locale: Locale) {
   await requireAdmin(locale);
   const parsed = adminGroupOrderIdSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
 
   const db = getDb();
   const [row] = await db
@@ -262,23 +253,23 @@ export async function adminCancelGroupOrderAction(
     .from(groupOrders)
     .where(eq(groupOrders.id, parsed.data.groupOrderId))
     .limit(1);
-  if (!row) return { ok: false as const, error: "Not found." };
-  if (!canTransitionGroupOrderStatus(row.status, "CANCELLED")) {
-    return { ok: false as const, error: "Cannot cancel in current status." };
+  if (!row) return { ok: false as const, error: 'Not found.' };
+  if (!canTransitionGroupOrderStatus(row.status, 'CANCELLED')) {
+    return { ok: false as const, error: 'Cannot cancel in current status.' };
   }
 
   const user = await getCurrentUser();
   await db
     .update(groupOrders)
-    .set({ status: "CANCELLED", updatedAt: new Date() })
+    .set({ status: 'CANCELLED', updatedAt: new Date() })
     .where(eq(groupOrders.id, row.id));
   await appendGroupOrderEvent(db, {
     groupOrderId: row.id,
-    eventType: "ADMIN_ACTION",
+    eventType: 'ADMIN_ACTION',
     fromState: row.status,
-    toState: "CANCELLED",
+    toState: 'CANCELLED',
     actorUserId: user?.id ?? null,
-    payload: { action: "cancel" },
+    payload: { action: 'cancel' },
   });
   revalidateGroupOrder(row.inviteToken);
   return { ok: true as const };
@@ -287,7 +278,7 @@ export async function adminCancelGroupOrderAction(
 export async function adminCloseJoinsAction(raw: unknown, locale: Locale) {
   await requireAdmin(locale);
   const parsed = adminGroupOrderIdSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
 
   const db = getDb();
   const [row] = await db
@@ -295,7 +286,7 @@ export async function adminCloseJoinsAction(raw: unknown, locale: Locale) {
     .from(groupOrders)
     .where(eq(groupOrders.id, parsed.data.groupOrderId))
     .limit(1);
-  if (!row) return { ok: false as const, error: "Not found." };
+  if (!row) return { ok: false as const, error: 'Not found.' };
 
   const user = await getCurrentUser();
   await db
@@ -304,21 +295,18 @@ export async function adminCloseJoinsAction(raw: unknown, locale: Locale) {
     .where(eq(groupOrders.id, row.id));
   await appendGroupOrderEvent(db, {
     groupOrderId: row.id,
-    eventType: "ADMIN_ACTION",
+    eventType: 'ADMIN_ACTION',
     actorUserId: user?.id ?? null,
-    payload: { action: "close_joins" },
+    payload: { action: 'close_joins' },
   });
   revalidateGroupOrder(row.inviteToken);
   return { ok: true as const };
 }
 
-export async function adminMarkParticipantPaidAction(
-  raw: unknown,
-  locale: Locale,
-) {
+export async function adminMarkParticipantPaidAction(raw: unknown, locale: Locale) {
   const admin = await requireAdmin(locale);
   const parsed = adminMarkParticipantPaidSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
 
   const result = await markParticipantPaid({
     groupOrderId: parsed.data.groupOrderId,
@@ -339,25 +327,22 @@ export async function adminMarkParticipantPaidAction(
 
 export async function prepareGroupOrderCheckoutAction(raw: unknown) {
   const parsed = groupOrderInviteTokenSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await prepareGroupOrderCheckout(parsed.data.inviteToken);
   if (result.ok) {
-    revalidatePath("/[locale]/checkout", "page");
-    revalidatePath("/", "layout");
+    revalidatePath('/[locale]/checkout', 'page');
+    revalidatePath('/', 'layout');
   }
   return result;
 }
 
 export async function completeParticipantCardPaymentAction(raw: unknown) {
   const parsed = completeParticipantCardPaymentSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) return { ok: false as const, error: 'Invalid input.' };
   const result = await completeParticipantCardPayment(parsed.data);
   if (result.ok) {
     revalidateGroupOrder(parsed.data.inviteToken);
-    revalidatePath(
-      `/[locale]/group-orders/${parsed.data.inviteToken}/pay`,
-      "page",
-    );
+    revalidatePath(`/[locale]/group-orders/${parsed.data.inviteToken}/pay`, 'page');
   }
   return result;
 }

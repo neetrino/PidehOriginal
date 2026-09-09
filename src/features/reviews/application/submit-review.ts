@@ -1,22 +1,19 @@
-"use server";
+'use server';
 
-import { and, desc, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { and, desc, eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { orderItems, orders, products, reviews } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
+import { orderItems, orders, products, reviews } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
 import {
   isReviewEligibleOrderStatus,
   sanitizeReviewComment,
-} from "@/features/reviews/domain/review-rules";
-import {
-  submitReviewSchema,
-  type SubmitReviewInput,
-} from "@/features/reviews/schemas/reviews";
-import { requireUser } from "@/lib/auth/policies";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/features/reviews/domain/review-rules';
+import { submitReviewSchema, type SubmitReviewInput } from '@/features/reviews/schemas/reviews';
+import { requireUser } from '@/lib/auth/policies';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 /** Customer submits a product review (pending moderation). */
 export async function submitReviewAction(
@@ -24,12 +21,12 @@ export async function submitReviewAction(
   raw: SubmitReviewInput,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = submitReviewSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid review payload.");
+    return err('VALIDATION_ERROR', 'Invalid review payload.');
   }
 
   const user = await requireUser(locale as Locale);
@@ -47,23 +44,18 @@ export async function submitReviewAction(
         .where(eq(products.id, parsed.data.productId))
         .limit(1);
 
-      if (!product || product.status !== "ACTIVE") {
-        throw new Error("PRODUCT_NOT_FOUND");
+      if (!product || product.status !== 'ACTIVE') {
+        throw new Error('PRODUCT_NOT_FOUND');
       }
 
       const [existing] = await tx
         .select({ id: reviews.id })
         .from(reviews)
-        .where(
-          and(
-            eq(reviews.userId, user.id),
-            eq(reviews.productId, parsed.data.productId),
-          ),
-        )
+        .where(and(eq(reviews.userId, user.id), eq(reviews.productId, parsed.data.productId)))
         .limit(1);
 
       if (existing) {
-        throw new Error("ALREADY_REVIEWED");
+        throw new Error('ALREADY_REVIEWED');
       }
 
       const eligibilityRows = await tx
@@ -82,9 +74,7 @@ export async function submitReviewAction(
         )
         .orderBy(desc(orders.placedAt));
 
-      const eligible = eligibilityRows.find((row) =>
-        isReviewEligibleOrderStatus(row.orderStatus),
-      );
+      const eligible = eligibilityRows.find((row) => isReviewEligibleOrderStatus(row.orderStatus));
 
       const id = createId();
       await tx.insert(reviews).values({
@@ -94,13 +84,11 @@ export async function submitReviewAction(
         orderItemId: eligible?.orderItemId ?? null,
         rating: parsed.data.rating,
         comment: comment.length > 0 ? comment : null,
-        moderationStatus: "PENDING",
+        moderationStatus: 'PENDING',
       });
 
       const slug =
-        product.translations[locale as Locale]?.slug ??
-        product.translations.hy?.slug ??
-        null;
+        product.translations[locale as Locale]?.slug ?? product.translations.hy?.slug ?? null;
 
       return { id, slug };
     });
@@ -111,14 +99,14 @@ export async function submitReviewAction(
     }
     return ok({ id: result.id });
   } catch (error) {
-    const code = error instanceof Error ? error.message : "UNKNOWN";
+    const code = error instanceof Error ? error.message : 'UNKNOWN';
     switch (code) {
-      case "PRODUCT_NOT_FOUND":
-        return err("PRODUCT_NOT_FOUND", "Product not found.");
-      case "ALREADY_REVIEWED":
-        return err("ALREADY_REVIEWED", "You already reviewed this product.");
+      case 'PRODUCT_NOT_FOUND':
+        return err('PRODUCT_NOT_FOUND', 'Product not found.');
+      case 'ALREADY_REVIEWED':
+        return err('ALREADY_REVIEWED', 'You already reviewed this product.');
       default:
-        return err("REVIEW_SUBMIT_FAILED", "Unable to submit review.");
+        return err('REVIEW_SUBMIT_FAILED', 'Unable to submit review.');
     }
   }
 }

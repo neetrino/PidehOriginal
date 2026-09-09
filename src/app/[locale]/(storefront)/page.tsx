@@ -1,37 +1,26 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
-import { listActiveHeroSlides } from "@/features/hero/application/queries";
-import { HomeCategories } from "@/features/home/ui/HomeCategories";
-import { HomeCtaBanner } from "@/features/home/ui/HomeCtaBanner";
-import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
-import {
-  HOME_FEATURE_VISUALS,
-  HomeFeatures,
-} from "@/features/home/ui/HomeFeatures";
-import { HomeHero } from "@/features/home/ui/HomeHero";
-import { HomeReviews } from "@/features/home/ui/HomeReviews";
-import { MobileHome } from "@/features/home/ui/mobile/MobileHome";
-import {
-  getFeaturedProducts,
-  type CatalogProduct,
-} from "@/features/products/queries";
-import { getWishlistProductIds } from "@/features/wishlist/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import {
-  createDisplayPriceFormatter,
-  getSelectedCurrency,
-} from "@/lib/money/display-price";
+import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
+import { listActiveHeroSlides } from '@/features/hero/application/queries';
+import { HomeCategories } from '@/features/home/ui/HomeCategories';
+import { HomeCtaBanner } from '@/features/home/ui/HomeCtaBanner';
+import { HomeFeaturedProducts } from '@/features/home/ui/HomeFeaturedProducts';
+import { HOME_FEATURE_VISUALS, HomeFeatures } from '@/features/home/ui/HomeFeatures';
+import { HomeHero } from '@/features/home/ui/HomeHero';
+import { HomeReviews } from '@/features/home/ui/HomeReviews';
+import { MobileHome } from '@/features/home/ui/mobile/MobileHome';
+import { getFeaturedProducts, type CatalogProduct } from '@/features/products/queries';
+import { getWishlistProductIds } from '@/features/wishlist/queries';
+import { getCurrentUser } from '@/lib/auth/session';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { createDisplayPriceFormatter, getSelectedCurrency } from '@/lib/money/display-price';
 
 type HomePageProps = {
   params: Promise<{ locale: string }>;
 };
 
-type DisplayPriceFormatter = Awaited<
-  ReturnType<typeof createDisplayPriceFormatter>
->;
+type DisplayPriceFormatter = Awaited<ReturnType<typeof createDisplayPriceFormatter>>;
 
 function toProductCards(
   products: CatalogProduct[],
@@ -41,10 +30,7 @@ function toProductCards(
 ) {
   return products.map((product) => {
     const price = formatPrice(product.priceAmount);
-    const compareAt =
-      product.compareAtAmount != null
-        ? formatPrice(product.compareAtAmount)
-        : null;
+    const compareAt = product.compareAtAmount != null ? formatPrice(product.compareAtAmount) : null;
 
     return {
       id: product.id,
@@ -69,14 +55,13 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const [heroSlides, categories, featuredProducts, currency, user] =
-    await Promise.all([
-      listActiveHeroSlides(locale),
-      listStorefrontCategories(locale),
-      getFeaturedProducts(locale),
-      getSelectedCurrency(),
-      getCurrentUser(),
-    ]);
+  const [heroSlides, categories, featuredProducts, currency, user] = await Promise.all([
+    listActiveHeroSlides(locale),
+    listStorefrontCategories(locale),
+    getFeaturedProducts(locale),
+    getSelectedCurrency(),
+    getCurrentUser(),
+  ]);
 
   const productIds = featuredProducts.map((product) => product.id);
   const [wishlistIds, formatPrice] = await Promise.all([
@@ -84,12 +69,7 @@ export default async function HomePage({ params }: HomePageProps) {
     createDisplayPriceFormatter(locale, currency),
   ]);
 
-  const featuredCards = toProductCards(
-    featuredProducts,
-    locale,
-    formatPrice,
-    wishlistIds,
-  );
+  const featuredCards = toProductCards(featuredProducts, locale, formatPrice, wishlistIds);
 
   const featureTitles = {
     delivery: dictionary.home.features.deliveryTitle,
@@ -103,6 +83,7 @@ export default async function HomePage({ params }: HomePageProps) {
     title: category.title,
     href: `/${locale}/products?category=${encodeURIComponent(category.slug)}`,
     imageUrl: category.imageUrl,
+    productCount: category.productCount,
   }));
 
   return (
@@ -162,10 +143,7 @@ export default async function HomePage({ params }: HomePageProps) {
           }))}
         />
 
-        <HomeReviews
-          title={dictionary.home.reviewsTitle}
-          reviews={dictionary.home.reviews}
-        />
+        <HomeReviews title={dictionary.home.reviewsTitle} reviews={dictionary.home.reviews} />
 
         <HomeCtaBanner
           titleLine1={dictionary.home.ctaTitleLine1}

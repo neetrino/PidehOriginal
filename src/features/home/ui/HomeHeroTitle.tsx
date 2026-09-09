@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from 'motion/react';
 
 type HomeHeroTitleProps = {
   line1: string;
@@ -9,7 +9,7 @@ type HomeHeroTitleProps = {
 };
 
 const TITLE_STYLE = {
-  fontSize: "clamp(3.5rem, 12vw, 215px)",
+  fontSize: 'clamp(3.5rem, 12vw, 215px)',
   lineHeight: 0.85,
   letterSpacing: 0,
 } as const;
@@ -33,7 +33,7 @@ function HeroTitleLine({
       <motion.span
         key={text}
         className="block"
-        initial={reduceMotion ? false : { y: "110%", opacity: 0 }}
+        initial={reduceMotion ? false : { y: '110%', opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
       >
@@ -47,15 +47,9 @@ function HeroTitleLine({
  * Figma Component 1 (51:179) — Pricehigh Black, 215px / leading ~0.73–0.85.
  * Uses `display: contents` so line z-indexes interleave with the pide media sibling.
  */
-export function HomeHeroTitle({
-  line1,
-  line2,
-  className = "",
-}: HomeHeroTitleProps) {
+export function HomeHeroTitle({ line1, line2, className = '' }: HomeHeroTitleProps) {
   return (
-    <h1
-      className={`font-display contents text-center whitespace-nowrap ${className}`}
-    >
+    <h1 className={`font-display contents text-center whitespace-nowrap ${className}`}>
       <HeroTitleLine
         text={line1}
         className="pideh-hero-title-line1 relative z-[1] text-white"

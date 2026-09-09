@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { Minus, Plus, X } from "lucide-react";
-import NumberFlow from "@number-flow/react";
-import { motion } from "motion/react";
+import Image from 'next/image';
+import { Minus, Plus, X } from 'lucide-react';
+import NumberFlow from '@number-flow/react';
+import { motion } from 'motion/react';
 
-import { fadeUp } from "@/components/motion/presets";
-import type { CartDrawerItemView } from "@/features/cart/get-cart-drawer-view";
+import { fadeUp } from '@/components/motion/presets';
+import type { CartDrawerItemView } from '@/features/cart/get-cart-drawer-view';
 
 type CartDrawerItemsProps = {
   items: readonly CartDrawerItemView[];
@@ -104,17 +104,13 @@ function CartDrawerLine({
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="line-clamp-2 text-sm font-bold text-[#1e1e1e]">
-                {item.title}
-              </p>
+              <p className="line-clamp-2 text-sm font-bold text-[#1e1e1e]">{item.title}</p>
               {item.modifierSummary ? (
                 <p className="mt-0.5 line-clamp-2 text-xs text-[#1e1e1e]/55">
                   {item.modifierSummary}
                 </p>
               ) : null}
-              <p className="mt-1 text-sm font-semibold text-[#ff6b00]">
-                {item.lineTotalFormatted}
-              </p>
+              <p className="mt-1 text-sm font-semibold text-[#ff6b00]">{item.lineTotalFormatted}</p>
             </div>
             <button
               type="button"

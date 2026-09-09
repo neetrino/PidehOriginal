@@ -1,10 +1,10 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { listCustomerAddresses } from "@/features/profile/application/address-queries";
-import { ProfileAddressesView } from "@/features/profile/ui/ProfileAddressesView";
-import { requireUser } from "@/lib/auth/policies";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { listCustomerAddresses } from '@/features/profile/application/address-queries';
+import { ProfileAddressesView } from '@/features/profile/ui/ProfileAddressesView';
+import { requireUser } from '@/lib/auth/policies';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type AddressesPageProps = {
   params: Promise<{ locale: string }>;
@@ -38,7 +38,6 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
         formAddTitle: copy.formAddTitle,
         formEditTitle: copy.formEditTitle,
         line1: copy.line1,
-        city: copy.city,
         phone: copy.phone,
         phonePlaceholder: copy.phonePlaceholder,
         isDefault: copy.isDefault,

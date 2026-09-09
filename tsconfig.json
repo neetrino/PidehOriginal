@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
@@ -24,12 +20,8 @@
       }
     ],
     "paths": {
-      "@/locales/*": [
-        "./locales/*"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
+      "@/locales/*": ["./locales/*"],
+      "@/*": ["./src/*"]
     }
   },
   "include": [
@@ -40,10 +32,5 @@
     "**/*.mts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "tests/e2e",
-    ".next/dev",
-    "scripts"
-  ]
+  "exclude": ["node_modules", "tests/e2e", ".next/dev", "scripts"]
 }

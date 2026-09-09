@@ -25,7 +25,7 @@ export function MobileCategoryLayer({
   iconWidth,
   iconHeight,
   rotateDeg,
-  className = "",
+  className = '',
 }: MobileCategoryLayerProps) {
   return (
     <span

@@ -1,8 +1,8 @@
-import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
-import { AnalyticsTrendChart } from "@/features/analytics/ui/AnalyticsTrendChart";
-import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import { formatMoneyAmount } from "@/lib/money/format";
+import type { AnalyticsCsvRow } from '@/features/analytics/domain/csv';
+import { AnalyticsTrendChart } from '@/features/analytics/ui/AnalyticsTrendChart';
+import type { Locale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import { formatMoneyAmount } from '@/lib/money/format';
 
 type AnalyticsOrdersByDayProps = {
   rows: AnalyticsCsvRow[];
@@ -12,7 +12,7 @@ type AnalyticsOrdersByDayProps = {
   revenueAmount: number;
   orderCount: number;
   averageOrderValue: number;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
 export function AnalyticsOrdersByDay({
@@ -25,8 +25,8 @@ export function AnalyticsOrdersByDay({
   averageOrderValue,
   copy,
 }: AnalyticsOrdersByDayProps) {
-  const revenueLabel = formatMoneyAmount(revenueAmount, "AMD", locale);
-  const averageLabel = formatMoneyAmount(averageOrderValue, "AMD", locale);
+  const revenueLabel = formatMoneyAmount(revenueAmount, 'AMD', locale);
+  const averageLabel = formatMoneyAmount(averageOrderValue, 'AMD', locale);
 
   return (
     <div className="mb-5 overflow-hidden rounded-[22px] border-2 border-[#1e1e1e] bg-white shadow-[6px_6px_0_#1e1e1e]">
@@ -36,9 +36,7 @@ export function AnalyticsOrdersByDay({
             <h2 className="font-display text-2xl text-[#1e1e1e] uppercase">
               {copy.analytics.ordersByDay.title}
             </h2>
-            <p className="mt-1 text-sm text-[#1e1e1e]/55">
-              {copy.analytics.ordersByDay.subtitle}
-            </p>
+            <p className="mt-1 text-sm text-[#1e1e1e]/55">{copy.analytics.ordersByDay.subtitle}</p>
           </div>
 
           {rows.length === 0 ? (

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 type GoogleMapsNamespace = {
   Map: new (
@@ -43,7 +43,7 @@ declare global {
   }
 }
 
-const SCRIPT_ID = "kamancha-google-maps-js";
+const SCRIPT_ID = 'kamancha-google-maps-js';
 
 /** Loads Google Maps JavaScript API once per page. */
 export function loadGoogleMapsScript(apiKey: string): Promise<GoogleMapsNamespace> {
@@ -63,7 +63,7 @@ export function loadGoogleMapsScript(apiKey: string): Promise<GoogleMapsNamespac
         }
         if (Date.now() - started > 15000) {
           window.clearInterval(timer);
-          reject(new Error("Google Maps failed to load."));
+          reject(new Error('Google Maps failed to load.'));
         }
       }, 50);
     });
@@ -75,10 +75,10 @@ export function loadGoogleMapsScript(apiKey: string): Promise<GoogleMapsNamespac
         resolve(window.google.maps);
         return;
       }
-      reject(new Error("Google Maps failed to initialize."));
+      reject(new Error('Google Maps failed to initialize.'));
     };
 
-    const script = document.createElement("script");
+    const script = document.createElement('script');
     script.id = SCRIPT_ID;
     script.async = true;
     script.defer = true;
@@ -87,7 +87,7 @@ export function loadGoogleMapsScript(apiKey: string): Promise<GoogleMapsNamespac
     script.onerror = () => {
       reject(
         new Error(
-          "Google Maps failed to load. Check that Maps JavaScript API is enabled and allowed by Content-Security-Policy.",
+          'Google Maps failed to load. Check that Maps JavaScript API is enabled and allowed by Content-Security-Policy.',
         ),
       );
     };

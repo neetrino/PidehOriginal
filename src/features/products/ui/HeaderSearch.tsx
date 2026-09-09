@@ -1,24 +1,17 @@
-"use client";
+'use client';
 
-import {
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  useTransition,
-  type AnimationEvent,
-} from "react";
-import { createPortal } from "react-dom";
-import { Search, X } from "lucide-react";
+import { useEffect, useId, useRef, useState, useTransition, type AnimationEvent } from 'react';
+import { createPortal } from 'react-dom';
+import { Search, X } from 'lucide-react';
 
-import { catalogHref } from "@/features/products/application/catalog-search-params";
+import { catalogHref } from '@/features/products/application/catalog-search-params';
 import {
   searchHeaderProductsAction,
   type HeaderSearchProduct,
-} from "@/features/products/application/search-header-products-action";
-import { HeaderSearchResults } from "@/features/products/ui/HeaderSearchResults";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
+} from '@/features/products/application/search-header-products-action';
+import { HeaderSearchResults } from '@/features/products/ui/HeaderSearchResults';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 const SEARCH_EXIT_MS = 320;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -52,10 +45,10 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
   const [mounted, setMounted] = useState(false);
   const [rendered, setRendered] = useState(false);
   const [exiting, setExiting] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [products, setProducts] = useState<HeaderSearchProduct[]>([]);
   const [total, setTotal] = useState(0);
-  const [searchedQuery, setSearchedQuery] = useState("");
+  const [searchedQuery, setSearchedQuery] = useState('');
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -87,19 +80,19 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     }, 40);
 
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         setOpen(false);
       }
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       window.clearTimeout(focusTimer);
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [rendered, exiting]);
 
@@ -111,18 +104,14 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
       requestIdRef.current += 1;
       setProducts([]);
       setTotal(0);
-      setSearchedQuery("");
+      setSearchedQuery('');
       return;
     }
 
     const requestId = ++requestIdRef.current;
     const timer = window.setTimeout(() => {
       startTransition(async () => {
-        const result = await searchHeaderProductsAction(
-          locale,
-          currency,
-          trimmed,
-        );
+        const result = await searchHeaderProductsAction(locale, currency, trimmed);
         if (requestId !== requestIdRef.current) return;
         setProducts(result.products);
         setTotal(result.total);
@@ -140,31 +129,30 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
   function finishExit(): void {
     setRendered(false);
     setExiting(false);
-    setQuery("");
+    setQuery('');
     setProducts([]);
     setTotal(0);
-    setSearchedQuery("");
+    setSearchedQuery('');
   }
 
   function handlePanelAnimationEnd(event: AnimationEvent<HTMLDivElement>): void {
     if (event.target !== event.currentTarget) return;
-    if (!event.animationName.includes("confirm-dialog-panel-out")) return;
+    if (!event.animationName.includes('confirm-dialog-panel-out')) return;
     finishExit();
   }
 
   const backdropClass = exiting
-    ? "animate-confirm-dialog-backdrop-out"
-    : "animate-confirm-dialog-backdrop-in";
+    ? 'animate-confirm-dialog-backdrop-out'
+    : 'animate-confirm-dialog-backdrop-in';
   const panelClass = exiting
-    ? "animate-confirm-dialog-panel-out"
-    : "animate-confirm-dialog-panel-in";
+    ? 'animate-confirm-dialog-panel-out'
+    : 'animate-confirm-dialog-panel-in';
 
   const showIdle = searchedQuery.length === 0 && !pending;
-  const showEmpty =
-    searchedQuery.length > 0 && products.length === 0 && !pending;
+  const showEmpty = searchedQuery.length > 0 && products.length === 0 && !pending;
   const viewAllHref = catalogHref(locale, {
     q: searchedQuery || query.trim(),
-    sort: "newest",
+    sort: 'newest',
     page: 1,
     pageSize: 24,
   });

@@ -1,13 +1,16 @@
-"use client";
+'use client';
 
-import type { MouseEvent } from "react";
-import Image from "next/image";
-import { Heart } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import type { MouseEvent } from 'react';
+import Image from 'next/image';
+import { Heart } from 'lucide-react';
+import { motion, useReducedMotion } from 'motion/react';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
 
-import { toggleWishlistAction } from "@/features/wishlist/actions";
-import type { Locale } from "@/lib/i18n/config";
+import { toggleWishlistAction } from '@/features/wishlist/actions';
+import { setWishlistBadgeCount } from '@/features/wishlist/ui/wishlist-badge-count';
+import { WishlistHeartBurst } from '@/features/wishlist/ui/WishlistHeartBurst';
+import type { Locale } from '@/lib/i18n/config';
 
 type WishlistButtonProps = {
   locale: Locale;
@@ -16,7 +19,7 @@ type WishlistButtonProps = {
   isSignedIn: boolean;
   label: string;
   className?: string;
-  size?: "sm" | "md";
+  size?: 'sm' | 'md';
   emptyIconSrc?: string;
   emptyIconWidth?: number;
   emptyIconHeight?: number;
@@ -27,7 +30,7 @@ function wishlistHeartClass(
   usesFigmaIcon: boolean,
   iconClass: string,
 ): string {
-  const sizeClass = usesFigmaIcon ? "" : iconClass;
+  const sizeClass = usesFigmaIcon ? '' : iconClass;
   if (!inWishlist) {
     return `${sizeClass} fill-transparent text-current`.trim();
   }
@@ -43,42 +46,66 @@ export function WishlistButton({
   initialInWishlist,
   isSignedIn,
   label,
-  className = "",
-  size = "md",
+  className = '',
+  size = 'md',
   emptyIconSrc,
   emptyIconWidth = 34,
   emptyIconHeight = 34,
 }: WishlistButtonProps) {
   const router = useRouter();
   const [inWishlist, setInWishlist] = useState(initialInWishlist);
-  const [pending, startTransition] = useTransition();
-  const iconClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+  const [burstKey, setBurstKey] = useState(0);
+  const [bursting, setBursting] = useState(false);
+  const busyRef = useRef(false);
+  const reduceMotion = useReducedMotion();
+  const iconClass = size === 'sm' ? 'h-4 w-4' : 'h-5 w-5';
+
+  function redirectToLogin(): void {
+    const target =
+      typeof window === 'undefined'
+        ? `/${locale}`
+        : `${window.location.pathname}${window.location.search}`;
+    router.push(`/${locale}/login?next=${encodeURIComponent(target)}`);
+  }
+
+  /** Optimistic so the heart fills on click; the server call only corrects it. */
+  async function toggle(): Promise<void> {
+    const previous = inWishlist;
+    setInWishlist(!previous);
+    if (!previous && !reduceMotion) {
+      setBurstKey((current) => current + 1);
+      setBursting(true);
+    }
+
+    const result = await toggleWishlistAction(productId);
+    if (!result.ok) {
+      setInWishlist(previous);
+      setBursting(false);
+      if (result.error.code === 'UNAUTHENTICATED') {
+        redirectToLogin();
+      }
+      return;
+    }
+
+    setInWishlist(result.value.inWishlist);
+    setWishlistBadgeCount(result.value.count);
+  }
 
   function handleClick(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
     event.stopPropagation();
 
     if (!isSignedIn) {
-      const next = encodeURIComponent(
-        typeof window !== "undefined" ? window.location.pathname : `/${locale}`,
-      );
-      router.push(`/${locale}/login?next=${next}`);
+      redirectToLogin();
+      return;
+    }
+    if (busyRef.current) {
       return;
     }
 
-    startTransition(async () => {
-      const previous = inWishlist;
-      setInWishlist(!previous);
-      const result = await toggleWishlistAction(productId);
-      if (!result.ok) {
-        setInWishlist(previous);
-        if (result.error.code === "UNAUTHENTICATED") {
-          router.push(`/${locale}/login`);
-        }
-        return;
-      }
-      setInWishlist(result.value.inWishlist);
-      router.refresh();
+    busyRef.current = true;
+    void toggle().finally(() => {
+      busyRef.current = false;
     });
   }
 
@@ -86,34 +113,39 @@ export function WishlistButton({
     <button
       type="button"
       onClick={handleClick}
-      disabled={pending}
       aria-label={label}
       aria-pressed={inWishlist}
-      className={`inline-flex items-center justify-center rounded-full transition disabled:opacity-60 ${className}`}
+      className={`inline-flex items-center justify-center rounded-full transition ${className}`}
     >
-      {emptyIconSrc && !inWishlist ? (
-        <Image
-          src={emptyIconSrc}
-          alt=""
-          width={emptyIconWidth}
-          height={emptyIconHeight}
-          aria-hidden
-        />
-      ) : (
-        <Heart
-          className={wishlistHeartClass(
-            inWishlist,
-            Boolean(emptyIconSrc),
-            iconClass,
+      {/* Own positioning context: the button keeps whatever position the caller sets. */}
+      <span className="relative inline-flex items-center justify-center">
+        <motion.span
+          key={burstKey}
+          className="inline-flex"
+          animate={burstKey > 0 ? { scale: [1, 1.35, 1] } : undefined}
+          transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {emptyIconSrc && !inWishlist ? (
+            <Image
+              src={emptyIconSrc}
+              alt=""
+              width={emptyIconWidth}
+              height={emptyIconHeight}
+              aria-hidden
+            />
+          ) : (
+            <Heart
+              className={wishlistHeartClass(inWishlist, Boolean(emptyIconSrc), iconClass)}
+              style={emptyIconSrc ? { width: emptyIconWidth, height: emptyIconHeight } : undefined}
+              aria-hidden
+            />
           )}
-          style={
-            emptyIconSrc
-              ? { width: emptyIconWidth, height: emptyIconHeight }
-              : undefined
-          }
-          aria-hidden
-        />
-      )}
+        </motion.span>
+
+        {bursting ? (
+          <WishlistHeartBurst burstKey={burstKey} onDone={() => setBursting(false)} />
+        ) : null}
+      </span>
     </button>
   );
 }

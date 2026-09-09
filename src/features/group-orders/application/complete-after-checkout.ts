@@ -1,12 +1,12 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { groupOrderParticipants, groupOrders, orders } from "@/db/schema";
-import type { DbTransaction } from "@/db/transaction";
-import { assertOrganizerAccess } from "@/features/group-orders/application/access";
-import { appendGroupOrderEvent } from "@/features/group-orders/application/money";
-import { canTransitionGroupOrderStatus } from "@/features/group-orders/domain/status";
-import { peekGroupOrderSession } from "@/features/group-orders/session";
+import { getDb } from '@/db/client';
+import { groupOrderParticipants, groupOrders, orders } from '@/db/schema';
+import type { DbTransaction } from '@/db/transaction';
+import { assertOrganizerAccess } from '@/features/group-orders/application/access';
+import { appendGroupOrderEvent } from '@/features/group-orders/application/money';
+import { canTransitionGroupOrderStatus } from '@/features/group-orders/domain/status';
+import { peekGroupOrderSession } from '@/features/group-orders/session';
 
 type DbLike = ReturnType<typeof getDb> | DbTransaction;
 
@@ -29,10 +29,10 @@ export async function completeGroupOrderAfterStandardCheckout(input: {
   if (!access.ok) {
     return { completed: false };
   }
-  if (access.groupOrder.status !== "CHECKOUT") {
+  if (access.groupOrder.status !== 'CHECKOUT') {
     return { completed: false };
   }
-  if (!canTransitionGroupOrderStatus("CHECKOUT", "PAID")) {
+  if (!canTransitionGroupOrderStatus('CHECKOUT', 'PAID')) {
     return { completed: false };
   }
 
@@ -41,7 +41,7 @@ export async function completeGroupOrderAfterStandardCheckout(input: {
   await db
     .update(groupOrders)
     .set({
-      status: "PAID",
+      status: 'PAID',
       orderId: input.orderId,
       updatedAt: new Date(),
     })
@@ -50,7 +50,7 @@ export async function completeGroupOrderAfterStandardCheckout(input: {
   await db
     .update(groupOrderParticipants)
     .set({
-      paymentStatus: "PAID",
+      paymentStatus: 'PAID',
       updatedAt: new Date(),
     })
     .where(
@@ -67,14 +67,14 @@ export async function completeGroupOrderAfterStandardCheckout(input: {
 
   await appendGroupOrderEvent(db, {
     groupOrderId: access.groupOrder.id,
-    eventType: "STATUS_CHANGE",
-    fromState: "CHECKOUT",
-    toState: "PAID",
+    eventType: 'STATUS_CHANGE',
+    fromState: 'CHECKOUT',
+    toState: 'PAID',
     actorParticipantId: access.participant.id,
     payload: {
       orderId: input.orderId,
       orderNumber: input.orderNumber,
-      source: "standard_checkout",
+      source: 'standard_checkout',
     },
   });
 

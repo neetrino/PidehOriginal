@@ -1,19 +1,16 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq, isNull, sql } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
+import { and, eq, isNull, sql } from 'drizzle-orm';
+import { unstable_cache } from 'next/cache';
 
-import { getDb } from "@/db/client";
-import { products } from "@/db/schema";
-import {
-  CACHE_TAGS,
-  PUBLIC_CACHE_REVALIDATE_SECONDS,
-} from "@/lib/cache/tags";
-import { getCheckoutRateSnapshot } from "@/lib/fx/service";
-import { convertAmount } from "@/lib/money/convert";
-import type { Currency } from "@/lib/money/currency";
-import { defaultCurrency } from "@/lib/money/currency";
-import { getCurrencyMeta } from "@/lib/money/currency-meta";
+import { getDb } from '@/db/client';
+import { products } from '@/db/schema';
+import { CACHE_TAGS, PUBLIC_CACHE_REVALIDATE_SECONDS } from '@/lib/cache/tags';
+import { getCheckoutRateSnapshot } from '@/lib/fx/service';
+import { convertAmount } from '@/lib/money/convert';
+import type { Currency } from '@/lib/money/currency';
+import { defaultCurrency } from '@/lib/money/currency';
+import { getCurrencyMeta } from '@/lib/money/currency-meta';
 
 export type CatalogPriceBounds = {
   /** Inclusive floor in display-currency major units. */
@@ -28,26 +25,19 @@ function amdToDisplayMajor(
   amdAmount: number,
   displayCurrency: Currency,
   rate: string,
-  mode: "floor" | "ceil",
+  mode: 'floor' | 'ceil',
 ): number {
-  const minor = convertAmount(
-    amdAmount,
-    rate,
-    defaultCurrency,
-    displayCurrency,
-  ).amount;
+  const minor = convertAmount(amdAmount, rate, defaultCurrency, displayCurrency).amount;
   const scale = getCurrencyMeta(displayCurrency).scale;
   if (scale === 0) {
     return Number(minor);
   }
 
   const major = Number(minor) / 10 ** scale;
-  return mode === "ceil" ? Math.ceil(major) : Math.floor(major);
+  return mode === 'ceil' ? Math.ceil(major) : Math.floor(major);
 }
 
-async function loadCatalogPriceBounds(
-  displayCurrency: Currency,
-): Promise<CatalogPriceBounds> {
+async function loadCatalogPriceBounds(displayCurrency: Currency): Promise<CatalogPriceBounds> {
   const [[row], quote] = await Promise.all([
     getDb()
       .select({
@@ -55,9 +45,7 @@ async function loadCatalogPriceBounds(
         max: sql<number>`coalesce(max(${products.priceAmount}), 0)::int`,
       })
       .from(products)
-      .where(
-        and(eq(products.status, "ACTIVE"), isNull(products.deletedAt)),
-      ),
+      .where(and(eq(products.status, 'ACTIVE'), isNull(products.deletedAt))),
     getCheckoutRateSnapshot(displayCurrency),
   ]);
 
@@ -68,8 +56,8 @@ async function loadCatalogPriceBounds(
     return EMPTY_CATALOG_BOUNDS;
   }
 
-  const min = amdToDisplayMajor(minAmd, displayCurrency, quote.rate, "floor");
-  let max = amdToDisplayMajor(maxAmd, displayCurrency, quote.rate, "ceil");
+  const min = amdToDisplayMajor(minAmd, displayCurrency, quote.rate, 'floor');
+  let max = amdToDisplayMajor(maxAmd, displayCurrency, quote.rate, 'ceil');
   if (max <= min) {
     max = min + 1;
   }
@@ -83,7 +71,7 @@ export async function getCatalogPriceBounds(
 ): Promise<CatalogPriceBounds> {
   return unstable_cache(
     async () => loadCatalogPriceBounds(displayCurrency),
-    ["catalog-price-bounds", displayCurrency],
+    ['catalog-price-bounds', displayCurrency],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

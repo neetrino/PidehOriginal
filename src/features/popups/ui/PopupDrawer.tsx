@@ -1,49 +1,35 @@
-"use client";
+'use client';
 
-import { useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Button } from "@/components/ui/Button";
-import { SideSheet } from "@/components/ui/SideSheet";
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
-import {
-  createPopupAction,
-  updatePopupAction,
-} from "@/features/popups/application/manage-popups";
-import type { AdminPopupListItem } from "@/features/popups/application/queries";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { SideSheet } from '@/components/ui/SideSheet';
+import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import { createPopupAction, updatePopupAction } from '@/features/popups/application/manage-popups';
+import type { AdminPopupListItem } from '@/features/popups/application/queries';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type PopupDrawerProps = {
   locale: string;
   open: boolean;
   onClose: () => void;
   popup?: AdminPopupListItem | null;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-export function PopupDrawer({
-  locale,
-  open,
-  onClose,
-  popup = null,
-  copy,
-}: PopupDrawerProps) {
+export function PopupDrawer({ locale, open, onClose, popup = null, copy }: PopupDrawerProps) {
   const isEdit = popup != null;
 
   return (
     <SideSheet
       open={open}
       onClose={onClose}
-      ariaLabel={
-        isEdit ? copy.popups.drawer.editAria : copy.popups.drawer.createAria
-      }
+      ariaLabel={isEdit ? copy.popups.drawer.editAria : copy.popups.drawer.createAria}
       variant="admin"
     >
       <PopupDrawerForm
-        key={popup?.id ?? "create"}
+        key={popup?.id ?? 'create'}
         locale={locale}
         onClose={onClose}
         popup={popup}
@@ -57,24 +43,17 @@ type PopupDrawerFormProps = {
   locale: string;
   onClose: () => void;
   popup: AdminPopupListItem | null;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-function PopupDrawerForm({
-  locale,
-  onClose,
-  popup,
-  copy,
-}: PopupDrawerFormProps) {
+function PopupDrawerForm({ locale, onClose, popup, copy }: PopupDrawerFormProps) {
   const router = useRouter();
   const isEdit = popup != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [title, setTitle] = useState(popup?.title ?? "");
-  const [linkUrl, setLinkUrl] = useState(popup?.linkUrl ?? "");
+  const [title, setTitle] = useState(popup?.title ?? '');
+  const [linkUrl, setLinkUrl] = useState(popup?.linkUrl ?? '');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    popup?.imageUrl ?? null,
-  );
+  const [imagePreview, setImagePreview] = useState<string | null>(popup?.imageUrl ?? null);
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -87,9 +66,7 @@ function PopupDrawerForm({
     <>
       <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
         <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
-          {isEdit
-            ? copy.popups.drawer.editTitle
-            : copy.popups.drawer.createTitle}
+          {isEdit ? copy.popups.drawer.editTitle : copy.popups.drawer.createTitle}
         </h2>
       </div>
 
@@ -98,13 +75,13 @@ function PopupDrawerForm({
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData();
-          formData.set("title", title.trim());
-          formData.set("linkUrl", linkUrl.trim());
+          formData.set('title', title.trim());
+          formData.set('linkUrl', linkUrl.trim());
           if (imageFile) {
-            formData.set("image", imageFile);
+            formData.set('image', imageFile);
           }
           if (removeExistingImage) {
-            formData.set("removeImage", "1");
+            formData.set('removeImage', '1');
           }
 
           startTransition(async () => {
@@ -171,9 +148,9 @@ function PopupDrawerForm({
                 disabled={isPending}
                 onChange={(event) => {
                   const file = event.target.files?.[0] ?? null;
-                  event.target.value = "";
+                  event.target.value = '';
                   setImagePreview((current) => {
-                    if (current?.startsWith("blob:")) {
+                    if (current?.startsWith('blob:')) {
                       URL.revokeObjectURL(current);
                     }
                     return file ? URL.createObjectURL(file) : null;
@@ -189,7 +166,7 @@ function PopupDrawerForm({
                   onClick={() => {
                     setImageFile(null);
                     setImagePreview((current) => {
-                      if (current?.startsWith("blob:")) {
+                      if (current?.startsWith('blob:')) {
                         URL.revokeObjectURL(current);
                       }
                       return null;

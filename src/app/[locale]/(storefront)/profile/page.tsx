@@ -1,10 +1,10 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { getProfileDashboard } from "@/features/profile/application/dashboard-queries";
-import { ProfileDashboard } from "@/features/profile/ui/ProfileDashboard";
-import { requireUser } from "@/lib/auth/policies";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getProfileDashboard } from '@/features/profile/application/dashboard-queries';
+import { ProfileDashboard } from '@/features/profile/ui/ProfileDashboard';
+import { requireUser } from '@/lib/auth/policies';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type ProfilePageProps = {
   params: Promise<{ locale: string }>;

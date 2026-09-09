@@ -1,4 +1,4 @@
-import type { Currency } from "@/lib/money/currency";
+import type { Currency } from '@/lib/money/currency';
 
 /** Integer minor-unit scale and display fraction digits per currency. */
 export type CurrencyMeta = {

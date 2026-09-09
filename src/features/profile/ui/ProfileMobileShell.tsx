@@ -1,23 +1,18 @@
-"use client";
+'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { ProfileMobileHub } from "@/features/profile/ui/ProfileMobileHub";
-import { ProfileMobileTabSheet } from "@/features/profile/ui/ProfileMobileTabSheet";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
-import type { SessionUser } from "@/lib/auth/session";
+import { ProfileMobileHub } from '@/features/profile/ui/ProfileMobileHub';
+import { ProfileMobileTabSheet } from '@/features/profile/ui/ProfileMobileTabSheet';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import type { SessionUser } from '@/lib/auth/session';
 
 type ProfileMobileShellProps = {
   locale: Locale;
   user: SessionUser;
-  dictionary: Dictionary["profile"];
+  dictionary: Dictionary['profile'];
   children: ReactNode;
 };
 
@@ -36,7 +31,7 @@ export function ProfileMobileShell({
   dictionary,
   children,
 }: ProfileMobileShellProps) {
-  const pathname = usePathname() ?? "";
+  const pathname = usePathname() ?? '';
   const router = useRouter();
   const isHub = isProfileHubPath(pathname, locale);
   const [hubSheetOpen, setHubSheetOpen] = useState(false);
@@ -45,13 +40,13 @@ export function ProfileMobileShell({
   const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
+    const media = window.matchMedia('(min-width: 1024px)');
     function sync(): void {
       setIsDesktop(media.matches);
     }
     sync();
-    media.addEventListener("change", sync);
-    return () => media.removeEventListener("change", sync);
+    media.addEventListener('change', sync);
+    return () => media.removeEventListener('change', sync);
   }, []);
 
   useEffect(() => {

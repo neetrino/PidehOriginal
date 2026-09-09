@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
+import { useState } from 'react';
+import { Plus } from 'lucide-react';
 
-import { ADMIN_PRIMARY_BTN } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_PRIMARY_BTN } from '@/features/admin/ui/admin-form-classes';
 import type {
   AdminCategoryOption,
   AdminProductListItem,
-} from "@/features/products/application/list-admin-products";
-import type { ProductModifierOption } from "@/features/products/types/modifiers";
-import { AdminProductsTable } from "@/features/products/ui/AdminProductsTable";
-import { ProductDrawer } from "@/features/products/ui/ProductDrawer";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/products/application/list-admin-products';
+import type { ProductModifierOption } from '@/features/products/types/modifiers';
+import { AdminProductsTable } from '@/features/products/ui/AdminProductsTable';
+import { ProductDrawer } from '@/features/products/ui/ProductDrawer';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminProductsSortLinks = {
   title: string;
@@ -21,9 +21,9 @@ type AdminProductsSortLinks = {
 };
 
 type ViewCopy = {
-  products: Dictionary["admin"]["products"];
-  common: Dictionary["admin"]["common"];
-  confirm: Dictionary["admin"]["confirm"];
+  products: Dictionary['admin']['products'];
+  common: Dictionary['admin']['common'];
+  confirm: Dictionary['admin']['confirm'];
 };
 
 type AdminProductsViewProps = {
@@ -44,8 +44,7 @@ export function AdminProductsView({
   copy,
 }: AdminProductsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editingProduct, setEditingProduct] =
-    useState<AdminProductListItem | null>(null);
+  const [editingProduct, setEditingProduct] = useState<AdminProductListItem | null>(null);
 
   function openCreate(): void {
     setEditingProduct(null);
@@ -64,11 +63,7 @@ export function AdminProductsView({
 
   return (
     <>
-      <button
-        type="button"
-        onClick={openCreate}
-        className={`${ADMIN_PRIMARY_BTN} mb-4 w-full`}
-      >
+      <button type="button" onClick={openCreate} className={`${ADMIN_PRIMARY_BTN} mb-4 w-full`}>
         <Plus className="h-4 w-4" aria-hidden />
         {copy.products.addNewProduct}
       </button>

@@ -1,29 +1,27 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
-import { getAnalyticsSummary } from "@/features/analytics/application/queries";
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
+import { getAnalyticsSummary } from '@/features/analytics/application/queries';
 import {
   analyticsDateRangeSchema,
   matchAnalyticsPeriodPreset,
   rangeForAnalyticsPeriod,
-} from "@/features/analytics/domain/date-range";
-import { AnalyticsMetricCards } from "@/features/analytics/ui/AnalyticsMetricCards";
-import { AnalyticsOrdersByDay } from "@/features/analytics/ui/AnalyticsOrdersByDay";
-import { AnalyticsPeriodCard } from "@/features/analytics/ui/AnalyticsPeriodCard";
-import { AnalyticsSnapshotCards } from "@/features/analytics/ui/AnalyticsSnapshotCards";
-import { AnalyticsTopRankings } from "@/features/analytics/ui/AnalyticsTopRankings";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { formatMoneyAmount } from "@/lib/money/format";
+} from '@/features/analytics/domain/date-range';
+import { AnalyticsMetricCards } from '@/features/analytics/ui/AnalyticsMetricCards';
+import { AnalyticsOrdersByDay } from '@/features/analytics/ui/AnalyticsOrdersByDay';
+import { AnalyticsPeriodCard } from '@/features/analytics/ui/AnalyticsPeriodCard';
+import { AnalyticsSnapshotCards } from '@/features/analytics/ui/AnalyticsSnapshotCards';
+import { AnalyticsTopRankings } from '@/features/analytics/ui/AnalyticsTopRankings';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { formatMoneyAmount } from '@/lib/money/format';
 
 type AdminAnalyticsPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-function firstParam(
-  value: string | string[] | undefined,
-): string | undefined {
+function firstParam(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
     return value[0];
   }
@@ -41,7 +39,7 @@ export default async function AdminAnalyticsPage({
 
   const dictionary = getDictionary(locale);
   const raw = await searchParams;
-  const defaults = rangeForAnalyticsPeriod("last_7_days");
+  const defaults = rangeForAnalyticsPeriod('last_7_days');
   const parsed = analyticsDateRangeSchema.safeParse({
     from: firstParam(raw.from) ?? defaults.from,
     to: firstParam(raw.to) ?? defaults.to,
@@ -55,8 +53,7 @@ export default async function AdminAnalyticsPage({
     to: range.to,
   }).toString();
 
-  const formatMoney = (amount: number): string =>
-    formatMoneyAmount(amount, "AMD", locale);
+  const formatMoney = (amount: number): string => formatMoneyAmount(amount, 'AMD', locale);
 
   return (
     <section>

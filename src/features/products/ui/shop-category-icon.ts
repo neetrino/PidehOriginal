@@ -1,4 +1,4 @@
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 
 export type ShopCategoryIcon = {
   src: string;
@@ -23,23 +23,23 @@ const ICONS = {
 type NamedIconKey = keyof typeof ICONS;
 
 const SLUG_TO_ICON: Record<string, NamedIconKey> = {
-  combo: "combo",
-  combos: "combo",
-  kombo: "combo",
-  pide: "pide",
-  snack: "snack",
-  snacks: "snack",
-  appetizer: "snack",
-  sauces: "sauces",
-  sauce: "sauces",
-  drinks: "drinks",
-  drink: "drinks",
-  beverages: "drinks",
+  combo: 'combo',
+  combos: 'combo',
+  kombo: 'combo',
+  pide: 'pide',
+  snack: 'snack',
+  snacks: 'snack',
+  appetizer: 'snack',
+  sauces: 'sauces',
+  sauce: 'sauces',
+  drinks: 'drinks',
+  drink: 'drinks',
+  beverages: 'drinks',
 };
 
 /** Figma Shop category glyph for a catalog slug, or the All glyph. */
-export function shopCategoryIcon(slug: string | "all"): ShopCategoryIcon {
-  if (slug === "all") {
+export function shopCategoryIcon(slug: string | 'all'): ShopCategoryIcon {
+  if (slug === 'all') {
     return ALL_ICON;
   }
 

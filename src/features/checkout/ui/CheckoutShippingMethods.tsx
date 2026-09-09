@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type { CheckoutShippingMethod } from "@/features/checkout/domain/shipping-methods";
+import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
 
-const RADIO_SELECTED = "border-gray-900 bg-gray-50";
-const RADIO_IDLE = "border-gray-300 hover:bg-gray-50";
+const RADIO_SELECTED = 'border-gray-900 bg-gray-50';
+const RADIO_IDLE = 'border-gray-300 hover:bg-gray-50';
 
 type ShippingOption = {
   id: CheckoutShippingMethod;

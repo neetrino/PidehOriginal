@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { MapPin, X } from "lucide-react";
-import { useEffect, useRef, useState, type AnimationEvent } from "react";
-import { createPortal } from "react-dom";
+import { MapPin, X } from 'lucide-react';
+import { useEffect, useRef, useState, type AnimationEvent } from 'react';
+import { createPortal } from 'react-dom';
 
-import { getMapPickerConfigAction } from "@/features/delivery/application/get-map-picker-config";
-import { reverseGeocodeAddressAction } from "@/features/delivery/application/reverse-geocode-address";
+import { getMapPickerConfigAction } from '@/features/delivery/application/get-map-picker-config';
+import { reverseGeocodeAddressAction } from '@/features/delivery/application/reverse-geocode-address';
 import {
   loadGoogleMapsScript,
   type GoogleMapInstance,
   type GoogleMarkerInstance,
   type GoogleMapsNamespace,
-} from "@/lib/maps/load-google-maps-script";
+} from '@/lib/maps/load-google-maps-script';
 
 type AddressMapPickerLabels = {
   openMap: string;
@@ -26,10 +26,7 @@ type AddressMapPickerProps = {
   addressValue: string;
   disabled?: boolean;
   labels: AddressMapPickerLabels;
-  onAddressSelected: (
-    address: string,
-    point: { lat: number; lng: number },
-  ) => void;
+  onAddressSelected: (address: string, point: { lat: number; lng: number }) => void;
 };
 
 type PickedPoint = {
@@ -62,16 +59,16 @@ export function AddressMapPicker({
     if (!open) return;
 
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     function onKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape" && !resolving) {
+      if (event.key === 'Escape' && !resolving) {
         setExiting(true);
       }
     }
-    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener('keydown', onKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener('keydown', onKeyDown);
     };
   }, [open, resolving]);
 
@@ -126,21 +123,12 @@ export function AddressMapPicker({
         }
 
         bindMapSelection(maps, map, marker, cancelled, onUpdate);
-        await resolveMapPoint(
-          config.center.lat,
-          config.center.lng,
-          cancelled,
-          onUpdate,
-        );
+        await resolveMapPoint(config.center.lat, config.center.lng, cancelled, onUpdate);
         if (!cancelled.current) setLoading(false);
       } catch (loadError) {
         if (cancelled.current) return;
         setLoading(false);
-        setError(
-          loadError instanceof Error
-            ? loadError.message
-            : "Google Maps failed to load.",
-        );
+        setError(loadError instanceof Error ? loadError.message : 'Google Maps failed to load.');
       }
     })();
 
@@ -157,7 +145,7 @@ export function AddressMapPicker({
   function handlePanelAnimationEnd(event: AnimationEvent<HTMLDivElement>): void {
     if (event.target !== event.currentTarget) return;
     if (!exiting) return;
-    if (!event.animationName.includes("confirm-dialog-panel-out")) return;
+    if (!event.animationName.includes('confirm-dialog-panel-out')) return;
     setOpen(false);
     setExiting(false);
   }
@@ -172,11 +160,11 @@ export function AddressMapPicker({
   }
 
   const backdropClass = exiting
-    ? "animate-confirm-dialog-backdrop-out"
-    : "animate-confirm-dialog-backdrop-in";
+    ? 'animate-confirm-dialog-backdrop-out'
+    : 'animate-confirm-dialog-backdrop-in';
   const panelClass = exiting
-    ? "animate-confirm-dialog-panel-out"
-    : "animate-confirm-dialog-panel-in";
+    ? 'animate-confirm-dialog-panel-out'
+    : 'animate-confirm-dialog-panel-in';
 
   return (
     <>
@@ -194,7 +182,7 @@ export function AddressMapPicker({
         <span className="hidden sm:inline">{labels.openMap}</span>
       </button>
 
-      {typeof document !== "undefined" && open
+      {typeof document !== 'undefined' && open
         ? createPortal(
             <div
               className="fixed inset-0 z-[300] flex items-center justify-center p-4"
@@ -226,7 +214,7 @@ export function AddressMapPicker({
                   labels={labels}
                   error={error}
                   resolving={resolving}
-                  address={picked?.formattedAddress ?? ""}
+                  address={picked?.formattedAddress ?? ''}
                   canConfirm={Boolean(picked) && !resolving}
                   onCancel={closePicker}
                   onConfirm={onConfirm}
@@ -277,7 +265,7 @@ function bindMapSelection(
   cancelled: { current: boolean },
   onUpdate: (update: ResolveUpdate) => void,
 ): void {
-  maps.event.addListener(map, "click", (event) => {
+  maps.event.addListener(map, 'click', (event) => {
     const latLng = event.latLng;
     if (!latLng) return;
     const lat = latLng.lat();
@@ -286,7 +274,7 @@ function bindMapSelection(
     void resolveMapPoint(lat, lng, cancelled, onUpdate);
   });
 
-  maps.event.addListener(marker, "dragend", () => {
+  maps.event.addListener(marker, 'dragend', () => {
     const position = marker.getPosition();
     if (!position) return;
     void resolveMapPoint(position.lat(), position.lng(), cancelled, onUpdate);
@@ -305,10 +293,7 @@ function MapPickerHeader({
   return (
     <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-5 py-4">
       <div>
-        <h2
-          id="address-map-picker-title"
-          className="text-lg font-semibold text-gray-900"
-        >
+        <h2 id="address-map-picker-title" className="text-lg font-semibold text-gray-900">
           {labels.title}
         </h2>
         <p className="mt-1 text-sm text-gray-600">{labels.hint}</p>
@@ -346,9 +331,7 @@ function MapPickerFooter({
   return (
     <div className="space-y-3 border-t border-gray-100 px-5 py-4">
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      <p className="min-h-5 text-sm text-gray-700">
-        {resolving ? labels.resolving : address}
-      </p>
+      <p className="min-h-5 text-sm text-gray-700">{resolving ? labels.resolving : address}</p>
       <div className="flex flex-wrap items-center justify-end gap-3">
         <button
           type="button"

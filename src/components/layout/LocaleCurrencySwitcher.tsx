@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "motion/react";
-import { ChevronDown } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useId, useRef, useState, useTransition } from "react";
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'motion/react';
+import { ChevronDown } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useId, useRef, useState, useTransition } from 'react';
 
-import { setCurrencyAction } from "@/features/preferences/set-currency-action";
-import type { Locale } from "@/lib/i18n/config";
-import { localeLabels, locales } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
-import { currencies } from "@/lib/money/currency";
+import { setCurrencyAction } from '@/features/preferences/set-currency-action';
+import type { Locale } from '@/lib/i18n/config';
+import { localeLabels, locales } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
+import { currencies } from '@/lib/money/currency';
 
 const HOVER_CLOSE_DELAY_MS = 140;
 
 /** Short labels for the navbar trigger (e.g. `AMD / Հայ`). */
 const localeShortLabels: Record<Locale, string> = {
-  hy: "Հայ",
-  en: "EN",
-  ru: "RU",
+  hy: 'Հայ',
+  en: 'EN',
+  ru: 'RU',
 };
 
 type LocaleCurrencySwitcherProps = {
@@ -30,10 +30,10 @@ type LocaleCurrencySwitcherProps = {
 };
 
 function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
-  const segments = pathname.split("/");
+  const segments = pathname.split('/');
   if (segments.length > 1) {
     segments[1] = nextLocale;
-    return segments.join("/") || `/${nextLocale}`;
+    return segments.join('/') || `/${nextLocale}`;
   }
   return `/${nextLocale}`;
 }
@@ -63,9 +63,7 @@ function SwitcherOption({
       disabled={disabled}
       aria-label={ariaLabel}
       className={`relative flex w-full justify-center whitespace-nowrap rounded-full px-3 py-1.5 text-center text-sm transition-colors ${
-        selected
-          ? "font-bold text-[#1e1e1e]"
-          : "font-medium text-[#1e1e1e]/45 hover:text-[#1e1e1e]"
+        selected ? 'font-bold text-[#1e1e1e]' : 'font-medium text-[#1e1e1e]/45 hover:text-[#1e1e1e]'
       }`}
       onClick={onClick}
     >
@@ -74,9 +72,7 @@ function SwitcherOption({
           layoutId={layoutId}
           className="absolute inset-0 rounded-full bg-[#ffd54a]"
           transition={
-            reduceMotion
-              ? { duration: 0 }
-              : { type: "spring", stiffness: 420, damping: 32 }
+            reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 32 }
           }
         />
       ) : null}
@@ -144,14 +140,14 @@ export function LocaleCurrencySwitcher({
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") closeMenu();
+      if (event.key === 'Escape') closeMenu();
     }
 
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
     // closeMenu is a stable event helper declared in the component body.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- see closeMenu
@@ -181,7 +177,7 @@ export function LocaleCurrencySwitcher({
   return (
     <div
       ref={rootRef}
-      className={open ? "relative z-[300]" : "relative z-0"}
+      className={open ? 'relative z-[300]' : 'relative z-0'}
       onMouseEnter={openMenu}
       onMouseLeave={scheduleClose}
     >
@@ -189,8 +185,8 @@ export function LocaleCurrencySwitcher({
         type="button"
         className={
           compact
-            ? "flex h-5 items-center gap-px text-[16px] leading-4 text-[#1e1e1e]"
-            : "flex h-9 shrink-0 items-center gap-1 rounded-full border-2 border-[#1e1e1e] bg-[#fff8e7] py-0 pr-2.5 pl-3 text-[#1e1e1e] shadow-[2px_2px_0_#1e1e1e] transition hover:bg-[#ffd54a]"
+            ? 'flex h-5 items-center gap-px text-[16px] leading-4 text-[#1e1e1e]'
+            : 'flex h-9 shrink-0 items-center gap-1 rounded-full border-2 border-[#1e1e1e] bg-[#fff8e7] py-0 pr-2.5 pl-3 text-[#1e1e1e] shadow-[2px_2px_0_#1e1e1e] transition hover:bg-[#ffd54a]'
         }
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -204,7 +200,7 @@ export function LocaleCurrencySwitcher({
               {localeShortLabels[locale]}
             </span>
             <ChevronDown
-              className={`size-[14px] shrink-0 text-[#1e1e1e] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
+              className={`size-[14px] shrink-0 text-[#1e1e1e] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? 'rotate-180' : ''}`}
               aria-hidden
             />
           </>
@@ -220,7 +216,7 @@ export function LocaleCurrencySwitcher({
               </span>
             </span>
             <ChevronDown
-              className={`h-4 w-4 shrink-0 text-[#1e1e1e] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
+              className={`h-4 w-4 shrink-0 text-[#1e1e1e] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? 'rotate-180' : ''}`}
               aria-hidden
             />
           </>

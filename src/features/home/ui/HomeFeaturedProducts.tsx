@@ -1,10 +1,11 @@
-import { PidehPillButton } from "@/components/brand/PidehPillButton";
-import { RevealOnView } from "@/components/motion/RevealOnView";
-import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
-import { cardShelf, pillPop, titleSweep } from "@/components/motion/presets";
-import { HomeOrangeWave } from "@/features/home/ui/HomeOrangeWave";
-import { HomeProductCard } from "@/features/home/ui/HomeProductCard";
-import type { Locale } from "@/lib/i18n/config";
+import { PidehPillButton } from '@/components/brand/PidehPillButton';
+import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import { RevealOnView } from '@/components/motion/RevealOnView';
+import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
+import { cardShelf, pillPop, titleSweep } from '@/components/motion/presets';
+import { HomeOrangeWave } from '@/features/home/ui/HomeOrangeWave';
+import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
+import type { Locale } from '@/lib/i18n/config';
 
 type FeaturedItem = {
   id: string;
@@ -63,13 +64,13 @@ export function HomeFeaturedProducts({
       />
       <HomeOrangeWave />
 
-      <div className="relative z-[1] mx-auto max-w-[1440px] px-4 pt-24 pb-16 md:px-[51px] md:pt-[240px] md:pb-20">
+      <div className={`relative z-[1] pt-24 pb-16 md:pt-[240px] md:pb-20 ${PAGE_CONTAINER}`}>
         <div className="mb-10 flex flex-col gap-6 md:mb-[113px] md:flex-row md:items-end md:justify-between">
           <RevealOnView variants={titleSweep}>
             <h2
               className="font-display max-w-[891px] text-white"
               style={{
-                fontSize: "clamp(2.75rem, 9.72vw, 8.75rem)",
+                fontSize: 'clamp(2.75rem, 9.72vw, 8.75rem)',
                 lineHeight: 0.78,
               }}
             >

@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import type { CatalogPriceBounds } from "@/features/products/application/catalog-price-bounds";
+import { AppLink } from '@/components/ui/AppLink';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import type { CatalogPriceBounds } from '@/features/products/application/catalog-price-bounds';
 import {
   catalogHref,
   clearCatalogFiltersHref,
-} from "@/features/products/application/catalog-search-params";
-import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
-import { CATALOG_PRICE_FILTER_MAX } from "@/features/products/schemas/catalog-list";
-import { CatalogPriceRange } from "@/features/products/ui/CatalogPriceRange";
-import type { Currency } from "@/lib/money/currency";
+} from '@/features/products/application/catalog-search-params';
+import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
+import { CATALOG_PRICE_FILTER_MAX } from '@/features/products/schemas/catalog-list';
+import { CatalogPriceRange } from '@/features/products/ui/CatalogPriceRange';
+import type { Currency } from '@/lib/money/currency';
 
 export type CatalogFilterLabels = {
   filters: string;
@@ -45,10 +45,9 @@ type CatalogFilterFormProps = {
 };
 
 const FIELD =
-  "mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-400";
+  'mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-400';
 
-const CHECK =
-  "size-4 rounded border-gray-300 text-gray-900 focus:ring-gray-400";
+const CHECK = 'size-4 rounded border-gray-300 text-gray-900 focus:ring-gray-400';
 
 const TEXT_DEBOUNCE_MS = 350;
 
@@ -57,19 +56,16 @@ function resolveRange(
   bounds: CatalogPriceBounds,
 ): { min: number; max: number } {
   const min = Math.max(0, filters.minPrice ?? bounds.min);
-  const max = Math.max(
-    min,
-    Math.min(CATALOG_PRICE_FILTER_MAX, filters.maxPrice ?? bounds.max),
-  );
+  const max = Math.max(min, Math.min(CATALOG_PRICE_FILTER_MAX, filters.maxPrice ?? bounds.max));
   return { min, max };
 }
 
 function toFilterPrice(
   value: number,
   defaultBound: number,
-  edge: "min" | "max",
+  edge: 'min' | 'max',
 ): number | undefined {
-  if (edge === "min") {
+  if (edge === 'min') {
     if (value <= 0 || value === defaultBound) return undefined;
     return value;
   }
@@ -87,14 +83,14 @@ export function CatalogFilterForm({
   priceBounds,
   labels,
   active,
-  className = "",
+  className = '',
 }: CatalogFilterFormProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
   const initialRange = resolveRange(filters, priceBounds);
-  const [categoryValue, setCategoryValue] = useState(filters.category ?? "");
-  const [searchValue, setSearchValue] = useState(filters.q ?? "");
+  const [categoryValue, setCategoryValue] = useState(filters.category ?? '');
+  const [searchValue, setSearchValue] = useState(filters.q ?? '');
   const [rangeMin, setRangeMin] = useState(initialRange.min);
   const [rangeMax, setRangeMax] = useState(initialRange.max);
   const [inStock, setInStock] = useState(Boolean(filters.inStock));
@@ -105,11 +101,11 @@ export function CatalogFilterForm({
     const previousRange = resolveRange(prevFilters, priceBounds);
     const nextRange = resolveRange(filters, priceBounds);
     setPrevFilters(filters);
-    setCategoryValue(filters.category ?? "");
+    setCategoryValue(filters.category ?? '');
     setInStock(Boolean(filters.inStock));
     setOnSale(Boolean(filters.onSale));
-    if (searchValue === (prevFilters.q ?? "")) {
-      setSearchValue(filters.q ?? "");
+    if (searchValue === (prevFilters.q ?? '')) {
+      setSearchValue(filters.q ?? '');
     }
     if (rangeMin === previousRange.min && rangeMax === previousRange.max) {
       setRangeMin(nextRange.min);
@@ -140,8 +136,8 @@ export function CatalogFilterForm({
     };
     const href = catalogHref(locale, filters, {
       q: current.searchValue.trim() || undefined,
-      minPrice: toFilterPrice(current.rangeMin, priceBounds.min, "min"),
-      maxPrice: toFilterPrice(current.rangeMax, priceBounds.max, "max"),
+      minPrice: toFilterPrice(current.rangeMin, priceBounds.min, 'min'),
+      maxPrice: toFilterPrice(current.rangeMax, priceBounds.max, 'max'),
       category: current.categoryValue || undefined,
       inStock: current.inStock ? true : undefined,
       onSale: current.onSale ? true : undefined,
@@ -162,11 +158,11 @@ export function CatalogFilterForm({
 
     const timer = window.setTimeout(() => {
       const nextQ = searchValue.trim() || undefined;
-      const nextMin = toFilterPrice(rangeMin, priceBounds.min, "min");
-      const nextMax = toFilterPrice(rangeMax, priceBounds.max, "max");
+      const nextMin = toFilterPrice(rangeMin, priceBounds.min, 'min');
+      const nextMax = toFilterPrice(rangeMax, priceBounds.max, 'max');
 
       if (
-        (nextQ ?? "") === (filters.q ?? "") &&
+        (nextQ ?? '') === (filters.q ?? '') &&
         nextMin === filters.minPrice &&
         nextMax === filters.maxPrice
       ) {
@@ -185,9 +181,7 @@ export function CatalogFilterForm({
   }, [searchValue, rangeMin, rangeMax]);
 
   return (
-    <div
-      className={`rounded-xl border border-gray-200 bg-white p-4 ${className}`}
-    >
+    <div className={`rounded-xl border border-gray-200 bg-white p-4 ${className}`}>
       <div className="mb-4 flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-gray-900">{labels.filters}</h2>
         {active ? (
@@ -204,9 +198,7 @@ export function CatalogFilterForm({
 
       <div className="flex flex-col gap-5">
         <label className="block">
-          <span className="text-sm font-medium text-gray-900">
-            {labels.searchLabel}
-          </span>
+          <span className="text-sm font-medium text-gray-900">{labels.searchLabel}</span>
           <input
             type="search"
             value={searchValue}
@@ -218,9 +210,7 @@ export function CatalogFilterForm({
         </label>
 
         <div>
-          <span className="text-sm font-medium text-gray-900">
-            {labels.categoryLabel}
-          </span>
+          <span className="text-sm font-medium text-gray-900">{labels.categoryLabel}</span>
           <div className="mt-1">
             <SelectDropdown
               ariaLabel={labels.categoryLabel}
@@ -262,9 +252,7 @@ export function CatalogFilterForm({
         />
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-sm font-medium text-gray-900">
-            {labels.availabilityLabel}
-          </legend>
+          <legend className="text-sm font-medium text-gray-900">{labels.availabilityLabel}</legend>
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
               type="checkbox"

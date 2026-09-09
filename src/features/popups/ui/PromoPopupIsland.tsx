@@ -1,7 +1,7 @@
-import { Suspense } from "react";
+import { Suspense } from 'react';
 
-import { getActiveStorefrontPopup } from "@/features/popups/application/queries";
-import { PromoPopupClient } from "@/features/popups/ui/PromoPopupClient";
+import { getActiveStorefrontPopup } from '@/features/popups/application/queries';
+import { PromoPopupClient } from '@/features/popups/ui/PromoPopupClient';
 
 type PromoPopupIslandProps = {
   closeLabel: string;

@@ -1,9 +1,9 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, isNull } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { addresses } from "@/db/schema";
+import { getDb } from '@/db/client';
+import { addresses } from '@/db/schema';
 
 export type CustomerAddressListItem = {
   id: string;
@@ -21,9 +21,7 @@ export type CustomerAddressListItem = {
 };
 
 /** Lists non-archived addresses for a customer (defaults first). */
-export async function listCustomerAddresses(
-  userId: string,
-): Promise<CustomerAddressListItem[]> {
+export async function listCustomerAddresses(userId: string): Promise<CustomerAddressListItem[]> {
   return getDb()
     .select({
       id: addresses.id,
@@ -40,13 +38,8 @@ export async function listCustomerAddresses(
       isDefaultBilling: addresses.isDefaultBilling,
     })
     .from(addresses)
-    .where(
-      and(eq(addresses.userId, userId), isNull(addresses.archivedAt)),
-    )
-    .orderBy(
-      desc(addresses.isDefaultShipping),
-      asc(addresses.createdAt),
-    );
+    .where(and(eq(addresses.userId, userId), isNull(addresses.archivedAt)))
+    .orderBy(desc(addresses.isDefaultShipping), asc(addresses.createdAt));
 }
 
 /** Loads the customer's default shipping address when present. */

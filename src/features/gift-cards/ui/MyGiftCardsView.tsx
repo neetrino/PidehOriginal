@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 
-import { BuyGiftCardDrawer } from "@/features/gift-cards/ui/BuyGiftCardDrawer";
+import { BuyGiftCardDrawer } from '@/features/gift-cards/ui/BuyGiftCardDrawer';
 import type {
   CustomerGiftCardListItem,
   GiftCardDetail,
-} from "@/features/gift-cards/application/queries";
+} from '@/features/gift-cards/application/queries';
 import type {
   CustomerGiftCardBucket,
   GiftCardSettings,
-} from "@/features/gift-cards/domain/gift-card-rules";
-import type { Locale } from "@/lib/i18n/config";
-import { formatMoneyAmount } from "@/lib/money/format";
+} from '@/features/gift-cards/domain/gift-card-rules';
+import type { Locale } from '@/lib/i18n/config';
+import { formatMoneyAmount } from '@/lib/money/format';
 
 type MyGiftCardsViewCopy = {
   title: string;
@@ -56,11 +56,7 @@ type MyGiftCardsViewProps = {
   copy: MyGiftCardsViewCopy;
 };
 
-const FILTER_ORDER: CustomerGiftCardBucket[] = [
-  "mine",
-  "usedByMe",
-  "boughtForOthers",
-];
+const FILTER_ORDER: CustomerGiftCardBucket[] = ['mine', 'usedByMe', 'boughtForOthers'];
 
 export function MyGiftCardsView({
   locale,
@@ -71,8 +67,7 @@ export function MyGiftCardsView({
 }: MyGiftCardsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerKey, setDrawerKey] = useState(0);
-  const [activeFilter, setActiveFilter] =
-    useState<CustomerGiftCardBucket>("mine");
+  const [activeFilter, setActiveFilter] = useState<CustomerGiftCardBucket>('mine');
 
   const filteredDetails = useMemo(
     () => details.filter(({ card }) => card.bucket === activeFilter),
@@ -113,8 +108,8 @@ export function MyGiftCardsView({
               onClick={() => setActiveFilter(bucket)}
               className={`inline-flex min-h-8 flex-1 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-[10px] font-bold leading-tight tracking-wide uppercase transition sm:min-h-9 sm:px-3 sm:text-[11px] lg:text-xs ${
                 isActive
-                  ? "bg-[#1e1e1e] text-white shadow-[0_8px_18px_rgba(30,30,30,0.18)]"
-                  : "bg-[#ff6b00]/12 text-[#1e1e1e] hover:bg-[#ff6b00]/20"
+                  ? 'bg-[#1e1e1e] text-white shadow-[0_8px_18px_rgba(30,30,30,0.18)]'
+                  : 'bg-[#ff6b00]/12 text-[#1e1e1e] hover:bg-[#ff6b00]/20'
               }`}
             >
               {copy.filters[bucket]}
@@ -144,12 +139,10 @@ export function MyGiftCardsView({
                   </div>
                   <div className="text-right text-sm">
                     <p className="font-medium text-[#1e1e1e]">
-                      {copy.balance}:{" "}
-                      {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
+                      {copy.balance}: {formatMoneyAmount(card.balanceAmount, 'AMD', locale)}
                     </p>
                     <p className="text-xs text-[#1e1e1e]/55">
-                      {copy.initial}:{" "}
-                      {formatMoneyAmount(card.initialAmount, "AMD", locale)}
+                      {copy.initial}: {formatMoneyAmount(card.initialAmount, 'AMD', locale)}
                     </p>
                   </div>
                 </div>
@@ -177,8 +170,8 @@ export function MyGiftCardsView({
                           {row.type} · {row.createdAt.toISOString().slice(0, 10)}
                         </span>
                         <span className="font-medium text-[#1e1e1e]">
-                          {row.delta > 0 ? "+" : ""}
-                          {formatMoneyAmount(row.delta, "AMD", locale)}
+                          {row.delta > 0 ? '+' : ''}
+                          {formatMoneyAmount(row.delta, 'AMD', locale)}
                         </span>
                       </li>
                     ))}

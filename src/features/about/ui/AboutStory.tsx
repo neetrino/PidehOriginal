@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
+import { useRef } from 'react';
 
-import { useAboutStoryScroll } from "@/features/about/ui/useAboutStoryScroll";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import { useAboutStoryScroll } from '@/features/about/ui/useAboutStoryScroll';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AboutStoryProps = {
-  copy: Dictionary["about"];
+  copy: Dictionary['about'];
 };
 
 export function AboutStory({ copy }: AboutStoryProps) {
@@ -14,17 +15,14 @@ export function AboutStory({ copy }: AboutStoryProps) {
   useAboutStoryScroll(sectionRef);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative overflow-hidden px-4 py-16 sm:px-6 lg:px-10 lg:py-24"
-    >
+    <section ref={sectionRef} className="relative overflow-hidden py-16 lg:py-24">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-10 right-[-6rem] font-display text-[28vw] leading-none text-pideh-orange/8 select-none"
       >
         01
       </div>
-      <div className="relative mx-auto max-w-6xl">
+      <div className={`relative ${PAGE_CONTAINER}`}>
         <div
           aria-hidden="true"
           data-story-line
@@ -33,7 +31,7 @@ export function AboutStory({ copy }: AboutStoryProps) {
         <ol className="space-y-10 md:space-y-14">
           {copy.paragraphs.map((paragraph, index) => {
             const title = copy.storyTitles[index] ?? copy.eyebrow;
-            const step = String(index + 1).padStart(2, "0");
+            const step = String(index + 1).padStart(2, '0');
 
             return (
               <li
@@ -54,7 +52,7 @@ export function AboutStory({ copy }: AboutStoryProps) {
                   <h2 className="font-display text-[22px] leading-6 text-[#ff6b00] uppercase md:text-[28px] md:leading-8">
                     {title}
                   </h2>
-                  <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#1e1e1e]/80 md:text-lg">
+                  <p className="font-noto-armenian mt-4 max-w-2xl text-sm leading-relaxed text-[#1e1e1e]/80 md:text-base">
                     {paragraph}
                   </p>
                 </article>

@@ -44,15 +44,15 @@ Codex Security, Vercel Optimize, Cloudflare platform Skills, and Wrangler depend
 
 ## Evaluation matrix
 
-| Candidate | Value | Scope/trigger | Portability | Safety/overlap | Decision |
-| --- | --- | --- | --- | --- | --- |
-| code-review | High | Clear review boundary | High | Complements debugging and verification | Internal Batch 1 |
-| security-review | High for sensitive work | Explicit audit boundary | High | Must not replace Security Rule | Internal Batch 1 |
-| react-performance-review | High for React/Next.js | Narrow performance-review boundary | High | Independently authored; no external content copied | Internal Batch 1B |
-| ui-accessibility-review | High for UI quality | Separate review from implementation | High | Licensed primary source and local reviewed guidance | External-adapted Batch 1B |
-| web-performance-audit | High | Measurement-focused | Medium | Overlap with React and completion checks | Batch 2 |
-| api-contract-change | Medium–high | Clear API evolution workflow | High | Overlap with API Rule | Batch 2 |
-| safe-dependency-upgrade | Medium–high | Clear upgrade workflow | High | Needs supply-chain safeguards | Batch 2 |
+| Candidate                | Value                   | Scope/trigger                       | Portability | Safety/overlap                                      | Decision                  |
+| ------------------------ | ----------------------- | ----------------------------------- | ----------- | --------------------------------------------------- | ------------------------- |
+| code-review              | High                    | Clear review boundary               | High        | Complements debugging and verification              | Internal Batch 1          |
+| security-review          | High for sensitive work | Explicit audit boundary             | High        | Must not replace Security Rule                      | Internal Batch 1          |
+| react-performance-review | High for React/Next.js  | Narrow performance-review boundary  | High        | Independently authored; no external content copied  | Internal Batch 1B         |
+| ui-accessibility-review  | High for UI quality     | Separate review from implementation | High        | Licensed primary source and local reviewed guidance | External-adapted Batch 1B |
+| web-performance-audit    | High                    | Measurement-focused                 | Medium      | Overlap with React and completion checks            | Batch 2                   |
+| api-contract-change      | Medium–high             | Clear API evolution workflow        | High        | Overlap with API Rule                               | Batch 2                   |
+| safe-dependency-upgrade  | Medium–high             | Clear upgrade workflow              | High        | Needs supply-chain safeguards                       | Batch 2                   |
 
 ## Sources reviewed
 

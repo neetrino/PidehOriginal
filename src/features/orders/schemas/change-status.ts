@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { ORDER_STATUSES } from "@/features/orders/domain/order-status";
-import { PAYMENT_STATUSES } from "@/features/orders/domain/payment-status";
+import { ORDER_STATUSES } from '@/features/orders/domain/order-status';
+import { PAYMENT_STATUSES } from '@/features/orders/domain/payment-status';
 
 export const changeOrderStatusSchema = z.object({
   orderNumber: z.string().trim().min(1).max(64),
@@ -14,7 +14,7 @@ export type ChangeOrderStatusInput = z.infer<typeof changeOrderStatusSchema>;
 export const adminOrdersFilterSchema = z.object({
   status: z.enum(ORDER_STATUSES).optional(),
   paymentStatus: z.enum(PAYMENT_STATUSES).optional(),
-  archived: z.enum(["active", "archived", "all"]).default("active"),
+  archived: z.enum(['active', 'archived', 'all']).default('active'),
   dateFrom: z.string().date().optional(),
   dateTo: z.string().date().optional(),
   q: z.string().trim().max(100).optional(),
@@ -42,9 +42,7 @@ export const bulkChangeOrderStatusSchema = z.object({
   toStatus: z.enum(ORDER_STATUSES),
 });
 
-export type BulkChangeOrderStatusInput = z.infer<
-  typeof bulkChangeOrderStatusSchema
->;
+export type BulkChangeOrderStatusInput = z.infer<typeof bulkChangeOrderStatusSchema>;
 
 export const bulkArchiveOrdersSchema = z.object({
   orderNumbers: z.array(z.string().trim().min(1).max(64)).min(1).max(50),

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import type { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   ChevronRight,
   Gift,
@@ -13,18 +13,18 @@ import {
   Sparkles,
   Trash2,
   User,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { logoutAction } from "@/features/auth/logout-action";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
-import type { SessionUser } from "@/lib/auth/session";
+import { AppLink } from '@/components/ui/AppLink';
+import { logoutAction } from '@/features/auth/logout-action';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import type { SessionUser } from '@/lib/auth/session';
 
 type ProfileMobileHubProps = {
   locale: Locale;
   user: SessionUser;
-  dictionary: Dictionary["profile"];
+  dictionary: Dictionary['profile'];
   /** Opens the dashboard sheet while already on the profile hub route. */
   onOpenDashboard: () => void;
 };
@@ -35,13 +35,13 @@ type MenuItem = {
   icon: ReactNode;
   exact?: boolean;
   danger?: boolean;
-  iconTheme: "neutral" | "amber" | "sky";
+  iconTheme: 'neutral' | 'amber' | 'sky';
 };
 
 const ICON_THEMES = {
-  neutral: { bg: "bg-gray-100", fg: "text-gray-800" },
-  amber: { bg: "bg-amber-50", fg: "text-amber-600" },
-  sky: { bg: "bg-sky-50", fg: "text-sky-600" },
+  neutral: { bg: 'bg-gray-100', fg: 'text-gray-800' },
+  amber: { bg: 'bg-amber-50', fg: 'text-amber-600' },
+  sky: { bg: 'bg-sky-50', fg: 'text-sky-600' },
 } as const;
 
 /**
@@ -53,7 +53,7 @@ export function ProfileMobileHub({
   dictionary,
   onOpenDashboard,
 }: ProfileMobileHubProps) {
-  const pathname = usePathname() ?? "";
+  const pathname = usePathname() ?? '';
   const logoutWithLocale = logoutAction.bind(null, locale);
   const displayName = `${user.firstName} ${user.lastName}`.trim();
   const hubHref = `/${locale}/profile`;
@@ -64,50 +64,50 @@ export function ProfileMobileHub({
       label: dictionary.dashboard,
       icon: <LayoutDashboard className="h-5 w-5" />,
       exact: true,
-      iconTheme: "neutral",
+      iconTheme: 'neutral',
     },
     {
       href: `/${locale}/profile/orders`,
       label: dictionary.orders,
       icon: <Package className="h-5 w-5" />,
-      iconTheme: "amber",
+      iconTheme: 'amber',
     },
     {
       href: `/${locale}/profile/bonuses`,
       label: dictionary.bonuses,
       icon: <Sparkles className="h-5 w-5" />,
-      iconTheme: "sky",
+      iconTheme: 'sky',
     },
     {
       href: `/${locale}/profile/gift-cards`,
       label: dictionary.giftCards,
       icon: <Gift className="h-5 w-5" />,
-      iconTheme: "amber",
+      iconTheme: 'amber',
     },
     {
       href: `/${locale}/profile/personal-information`,
       label: dictionary.personal,
       icon: <User className="h-5 w-5" />,
-      iconTheme: "sky",
+      iconTheme: 'sky',
     },
     {
       href: `/${locale}/profile/addresses`,
       label: dictionary.addresses,
       icon: <MapPin className="h-5 w-5" />,
-      iconTheme: "neutral",
+      iconTheme: 'neutral',
     },
     {
       href: `/${locale}/profile/password`,
       label: dictionary.password,
       icon: <Lock className="h-5 w-5" />,
-      iconTheme: "amber",
+      iconTheme: 'amber',
     },
     {
       href: `/${locale}/profile/delete-account`,
       label: dictionary.deleteAccount,
       icon: <Trash2 className="h-5 w-5" />,
       danger: true,
-      iconTheme: "sky",
+      iconTheme: 'sky',
     },
   ];
 
@@ -129,14 +129,14 @@ export function ProfileMobileHub({
         <span className="flex min-w-0 items-center gap-3">
           <span
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-              item.danger ? "bg-red-50 text-red-500" : `${theme.bg} ${theme.fg}`
+              item.danger ? 'bg-red-50 text-red-500' : `${theme.bg} ${theme.fg}`
             }`}
           >
             {item.icon}
           </span>
           <span
             className={`truncate text-base font-medium ${
-              item.danger ? "text-red-500" : "text-gray-800"
+              item.danger ? 'text-red-500' : 'text-gray-800'
             }`}
           >
             {item.label}
@@ -144,7 +144,7 @@ export function ProfileMobileHub({
         </span>
         <ChevronRight
           className={`h-[18px] w-[18px] shrink-0 ${
-            item.danger ? "text-red-400" : "text-gray-400 opacity-80"
+            item.danger ? 'text-red-400' : 'text-gray-400 opacity-80'
           }`}
           aria-hidden
         />
@@ -157,7 +157,7 @@ export function ProfileMobileHub({
           key={item.href}
           type="button"
           onClick={onOpenDashboard}
-          aria-current={active ? "page" : undefined}
+          aria-current={active ? 'page' : undefined}
           className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50/80"
         >
           {content}
@@ -184,7 +184,7 @@ export function ProfileMobileHub({
         key={item.href}
         href={item.href}
         prefetchPolicy="intent"
-        aria-current={active ? "page" : undefined}
+        aria-current={active ? 'page' : undefined}
         className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50/80"
       >
         {content}
@@ -204,12 +204,8 @@ export function ProfileMobileHub({
             {user.lastName.slice(0, 1).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xl font-bold leading-tight text-gray-900">
-              {displayName}
-            </p>
-            <p className="truncate text-sm leading-snug text-gray-500">
-              {user.email}
-            </p>
+            <p className="truncate text-xl font-bold leading-tight text-gray-900">{displayName}</p>
+            <p className="truncate text-sm leading-snug text-gray-500">{user.email}</p>
           </div>
         </div>
       </section>
@@ -218,9 +214,7 @@ export function ProfileMobileHub({
         className="overflow-hidden rounded-[var(--radius)] bg-white py-1 shadow-sm ring-1 ring-[#ff6b00]/12"
         aria-label={dictionary.title}
       >
-        <div className="divide-y divide-gray-100">
-          {mainItems.map((item) => renderRow(item))}
-        </div>
+        <div className="divide-y divide-gray-100">{mainItems.map((item) => renderRow(item))}</div>
         {dangerItem ? renderRow(dangerItem) : null}
       </nav>
 

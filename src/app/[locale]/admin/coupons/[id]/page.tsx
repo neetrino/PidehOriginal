@@ -1,25 +1,21 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
-import {
-  ADMIN_PAGE_SUBTITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
+import { ADMIN_PAGE_SUBTITLE } from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import {
   getAdminPromotionById,
   listPromotionTargetOptions,
-} from "@/features/promotions/application/queries";
-import { PromotionForm } from "@/features/promotions/ui/PromotionForm";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/promotions/application/queries';
+import { PromotionForm } from '@/features/promotions/ui/PromotionForm';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminCouponDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
 
-export default async function AdminCouponDetailPage({
-  params,
-}: AdminCouponDetailPageProps) {
+export default async function AdminCouponDetailPage({ params }: AdminCouponDetailPageProps) {
   const { locale, id } = await params;
   if (!isLocale(locale)) {
     notFound();
@@ -31,7 +27,7 @@ export default async function AdminCouponDetailPage({
     getDictionary(locale),
   ]);
 
-  if (!promo || promo.kind !== "COUPON") {
+  if (!promo || promo.kind !== 'COUPON') {
     notFound();
   }
 
@@ -46,10 +42,7 @@ export default async function AdminCouponDetailPage({
             {dict.admin.coupons.title}
           </Link>
         </p>
-        <AdminPageHeading
-          title={promo.code ?? ""}
-          description={`Used ${promo.usedCount} times`}
-        />
+        <AdminPageHeading title={promo.code ?? ''} description={`Used ${promo.usedCount} times`} />
       </div>
 
       <PromotionForm

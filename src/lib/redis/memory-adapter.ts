@@ -1,4 +1,4 @@
-import type { RedisAdapter, RedisClient } from "@/lib/redis/types";
+import type { RedisAdapter, RedisClient } from '@/lib/redis/types';
 
 type Entry = {
   value: string;
@@ -26,23 +26,17 @@ export function createMemoryRedisAdapter(): RedisAdapter {
     async set(key, value, options) {
       if (options?.nx && store.has(key)) {
         const existing = store.get(key);
-        if (
-          existing &&
-          (existing.expiresAt === null || Date.now() < existing.expiresAt)
-        ) {
+        if (existing && (existing.expiresAt === null || Date.now() < existing.expiresAt)) {
           return null;
         }
       }
 
       store.set(key, {
         value,
-        expiresAt:
-          typeof options?.ex === "number"
-            ? Date.now() + options.ex * 1000
-            : null,
+        expiresAt: typeof options?.ex === 'number' ? Date.now() + options.ex * 1000 : null,
       });
 
-      return "OK";
+      return 'OK';
     },
     async del(key) {
       return store.delete(key) ? 1 : 0;
@@ -64,7 +58,7 @@ export function createMemoryRedisAdapter(): RedisAdapter {
   };
 
   return {
-    name: "memory",
+    name: 'memory',
     getClient: () => client,
   };
 }

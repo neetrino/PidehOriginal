@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from 'drizzle-orm';
 import {
   boolean,
   index,
@@ -8,16 +8,11 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
+} from 'drizzle-orm/pg-core';
 
-import {
-  createdAtColumn,
-  deletedAtColumn,
-  idColumn,
-  updatedAtColumn,
-} from "@/db/schema/columns";
-import { blogPostStatusEnum } from "@/db/schema/enums";
-import { users } from "@/db/schema/identity";
+import { createdAtColumn, deletedAtColumn, idColumn, updatedAtColumn } from '@/db/schema/columns';
+import { blogPostStatusEnum } from '@/db/schema/enums';
+import { users } from '@/db/schema/identity';
 
 export type HeroTranslation = {
   title: string;
@@ -26,9 +21,7 @@ export type HeroTranslation = {
   buttonUrl?: string;
 };
 
-export type HeroTranslationsJson = Partial<
-  Record<"hy" | "en" | "ru", HeroTranslation>
->;
+export type HeroTranslationsJson = Partial<Record<'hy' | 'en' | 'ru', HeroTranslation>>;
 
 export type BlogTranslation = {
   title: string;
@@ -39,55 +32,48 @@ export type BlogTranslation = {
   seoDescription?: string;
 };
 
-export type BlogTranslationsJson = Partial<
-  Record<"hy" | "en" | "ru", BlogTranslation>
->;
+export type BlogTranslationsJson = Partial<Record<'hy' | 'en' | 'ru', BlogTranslation>>;
 
 export const heroSlides = pgTable(
-  "hero_slides",
+  'hero_slides',
   {
     id: idColumn(),
-    translations: jsonb("translations").$type<HeroTranslationsJson>().notNull(),
-    sortOrder: integer("sort_order").notNull().default(0),
-    isActive: boolean("is_active").notNull().default(false),
+    translations: jsonb('translations').$type<HeroTranslationsJson>().notNull(),
+    sortOrder: integer('sort_order').notNull().default(0),
+    isActive: boolean('is_active').notNull().default(false),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
-  (table) => [
-    index("hero_slides_active_sort_idx").on(table.isActive, table.sortOrder),
-  ],
+  (table) => [index('hero_slides_active_sort_idx').on(table.isActive, table.sortOrder)],
 );
 
 export const blogPosts = pgTable(
-  "blog_posts",
+  'blog_posts',
   {
     id: idColumn(),
-    authorUserId: uuid("author_user_id").references(() => users.id, {
-      onDelete: "set null",
+    authorUserId: uuid('author_user_id').references(() => users.id, {
+      onDelete: 'set null',
     }),
-    status: blogPostStatusEnum("status").notNull().default("DRAFT"),
-    publishedAt: timestamp("published_at", {
+    status: blogPostStatusEnum('status').notNull().default('DRAFT'),
+    publishedAt: timestamp('published_at', {
       withTimezone: true,
-      mode: "date",
+      mode: 'date',
     }),
-    translations: jsonb("translations").$type<BlogTranslationsJson>().notNull(),
-    tags: jsonb("tags").$type<string[]>().notNull().default([]),
+    translations: jsonb('translations').$type<BlogTranslationsJson>().notNull(),
+    tags: jsonb('tags').$type<string[]>().notNull().default([]),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
     deletedAt: deletedAtColumn(),
   },
   (table) => [
-    index("blog_posts_status_published_idx").on(
-      table.status,
-      table.publishedAt,
-    ),
-    uniqueIndex("blog_posts_slug_hy_uidx")
+    index('blog_posts_status_published_idx').on(table.status, table.publishedAt),
+    uniqueIndex('blog_posts_slug_hy_uidx')
       .on(sql`(${table.translations}->'hy'->>'slug')`)
       .where(sql`${table.translations}->'hy'->>'slug' IS NOT NULL`),
-    uniqueIndex("blog_posts_slug_en_uidx")
+    uniqueIndex('blog_posts_slug_en_uidx')
       .on(sql`(${table.translations}->'en'->>'slug')`)
       .where(sql`${table.translations}->'en'->>'slug' IS NOT NULL`),
-    uniqueIndex("blog_posts_slug_ru_uidx")
+    uniqueIndex('blog_posts_slug_ru_uidx')
       .on(sql`(${table.translations}->'ru'->>'slug')`)
       .where(sql`${table.translations}->'ru'->>'slug' IS NOT NULL`),
   ],

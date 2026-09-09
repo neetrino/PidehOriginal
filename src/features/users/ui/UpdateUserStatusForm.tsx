@@ -1,25 +1,22 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import {
-  ADMIN_LABEL,
-  ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { updateUserStatusAction } from "@/features/users/application/update-user";
-import type { UserStatus } from "@/features/users/domain/user-lifecycle";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import { ADMIN_LABEL, ADMIN_SECTION_TITLE } from '@/features/admin/ui/admin-form-classes';
+import { updateUserStatusAction } from '@/features/users/application/update-user';
+import type { UserStatus } from '@/features/users/domain/user-lifecycle';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type UpdateUserStatusFormProps = {
   locale: string;
   userId: string;
   currentStatus: UserStatus;
   eligibleStatuses: UserStatus[];
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
 export function UpdateUserStatusForm({
@@ -31,15 +28,11 @@ export function UpdateUserStatusForm({
 }: UpdateUserStatusFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState(eligibleStatuses[0] ?? "");
+  const [status, setStatus] = useState(eligibleStatuses[0] ?? '');
   const [isPending, startTransition] = useTransition();
 
   if (eligibleStatuses.length === 0) {
-    return (
-      <p className="text-sm text-gray-600">
-        {copy.users.statusForm.terminal}
-      </p>
-    );
+    return <p className="text-sm text-gray-600">{copy.users.statusForm.terminal}</p>;
   }
 
   return (
@@ -65,7 +58,7 @@ export function UpdateUserStatusForm({
       >
         <h3 className={ADMIN_SECTION_TITLE}>{copy.users.statusForm.title}</h3>
         <p className="text-sm text-gray-700">
-          {copy.common.current.replace("{value}", currentStatus)}
+          {copy.common.current.replace('{value}', currentStatus)}
         </p>
         <div>
           <span className={ADMIN_LABEL}>{copy.users.statusForm.newStatus}</span>

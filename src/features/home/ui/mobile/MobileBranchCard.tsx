@@ -1,4 +1,4 @@
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 
 type MobileBranchCardProps = {
   address: string;
@@ -11,11 +11,7 @@ type MobileBranchCardProps = {
  *
  * @see https://www.figma.com/design/zyLVZFDhohLYxwuohIrPDN/Pideh-Dev?node-id=268-541
  */
-export function MobileBranchCard({
-  address,
-  phoneHref,
-  contactLabel,
-}: MobileBranchCardProps) {
+export function MobileBranchCard({ address, phoneHref, contactLabel }: MobileBranchCardProps) {
   return (
     <div
       data-node-id="268:541"

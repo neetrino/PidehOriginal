@@ -1,27 +1,14 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import {
-  useMemo,
-  useState,
-  useTransition,
-  useEffect,
-  useRef,
-  type ReactNode,
-} from "react";
-import {
-  Copy,
-  Share2,
-  Trash2,
-  Users,
-  X,
-} from "lucide-react";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState, useTransition, useEffect, useRef, type ReactNode } from 'react';
+import { Copy, Share2, Trash2, Users, X } from 'lucide-react';
 
-import { PidehPillButton } from "@/components/brand/PidehPillButton";
-import { AppLink } from "@/components/ui/AppLink";
-import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
-import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
+import { PidehPillButton } from '@/components/brand/PidehPillButton';
+import { AppLink } from '@/components/ui/AppLink';
+import { AddressAutocomplete } from '@/components/ui/AddressAutocomplete';
+import { AddressMapPicker } from '@/components/ui/AddressMapPicker';
 import {
   cancelGroupOrderAction,
   joinGroupOrderAction,
@@ -35,35 +22,35 @@ import {
   setDeliveryAddressAction,
   setJoinsClosedAction,
   updateSpendLimitAction,
-} from "@/features/group-orders/actions";
-import type { GroupOrderDetailView } from "@/features/group-orders/application/queries";
-import { alertGroupOrderCancelledOnce } from "@/features/group-orders/ui/alert-group-order-cancelled";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
+} from '@/features/group-orders/actions';
+import type { GroupOrderDetailView } from '@/features/group-orders/application/queries';
+import { alertGroupOrderCancelledOnce } from '@/features/group-orders/ui/alert-group-order-cancelled';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 type GroupOrderPageClientProps = {
   locale: Locale;
   currency: Currency;
-  labels: Dictionary["groupOrder"];
+  labels: Dictionary['groupOrder'];
   initialView: GroupOrderDetailView | null;
   inviteToken: string;
   needsJoin: boolean;
 };
 
 const GROUP_CARD =
-  "rounded-[26px] border-2 border-pideh-ink/10 bg-white p-5 shadow-[0px_12px_14px_rgba(31,20,8,0.08)]";
+  'rounded-[26px] border-2 border-pideh-ink/10 bg-white p-5 shadow-[0px_12px_14px_rgba(31,20,8,0.08)]';
 
 const GROUP_ORDER_POLL_MS = 8_000;
 
 const INPUT_CLASS =
-  "w-full rounded-full border-2 border-pideh-ink/10 bg-pideh-cream px-4 py-2.5 text-sm font-medium text-pideh-ink outline-none transition focus:border-pideh-orange focus:ring-2 focus:ring-pideh-orange/30";
+  'w-full rounded-full border-2 border-pideh-ink/10 bg-pideh-cream px-4 py-2.5 text-sm font-medium text-pideh-ink outline-none transition focus:border-pideh-orange focus:ring-2 focus:ring-pideh-orange/30';
 
 function GhostPillButton({
   children,
   onClick,
   disabled,
-  className = "",
+  className = '',
 }: {
   children: ReactNode;
   onClick: () => void;
@@ -84,22 +71,22 @@ function GhostPillButton({
 
 function paymentLabel(
   status: string,
-  labels: Dictionary["groupOrder"],
+  labels: Dictionary['groupOrder'],
   options?: { paysAtCheckout?: boolean },
 ): string {
   if (options?.paysAtCheckout) {
     return labels.statusPaysAtCheckout;
   }
   switch (status) {
-    case "PAID":
+    case 'PAID':
       return labels.statusPaid;
-    case "FAILED":
+    case 'FAILED':
       return labels.statusFailed;
-    case "NOT_REQUIRED":
+    case 'NOT_REQUIRED':
       return labels.statusNotRequired;
-    case "REFUNDED":
+    case 'REFUNDED':
       return labels.statusRefunded;
-    case "MARKED_RECEIVED":
+    case 'MARKED_RECEIVED':
       return labels.statusMarkedReceived;
     default:
       return labels.statusPending;
@@ -119,13 +106,9 @@ export function GroupOrderPageClient({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [joinName, setJoinName] = useState("");
-  const [spendLimit, setSpendLimit] = useState(
-    initialView?.spendLimitAmount?.toString() ?? "",
-  );
-  const [deliveryAddress, setDeliveryAddress] = useState(
-    initialView?.deliveryAddress ?? "",
-  );
+  const [joinName, setJoinName] = useState('');
+  const [spendLimit, setSpendLimit] = useState(initialView?.spendLimitAmount?.toString() ?? '');
+  const [deliveryAddress, setDeliveryAddress] = useState(initialView?.deliveryAddress ?? '');
   const [deliveryPoint, setDeliveryPoint] = useState<{
     lat: number;
     lng: number;
@@ -134,13 +117,13 @@ export function GroupOrderPageClient({
 
   useEffect(() => {
     setView(initialView);
-    setSpendLimit(initialView?.spendLimitAmount?.toString() ?? "");
-    setDeliveryAddress(initialView?.deliveryAddress ?? "");
+    setSpendLimit(initialView?.spendLimitAmount?.toString() ?? '');
+    setDeliveryAddress(initialView?.deliveryAddress ?? '');
     setDeliveryPoint(null);
   }, [initialView]);
 
   useEffect(() => {
-    if (view?.status !== "CANCELLED" || cancelledHandledRef.current) {
+    if (view?.status !== 'CANCELLED' || cancelledHandledRef.current) {
       return;
     }
     cancelledHandledRef.current = true;
@@ -155,9 +138,9 @@ export function GroupOrderPageClient({
     const status = view?.status;
     if (
       status == null ||
-      status === "CANCELLED" ||
-      status === "COMPLETED" ||
-      status === "EXPIRED"
+      status === 'CANCELLED' ||
+      status === 'COMPLETED' ||
+      status === 'EXPIRED'
     ) {
       return;
     }
@@ -165,11 +148,7 @@ export function GroupOrderPageClient({
     let cancelled = false;
     const timer = window.setInterval(() => {
       void (async () => {
-        const detail = await loadGroupOrderDetailAction(
-          inviteToken,
-          locale,
-          currency,
-        );
+        const detail = await loadGroupOrderDetailAction(inviteToken, locale, currency);
         if (cancelled || !detail) return;
         setView(detail);
       })();
@@ -182,12 +161,12 @@ export function GroupOrderPageClient({
   }, [view?.status, inviteToken, locale, currency]);
 
   const inviteUrl = useMemo(() => {
-    if (typeof window === "undefined" || !view) return view?.invitePath ?? "";
+    if (typeof window === 'undefined' || !view) return view?.invitePath ?? '';
     return `${window.location.origin}${view.invitePath}`;
   }, [view]);
 
-  const isOrganizer = view?.currentParticipantRole === "ORGANIZER";
-  const canEdit = view?.status === "OPEN";
+  const isOrganizer = view?.currentParticipantRole === 'ORGANIZER';
+  const canEdit = view?.status === 'OPEN';
   const currentParticipant = view?.participants.find(
     (participant) => participant.id === view.currentParticipantId,
   );
@@ -201,12 +180,10 @@ export function GroupOrderPageClient({
     );
   }
 
-  if (view.status === "CANCELLED") {
+  if (view.status === 'CANCELLED') {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <p className="text-lg font-extrabold text-pideh-ink">
-          {labels.cancelledAlert}
-        </p>
+        <p className="text-lg font-extrabold text-pideh-ink">{labels.cancelledAlert}</p>
         <AppLink
           href={`/${locale}`}
           prefetchPolicy="intent"
@@ -245,9 +222,7 @@ export function GroupOrderPageClient({
     );
   }
 
-  function run(
-    action: () => Promise<{ ok: boolean; error?: string }>,
-  ): void {
+  function run(action: () => Promise<{ ok: boolean; error?: string }>): void {
     setError(null);
     startTransition(async () => {
       const result = await action();
@@ -285,7 +260,7 @@ export function GroupOrderPageClient({
   }
 
   return (
-    <div className={`mx-auto max-w-2xl px-4 py-8 md:py-10 ${pending ? "opacity-70" : ""}`}>
+    <div className={`mx-auto max-w-2xl px-4 py-8 md:py-10 ${pending ? 'opacity-70' : ''}`}>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] font-bold tracking-[0.22em] text-pideh-orange uppercase">
@@ -327,13 +302,13 @@ export function GroupOrderPageClient({
       <section className={`mb-5 space-y-3 ${GROUP_CARD} text-sm`}>
         <div className="flex items-center gap-2 font-semibold text-pideh-ink">
           <Users className="h-4 w-4 text-pideh-orange" />
-          {view.paymentMode === "ORGANIZER_PAYS_ALL"
-            ? labels.payingOrganizer.replace("{name}", view.organizerDisplayName)
+          {view.paymentMode === 'ORGANIZER_PAYS_ALL'
+            ? labels.payingOrganizer.replace('{name}', view.organizerDisplayName)
             : labels.payingSplit}
         </div>
         <p className="text-pideh-muted">
           {view.spendLimitFormatted
-            ? labels.limitLabel.replace("{amount}", view.spendLimitFormatted)
+            ? labels.limitLabel.replace('{amount}', view.spendLimitFormatted)
             : labels.noLimit}
         </p>
         <p className="text-pideh-muted">
@@ -343,27 +318,22 @@ export function GroupOrderPageClient({
         </p>
         <p className="text-pideh-muted">
           {labels.delivery}: {view.deliveryFormatted}
-          {view.deliveryDistanceLabel
-            ? ` · ${view.deliveryDistanceLabel}`
-            : ""}
+          {view.deliveryDistanceLabel ? ` · ${view.deliveryDistanceLabel}` : ''}
         </p>
-        {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
+        {view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
         view.currentParticipantId &&
         currentParticipant ? (
           <p className="text-pideh-muted">
-            {labels.yourDeliveryShare}:{" "}
-            {currentParticipant.deliveryShareFormatted}
+            {labels.yourDeliveryShare}: {currentParticipant.deliveryShareFormatted}
           </p>
         ) : null}
-        {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
+        {view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
         view.currentParticipantId &&
         currentParticipant ? (
           <>
             <p className="pt-1 text-lg font-extrabold text-pideh-ink">
-              {labels.yourShare}:{" "}
-              <span className="text-pideh-orange">
-                {currentParticipant.finalAmountFormatted}
-              </span>
+              {labels.yourShare}:{' '}
+              <span className="text-pideh-orange">{currentParticipant.finalAmountFormatted}</span>
             </p>
             <p className="text-sm text-pideh-muted">
               {labels.total}: {view.grandTotalFormatted}
@@ -371,17 +341,14 @@ export function GroupOrderPageClient({
           </>
         ) : (
           <p className="pt-1 text-lg font-extrabold text-pideh-ink">
-            {labels.total}:{" "}
-            <span className="text-pideh-orange">{view.grandTotalFormatted}</span>
+            {labels.total}: <span className="text-pideh-orange">{view.grandTotalFormatted}</span>
           </p>
         )}
       </section>
 
       {isOrganizer && canEdit ? (
         <section className={`mb-5 space-y-5 ${GROUP_CARD}`}>
-          <h2 className="text-base font-extrabold text-pideh-ink">
-            {labels.settingsTitle}
-          </h2>
+          <h2 className="text-base font-extrabold text-pideh-ink">{labels.settingsTitle}</h2>
 
           <div className="space-y-2">
             <label className="block">
@@ -411,9 +378,7 @@ export function GroupOrderPageClient({
                   run(async () =>
                     updateSpendLimitAction({
                       inviteToken,
-                      spendLimitAmount: spendLimit.trim()
-                        ? Number.parseInt(spendLimit, 10)
-                        : null,
+                      spendLimitAmount: spendLimit.trim() ? Number.parseInt(spendLimit, 10) : null,
                     }),
                   )
                 }
@@ -425,9 +390,7 @@ export function GroupOrderPageClient({
 
           <div className="space-y-2 border-t border-pideh-orange/15 pt-4">
             <label className="block">
-              <span className="text-sm font-bold text-pideh-ink">
-                {labels.deliveryFieldLabel}
-              </span>
+              <span className="text-sm font-bold text-pideh-ink">{labels.deliveryFieldLabel}</span>
               <span className="mt-0.5 block text-xs leading-relaxed text-pideh-muted">
                 {labels.deliveryFieldHint}
               </span>
@@ -463,18 +426,15 @@ export function GroupOrderPageClient({
               />
             </div>
             <p className="text-xs leading-relaxed text-pideh-muted">
-              {view.paymentMode === "SPLIT_PER_PARTICIPANT"
+              {view.paymentMode === 'SPLIT_PER_PARTICIPANT'
                 ? labels.deliverySplitHint
                 : labels.deliveryOrganizerPaysHint}
             </p>
             {view.deliveryAmount > 0 ? (
               <p className="text-sm font-bold text-pideh-orange">
                 {labels.deliveryQuoteReady
-                  .replace("{amount}", view.deliveryFormatted)
-                  .replace(
-                    "{distance}",
-                    view.deliveryDistanceLabel ?? "—",
-                  )}
+                  .replace('{amount}', view.deliveryFormatted)
+                  .replace('{distance}', view.deliveryDistanceLabel ?? '—')}
               </p>
             ) : null}
             <GhostPillButton
@@ -495,9 +455,7 @@ export function GroupOrderPageClient({
           </div>
 
           <div className="space-y-2 border-t border-pideh-orange/15 pt-4">
-            <p className="text-xs leading-relaxed text-pideh-muted">
-              {labels.closeJoinsHint}
-            </p>
+            <p className="text-xs leading-relaxed text-pideh-muted">{labels.closeJoinsHint}</p>
             <GhostPillButton
               className="w-full sm:w-auto"
               onClick={() =>
@@ -516,57 +474,48 @@ export function GroupOrderPageClient({
       ) : null}
 
       <section className="mb-6">
-        <h2 className="mb-3 text-lg font-extrabold text-pideh-ink">
-          {labels.participants}
-        </h2>
+        <h2 className="mb-3 text-lg font-extrabold text-pideh-ink">{labels.participants}</h2>
         <ul className="space-y-4">
           {view.participants.map((participant) => (
-            <li
-              key={participant.id}
-              className={GROUP_CARD}
-            >
+            <li key={participant.id} className={GROUP_CARD}>
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="font-extrabold text-pideh-ink">
                     {participant.displayName}
-                    {participant.role === "ORGANIZER" ? (
+                    {participant.role === 'ORGANIZER' ? (
                       <span className="ml-2 text-xs font-bold text-pideh-orange">
                         ({labels.organizer})
                       </span>
                     ) : null}
                   </p>
                   <p className="mt-0.5 text-sm text-pideh-muted">
-                    {participant.subtotalFormatted} ·{" "}
+                    {participant.subtotalFormatted} ·{' '}
                     {paymentLabel(participant.paymentStatus, labels, {
                       paysAtCheckout:
-                        view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-                        participant.role === "ORGANIZER" &&
-                        participant.paymentStatus !== "PAID" &&
-                        participant.paymentStatus !== "MARKED_RECEIVED" &&
-                        (view.status === "AWAITING_PAYMENTS" ||
-                          view.status === "CHECKOUT"),
+                        view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
+                        participant.role === 'ORGANIZER' &&
+                        participant.paymentStatus !== 'PAID' &&
+                        participant.paymentStatus !== 'MARKED_RECEIVED' &&
+                        (view.status === 'AWAITING_PAYMENTS' || view.status === 'CHECKOUT'),
                     })}
                   </p>
-                  {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
+                  {view.paymentMode === 'SPLIT_PER_PARTICIPANT' ? (
                     <p className="mt-0.5 text-xs text-pideh-muted">
-                      {labels.deliveryShare}:{" "}
-                      {participant.deliveryShareFormatted} · {labels.total}:{" "}
+                      {labels.deliveryShare}: {participant.deliveryShareFormatted} · {labels.total}:{' '}
                       {participant.finalAmountFormatted}
                     </p>
                   ) : null}
                   <p
                     className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${
                       participant.itemsReady
-                        ? "bg-pideh-orange/12 text-pideh-orange"
-                        : "bg-pideh-yellow/50 text-pideh-ink"
+                        ? 'bg-pideh-orange/12 text-pideh-orange'
+                        : 'bg-pideh-yellow/50 text-pideh-ink'
                     }`}
                   >
                     {participant.itemsReady ? labels.ready : labels.notReady}
                   </p>
                 </div>
-                {isOrganizer &&
-                participant.role !== "ORGANIZER" &&
-                canEdit ? (
+                {isOrganizer && participant.role !== 'ORGANIZER' && canEdit ? (
                   <button
                     type="button"
                     className="rounded-full p-2 text-pideh-muted transition hover:bg-red-50 hover:text-red-600"
@@ -613,9 +562,7 @@ export function GroupOrderPageClient({
                           {item.lineTotalFormatted}
                         </p>
                       </div>
-                      {(isOrganizer ||
-                        participant.id === view.currentParticipantId) &&
-                      canEdit ? (
+                      {(isOrganizer || participant.id === view.currentParticipantId) && canEdit ? (
                         <button
                           type="button"
                           className="rounded-full p-1.5 text-pideh-muted transition hover:bg-white hover:text-pideh-ink"
@@ -654,9 +601,7 @@ export function GroupOrderPageClient({
               className="rounded-[22px] border-2 border-pideh-orange/25 bg-white px-4 py-3 text-center shadow-[0px_8px_16px_rgba(31,20,8,0.08)]"
               role="status"
             >
-              <p className="text-sm font-extrabold text-pideh-orange">
-                {labels.itemsReadyDone}
-              </p>
+              <p className="text-sm font-extrabold text-pideh-orange">{labels.itemsReadyDone}</p>
               <p className="mt-1 text-xs leading-relaxed text-pideh-muted">
                 {labels.itemsReadyDoneHint}
               </p>
@@ -698,13 +643,11 @@ export function GroupOrderPageClient({
             tone="dark"
             disabled={pending}
             className="w-full"
-            onClick={() =>
-              run(async () => lockGroupOrderAction({ inviteToken }))
-            }
+            onClick={() => run(async () => lockGroupOrderAction({ inviteToken }))}
           />
         ) : null}
 
-        {isOrganizer && view.status === "CHECKOUT" ? (
+        {isOrganizer && view.status === 'CHECKOUT' ? (
           <PidehPillButton
             label={labels.goToCheckout}
             disabled={pending}
@@ -725,56 +668,49 @@ export function GroupOrderPageClient({
           />
         ) : null}
 
-        {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-        view.status === "AWAITING_PAYMENTS" &&
+        {view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
+        view.status === 'AWAITING_PAYMENTS' &&
         !isOrganizer &&
         view.currentParticipantId &&
         currentParticipant &&
         currentParticipant.finalAmount > 0 &&
-        currentParticipant.paymentStatus !== "PAID" &&
-        currentParticipant.paymentStatus !== "MARKED_RECEIVED" ? (
+        currentParticipant.paymentStatus !== 'PAID' &&
+        currentParticipant.paymentStatus !== 'MARKED_RECEIVED' ? (
           <PidehPillButton
-            label={labels.payWithCard.replace(
-              "{amount}",
-              currentParticipant.finalAmountFormatted,
-            )}
+            label={labels.payWithCard.replace('{amount}', currentParticipant.finalAmountFormatted)}
             disabled={pending}
             className="w-full"
-            onClick={() =>
-              router.push(`/${locale}/group-orders/${inviteToken}/pay`)
-            }
+            onClick={() => router.push(`/${locale}/group-orders/${inviteToken}/pay`)}
           />
         ) : null}
 
-        {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-        view.status === "AWAITING_PAYMENTS" &&
+        {view.paymentMode === 'SPLIT_PER_PARTICIPANT' &&
+        view.status === 'AWAITING_PAYMENTS' &&
         !isOrganizer &&
         view.currentParticipantId &&
         currentParticipant &&
-        (currentParticipant.paymentStatus === "PAID" ||
-          currentParticipant.paymentStatus === "MARKED_RECEIVED") ? (
+        (currentParticipant.paymentStatus === 'PAID' ||
+          currentParticipant.paymentStatus === 'MARKED_RECEIVED') ? (
           <p className="rounded-[22px] border-2 border-pideh-orange/25 bg-white px-4 py-3 text-center text-sm font-semibold text-pideh-ink">
             {labels.payYouPaid}
           </p>
         ) : null}
 
-        {isOrganizer && view.status === "AWAITING_PAYMENTS" ? (
+        {isOrganizer && view.status === 'AWAITING_PAYMENTS' ? (
           <p className="rounded-[22px] border-2 border-pideh-yellow bg-pideh-yellow/40 px-4 py-3 text-center text-sm font-semibold text-pideh-ink">
             {labels.statusAwaitingCardPayments}
           </p>
         ) : null}
 
         {isOrganizer &&
-        view.status !== "CANCELLED" &&
-        view.status !== "COMPLETED" &&
-        view.status !== "PAID" &&
-        view.status !== "PREPARING" ? (
+        view.status !== 'CANCELLED' &&
+        view.status !== 'COMPLETED' &&
+        view.status !== 'PAID' &&
+        view.status !== 'PREPARING' ? (
           <button
             type="button"
             className="w-full rounded-full border-2 border-red-400/50 bg-white px-6 py-3 text-base font-bold text-red-600 transition hover:bg-red-50"
-            onClick={() =>
-              run(async () => cancelGroupOrderAction({ inviteToken }))
-            }
+            onClick={() => run(async () => cancelGroupOrderAction({ inviteToken }))}
           >
             {labels.cancelOrder}
           </button>
@@ -793,7 +729,7 @@ function JoinPanel({
   error,
   onJoin,
 }: {
-  labels: Dictionary["groupOrder"];
+  labels: Dictionary['groupOrder'];
   view: GroupOrderDetailView;
   joinName: string;
   setJoinName: (value: string) => void;
@@ -806,52 +742,49 @@ function JoinPanel({
       <div className="w-full overflow-hidden rounded-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-[8px_8px_0_#1e1e1e]">
         <div className="border-b-2 border-pideh-ink/10 bg-pideh-yellow/35 px-6 py-5">
           <h1 className="text-xl font-extrabold text-pideh-ink">
-            {labels.joinTitle.replace("{name}", view.organizerDisplayName)}
+            {labels.joinTitle.replace('{name}', view.organizerDisplayName)}
           </h1>
           <p className="mt-2 text-sm text-pideh-muted">{labels.joinDescription}</p>
         </div>
         <div className="px-6 py-5">
-        <div className="space-y-3 text-sm text-pideh-ink">
-          <p className="flex items-center gap-2 font-semibold">
-            <Users className="h-4 w-4 text-pideh-orange" />
-            {view.paymentMode === "ORGANIZER_PAYS_ALL"
-              ? labels.payingOrganizer.replace(
-                  "{name}",
-                  view.organizerDisplayName,
-                )
-              : labels.payingSplit}
-          </p>
-          <p className="text-pideh-muted">
-            {view.spendLimitFormatted
-              ? labels.limitLabel.replace("{amount}", view.spendLimitFormatted)
-              : labels.noLimit}
-          </p>
-        </div>
+          <div className="space-y-3 text-sm text-pideh-ink">
+            <p className="flex items-center gap-2 font-semibold">
+              <Users className="h-4 w-4 text-pideh-orange" />
+              {view.paymentMode === 'ORGANIZER_PAYS_ALL'
+                ? labels.payingOrganizer.replace('{name}', view.organizerDisplayName)
+                : labels.payingSplit}
+            </p>
+            <p className="text-pideh-muted">
+              {view.spendLimitFormatted
+                ? labels.limitLabel.replace('{amount}', view.spendLimitFormatted)
+                : labels.noLimit}
+            </p>
+          </div>
 
-        <label className="mt-5 block">
-          <span className="mb-1.5 block text-sm font-bold text-pideh-ink">
-            {labels.joinNameLabel}
-          </span>
-          <input
-            value={joinName}
-            onChange={(e) => setJoinName(e.target.value)}
-            placeholder={labels.joinNamePlaceholder}
-            className={INPUT_CLASS}
+          <label className="mt-5 block">
+            <span className="mb-1.5 block text-sm font-bold text-pideh-ink">
+              {labels.joinNameLabel}
+            </span>
+            <input
+              value={joinName}
+              onChange={(e) => setJoinName(e.target.value)}
+              placeholder={labels.joinNamePlaceholder}
+              className={INPUT_CLASS}
+            />
+          </label>
+
+          {error ? (
+            <p className="mt-3 text-sm font-semibold text-red-600" role="alert">
+              {error}
+            </p>
+          ) : null}
+
+          <PidehPillButton
+            label={labels.join}
+            disabled={pending || !joinName.trim()}
+            className="mt-5 w-full"
+            onClick={onJoin}
           />
-        </label>
-
-        {error ? (
-          <p className="mt-3 text-sm font-semibold text-red-600" role="alert">
-            {error}
-          </p>
-        ) : null}
-
-        <PidehPillButton
-          label={labels.join}
-          disabled={pending || !joinName.trim()}
-          className="mt-5 w-full"
-          onClick={onJoin}
-        />
         </div>
       </div>
     </div>

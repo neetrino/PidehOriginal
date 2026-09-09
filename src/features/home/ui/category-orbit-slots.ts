@@ -5,16 +5,11 @@ export const SLOT_COUNT = 5;
 
 /** Figma Ellipse 3469 center (arc the pides ride on). */
 export const ORBIT_CIRCLE = {
-  cx: 1034.27 + 691.104 / 2,
+  cx: 978.27 + 691.104 / 2,
   cy: 108.24 + 691.104 / 2,
 } as const;
 
-export function categoryFigmaBox(
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-) {
+export function categoryFigmaBox(x: number, y: number, width: number, height: number) {
   return {
     left: `${(x / CATEGORY_FRAME.w) * 100}%`,
     top: `${(y / CATEGORY_FRAME.h) * 100}%`,
@@ -32,10 +27,7 @@ function polarFromBox(
   const centerX = x + width / 2;
   const centerY = y + height / 2;
   return {
-    angleDeg:
-      (Math.atan2(centerY - ORBIT_CIRCLE.cy, centerX - ORBIT_CIRCLE.cx) *
-        180) /
-      Math.PI,
+    angleDeg: (Math.atan2(centerY - ORBIT_CIRCLE.cy, centerX - ORBIT_CIRCLE.cx) * 180) / Math.PI,
     radius: Math.hypot(centerX - ORBIT_CIRCLE.cx, centerY - ORBIT_CIRCLE.cy),
   };
 }
@@ -90,56 +82,20 @@ function createPose(
  * Sizes unchanged — only tilts use Figma class transforms.
  */
 export const ORBIT_SLOT_POSES: readonly OrbitSlotPose[] = [
+  createPose(724, 334.45, 516.702, 243.154, '-scale-y-100 rotate-90', '47.06%', '212.5%', 8),
   createPose(
-    780,
-    334.45,
-    516.702,
-    243.154,
-    "-scale-y-100 rotate-90",
-    "47.06%",
-    "212.5%",
-    8,
-  ),
-  createPose(
-    1096.52,
+    1040.52,
     91.58,
     272.565,
     242.72,
-    "-scale-y-100 rotate-[125.86deg]",
-    "43.33%",
-    "103.39%",
+    '-scale-y-100 rotate-[125.86deg]',
+    '43.33%',
+    '103.39%',
     5,
   ),
-  createPose(
-    1414.79,
-    53,
-    118.186,
-    251.145,
-    "-scale-y-100",
-    "100%",
-    "100%",
-    3,
-  ),
-  createPose(
-    1414.79,
-    598.42,
-    118.392,
-    251.583,
-    "",
-    "100%",
-    "100%",
-    3,
-  ),
-  createPose(
-    1097.4,
-    586.96,
-    263.173,
-    258.582,
-    "rotate-[-133.6deg]",
-    "44.87%",
-    "97.05%",
-    5,
-  ),
+  createPose(1358.79, 53, 118.186, 251.145, '-scale-y-100', '100%', '100%', 3),
+  createPose(1358.79, 598.42, 118.392, 251.583, '', '100%', '100%', 3),
+  createPose(1041.4, 586.96, 263.173, 258.582, 'rotate-[-133.6deg]', '44.87%', '97.05%', 5),
 ];
 
 function shortestAngleDelta(fromDeg: number, toDeg: number): number {

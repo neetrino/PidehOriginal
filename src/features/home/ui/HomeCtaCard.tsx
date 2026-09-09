@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { motion, useReducedMotion } from "motion/react";
+import Image from 'next/image';
+import { motion, useReducedMotion } from 'motion/react';
 
-import { PidehPillButton } from "@/components/brand/PidehPillButton";
-import { VIEWPORT_ONCE, specklePop } from "@/components/motion/presets";
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+import { PidehPillButton } from '@/components/brand/PidehPillButton';
+import { VIEWPORT_ONCE, specklePop } from '@/components/motion/presets';
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 
 type HomeCtaCardProps = {
   titleLine1: string;
@@ -19,10 +19,10 @@ type HomeCtaCardProps = {
 const FRAME = { w: 1240, h: 453 } as const;
 
 const PIDE_CROP = {
-  height: "116.23%",
-  width: "196.94%",
-  left: "-46.39%",
-  top: "-5.81%",
+  height: '116.23%',
+  width: '196.94%',
+  left: '-46.39%',
+  top: '-5.81%',
 } as const;
 
 function figmaBox(x: number, y: number, width: number, height: number) {
@@ -54,7 +54,7 @@ const CTA_DOTS: readonly CtaDot[] = [
     top: 373,
     width: 24.114,
     height: 19.212,
-    rotate: "-28.21deg",
+    rotate: '-28.21deg',
   },
   { src: PIDEH_ASSETS.ctaDotF, left: 755, top: 70, width: 30, height: 18 },
   { src: PIDEH_ASSETS.ctaDotA, left: 894, top: 153, width: 14, height: 10 },
@@ -125,7 +125,7 @@ export function HomeCtaCard({
       <div className="md:hidden overflow-hidden rounded-[32px] bg-gradient-to-b from-[#ff6b00] to-[#ffd54a] px-6 py-12 text-center">
         <h2
           className="font-display mb-5 text-white"
-          style={{ fontSize: "clamp(2rem, 10vw, 3rem)", lineHeight: 0.85 }}
+          style={{ fontSize: 'clamp(2rem, 10vw, 3rem)', lineHeight: 0.85 }}
         >
           <span className="block">{titleLine1}</span>
           <span className="block">{titleLine2}</span>
@@ -143,7 +143,7 @@ export function HomeCtaCard({
         className="relative mx-auto hidden w-full max-w-[1240px] overflow-hidden rounded-[32px] bg-gradient-to-b from-[#ff6b00] to-[#ffd54a] md:block"
         style={{
           aspectRatio: `${FRAME.w} / ${FRAME.h}`,
-          containerType: "inline-size",
+          containerType: 'inline-size',
         }}
       >
         <CtaPide
@@ -174,7 +174,7 @@ export function HomeCtaCard({
           <h2
             className="font-display shrink-0 text-center text-white"
             style={{
-              fontSize: "clamp(2.25rem, 6.45cqw, 80px)",
+              fontSize: 'clamp(2.25rem, 6.45cqw, 80px)',
               lineHeight: 0.85,
             }}
           >

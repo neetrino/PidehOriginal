@@ -1,10 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { and, count, desc, eq, ilike, inArray, or, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, or, type SQL } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { orders, users } from "@/db/schema";
-import type { AdminUsersFilter } from "@/features/users/schemas/admin-users";
+import { getDb } from '@/db/client';
+import { orders, users } from '@/db/schema';
+import type { AdminUsersFilter } from '@/features/users/schemas/admin-users';
 
 const PAGE_SIZE = 20;
 
@@ -131,9 +131,7 @@ export async function listAdminUsers(
 }
 
 /** Loads a user profile plus their most recent orders for the admin detail page. */
-export async function getAdminUserById(
-  userId: string,
-): Promise<AdminUserDetail | null> {
+export async function getAdminUserById(userId: string): Promise<AdminUserDetail | null> {
   const [user] = await getDb()
     .select({
       id: users.id,

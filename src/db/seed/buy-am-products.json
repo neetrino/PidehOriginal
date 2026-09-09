@@ -5,13 +5,7 @@
     "price": 950,
     "image": "/images/2-myasa-pide-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "2 вида мяса",
-      "Зеленый перец",
-      "Помидоры черри",
-      "Сыр"
-    ],
+    "ingredients": ["Тесто", "2 вида мяса", "Зеленый перец", "Помидоры черри", "Сыр"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -21,12 +15,7 @@
     "price": 300,
     "image": "/images/BBQ-sauce-Pideh-Photoroom.png",
     "category": "Соусы",
-    "ingredients": [
-      "Томатная паста",
-      "Сахар",
-      "Уксус",
-      "Специи"
-    ],
+    "ingredients": ["Томатная паста", "Сахар", "Уксус", "Специи"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -36,12 +25,7 @@
     "price": 300,
     "image": "/images/Mustard-sauce-Pideh-Photoroom.png",
     "category": "Соусы",
-    "ingredients": [
-      "Горчичные зерна",
-      "Уксус",
-      "Соль",
-      "Специи"
-    ],
+    "ingredients": ["Горчичные зерна", "Уксус", "Соль", "Специи"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -51,12 +35,7 @@
     "price": 750,
     "image": "/images/gribnoe-pide-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Жареные грибы",
-      "Зелень",
-      "Сыр"
-    ],
+    "ingredients": ["Тесто", "Жареные грибы", "Зелень", "Сыр"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -66,12 +45,7 @@
     "price": 750,
     "image": "/images/caucasus-cheese-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Белый сыр",
-      "Зелень",
-      "Помидоры черри"
-    ],
+    "ingredients": ["Тесто", "Белый сыр", "Зелень", "Помидоры черри"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -81,11 +55,7 @@
     "price": 500,
     "image": "/images/kartofel-fri-Photoroom.png",
     "category": "Снэк",
-    "ingredients": [
-      "Картофель",
-      "Масло",
-      "Соль"
-    ],
+    "ingredients": ["Картофель", "Масло", "Соль"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -95,12 +65,7 @@
     "price": 300,
     "image": "/images/Ketchup-Pideh-Photoroom.png",
     "category": "Соусы",
-    "ingredients": [
-      "Томатная паста",
-      "Сахар",
-      "Уксус",
-      "Специи"
-    ],
+    "ingredients": ["Томатная паста", "Сахар", "Уксус", "Специи"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -110,11 +75,7 @@
     "price": 700,
     "image": "/images/classic-chees-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Сыр",
-      "Помидоры черри"
-    ],
+    "ingredients": ["Тесто", "Сыр", "Помидоры черри"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -124,11 +85,7 @@
     "price": 500,
     "image": "/images/cola-sprite-fanta-Photoroom.png",
     "category": "Напитки",
-    "ingredients": [
-      "Вода",
-      "Сахар",
-      "Кофеин"
-    ],
+    "ingredients": ["Вода", "Сахар", "Кофеин"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -138,12 +95,7 @@
     "price": 300,
     "image": "/images/Cocktail-sauce-Pideh-Photoroom.png",
     "category": "Соусы",
-    "ingredients": [
-      "Майонез",
-      "Кетчуп",
-      "Коньяк",
-      "Специи"
-    ],
+    "ingredients": ["Майонез", "Кетчуп", "Коньяк", "Специи"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -153,11 +105,7 @@
     "price": 2900,
     "image": "/images/kombo-my-vdvoyom-Photoroom.png",
     "category": "Комбо",
-    "ingredients": [
-      "Пиде пепперони",
-      "Пиде 2 мяса",
-      "2 напитка Tan"
-    ],
+    "ingredients": ["Пиде пепперони", "Пиде 2 мяса", "2 напитка Tan"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -167,12 +115,7 @@
     "price": 4900,
     "image": "/images/kombo-my-golodny-Photoroom.png",
     "category": "Комбо",
-    "ingredients": [
-      "2 пиде с бастурмой",
-      "2 куриные легкие пиде",
-      "Картофель фри",
-      "Кока-кола"
-    ],
+    "ingredients": ["2 пиде с бастурмой", "2 куриные легкие пиде", "Картофель фри", "Кока-кола"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -197,11 +140,7 @@
     "price": 1700,
     "image": "/images/kombo-ya-odin-Photoroom.png",
     "category": "Комбо",
-    "ingredients": [
-      "Пиде с беконом",
-      "Картофель фри",
-      "Напиток Tan"
-    ],
+    "ingredients": ["Пиде с беконом", "Картофель фри", "Напиток Tan"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -211,13 +150,7 @@
     "price": 800,
     "image": "/images/kurinye-legkie-pide-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Курица",
-      "Сладкий перец",
-      "Помидоры черри",
-      "Сыр"
-    ],
+    "ingredients": ["Тесто", "Курица", "Сладкий перец", "Помидоры черри", "Сыр"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -227,11 +160,7 @@
     "price": 600,
     "image": "/images/kurinyy-popkorn-Photoroom.png",
     "category": "Снэк",
-    "ingredients": [
-      "Курица",
-      "Панировка",
-      "Специи"
-    ],
+    "ingredients": ["Курица", "Панировка", "Специи"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -241,12 +170,7 @@
     "price": 300,
     "image": "/images/Mayonnaise-Pideh-Photoroom.png",
     "category": "Соусы",
-    "ingredients": [
-      "Яичный желток",
-      "Масло",
-      "Уксус",
-      "Горчица"
-    ],
+    "ingredients": ["Яичный желток", "Масло", "Уксус", "Горчица"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -256,9 +180,7 @@
     "price": 300,
     "image": "/images/jur0000-Photoroom.png",
     "category": "Напитки",
-    "ingredients": [
-      "Минеральная вода"
-    ],
+    "ingredients": ["Минеральная вода"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -268,13 +190,7 @@
     "price": 800,
     "image": "/images/ovoshchnoe-pide-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Грибы",
-      "Зеленый лук",
-      "Помидоры черри",
-      "Сыр"
-    ],
+    "ingredients": ["Тесто", "Грибы", "Зеленый лук", "Помидоры черри", "Сыр"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -284,12 +200,7 @@
     "price": 950,
     "image": "/images/pepperoni-pide-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Пепперони",
-      "Сыр",
-      "Зеленый перец"
-    ],
+    "ingredients": ["Тесто", "Пепперони", "Сыр", "Зеленый перец"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -299,12 +210,7 @@
     "price": 700,
     "image": "/images/pide-blue-pear-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Груши",
-      "Легкий соус",
-      "Сыр"
-    ],
+    "ingredients": ["Тесто", "Груши", "Легкий соус", "Сыр"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -314,12 +220,7 @@
     "price": 950,
     "image": "/images/pide-s-basturmoj-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Бастурма",
-      "Сыр",
-      "Зеленый перец"
-    ],
+    "ingredients": ["Тесто", "Бастурма", "Сыр", "Зеленый перец"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -329,12 +230,7 @@
     "price": 950,
     "image": "/images/pide-s-bekonom-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Бекон",
-      "Сыр",
-      "Маринованные огурцы"
-    ],
+    "ingredients": ["Тесто", "Бекон", "Сыр", "Маринованные огурцы"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -344,13 +240,7 @@
     "price": 950,
     "image": "/images/pide-s-govyadinoj-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Говяжий фарш",
-      "Зелень",
-      "Помидоры черри",
-      "Сыр"
-    ],
+    "ingredients": ["Тесто", "Говяжий фарш", "Зелень", "Помидоры черри", "Сыр"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -360,12 +250,7 @@
     "price": 700,
     "image": "/images/pide-s-phali-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Пхали",
-      "Кинза",
-      "Сыр"
-    ],
+    "ingredients": ["Тесто", "Пхали", "Кинза", "Сыр"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -375,12 +260,7 @@
     "price": 700,
     "image": "/images/pide-hot-dog-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Сосиски",
-      "Сыр",
-      "Маринованные огурцы"
-    ],
+    "ingredients": ["Тесто", "Сосиски", "Сыр", "Маринованные огурцы"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -390,11 +270,7 @@
     "price": 750,
     "image": "/images/sladkiy-pide-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Шоколадные конфеты",
-      "Сладкий соус"
-    ],
+    "ingredients": ["Тесто", "Шоколадные конфеты", "Сладкий соус"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -404,9 +280,7 @@
     "price": 600,
     "image": "/images/juice-Photoroom.png",
     "category": "Напитки",
-    "ingredients": [
-      "Фруктовый сок"
-    ],
+    "ingredients": ["Фруктовый сок"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -416,11 +290,7 @@
     "price": 500,
     "image": "/images/cola-sprite-fanta-Photoroom.png",
     "category": "Напитки",
-    "ingredients": [
-      "Вода",
-      "Сахар",
-      "Лимонный сок"
-    ],
+    "ingredients": ["Вода", "Сахар", "Лимонный сок"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -430,12 +300,7 @@
     "price": 300,
     "image": "/images/caucasus-cheese-Photoroom.png",
     "category": "Соусы",
-    "ingredients": [
-      "Сыр",
-      "Сливки",
-      "Масло",
-      "Специи"
-    ],
+    "ingredients": ["Сыр", "Сливки", "Масло", "Специи"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -445,11 +310,7 @@
     "price": 400,
     "image": "/images/tan-Photoroom.png",
     "category": "Напитки",
-    "ingredients": [
-      "Мацони",
-      "Вода",
-      "Соль"
-    ],
+    "ingredients": ["Мацони", "Вода", "Соль"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -459,11 +320,7 @@
     "price": 500,
     "image": "/images/cola-sprite-fanta-Photoroom.png",
     "category": "Напитки",
-    "ingredients": [
-      "Вода",
-      "Сахар",
-      "Апельсиновый сок"
-    ],
+    "ingredients": ["Вода", "Сахар", "Апельсиновый сок"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -473,12 +330,7 @@
     "price": 300,
     "image": "/images/Garlic-sauce-Pideh-Photoroom.png",
     "category": "Соусы",
-    "ingredients": [
-      "Чеснок",
-      "Майонез",
-      "Зелень",
-      "Лимонный сок"
-    ],
+    "ingredients": ["Чеснок", "Майонез", "Зелень", "Лимонный сок"],
     "isAvailable": true,
     "source": "buy.am"
   },
@@ -488,12 +340,7 @@
     "price": 900,
     "image": "/images/shpinat-Photoroom.png",
     "category": "Пиде",
-    "ingredients": [
-      "Тесто",
-      "Шпинат",
-      "Сыр",
-      "Помидоры черри"
-    ],
+    "ingredients": ["Тесто", "Шпинат", "Сыр", "Помидоры черри"],
     "isAvailable": true,
     "source": "buy.am"
   }

@@ -1,20 +1,17 @@
-"use client";
+'use client';
 
-import { X } from "lucide-react";
-import { useState, useTransition } from "react";
+import { X } from 'lucide-react';
+import { useState, useTransition } from 'react';
 
-import {
-  ADMIN_CHECKBOX,
-  ADMIN_INPUT,
-} from "@/features/admin/ui/admin-form-classes";
-import type { ProductModifierOption } from "@/features/products/types/modifiers";
+import { ADMIN_CHECKBOX, ADMIN_INPUT } from '@/features/admin/ui/admin-form-classes';
+import type { ProductModifierOption } from '@/features/products/types/modifiers';
 import {
   createProductModifierAction,
   deactivateProductModifierAction,
-} from "@/features/products/application/modifier-actions";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/products/application/modifier-actions';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
-type ModifiersCopy = Dictionary["admin"]["products"]["modifiers"];
+type ModifiersCopy = Dictionary['admin']['products']['modifiers'];
 
 type ProductDrawerModifiersProps = {
   locale: string;
@@ -26,7 +23,7 @@ type ProductDrawerModifiersProps = {
   copy: ModifiersCopy;
 };
 
-type ColumnKind = "ADDITION" | "EXCEPTION";
+type ColumnKind = 'ADDITION' | 'EXCEPTION';
 
 export function ProductDrawerModifiers({
   locale,
@@ -40,9 +37,7 @@ export function ProductDrawerModifiers({
   return (
     <div className="space-y-3">
       <div>
-        <h3 className="text-sm font-semibold text-gray-900">
-          {copy.sectionTitle}
-        </h3>
+        <h3 className="text-sm font-semibold text-gray-900">{copy.sectionTitle}</h3>
         <p className="mt-0.5 text-xs text-gray-500">{copy.sectionHint}</p>
       </div>
 
@@ -107,8 +102,8 @@ function ModifierColumn({
   onLibraryChange: (next: ProductModifierOption[]) => void;
   onSelectedChange: (next: string[]) => void;
 }) {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const rows = library.filter((row) => row.kind === kind && row.isActive);
@@ -156,8 +151,8 @@ function ModifierColumn({
       if (!selectedSet.has(created.id)) {
         onSelectedChange([...selectedIds, created.id]);
       }
-      setName("");
-      setPrice("");
+      setName('');
+      setPrice('');
     });
   }
 
@@ -170,9 +165,7 @@ function ModifierColumn({
         return;
       }
       onLibraryChange(
-        library.map((row) =>
-          row.id === id ? { ...row, isActive: false, linked: false } : row,
-        ),
+        library.map((row) => (row.id === id ? { ...row, isActive: false, linked: false } : row)),
       );
       onSelectedChange(selectedIds.filter((value) => value !== id));
     });
@@ -206,7 +199,7 @@ function ModifierColumn({
                 {row.name}
                 {withPrice ? (
                   <span className="ml-1 text-xs text-gray-500">
-                    {copy.priceAmd.replace("{amount}", String(row.priceAmount))}
+                    {copy.priceAmd.replace('{amount}', String(row.priceAmount))}
                   </span>
                 ) : null}
               </span>
@@ -215,7 +208,7 @@ function ModifierColumn({
                 disabled={disabled || pending}
                 onClick={() => handleRemove(row.id)}
                 className="rounded p-1 text-red-500 transition hover:bg-red-50 disabled:opacity-40"
-                aria-label={copy.removeAria.replace("{name}", row.name)}
+                aria-label={copy.removeAria.replace('{name}', row.name)}
               >
                 <X className="h-4 w-4" aria-hidden />
               </button>
@@ -225,7 +218,7 @@ function ModifierColumn({
       </ul>
 
       <div className="space-y-2 border-t border-gray-100 px-2 py-2">
-        <div className={withPrice ? "grid grid-cols-[1fr_5.5rem] gap-2" : ""}>
+        <div className={withPrice ? 'grid grid-cols-[1fr_5.5rem] gap-2' : ''}>
           <label className="block">
             <span className="sr-only">{placeholder}</span>
             <input

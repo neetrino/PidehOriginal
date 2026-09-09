@@ -1,15 +1,15 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq, inArray, isNull, lte, or, gte } from "drizzle-orm";
+import { and, eq, inArray, isNull, lte, or, gte } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { productCategories, promotions } from "@/db/schema";
+import { getDb } from '@/db/client';
+import { productCategories, promotions } from '@/db/schema';
 import {
   resolveCatalogPrice,
   type ProductAutomaticDiscount,
   type ResolvedCatalogPrice,
-} from "@/features/promotions/domain/resolve-automatic-discount";
-import { getStoreGlobalDiscount } from "@/features/settings/application/queries";
+} from '@/features/promotions/domain/resolve-automatic-discount';
+import { getStoreGlobalDiscount } from '@/features/settings/application/queries';
 
 export type ProductPriceInput = {
   id: string;
@@ -57,12 +57,9 @@ export async function resolveProductPrices(
       .from(promotions)
       .where(
         and(
-          eq(promotions.kind, "AUTOMATIC"),
+          eq(promotions.kind, 'AUTOMATIC'),
           eq(promotions.isActive, true),
-          or(
-            isNull(promotions.startsAt),
-            lte(promotions.startsAt, now),
-          ),
+          or(isNull(promotions.startsAt), lte(promotions.startsAt, now)),
           or(isNull(promotions.endsAt), gte(promotions.endsAt, now)),
         ),
       ),
@@ -93,7 +90,7 @@ export async function resolveProductPrices(
       }
     }
 
-    if (promo.categoryId && promo.discountType === "PERCENTAGE") {
+    if (promo.categoryId && promo.discountType === 'PERCENTAGE') {
       const current = categoryPercent.get(promo.categoryId);
       if (current == null || promo.discountValue > current) {
         categoryPercent.set(promo.categoryId, promo.discountValue);

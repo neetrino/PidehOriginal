@@ -2,64 +2,64 @@
  * Imports the Pideh Armenia catalog from legacy seed JSON
  * (https://github.com/neetrino/pideh-armenia data/).
  */
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 
-import * as schema from "@/db/schema";
-import { getSeedEnv } from "@/db/seed/env";
-import { createId } from "@/lib/id";
+import * as schema from '@/db/schema';
+import { getSeedEnv } from '@/db/seed/env';
+import { createId } from '@/lib/id';
 
-const DATA_DIR = path.join(process.cwd(), "src/db/seed");
+const DATA_DIR = path.join(process.cwd(), 'src/db/seed');
 
 const CATEGORY_SLUG_BY_RU: Record<
   string,
   { slug: string; hy: string; en: string; sortOrder: number }
 > = {
-  Комбо: { slug: "combo", hy: "Կոմբո", en: "Combo", sortOrder: 1 },
-  Пиде: { slug: "pide", hy: "Փիդե", en: "Pide", sortOrder: 2 },
-  Снэк: { slug: "snack", hy: "Սնэք", en: "Snacks", sortOrder: 3 },
-  Соусы: { slug: "sauces", hy: "Սոուսներ", en: "Sauces", sortOrder: 4 },
-  Напитки: { slug: "drinks", hy: "Խմիչքներ", en: "Drinks", sortOrder: 5 },
+  Комбо: { slug: 'combo', hy: 'Կոմբո', en: 'Combo', sortOrder: 1 },
+  Пиде: { slug: 'pide', hy: 'Փիդե', en: 'Pide', sortOrder: 2 },
+  Снэк: { slug: 'snack', hy: 'Սնэք', en: 'Snacks', sortOrder: 3 },
+  Соусы: { slug: 'sauces', hy: 'Սոուսներ', en: 'Sauces', sortOrder: 4 },
+  Напитки: { slug: 'drinks', hy: 'Խմիչքներ', en: 'Drinks', sortOrder: 5 },
 };
 
 /** Featured / badge mapping from legacy pideh-armenia seed. */
 const PRODUCT_BADGE_BY_SLUG: Record<
   string,
-  { badge: Partial<Record<"hy" | "en" | "ru", string>>; featured: boolean }
+  { badge: Partial<Record<'hy' | 'en' | 'ru', string>>; featured: boolean }
 > = {
-  "2-myasa-pide": {
-    badge: { hy: "HIT", en: "HIT", ru: "HIT" },
+  '2-myasa-pide': {
+    badge: { hy: 'HIT', en: 'HIT', ru: 'HIT' },
     featured: true,
   },
-  "kombo-ya-odin": {
-    badge: { hy: "HIT", en: "HIT", ru: "HIT" },
+  'kombo-ya-odin': {
+    badge: { hy: 'HIT', en: 'HIT', ru: 'HIT' },
     featured: true,
   },
-  "pepperoni-pide": {
-    badge: { hy: "HIT", en: "HIT", ru: "HIT" },
+  'pepperoni-pide': {
+    badge: { hy: 'HIT', en: 'HIT', ru: 'HIT' },
     featured: true,
   },
-  "pide-s-basturmoj": {
-    badge: { hy: "Նոր", en: "NEW", ru: "NEW" },
+  'pide-s-basturmoj': {
+    badge: { hy: 'Նոր', en: 'NEW', ru: 'NEW' },
     featured: false,
   },
-  "kombo-my-vdvoyom": {
-    badge: { hy: "Նոր", en: "NEW", ru: "NEW" },
+  'kombo-my-vdvoyom': {
+    badge: { hy: 'Նոր', en: 'NEW', ru: 'NEW' },
     featured: false,
   },
-  "classic-chees": {
-    badge: { hy: "Դասական", en: "CLASSIC", ru: "CLASSIC" },
+  'classic-chees': {
+    badge: { hy: 'Դասական', en: 'CLASSIC', ru: 'CLASSIC' },
     featured: false,
   },
-  "ovoshchnoe-pide": {
-    badge: { hy: "Դասական", en: "CLASSIC", ru: "CLASSIC" },
+  'ovoshchnoe-pide': {
+    badge: { hy: 'Դասական', en: 'CLASSIC', ru: 'CLASSIC' },
     featured: false,
   },
-  "pide-s-govyadinoj": {
-    badge: { hy: "Banner", en: "Banner", ru: "Banner" },
+  'pide-s-govyadinoj': {
+    badge: { hy: 'Banner', en: 'Banner', ru: 'Banner' },
     featured: true,
   },
 };
@@ -80,32 +80,25 @@ type TranslationSeed = {
   ingredients: string[];
 };
 
-type TranslationsMap = Record<
-  string,
-  { hy: TranslationSeed; en: TranslationSeed }
->;
+type TranslationsMap = Record<string, { hy: TranslationSeed; en: TranslationSeed }>;
 
 function productSlugFromImage(imagePath: string): string {
   const file = path.basename(imagePath);
-  const withoutExt = file.replace(/\.(png|jpg|jpeg|webp)$/i, "");
-  return withoutExt.replace(/-Photoroom$/i, "");
+  const withoutExt = file.replace(/\.(png|jpg|jpeg|webp)$/i, '');
+  return withoutExt.replace(/-Photoroom$/i, '');
 }
 
 function slugifyTitle(title: string): string {
   return title
     .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^\w\s-]/g, "")
+    .normalize('NFKD')
+    .replace(/[^\w\s-]/g, '')
     .trim()
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-");
+    .replace(/[\s_]+/g, '-')
+    .replace(/-+/g, '-');
 }
 
-function allocateUniqueSlug(
-  baseSlug: string,
-  enTitle: string,
-  used: Set<string>,
-): string {
+function allocateUniqueSlug(baseSlug: string, enTitle: string, used: Set<string>): string {
   if (!used.has(baseSlug)) {
     used.add(baseSlug);
     return baseSlug;
@@ -124,7 +117,7 @@ function allocateUniqueSlug(
 
 function objectKeyFromPublicUrl(url: string): string {
   const parsed = new URL(url);
-  return parsed.pathname.replace(/^\//, "");
+  return parsed.pathname.replace(/^\//, '');
 }
 
 /** Keeps the R2 path unique per product while still resolving on the CDN. */
@@ -132,28 +125,25 @@ function uniqueObjectKey(baseKey: string, productId: string): string {
   return `${baseKey}?p=${productId}`;
 }
 
-function formatDescription(
-  description: string,
-  ingredients: string[],
-): string {
+function formatDescription(description: string, ingredients: string[]): string {
   if (ingredients.length === 0) {
     return description;
   }
-  return `${description}\n\n${ingredients.join(", ")}`;
+  return `${description}\n\n${ingredients.join(', ')}`;
 }
 
 function loadJson<T>(fileName: string): T {
   const fullPath = path.join(DATA_DIR, fileName);
-  return JSON.parse(readFileSync(fullPath, "utf8")) as T;
+  return JSON.parse(readFileSync(fullPath, 'utf8')) as T;
 }
 
 async function importCatalog(): Promise<void> {
   const env = getSeedEnv();
   const db = drizzle(neon(env.DATABASE_URL), { schema });
 
-  const productsData = loadJson<ProductSeed[]>("buy-am-products.json");
-  const translations = loadJson<TranslationsMap>("product-translations.json");
-  const imageMap = loadJson<Record<string, string>>("image-map.json");
+  const productsData = loadJson<ProductSeed[]>('buy-am-products.json');
+  const translations = loadJson<TranslationsMap>('product-translations.json');
+  const imageMap = loadJson<Record<string, string>>('image-map.json');
 
   // Full catalog reset so re-runs are idempotent.
   await db.delete(schema.mediaAssets);
@@ -185,7 +175,7 @@ async function importCatalog(): Promise<void> {
         },
       },
       sortOrder: meta.sortOrder,
-      status: "ACTIVE",
+      status: 'ACTIVE',
     });
     categoryIdBySlug.set(meta.slug, id);
   }
@@ -196,9 +186,7 @@ async function importCatalog(): Promise<void> {
 
   for (const item of productsData) {
     const categoryMeta = CATEGORY_SLUG_BY_RU[item.category];
-    const categoryId = categoryMeta
-      ? categoryIdBySlug.get(categoryMeta.slug)
-      : undefined;
+    const categoryId = categoryMeta ? categoryIdBySlug.get(categoryMeta.slug) : undefined;
     if (!categoryId) {
       console.warn(`Skip (no category): ${item.name}`);
       skipped += 1;
@@ -232,18 +220,12 @@ async function importCatalog(): Promise<void> {
         hy: {
           title: localized.hy.name,
           slug,
-          description: formatDescription(
-            localized.hy.description,
-            localized.hy.ingredients,
-          ),
+          description: formatDescription(localized.hy.description, localized.hy.ingredients),
         },
         en: {
           title: localized.en.name,
           slug,
-          description: formatDescription(
-            localized.en.description,
-            localized.en.ingredients,
-          ),
+          description: formatDescription(localized.en.description, localized.en.ingredients),
         },
         ru: {
           title: item.name,
@@ -254,11 +236,11 @@ async function importCatalog(): Promise<void> {
       priceAmount: Math.round(item.price),
       stockOnHand: item.isAvailable ? 100 : 0,
       lowStockThreshold: 5,
-      status: item.isAvailable ? "ACTIVE" : "ARCHIVED",
+      status: item.isAvailable ? 'ACTIVE' : 'ARCHIVED',
       isFeatured: badge?.featured ?? false,
       badgeTranslations: badge?.badge,
-      badgeStyle: badge ? "solid" : null,
-      badgePosition: badge ? "top-left" : null,
+      badgeStyle: badge ? 'solid' : null,
+      badgePosition: badge ? 'top-left' : null,
     });
 
     await db.insert(schema.productCategories).values({
@@ -274,10 +256,10 @@ async function importCatalog(): Promise<void> {
     await db.insert(schema.mediaAssets).values({
       id: createId(),
       objectKey,
-      mimeType: baseObjectKey.endsWith(".png") ? "image/png" : "image/webp",
+      mimeType: baseObjectKey.endsWith('.png') ? 'image/png' : 'image/webp',
       byteSize: 0,
-      uploadStatus: "READY",
-      role: "PRIMARY",
+      uploadStatus: 'READY',
+      role: 'PRIMARY',
       sortOrder: 0,
       isPrimary: true,
       productId,
@@ -294,12 +276,12 @@ async function importCatalog(): Promise<void> {
   await db
     .insert(schema.storeSettings)
     .values({
-      key: "store.identity",
+      key: 'store.identity',
       value: {
         version: 1,
-        name: "Pideh Armenia",
-        defaultLocale: "hy",
-        defaultCurrency: "AMD",
+        name: 'Pideh Armenia',
+        defaultLocale: 'hy',
+        defaultCurrency: 'AMD',
       },
     })
     .onConflictDoUpdate({
@@ -307,9 +289,9 @@ async function importCatalog(): Promise<void> {
       set: {
         value: {
           version: 1,
-          name: "Pideh Armenia",
-          defaultLocale: "hy",
-          defaultCurrency: "AMD",
+          name: 'Pideh Armenia',
+          defaultLocale: 'hy',
+          defaultCurrency: 'AMD',
         },
         updatedAt: new Date(),
       },
@@ -317,8 +299,8 @@ async function importCatalog(): Promise<void> {
 
   console.info(
     JSON.stringify({
-      level: "info",
-      message: "import-pideh-catalog.complete",
+      level: 'info',
+      message: 'import-pideh-catalog.complete',
       imported,
       skipped,
       categories: categoryIdBySlug.size,
@@ -330,8 +312,8 @@ importCatalog().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(
     JSON.stringify({
-      level: "error",
-      message: "import-pideh-catalog.failed",
+      level: 'error',
+      message: 'import-pideh-catalog.failed',
       error: message,
     }),
   );

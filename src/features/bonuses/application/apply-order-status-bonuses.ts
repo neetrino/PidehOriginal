@@ -1,23 +1,18 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import {
-  bonusTransactions,
-  groupOrderParticipants,
-  groupOrders,
-  orders,
-} from "@/db/schema";
-import type { DbTransaction } from "@/db/transaction";
+import { bonusTransactions, groupOrderParticipants, groupOrders, orders } from '@/db/schema';
+import type { DbTransaction } from '@/db/transaction';
 import {
   earnBonusesForOrder,
   reverseAllEarnBonusesForOrder,
   reverseRedeemBonusesForOrder,
-} from "@/features/bonuses/application/bonus-ledger";
-import { allocateParticipantBonusBases } from "@/features/bonuses/domain/group-bonus-allocation";
-import { bonusEligibleAfterGiftCard } from "@/features/gift-cards/domain/gift-card-rules";
-import type { OrderStatus } from "@/features/orders/domain/order-status";
-import { getStoreBonusSettings } from "@/features/settings/application/queries";
+} from '@/features/bonuses/application/bonus-ledger';
+import { allocateParticipantBonusBases } from '@/features/bonuses/domain/group-bonus-allocation';
+import { bonusEligibleAfterGiftCard } from '@/features/gift-cards/domain/gift-card-rules';
+import type { OrderStatus } from '@/features/orders/domain/order-status';
+import { getStoreBonusSettings } from '@/features/settings/application/queries';
 
 export type OrderBonusSnapshot = {
   id: string;
@@ -43,14 +38,11 @@ export async function applyBonusSideEffectsOnStatusChange(input: {
   actorUserId: string;
   correlationId: string;
 }): Promise<void> {
-  const { order, fromStatus, toStatus, actorUserId, correlationId, tx } =
-    input;
+  const { order, fromStatus, toStatus, actorUserId, correlationId, tx } = input;
 
-  const leftDelivered = fromStatus === "DELIVERED" && toStatus !== "DELIVERED";
-  const enteredDelivered =
-    fromStatus !== "DELIVERED" && toStatus === "DELIVERED";
-  const isTerminalCancelOrRefund =
-    toStatus === "CANCELLED" || toStatus === "REFUNDED";
+  const leftDelivered = fromStatus === 'DELIVERED' && toStatus !== 'DELIVERED';
+  const enteredDelivered = fromStatus !== 'DELIVERED' && toStatus === 'DELIVERED';
+  const isTerminalCancelOrRefund = toStatus === 'CANCELLED' || toStatus === 'REFUNDED';
 
   if (leftDelivered) {
     await reverseAllEarnBonusesForOrder({
@@ -111,8 +103,7 @@ async function earnGroupOrderBonuses(input: {
   actorUserId: string;
   correlationId: string;
 }): Promise<void> {
-  const { tx, order, eligibleTotal, settings, actorUserId, correlationId } =
-    input;
+  const { tx, order, eligibleTotal, settings, actorUserId, correlationId } = input;
   if (!order.groupOrderId || eligibleTotal <= 0) {
     return;
   }
@@ -137,7 +128,7 @@ async function earnGroupOrderBonuses(input: {
     .where(
       and(
         eq(groupOrderParticipants.groupOrderId, order.groupOrderId),
-        eq(groupOrderParticipants.status, "ACTIVE"),
+        eq(groupOrderParticipants.status, 'ACTIVE'),
       ),
     );
 
@@ -164,12 +155,7 @@ async function earnGroupOrderBonuses(input: {
   const existingEarn = await tx
     .select({ id: bonusTransactions.id })
     .from(bonusTransactions)
-    .where(
-      and(
-        eq(bonusTransactions.orderId, order.id),
-        eq(bonusTransactions.type, "EARN"),
-      ),
-    )
+    .where(and(eq(bonusTransactions.orderId, order.id), eq(bonusTransactions.type, 'EARN')))
     .limit(1);
 
   if (existingEarn.length === 0) {

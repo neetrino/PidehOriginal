@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   animate,
@@ -6,11 +6,11 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   useTransform,
-} from "motion/react";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+} from 'motion/react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { MobileCategoryLayer } from "@/features/home/ui/mobile/MobileCategoryLayer";
+import { AppLink } from '@/components/ui/AppLink';
+import { MobileCategoryLayer } from '@/features/home/ui/mobile/MobileCategoryLayer';
 import {
   getOrbitNodeStyle,
   mobileArcAngleDelta,
@@ -25,14 +25,14 @@ import {
   toCssPx,
   wrapIndex,
   type OrbitPose,
-} from "@/features/home/ui/mobile/mobile-orbit-geometry";
+} from '@/features/home/ui/mobile/mobile-orbit-geometry';
 
 export {
   MOBILE_ARC_SLOTS,
   MOBILE_CENTER_SLOT,
   MOBILE_ORBIT_MOVE_MS,
   MOBILE_SLOT_COUNT,
-} from "@/features/home/ui/mobile/mobile-orbit-geometry";
+} from '@/features/home/ui/mobile/mobile-orbit-geometry';
 
 type CategoryItem = {
   id: string;
@@ -53,11 +53,7 @@ type RiderProps = {
   reduceMotion: boolean | null;
 };
 
-function applyRiderPosition(
-  element: HTMLDivElement,
-  left: number,
-  top: number,
-): void {
+function applyRiderPosition(element: HTMLDivElement, left: number, top: number): void {
   element.style.left = toCssPx(left);
   element.style.top = toCssPx(top);
 }
@@ -83,10 +79,7 @@ function OrbitRider({
   const boxW = useMotionValue(pose.frameW);
   const boxH = useMotionValue(pose.frameH);
 
-  const nodeStyle = useMemo(
-    () => getOrbitNodeStyle(pose, isCenter),
-    [isCenter, pose],
-  );
+  const nodeStyle = useMemo(() => getOrbitNodeStyle(pose, isCenter), [isCenter, pose]);
 
   useEffect(() => {
     const snap = (target: OrbitPose, targetIndex: number) => {
@@ -171,13 +164,13 @@ function OrbitRider({
     applyRiderPosition(element, left.get(), top.get());
   }, [left, poseIndex, top]);
 
-  useMotionValueEvent(left, "change", (value) => {
+  useMotionValueEvent(left, 'change', (value) => {
     const element = nodeRef.current;
     if (element) {
       applyRiderPosition(element, value, top.get());
     }
   });
-  useMotionValueEvent(top, "change", (value) => {
+  useMotionValueEvent(top, 'change', (value) => {
     const element = nodeRef.current;
     if (element) {
       applyRiderPosition(element, left.get(), value);
@@ -185,15 +178,11 @@ function OrbitRider({
   });
 
   return (
-    <div
-      ref={nodeRef}
-      className="absolute will-change-transform"
-      style={nodeStyle}
-    >
+    <div ref={nodeRef} className="absolute will-change-transform" style={nodeStyle}>
       <AppLink
         href={href}
         prefetchPolicy="intent"
-        aria-current={isCenter ? "true" : undefined}
+        aria-current={isCenter ? 'true' : undefined}
         data-node-id={nodeId}
         className="pointer-events-auto absolute inset-0 flex items-center justify-center"
       >
@@ -221,11 +210,7 @@ type MobileCategoryOrbitProps = {
  * Category icons at Figma rest poses; arrow spin rides the drip ellipse.
  * Edge wrap travels through the clipped (invisible) upper arc.
  */
-export function MobileCategoryOrbit({
-  spin,
-  productsHref,
-  categories,
-}: MobileCategoryOrbitProps) {
+export function MobileCategoryOrbit({ spin, productsHref, categories }: MobileCategoryOrbitProps) {
   const reduceMotion = useReducedMotion();
 
   const riders = useMemo(() => {
@@ -241,17 +226,14 @@ export function MobileCategoryOrbit({
         src: home.src,
         nodeId: home.nodeId,
         href: category?.href ?? productsHref,
-        title: category?.title ?? "",
+        title: category?.title ?? '',
         isCenter: poseIndex === MOBILE_CENTER_SLOT,
       };
     });
   }, [categories, productsHref, spin]);
 
   return (
-    <div
-      className="pointer-events-none absolute inset-0 z-30"
-      style={{ clipPath: ORBIT_CLIP }}
-    >
+    <div className="pointer-events-none absolute inset-0 z-30" style={{ clipPath: ORBIT_CLIP }}>
       {riders.map((rider) => (
         <OrbitRider
           key={rider.key}
@@ -275,8 +257,8 @@ export function mobileActiveCategoryTitle(
   categories: readonly OrbitCategoryItem[],
 ): string {
   if (categories.length === 0) {
-    return "";
+    return '';
   }
   const riderIndex = wrapIndex(MOBILE_CENTER_SLOT + spin, categories.length);
-  return categories[riderIndex]?.title ?? "";
+  return categories[riderIndex]?.title ?? '';
 }

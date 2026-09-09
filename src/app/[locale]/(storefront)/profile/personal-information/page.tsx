@@ -1,17 +1,15 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { PersonalInformationForm } from "@/features/profile/ui/PersonalInformationForm";
-import { requireUser } from "@/lib/auth/policies";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { PersonalInformationForm } from '@/features/profile/ui/PersonalInformationForm';
+import { requireUser } from '@/lib/auth/policies';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type PersonalInformationPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function PersonalInformationPage({
-  params,
-}: PersonalInformationPageProps) {
+export default async function PersonalInformationPage({ params }: PersonalInformationPageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) {
     notFound();

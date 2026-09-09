@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useReducedMotion } from "motion/react";
-import { useRef } from "react";
+import Image from 'next/image';
+import { useReducedMotion } from 'motion/react';
+import { useRef } from 'react';
 
-import { ABOUT_GALLERY } from "@/features/about/content/team-members";
-import { useAboutTeamScroll } from "@/features/about/ui/useAboutTeamScroll";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { ABOUT_GALLERY } from '@/features/about/content/team-members';
+import { useAboutTeamScroll } from '@/features/about/ui/useAboutTeamScroll';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AboutGalleryProps = {
-  copy: Dictionary["about"];
+  copy: Dictionary['about'];
 };
 
 export function AboutGallery({ copy }: AboutGalleryProps) {
@@ -25,8 +25,8 @@ export function AboutGallery({ copy }: AboutGalleryProps) {
       <div
         className={
           reduceMotion
-            ? "flex h-full flex-col gap-4 overflow-y-auto"
-            : "absolute inset-3 overflow-hidden bg-pideh-cream sm:inset-5"
+            ? 'flex h-full flex-col gap-4 overflow-y-auto'
+            : 'absolute inset-3 overflow-hidden bg-pideh-cream sm:inset-5'
         }
       >
         {ABOUT_GALLERY.map((slide, index) => {
@@ -37,9 +37,7 @@ export function AboutGallery({ copy }: AboutGalleryProps) {
               key={slide.id}
               data-team-card
               className={`overflow-hidden rounded-[28px] bg-pideh-cream sm:rounded-[36px] ${
-                reduceMotion
-                  ? "relative min-h-[70vh] w-full shrink-0"
-                  : "absolute inset-0"
+                reduceMotion ? 'relative min-h-[70vh] w-full shrink-0' : 'absolute inset-0'
               }`}
             >
               <Image

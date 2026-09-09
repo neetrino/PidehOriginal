@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
+import Link from 'next/link';
+import { useState } from 'react';
 
-import { SideSheet } from "@/components/ui/SideSheet";
+import { SideSheet } from '@/components/ui/SideSheet';
 
 import {
   getAdminMenuItems,
   isAdminTabActive,
   type AdminMenuItem,
-} from "@/features/admin/ui/admin-menu.config";
-import { AdminSidebarBackdrop } from "@/features/admin/ui/AdminSidebarBackdrop";
-import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-menu.config';
+import { AdminSidebarBackdrop } from '@/features/admin/ui/AdminSidebarBackdrop';
+import { useAdminProductsSubnavExpanded } from '@/features/admin/ui/useAdminProductsSubnavExpanded';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminMenuDrawerProps = {
   locale: string;
   pathname: string;
-  shell: Dictionary["admin"]["shell"];
-  nav: Dictionary["admin"]["nav"];
+  shell: Dictionary['admin']['shell'];
+  nav: Dictionary['admin']['nav'];
 };
 
 function isNestedVisible(
@@ -27,21 +27,18 @@ function isNestedVisible(
   locale: string,
   productsNestedExpanded: boolean,
 ): boolean {
-  if (tab.parentGroupId !== "products") return true;
+  if (tab.parentGroupId !== 'products') return true;
   if (isAdminTabActive(tab.href, pathname, locale)) return true;
   return productsNestedExpanded;
 }
 
-export function AdminMenuDrawer({
-  locale,
-  pathname,
-  shell,
-  nav,
-}: AdminMenuDrawerProps) {
+export function AdminMenuDrawer({ locale, pathname, shell, nav }: AdminMenuDrawerProps) {
   const [open, setOpen] = useState(false);
   const tabs = getAdminMenuItems(locale, nav);
-  const [productsNestedExpanded, toggleProductsNested] =
-    useAdminProductsSubnavExpanded(pathname, locale);
+  const [productsNestedExpanded, toggleProductsNested] = useAdminProductsSubnavExpanded(
+    pathname,
+    locale,
+  );
 
   return (
     <div className="lg:hidden">
@@ -59,11 +56,7 @@ export function AdminMenuDrawer({
           stroke="currentColor"
           strokeWidth={2}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M4 6H20M4 12H16M4 18H12"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6H20M4 12H16M4 18H12" />
         </svg>
         {shell.menu}
       </button>
@@ -77,102 +70,84 @@ export function AdminMenuDrawer({
         panelInnerClassName="relative overflow-hidden rounded-r-[28px] border-r-2 border-[#1e1e1e] bg-[#140a04] text-white shadow-[-8px_0_24px_rgba(30,30,30,0.18)]"
       >
         <AdminSidebarBackdrop />
-        <div
-          id="admin-menu-drawer-panel"
-          className="relative z-10 flex min-h-0 flex-1 flex-col"
-        >
-            <div className="border-b border-white/10 px-4 py-4">
-              <Link
-                href={`/${locale}`}
-                className="text-sm font-extrabold tracking-wide text-white uppercase"
-                onClick={() => setOpen(false)}
-              >
-                {shell.brandName}
-              </Link>
-            </div>
+        <div id="admin-menu-drawer-panel" className="relative z-10 flex min-h-0 flex-1 flex-col">
+          <div className="border-b border-white/10 px-4 py-4">
+            <Link
+              href={`/${locale}`}
+              className="text-sm font-extrabold tracking-wide text-white uppercase"
+              onClick={() => setOpen(false)}
+            >
+              {shell.brandName}
+            </Link>
+          </div>
 
-            <nav className="flex-1 divide-y divide-white/10 overflow-y-auto">
-              {tabs.map((tab) => {
-                if (
-                  !isNestedVisible(
-                    tab,
-                    pathname,
-                    locale,
-                    productsNestedExpanded,
-                  )
-                ) {
-                  return null;
-                }
+          <nav className="flex-1 divide-y divide-white/10 overflow-y-auto">
+            {tabs.map((tab) => {
+              if (!isNestedVisible(tab, pathname, locale, productsNestedExpanded)) {
+                return null;
+              }
 
-                const isActive = isAdminTabActive(tab.href, pathname, locale);
+              const isActive = isAdminTabActive(tab.href, pathname, locale);
 
-                if (tab.id === "products") {
-                  return (
-                    <div
-                      key={tab.id}
-                      className={`flex w-full ${isActive ? "bg-[#ff6b00] text-white" : ""}`}
-                    >
-                      <Link
-                        href={tab.href}
-                        onClick={() => setOpen(false)}
-                        className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-sm font-bold ${
-                          isActive
-                            ? "text-white"
-                            : "text-white/70 hover:bg-white/10"
-                        } ${tab.isSubCategory ? "pl-10" : ""}`}
-                      >
-                        <span className="shrink-0">{tab.icon}</span>
-                        <span className="truncate">{tab.label}</span>
-                      </Link>
-                      <button
-                        type="button"
-                        aria-expanded={productsNestedExpanded}
-                        aria-label={shell.toggleProductSubpages}
-                        onClick={toggleProductsNested}
-                        className={`shrink-0 border-l px-3 py-3 ${
-                          isActive
-                            ? "border-white/25 text-white"
-                            : "border-white/10 text-white/60"
-                        }`}
-                      >
-                        <svg
-                          className={`h-5 w-5 transition-transform ${productsNestedExpanded ? "" : "-rotate-90"}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          aria-hidden
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  );
-                }
-
+              if (tab.id === 'products') {
                 return (
-                  <Link
+                  <div
                     key={tab.id}
-                    href={tab.href}
-                    onClick={() => setOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 text-sm font-bold ${
-                      tab.isSubCategory ? "pl-10" : ""
-                    } ${
-                      isActive
-                        ? "bg-[#ff6b00] text-white"
-                        : "text-white/70 hover:bg-white/10"
-                    }`}
+                    className={`flex w-full ${isActive ? 'bg-[#ff6b00] text-white' : ''}`}
                   >
-                    <span className="shrink-0">{tab.icon}</span>
-                    <span className="truncate">{tab.label}</span>
-                  </Link>
+                    <Link
+                      href={tab.href}
+                      onClick={() => setOpen(false)}
+                      className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-sm font-bold ${
+                        isActive ? 'text-white' : 'text-white/70 hover:bg-white/10'
+                      } ${tab.isSubCategory ? 'pl-10' : ''}`}
+                    >
+                      <span className="shrink-0">{tab.icon}</span>
+                      <span className="truncate">{tab.label}</span>
+                    </Link>
+                    <button
+                      type="button"
+                      aria-expanded={productsNestedExpanded}
+                      aria-label={shell.toggleProductSubpages}
+                      onClick={toggleProductsNested}
+                      className={`shrink-0 border-l px-3 py-3 ${
+                        isActive ? 'border-white/25 text-white' : 'border-white/10 text-white/60'
+                      }`}
+                    >
+                      <svg
+                        className={`h-5 w-5 transition-transform ${productsNestedExpanded ? '' : '-rotate-90'}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 );
-              })}
-            </nav>
+              }
+
+              return (
+                <Link
+                  key={tab.id}
+                  href={tab.href}
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 text-sm font-bold ${
+                    tab.isSubCategory ? 'pl-10' : ''
+                  } ${isActive ? 'bg-[#ff6b00] text-white' : 'text-white/70 hover:bg-white/10'}`}
+                >
+                  <span className="shrink-0">{tab.icon}</span>
+                  <span className="truncate">{tab.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
         </div>
       </SideSheet>
     </div>

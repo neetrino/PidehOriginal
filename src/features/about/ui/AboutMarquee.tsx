@@ -1,4 +1,4 @@
-import "@/features/about/ui/about-marquee.css";
+import '@/features/about/ui/about-marquee.css';
 
 type AboutMarqueeProps = {
   items: readonly string[];

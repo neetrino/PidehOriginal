@@ -1,21 +1,15 @@
-"use client";
+'use client';
 
-import type { LatLngExpression } from "leaflet";
-import L from "leaflet";
-import { useEffect, useMemo } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import type { LatLngExpression } from 'leaflet';
+import L from 'leaflet';
+import { useEffect, useMemo } from 'react';
+import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 
-import {
-  CONTACT_BRANCHES,
-  type ContactBranchId,
-} from "@/features/contact/ui/contact-locations";
-import {
-  ContactMapControls,
-  FlyToActiveBranch,
-} from "@/features/contact/ui/ContactMapControls";
+import { CONTACT_BRANCHES, type ContactBranchId } from '@/features/contact/ui/contact-locations';
+import { ContactMapControls, FlyToActiveBranch } from '@/features/contact/ui/ContactMapControls';
 
-import "leaflet/dist/leaflet.css";
-import "@/features/contact/ui/contact-map.css";
+import 'leaflet/dist/leaflet.css';
+import '@/features/contact/ui/contact-map.css';
 
 type ContactMapCanvasProps = {
   primaryLabel: string;
@@ -25,18 +19,17 @@ type ContactMapCanvasProps = {
   activeBranchId: ContactBranchId | null;
 };
 
-const TILE_URL =
-  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+const TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
 const TILE_ATTR =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
-const BRANCH_LABEL_KEY: Record<ContactBranchId, "primary" | "secondary"> = {
-  andranik: "primary",
-  koghbatsi: "secondary",
+const BRANCH_LABEL_KEY: Record<ContactBranchId, 'primary' | 'secondary'> = {
+  andranik: 'primary',
+  koghbatsi: 'secondary',
 };
 
 const pinIcon = L.divIcon({
-  className: "contact-map-pin",
+  className: 'contact-map-pin',
   html: '<span class="contact-map-pin-mark"><span class="contact-map-pin-pulse"></span><span class="contact-map-pin-head"></span><span class="contact-map-pin-stem"></span></span>',
   iconSize: [28, 36],
   iconAnchor: [14, 34],
@@ -81,16 +74,9 @@ export function ContactMapCanvas({
       <TileLayer attribution={TILE_ATTR} url={TILE_URL} />
       <FitBranches points={points} />
       <FlyToActiveBranch branchId={activeBranchId} />
-      <ContactMapControls
-        zoomInLabel={zoomInLabel}
-        zoomOutLabel={zoomOutLabel}
-      />
+      <ContactMapControls zoomInLabel={zoomInLabel} zoomOutLabel={zoomOutLabel} />
       {CONTACT_BRANCHES.map((branch) => (
-        <Marker
-          key={branch.id}
-          position={[branch.lat, branch.lng]}
-          icon={pinIcon}
-        >
+        <Marker key={branch.id} position={[branch.lat, branch.lng]} icon={pinIcon}>
           <Popup>{labels[BRANCH_LABEL_KEY[branch.id]]}</Popup>
         </Marker>
       ))}

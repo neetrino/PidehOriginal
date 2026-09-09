@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 
 import {
   formatYerevanDate,
   listAvailableDeliveryDays,
   type DeliveryScheduleSettings,
   type SelectedDeliverySlot,
-} from "@/features/delivery/domain/delivery-schedule";
+} from '@/features/delivery/domain/delivery-schedule';
 
 type DeliverySlotPickerLabels = {
   title: string;
@@ -28,7 +28,7 @@ type DeliverySlotPickerProps = {
 };
 
 function startOfMonthYmd(year: number, monthIndex: number): string {
-  return `${year}-${String(monthIndex + 1).padStart(2, "0")}-01`;
+  return `${year}-${String(monthIndex + 1).padStart(2, '0')}-01`;
 }
 
 function daysInMonth(year: number, monthIndex: number): number {
@@ -36,7 +36,7 @@ function daysInMonth(year: number, monthIndex: number): number {
 }
 
 function parseYmd(ymd: string): { year: number; monthIndex: number; day: number } {
-  const [yearText, monthText, dayText] = ymd.split("-");
+  const [yearText, monthText, dayText] = ymd.split('-');
   return {
     year: Number(yearText),
     monthIndex: Number(monthText) - 1,
@@ -51,54 +51,52 @@ function parseYmd(ymd: string): { year: number; monthIndex: number; day: number 
  */
 const MONTH_NAMES = {
   en: [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ],
   hy: [
-    "հունվար",
-    "փետրվար",
-    "մարտ",
-    "ապրիլ",
-    "մայիս",
-    "հունիս",
-    "հուլիս",
-    "օգոստոս",
-    "սեպտեմբեր",
-    "հոկտեմբեր",
-    "նոյեմբեր",
-    "դեկտեմբեր",
+    'հունվար',
+    'փետրվար',
+    'մարտ',
+    'ապրիլ',
+    'մայիս',
+    'հունիս',
+    'հուլիս',
+    'օգոստոս',
+    'սեպտեմբեր',
+    'հոկտեմբեր',
+    'նոյեմբեր',
+    'դեկտեմբեր',
   ],
   ru: [
-    "январь",
-    "февраль",
-    "март",
-    "апрель",
-    "май",
-    "июнь",
-    "июль",
-    "август",
-    "сентябрь",
-    "октябрь",
-    "ноябрь",
-    "декабрь",
+    'январь',
+    'февраль',
+    'март',
+    'апрель',
+    'май',
+    'июнь',
+    'июль',
+    'август',
+    'сентябрь',
+    'октябрь',
+    'ноябрь',
+    'декабрь',
   ],
 } as const;
 
 function monthLabel(year: number, monthIndex: number, locale: string): string {
   const months =
-    locale === "hy" || locale === "ru" || locale === "en"
-      ? MONTH_NAMES[locale]
-      : MONTH_NAMES.en;
+    locale === 'hy' || locale === 'ru' || locale === 'en' ? MONTH_NAMES[locale] : MONTH_NAMES.en;
   const month = months[monthIndex] ?? months[0];
   return `${month} ${year}`;
 }
@@ -114,10 +112,7 @@ export function DeliverySlotPicker({
   labels,
   locale,
 }: DeliverySlotPickerProps) {
-  const availableDays = useMemo(
-    () => listAvailableDeliveryDays(schedule),
-    [schedule],
-  );
+  const availableDays = useMemo(() => listAvailableDeliveryDays(schedule), [schedule]);
   const availableByDate = useMemo(() => {
     const map = new Map<string, (typeof availableDays)[number]>();
     for (const day of availableDays) {
@@ -131,9 +126,7 @@ export function DeliverySlotPicker({
   const [viewYear, setViewYear] = useState(todayParts.year);
   const [viewMonth, setViewMonth] = useState(todayParts.monthIndex);
 
-  const selectedDay = selected
-    ? availableByDate.get(selected.date) ?? null
-    : null;
+  const selectedDay = selected ? (availableByDate.get(selected.date) ?? null) : null;
 
   function selectDate(date: string): void {
     const day = availableByDate.get(date);
@@ -163,14 +156,12 @@ export function DeliverySlotPicker({
     ...Array.from({ length: leadingBlanks }, () => null),
     ...Array.from({ length: totalDays }, (_, index) => {
       const day = index + 1;
-      return `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      return `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     }),
   ];
 
   const maxDate =
-    availableDays.length > 0
-      ? availableDays[availableDays.length - 1]?.date
-      : todayYmd;
+    availableDays.length > 0 ? availableDays[availableDays.length - 1]?.date : todayYmd;
   const minMonth = startOfMonthYmd(todayParts.year, todayParts.monthIndex);
   const maxParts = parseYmd(maxDate ?? todayYmd);
   const maxMonth = startOfMonthYmd(maxParts.year, maxParts.monthIndex);
@@ -213,7 +204,7 @@ export function DeliverySlotPicker({
               {labels.pickDate}
             </p>
             <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
-              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label) => (
+              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((label) => (
                 <div key={label} className="py-1 font-medium">
                   {label}
                 </div>
@@ -232,10 +223,10 @@ export function DeliverySlotPicker({
                     onClick={() => selectDate(date)}
                     className={`h-10 rounded-xl text-sm font-medium transition-colors ${
                       isSelected
-                        ? "bg-gray-900 text-white"
+                        ? 'bg-gray-900 text-white'
                         : bookable
-                          ? "bg-gray-50 text-gray-900 hover:bg-gray-100"
-                          : "cursor-not-allowed text-gray-300"
+                          ? 'bg-gray-50 text-gray-900 hover:bg-gray-100'
+                          : 'cursor-not-allowed text-gray-300'
                     }`}
                   >
                     {Number(date.slice(-2))}
@@ -253,8 +244,7 @@ export function DeliverySlotPicker({
               <div className="flex flex-wrap gap-2">
                 {selectedDay.slots.map((slot) => {
                   const isSelected =
-                    selected?.startTime === slot.startTime &&
-                    selected?.endTime === slot.endTime;
+                    selected?.startTime === slot.startTime && selected?.endTime === slot.endTime;
                   return (
                     <button
                       key={slot.label}
@@ -269,8 +259,8 @@ export function DeliverySlotPicker({
                       }
                       className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                         isSelected
-                          ? "border-gray-900 bg-gray-900 text-white"
-                          : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
+                          ? 'border-gray-900 bg-gray-900 text-white'
+                          : 'border-gray-200 bg-white text-gray-800 hover:bg-gray-50'
                       }`}
                     >
                       {slot.label}

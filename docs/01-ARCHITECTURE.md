@@ -176,14 +176,14 @@ infrastructure adapters
 
 ## 6. Rendering և data fetching strategy
 
-| Surface | Default | Cache behavior |
-|---|---|---|
-| Home/catalog/product/blog | Server Components | Tagged revalidation, locale/currency-aware derived display |
-| Search/filter/pagination | URL search params → server query | Shareable URL, deterministic parsing |
-| Cart | Server authoritative + small client interaction island | No public cache; refresh after mutation |
-| Checkout | Dynamic server flow | No shared cache; idempotent mutation |
-| Profile/admin | Authenticated dynamic RSC | User/role scoped, no public cache |
-| Admin interactive tables | RSC initial data + optional TanStack Query | Server pagination/filter; explicit invalidation |
+| Surface                   | Default                                                | Cache behavior                                             |
+| ------------------------- | ------------------------------------------------------ | ---------------------------------------------------------- |
+| Home/catalog/product/blog | Server Components                                      | Tagged revalidation, locale/currency-aware derived display |
+| Search/filter/pagination  | URL search params → server query                       | Shareable URL, deterministic parsing                       |
+| Cart                      | Server authoritative + small client interaction island | No public cache; refresh after mutation                    |
+| Checkout                  | Dynamic server flow                                    | No shared cache; idempotent mutation                       |
+| Profile/admin             | Authenticated dynamic RSC                              | User/role scoped, no public cache                          |
+| Admin interactive tables  | RSC initial data + optional TanStack Query             | Server pagination/filter; explicit invalidation            |
 
 `router.refresh()`/tag invalidation-ը կիրառվում են authoritative mutation-ից հետո։ Optimistic UI կիրառվում է միայն rollback-safe գործողությունների համար, օրինակ wishlist toggle, ոչ checkout/order/stock mutation-ի համար։
 
@@ -251,13 +251,13 @@ sequenceDiagram
 
 ## 9. Provider abstractions
 
-| Boundary | Minimum contract |
-|---|---|
-| Payment | `createPayment`, `verifyCallback`, `getStatus`, optional `refund` |
-| Email | templated `send` with provider message ID and retry-safe key |
-| Object storage | presign upload, head object, delete object, public URL builder |
-| Exchange rate | fetch base-relative rates with effective timestamp/source |
-| Observability | structured log, capture error, metric/timing |
+| Boundary       | Minimum contract                                                  |
+| -------------- | ----------------------------------------------------------------- |
+| Payment        | `createPayment`, `verifyCallback`, `getStatus`, optional `refund` |
+| Email          | templated `send` with provider message ID and retry-safe key      |
+| Object storage | presign upload, head object, delete object, public URL builder    |
+| Exchange rate  | fetch base-relative rates with effective timestamp/source         |
+| Observability  | structured log, capture error, metric/timing                      |
 
 Provider payloads/types չեն արտահոսում domain/storefront DTO-ների մեջ։
 

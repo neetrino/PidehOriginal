@@ -1,6 +1,6 @@
-import { and, asc, count, desc, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, or, sql, type SQL } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
+import { getDb } from '@/db/client';
 import {
   groupOrderEvents,
   groupOrderItemModifiers,
@@ -9,16 +9,16 @@ import {
   groupOrders,
   mediaAssets,
   products,
-} from "@/db/schema";
-import type { LocaleTranslation, TranslationsJson } from "@/db/schema/catalog";
-import { buildInvitePath } from "@/features/group-orders/application/money";
-import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
-import type { AdminGroupOrdersFilter } from "@/features/group-orders/schemas";
-import type { Locale } from "@/lib/i18n/config";
-import { mediaPublicUrl } from "@/lib/media/public-url";
-import { formatMoneyAmount } from "@/lib/money/format";
-import type { Currency } from "@/lib/money/currency";
-import { peekGroupOrderSession } from "@/features/group-orders/session";
+} from '@/db/schema';
+import type { LocaleTranslation, TranslationsJson } from '@/db/schema/catalog';
+import { buildInvitePath } from '@/features/group-orders/application/money';
+import type { GroupOrderPaymentMode } from '@/features/group-orders/domain/status';
+import type { AdminGroupOrdersFilter } from '@/features/group-orders/schemas';
+import type { Locale } from '@/lib/i18n/config';
+import { mediaPublicUrl } from '@/lib/media/public-url';
+import { formatMoneyAmount } from '@/lib/money/format';
+import type { Currency } from '@/lib/money/currency';
+import { peekGroupOrderSession } from '@/features/group-orders/session';
 
 export type GroupOrderItemView = {
   id: string;
@@ -36,7 +36,7 @@ export type GroupOrderItemView = {
 export type GroupOrderParticipantView = {
   id: string;
   displayName: string;
-  role: "ORGANIZER" | "PARTICIPANT";
+  role: 'ORGANIZER' | 'PARTICIPANT';
   status: string;
   paymentStatus: string;
   subtotalAmount: number;
@@ -66,7 +66,7 @@ export type GroupOrderDetailView = {
   lockedAt: string | null;
   expiresAt: string;
   currentParticipantId: string | null;
-  currentParticipantRole: "ORGANIZER" | "PARTICIPANT" | null;
+  currentParticipantRole: 'ORGANIZER' | 'PARTICIPANT' | null;
   merchandiseTotalAmount: number;
   merchandiseTotalFormatted: string;
   grandTotalAmount: number;
@@ -82,13 +82,8 @@ export type GroupOrderDetailView = {
   }>;
 };
 
-function productTitle(
-  translations: TranslationsJson,
-  locale: Locale,
-  fallbackSku: string,
-): string {
-  const entry: LocaleTranslation | undefined =
-    translations[locale] ?? translations.hy;
+function productTitle(translations: TranslationsJson, locale: Locale, fallbackSku: string): string {
+  const entry: LocaleTranslation | undefined = translations[locale] ?? translations.hy;
   return entry?.title ?? fallbackSku;
 }
 
@@ -146,8 +141,8 @@ export async function getGroupOrderDetailByInvite(input: {
           .where(
             and(
               inArray(mediaAssets.productId, productIds),
-              eq(mediaAssets.role, "PRIMARY"),
-              eq(mediaAssets.uploadStatus, "READY"),
+              eq(mediaAssets.role, 'PRIMARY'),
+              eq(mediaAssets.uploadStatus, 'READY'),
             ),
           );
 
@@ -155,29 +150,22 @@ export async function getGroupOrderDetailByInvite(input: {
     mediaRows.map((row) => [row.productId!, mediaPublicUrl(row.objectKey)]),
   );
 
-  const format = (amount: number) =>
-    formatMoneyAmount(amount, input.currency, input.locale);
+  const format = (amount: number) => formatMoneyAmount(amount, input.currency, input.locale);
 
   const participantViews: GroupOrderParticipantView[] = participants
-    .filter((p) => p.status === "ACTIVE")
+    .filter((p) => p.status === 'ACTIVE')
     .map((participant) => {
       const ownItems = items
         .filter((row) => row.item.participantId === participant.id)
         .map((row) => {
           const mods = modifiersByItem.get(row.item.id) ?? [];
           const modifierSummary =
-            mods.length > 0
-              ? mods.map((m) => m.nameSnapshot).join(", ")
-              : null;
+            mods.length > 0 ? mods.map((m) => m.nameSnapshot).join(', ') : null;
           return {
             id: row.item.id,
             participantId: participant.id,
             productId: row.product.id,
-            title: productTitle(
-              row.product.translations,
-              input.locale,
-              row.product.sku,
-            ),
+            title: productTitle(row.product.translations, input.locale, row.product.sku),
             imageUrl: imageByProduct.get(row.product.id) ?? null,
             quantity: row.item.quantity,
             unitAmount: row.item.unitAmount,
@@ -204,15 +192,12 @@ export async function getGroupOrderDetailByInvite(input: {
       };
     });
 
-  const merchandiseTotalAmount = participantViews.reduce(
-    (sum, p) => sum + p.subtotalAmount,
-    0,
-  );
+  const merchandiseTotalAmount = participantViews.reduce((sum, p) => sum + p.subtotalAmount, 0);
   const grandTotalAmount = merchandiseTotalAmount + groupOrder.deliveryAmount;
 
   const session = await peekGroupOrderSession();
   let currentParticipantId: string | null = null;
-  let currentParticipantRole: "ORGANIZER" | "PARTICIPANT" | null = null;
+  let currentParticipantRole: 'ORGANIZER' | 'PARTICIPANT' | null = null;
   if (session.inviteToken === input.inviteToken && session.participantId) {
     const match = participantViews.find((p) => p.id === session.participantId);
     if (match) {
@@ -237,9 +222,7 @@ export async function getGroupOrderDetailByInvite(input: {
     status: groupOrder.status,
     spendLimitAmount: groupOrder.spendLimitAmount,
     spendLimitFormatted:
-      groupOrder.spendLimitAmount != null
-        ? format(groupOrder.spendLimitAmount)
-        : null,
+      groupOrder.spendLimitAmount != null ? format(groupOrder.spendLimitAmount) : null,
     joinsClosed: groupOrder.joinsClosed,
     deliveryAmount: groupOrder.deliveryAmount,
     deliveryFormatted: format(groupOrder.deliveryAmount),
@@ -282,34 +265,32 @@ export type AdminGroupOrderListItem = {
 };
 
 const ADMIN_GROUP_ORDERS_PAGE_SIZE = 50;
-const ADMIN_LIST_TIME_ZONE = "Asia/Yerevan";
+const ADMIN_LIST_TIME_ZONE = 'Asia/Yerevan';
 
 function formatAdminCreatedParts(value: Date): {
   time: string;
   date: string;
 } {
-  const parts = new Intl.DateTimeFormat("en-GB", {
+  const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone: ADMIN_LIST_TIME_ZONE,
-    hour: "2-digit",
-    minute: "2-digit",
+    hour: '2-digit',
+    minute: '2-digit',
     hour12: false,
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
   }).formatToParts(value);
 
   const get = (type: Intl.DateTimeFormatPartTypes): string =>
-    parts.find((part) => part.type === type)?.value ?? "";
+    parts.find((part) => part.type === type)?.value ?? '';
 
   return {
-    time: `${get("hour")}:${get("minute")}`,
-    date: `${get("day")}.${get("month")}.${get("year")}`,
+    time: `${get('hour')}:${get('minute')}`,
+    date: `${get('day')}.${get('month')}.${get('year')}`,
   };
 }
 
-function buildAdminGroupOrderFilters(
-  filters: AdminGroupOrdersFilter,
-): SQL | undefined {
+function buildAdminGroupOrderFilters(filters: AdminGroupOrdersFilter): SQL | undefined {
   const conditions: SQL[] = [];
 
   if (filters.status) {
@@ -332,9 +313,7 @@ function buildAdminGroupOrderFilters(
 }
 
 /** Lists group orders for the admin surface with optional status/mode/search filters. */
-export async function listAdminGroupOrders(
-  filters: AdminGroupOrdersFilter = { page: 1 },
-): Promise<{
+export async function listAdminGroupOrders(filters: AdminGroupOrdersFilter = { page: 1 }): Promise<{
   rows: AdminGroupOrderListItem[];
   total: number;
   pageSize: number;
@@ -373,7 +352,7 @@ export async function listAdminGroupOrders(
     .where(
       and(
         inArray(groupOrderParticipants.groupOrderId, ids),
-        eq(groupOrderParticipants.status, "ACTIVE"),
+        eq(groupOrderParticipants.status, 'ACTIVE'),
       ),
     )
     .groupBy(groupOrderParticipants.groupOrderId);

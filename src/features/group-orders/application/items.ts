@@ -1,32 +1,28 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { revalidateCartPaths } from "@/features/cart/cart";
-import { getDb } from "@/db/client";
-import {
-  groupOrderItems,
-  groupOrderParticipants,
-  groupOrders,
-} from "@/db/schema";
+import { revalidateCartPaths } from '@/features/cart/cart';
+import { getDb } from '@/db/client';
+import { groupOrderItems, groupOrderParticipants, groupOrders } from '@/db/schema';
 import {
   appendGroupOrderEvent,
   recalculateGroupOrderMoney,
   replaceItemModifiers,
   resolveLinePricing,
-} from "@/features/group-orders/application/money";
-import { canEditGroupOrderItems } from "@/features/group-orders/domain/status";
-import { checkSpendLimit } from "@/features/group-orders/domain/spend-limit";
-import { buildModifierSelectionKey } from "@/features/products/domain/modifier-selection";
-import { resolveSelectedModifiersForProduct } from "@/features/products/application/product-modifiers";
-import { createId } from "@/lib/id";
+} from '@/features/group-orders/application/money';
+import { canEditGroupOrderItems } from '@/features/group-orders/domain/status';
+import { checkSpendLimit } from '@/features/group-orders/domain/spend-limit';
+import { buildModifierSelectionKey } from '@/features/products/domain/modifier-selection';
+import { resolveSelectedModifiersForProduct } from '@/features/products/application/product-modifiers';
+import { createId } from '@/lib/id';
 
-import { assertParticipantAccess } from "@/features/group-orders/application/access";
+import { assertParticipantAccess } from '@/features/group-orders/application/access';
 
 export type GroupOrderMutationResult =
   | { ok: true }
   | {
       ok: false;
       error: string;
-      code?: "SPEND_LIMIT_EXCEEDED";
+      code?: 'SPEND_LIMIT_EXCEEDED';
       limitAmount?: number;
     };
 
@@ -34,7 +30,7 @@ function spendLimitExceededResult(limitAmount: number): GroupOrderMutationResult
   return {
     ok: false,
     error: `Spend limit is ${limitAmount} ֏.`,
-    code: "SPEND_LIMIT_EXCEEDED",
+    code: 'SPEND_LIMIT_EXCEEDED',
     limitAmount,
   };
 }
@@ -50,7 +46,7 @@ export async function addGroupOrderItem(input: {
 
   const { groupOrder, participant } = access;
   if (!canEditGroupOrderItems(groupOrder.status)) {
-    return { ok: false, error: "Items can no longer be changed." };
+    return { ok: false, error: 'Items can no longer be changed.' };
   }
 
   const resolved = await resolveSelectedModifiersForProduct(
@@ -68,9 +64,7 @@ export async function addGroupOrderItem(input: {
   });
   if (!pricing.ok) return pricing;
 
-  const selectionKey = buildModifierSelectionKey(
-    resolved.modifiers.map((m) => m.id),
-  );
+  const selectionKey = buildModifierSelectionKey(resolved.modifiers.map((m) => m.id));
   const db = getDb();
 
   const [existing] = await db
@@ -89,10 +83,7 @@ export async function addGroupOrderItem(input: {
   if (existing) {
     const nextQty = existing.quantity + input.quantity;
     const lineTotal = pricing.unitAmount * nextQty;
-    nextSubtotal =
-      participant.subtotalAmount -
-      existing.lineTotalAmount +
-      lineTotal;
+    nextSubtotal = participant.subtotalAmount - existing.lineTotalAmount + lineTotal;
 
     const limit = checkSpendLimit(nextSubtotal, groupOrder.spendLimitAmount);
     if (!limit.ok) {
@@ -132,9 +123,9 @@ export async function addGroupOrderItem(input: {
   await recalculateGroupOrderMoney(db, groupOrder.id);
   await appendGroupOrderEvent(db, {
     groupOrderId: groupOrder.id,
-    eventType: "ITEMS_CHANGED",
+    eventType: 'ITEMS_CHANGED',
     actorParticipantId: participant.id,
-    payload: { action: "add", productId: input.productId },
+    payload: { action: 'add', productId: input.productId },
   });
   await revalidateCartPaths();
 
@@ -153,7 +144,7 @@ export async function updateGroupOrderItemQuantity(input: {
 
   const { groupOrder, participant } = access;
   if (!canEditGroupOrderItems(groupOrder.status)) {
-    return { ok: false, error: "Items can no longer be changed." };
+    return { ok: false, error: 'Items can no longer be changed.' };
   }
 
   const db = getDb();
@@ -164,13 +155,13 @@ export async function updateGroupOrderItemQuantity(input: {
     .limit(1);
 
   if (!item || item.groupOrderId !== groupOrder.id) {
-    return { ok: false, error: "Item not found." };
+    return { ok: false, error: 'Item not found.' };
   }
 
   const isOwner = item.participantId === participant.id;
-  const isOrganizer = participant.role === "ORGANIZER";
+  const isOrganizer = participant.role === 'ORGANIZER';
   if (!isOwner && !(input.asOrganizer && isOrganizer)) {
-    return { ok: false, error: "You can only edit your own items." };
+    return { ok: false, error: 'You can only edit your own items.' };
   }
 
   if (input.quantity < 1) {
@@ -186,10 +177,9 @@ export async function updateGroupOrderItemQuantity(input: {
     .from(groupOrderParticipants)
     .where(eq(groupOrderParticipants.id, item.participantId))
     .limit(1);
-  if (!owner) return { ok: false, error: "Participant not found." };
+  if (!owner) return { ok: false, error: 'Participant not found.' };
 
-  const nextSubtotal =
-    owner.subtotalAmount - item.lineTotalAmount + lineTotal;
+  const nextSubtotal = owner.subtotalAmount - item.lineTotalAmount + lineTotal;
   const limit = checkSpendLimit(nextSubtotal, groupOrder.spendLimitAmount);
   if (!limit.ok) {
     return spendLimitExceededResult(limit.limitAmount);
@@ -230,7 +220,7 @@ export async function markParticipantItemsReady(input: {
 
   const { groupOrder, participant } = access;
   if (!canEditGroupOrderItems(groupOrder.status)) {
-    return { ok: false, error: "Order is already locked." };
+    return { ok: false, error: 'Order is already locked.' };
   }
 
   const db = getDb();
@@ -241,7 +231,7 @@ export async function markParticipantItemsReady(input: {
 
   await appendGroupOrderEvent(db, {
     groupOrderId: groupOrder.id,
-    eventType: "ITEMS_READY",
+    eventType: 'ITEMS_READY',
     actorParticipantId: participant.id,
   });
 
@@ -254,26 +244,24 @@ export async function setGroupOrderDeliveryAddress(input: {
   deliveryLat?: number;
   deliveryLng?: number;
 }): Promise<
-  | { ok: true; deliveryAmount: number; distanceLabel: string }
-  | { ok: false; error: string }
+  { ok: true; deliveryAmount: number; distanceLabel: string } | { ok: false; error: string }
 > {
   const access = await assertParticipantAccess(input.inviteToken);
   if (!access.ok) return access;
-  if (access.participant.role !== "ORGANIZER") {
-    return { ok: false, error: "Only the organizer can set delivery." };
+  if (access.participant.role !== 'ORGANIZER') {
+    return { ok: false, error: 'Only the organizer can set delivery.' };
   }
   if (!canEditGroupOrderItems(access.groupOrder.status)) {
-    return { ok: false, error: "Delivery address can no longer be changed." };
+    return { ok: false, error: 'Delivery address can no longer be changed.' };
   }
 
   const address = input.deliveryAddress.trim();
   if (address.length < 3) {
-    return { ok: false, error: "Enter a delivery address." };
+    return { ok: false, error: 'Enter a delivery address.' };
   }
 
-  const { quoteDistanceDelivery } = await import(
-    "@/features/delivery/application/quote-distance-delivery"
-  );
+  const { quoteDistanceDelivery } =
+    await import('@/features/delivery/application/quote-distance-delivery');
   const point =
     input.deliveryLat != null && input.deliveryLng != null
       ? { lat: input.deliveryLat, lng: input.deliveryLng }
@@ -297,10 +285,10 @@ export async function setGroupOrderDeliveryAddress(input: {
   await recalculateGroupOrderMoney(db, access.groupOrder.id);
   await appendGroupOrderEvent(db, {
     groupOrderId: access.groupOrder.id,
-    eventType: "NOTE",
+    eventType: 'NOTE',
     actorParticipantId: access.participant.id,
     payload: {
-      action: "delivery_address_set",
+      action: 'delivery_address_set',
       deliveryAmount: quoted.quote.deliveryAmount,
       distanceLabel: quoted.quote.distanceLabel,
       usedMapPin: Boolean(point),
@@ -321,8 +309,8 @@ export async function setGroupOrderDeliveryAmount(input: {
 }): Promise<GroupOrderMutationResult> {
   const access = await assertParticipantAccess(input.inviteToken);
   if (!access.ok) return access;
-  if (access.participant.role !== "ORGANIZER") {
-    return { ok: false, error: "Only the organizer can set delivery." };
+  if (access.participant.role !== 'ORGANIZER') {
+    return { ok: false, error: 'Only the organizer can set delivery.' };
   }
 
   const db = getDb();
