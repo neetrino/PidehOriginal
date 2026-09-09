@@ -1,12 +1,13 @@
-import { Clock3, Mail, MapPin, Phone, type LucideIcon } from "lucide-react";
+import { Clock3, Mail, MapPin, Phone, type LucideIcon } from 'lucide-react';
 
-import { fadeUp } from "@/components/motion/presets";
-import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
-import { toTelHref } from "@/lib/contact/tel-href";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { fadeUp } from '@/components/motion/presets';
+import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
+import { toMapsHref } from '@/lib/contact/maps-href';
+import { toTelHref } from '@/lib/contact/tel-href';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ContactInfoProps = {
-  copy: Dictionary["contact"];
+  copy: Dictionary['contact'];
 };
 
 type ChannelLine = {
@@ -18,12 +19,16 @@ type Channel = {
   index: string;
   icon: LucideIcon;
   title: string;
+  href?: string;
   lines: ChannelLine[];
 };
 
-function toMapsHref(address: string): string {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+/** Maps links open in a new tab; `tel:` and `mailto:` must stay in place. */
+function targetProps(href: string): { target?: '_blank'; rel?: string } {
+  return href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 }
+
+const LINK_CLASS = 'underline-offset-2 transition hover:text-[#ff6b00] hover:underline';
 
 function ChannelRow({ channel }: { channel: Channel }) {
   const Icon = channel.icon;
@@ -31,68 +36,66 @@ function ChannelRow({ channel }: { channel: Channel }) {
   return (
     <div className="relative border-b border-dashed border-[#1e1e1e]/15 py-6 pl-8">
       <span className="absolute top-8 left-0 size-2.5 rounded-full bg-[#ff6b00] ring-4 ring-[#ff6b00]/20" />
-      <span className="font-mono text-xs tracking-[0.18em] text-[#ff6b00]">
-        {channel.index}
-      </span>
-      <span className="mt-1 flex items-center gap-2 text-sm font-semibold text-[#1e1e1e]">
-        <Icon className="size-4 text-[#ff6b00]" aria-hidden="true" />
-        {channel.title}
-      </span>
-      <span className="mt-2 space-y-1 text-base leading-snug text-[#1e1e1e]/75">
+      <span className="font-mono text-xs tracking-[0.18em] text-[#ff6b00]">{channel.index}</span>
+      <h3 className="mt-1 flex items-center gap-2 text-[19px] leading-6 font-bold text-[#1e1e1e]">
+        <Icon className="size-[19px] shrink-0 text-[#ff6b00]" aria-hidden="true" />
+        {channel.href ? (
+          <a href={channel.href} {...targetProps(channel.href)} className={LINK_CLASS}>
+            {channel.title}
+          </a>
+        ) : (
+          channel.title
+        )}
+      </h3>
+      <div className="font-noto-armenian mt-2 space-y-1 text-base leading-snug text-[#1e1e1e]/75">
         {channel.lines.map((line) =>
           line.href ? (
             <a
               key={line.text}
               href={line.href}
-              target={line.href.startsWith("http") ? "_blank" : undefined}
-              rel={
-                line.href.startsWith("http")
-                  ? "noopener noreferrer"
-                  : undefined
-              }
-              className="block w-fit text-[#1e1e1e] underline-offset-2 transition hover:text-[#ff6b00] hover:underline"
+              {...targetProps(line.href)}
+              className={`block w-fit text-[#1e1e1e] ${LINK_CLASS}`}
             >
               {line.text}
             </a>
           ) : (
-            <span key={line.text} className="block">
-              {line.text}
-            </span>
+            <p key={line.text}>{line.text}</p>
           ),
         )}
-      </span>
+      </div>
     </div>
   );
 }
 
 export function ContactInfo({ copy }: ContactInfoProps) {
+  const telHref = toTelHref(copy.storePhone);
+  const mailHref = `mailto:${copy.storeEmail}`;
+  const mapsHref = toMapsHref(copy.storeAddress);
+
   const channels: Channel[] = [
     {
-      index: "01",
+      index: '01',
       icon: Phone,
       title: copy.callTitle,
-      lines: [
-        { text: copy.callDescription },
-        { text: copy.storePhone, href: toTelHref(copy.storePhone) },
-      ],
+      href: telHref,
+      lines: [{ text: copy.callDescription }, { text: copy.storePhone, href: telHref }],
     },
     {
-      index: "02",
+      index: '02',
       icon: Mail,
       title: copy.writeTitle,
-      lines: [
-        { text: copy.writeDescription },
-        { text: copy.storeEmail, href: `mailto:${copy.storeEmail}` },
-      ],
+      href: mailHref,
+      lines: [{ text: copy.writeDescription }, { text: copy.storeEmail, href: mailHref }],
     },
     {
-      index: "03",
+      index: '03',
       icon: MapPin,
       title: copy.hqTitle,
+      href: mapsHref,
       lines: [
         {
           text: copy.storeAddress,
-          href: toMapsHref(copy.storeAddress),
+          href: mapsHref,
         },
         {
           text: copy.storeAddressSecondary,
@@ -101,22 +104,16 @@ export function ContactInfo({ copy }: ContactInfoProps) {
       ],
     },
     {
-      index: "04",
+      index: '04',
       icon: Clock3,
       title: copy.hoursTitle,
-      lines: [
-        { text: copy.hoursWeekdays },
-        { text: copy.hoursDelivery },
-      ],
+      lines: [{ text: copy.hoursWeekdays }],
     },
   ];
 
   return (
     <StaggerGroup className="relative">
-      <div
-        aria-hidden="true"
-        className="absolute top-8 bottom-8 left-[4px] w-px bg-[#ff6b00]/35"
-      />
+      <div aria-hidden="true" className="absolute top-8 bottom-8 left-[4px] w-px bg-[#ff6b00]/35" />
       {channels.map((channel) => (
         <StaggerItem key={channel.index} variants={fadeUp}>
           <ChannelRow channel={channel} />

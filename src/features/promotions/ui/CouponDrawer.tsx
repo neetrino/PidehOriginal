@@ -1,42 +1,39 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Button } from "@/components/ui/Button";
-import { MultiSelectDropdown } from "@/components/ui/MultiSelectDropdown";
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import { SideSheet } from "@/components/ui/SideSheet";
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
+import { Button } from '@/components/ui/Button';
+import { MultiSelectDropdown } from '@/components/ui/MultiSelectDropdown';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import { SideSheet } from '@/components/ui/SideSheet';
+import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import {
   createPromotionAction,
   updatePromotionAction,
-} from "@/features/promotions/application/upsert-promotion";
+} from '@/features/promotions/application/upsert-promotion';
 import type {
   AdminPromotionListItem,
   CouponUserOption,
-} from "@/features/promotions/application/queries";
-import type { DiscountType } from "@/features/promotions/domain/promotion-rules";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/promotions/application/queries';
+import type { DiscountType } from '@/features/promotions/domain/promotion-rules';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type CouponDrawerCoupon = Pick<
   AdminPromotionListItem,
-  | "id"
-  | "code"
-  | "discountType"
-  | "discountValue"
-  | "totalUsageLimit"
-  | "endsAt"
-  | "isActive"
-  | "userIds"
+  | 'id'
+  | 'code'
+  | 'discountType'
+  | 'discountValue'
+  | 'totalUsageLimit'
+  | 'endsAt'
+  | 'isActive'
+  | 'userIds'
 >;
 
 type CouponDrawerCopy = {
-  drawer: Dictionary["admin"]["coupons"]["drawer"];
-  common: Dictionary["admin"]["common"];
+  drawer: Dictionary['admin']['coupons']['drawer'];
+  common: Dictionary['admin']['common'];
 };
 
 type CouponDrawerProps = {
@@ -49,9 +46,9 @@ type CouponDrawerProps = {
 };
 
 function toDateTimeLocal(value: Date | string | null | undefined): string {
-  if (!value) return "";
+  if (!value) return '';
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
+  if (Number.isNaN(date.getTime())) return '';
   return date.toISOString().slice(0, 16);
 }
 
@@ -65,13 +62,12 @@ export function CouponDrawer({
 }: CouponDrawerProps) {
   const router = useRouter();
   const isEdit = coupon != null;
-  const [name, setName] = useState("");
-  const [code, setCode] = useState("");
-  const [discountType, setDiscountType] =
-    useState<DiscountType>("PERCENTAGE");
-  const [value, setValue] = useState("10");
-  const [quantity, setQuantity] = useState("1");
-  const [expiresAt, setExpiresAt] = useState("");
+  const [name, setName] = useState('');
+  const [code, setCode] = useState('');
+  const [discountType, setDiscountType] = useState<DiscountType>('PERCENTAGE');
+  const [value, setValue] = useState('10');
+  const [quantity, setQuantity] = useState('1');
+  const [expiresAt, setExpiresAt] = useState('');
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -80,25 +76,21 @@ export function CouponDrawer({
     if (!open) return;
 
     if (coupon) {
-      setName(coupon.code ?? "");
-      setCode(coupon.code ?? "");
-      setDiscountType(
-        coupon.discountType === "FIXED" ? "FIXED" : "PERCENTAGE",
-      );
+      setName(coupon.code ?? '');
+      setCode(coupon.code ?? '');
+      setDiscountType(coupon.discountType === 'FIXED' ? 'FIXED' : 'PERCENTAGE');
       setValue(String(coupon.discountValue));
-      setQuantity(
-        coupon.totalUsageLimit != null ? String(coupon.totalUsageLimit) : "",
-      );
+      setQuantity(coupon.totalUsageLimit != null ? String(coupon.totalUsageLimit) : '');
       setExpiresAt(toDateTimeLocal(coupon.endsAt));
       setSelectedUserIds(coupon.userIds);
       setError(null);
     } else {
-      setName("");
-      setCode("");
-      setDiscountType("PERCENTAGE");
-      setValue("10");
-      setQuantity("1");
-      setExpiresAt("");
+      setName('');
+      setCode('');
+      setDiscountType('PERCENTAGE');
+      setValue('10');
+      setQuantity('1');
+      setExpiresAt('');
       setSelectedUserIds([]);
       setError(null);
     }
@@ -128,7 +120,7 @@ export function CouponDrawer({
           }
 
           const payload = {
-            kind: "COUPON" as const,
+            kind: 'COUPON' as const,
             code: nextCode,
             productId: null,
             categoryId: null,
@@ -179,9 +171,7 @@ export function CouponDrawer({
               <span className={ADMIN_LABEL}>{copy.drawer.code}</span>
               <input
                 value={code}
-                onChange={(event) =>
-                  setCode(event.target.value.toUpperCase())
-                }
+                onChange={(event) => setCode(event.target.value.toUpperCase())}
                 placeholder={copy.drawer.codePlaceholder}
                 className={`${ADMIN_INPUT} uppercase`}
                 disabled={isPending}
@@ -196,15 +186,13 @@ export function CouponDrawer({
                 ariaLabel={copy.drawer.discountTypeAria}
                 value={discountType}
                 options={[
-                  { label: copy.drawer.percentOff, value: "PERCENTAGE" },
-                  { label: copy.drawer.fixedAmountAmd, value: "FIXED" },
+                  { label: copy.drawer.percentOff, value: 'PERCENTAGE' },
+                  { label: copy.drawer.fixedAmountAmd, value: 'FIXED' },
                 ]}
                 disabled={isPending}
                 deferChange={false}
                 className="mt-1"
-                onValueChange={(next) =>
-                  setDiscountType(next as DiscountType)
-                }
+                onValueChange={(next) => setDiscountType(next as DiscountType)}
               />
             </div>
             <label>

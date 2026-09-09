@@ -1,23 +1,25 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { ShoppingCart } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { ShoppingCart } from 'lucide-react';
 
-import { SideSheet } from "@/components/ui/SideSheet";
-import { removeItem, updateQuantity } from "@/features/cart/cart";
-import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
-import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
-import { CartDrawerEmpty } from "@/features/cart/ui/CartDrawerEmpty";
-import { CartDrawerItems } from "@/features/cart/ui/CartDrawerItems";
-import { CartDrawerTotals } from "@/features/cart/ui/CartDrawerTotals";
+import { SideSheet } from '@/components/ui/SideSheet';
+import { removeItem, updateQuantity } from '@/features/cart/cart';
+import type { CartDrawerView } from '@/features/cart/get-cart-drawer-view';
+import { loadCartDrawerViewAction } from '@/features/cart/load-cart-drawer-view-action';
+import { CartDrawerEmpty } from '@/features/cart/ui/CartDrawerEmpty';
+import { CartDrawerItems } from '@/features/cart/ui/CartDrawerItems';
+import { CartDrawerTotals } from '@/features/cart/ui/CartDrawerTotals';
+import { useCartBadge } from '@/features/cart/ui/cart-badge-count';
+import { CART_TARGET_ATTR } from '@/features/cart/ui/fly-to-cart';
 import {
   removeGroupOrderItemAction,
   updateGroupOrderItemQuantityAction,
-} from "@/features/group-orders/actions";
-import { alertIfSpendLimitExceeded } from "@/features/group-orders/ui/alert-spend-limit-exceeded";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
+} from '@/features/group-orders/actions';
+import { alertIfSpendLimitExceeded } from '@/features/group-orders/ui/alert-spend-limit-exceeded';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 type CartDrawerTriggerArgs = {
   open: boolean;
@@ -35,14 +37,11 @@ type CartDrawerProps = {
   renderTrigger?: (args: CartDrawerTriggerArgs) => React.ReactNode;
 };
 
-function formatItemCount(
-  count: number,
-  labels: Dictionary["cartDrawer"],
-): string {
+function formatItemCount(count: number, labels: Dictionary['cartDrawer']): string {
   if (count === 1) {
     return labels.itemsOne;
   }
-  return labels.itemsMany.replace("{count}", String(count));
+  return labels.itemsMany.replace('{count}', String(count));
 }
 
 export function CartDrawer({
@@ -56,10 +55,11 @@ export function CartDrawer({
   const [view, setView] = useState<CartDrawerView | null>(null);
   const [loadingView, setLoadingView] = useState(false);
   const [pending, startTransition] = useTransition();
-  const syncedItemCountRef = useRef(itemCount);
+  const { count: cartCount, adding: cartAdding } = useCartBadge(itemCount);
+  const syncedItemCountRef = useRef(cartCount);
   const labels = dictionary.cartDrawer;
-  const isGroupSource = view?.source === "group";
-  const badgeCount = open && view ? view.itemCount : itemCount;
+  const isGroupSource = view?.source === 'group';
+  const badgeCount = open && view ? view.itemCount : cartCount;
   const hasItems = Boolean(view && view.items.length > 0);
   const displayCurrency = view?.currency ?? currency;
 
@@ -77,17 +77,19 @@ export function CartDrawer({
 
   useEffect(() => {
     if (!open) {
-      syncedItemCountRef.current = itemCount;
+      syncedItemCountRef.current = cartCount;
       return;
     }
-    if (syncedItemCountRef.current === itemCount) {
+    // While an add is in flight the optimistic count is ahead of the database,
+    // so the reload waits for the write to land.
+    if (cartAdding || syncedItemCountRef.current === cartCount) {
       return;
     }
-    syncedItemCountRef.current = itemCount;
+    syncedItemCountRef.current = cartCount;
     loadView(false);
     // Reload only when the header badge count changes while the drawer is open.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: itemCount/open drive sync
-  }, [itemCount, open, locale, currency]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: cartCount/open drive sync
+  }, [cartCount, cartAdding, open, locale, currency]);
 
   function prefetchDrawerView(): void {
     if (view || loadingView || open) {
@@ -107,7 +109,7 @@ export function CartDrawer({
 
   function changeQuantity(itemId: string, quantity: number): void {
     startTransition(async () => {
-      if (view?.source === "group" && view.groupInviteToken) {
+      if (view?.source === 'group' && view.groupInviteToken) {
         const result = await updateGroupOrderItemQuantityAction({
           inviteToken: view.groupInviteToken,
           itemId,
@@ -128,7 +130,7 @@ export function CartDrawer({
 
   function removeCartItem(itemId: string): void {
     startTransition(async () => {
-      if (view?.source === "group" && view.groupInviteToken) {
+      if (view?.source === 'group' && view.groupInviteToken) {
         await removeGroupOrderItemAction({
           inviteToken: view.groupInviteToken,
           itemId,
@@ -155,22 +157,22 @@ export function CartDrawer({
         backdropBlur
       >
         <div className="border-b border-[#ff6b00]/15 px-6 py-5">
-          <p className="text-[11px] font-bold tracking-[0.22em] text-[#ff6b00] uppercase">
-            {isGroupSource ? labels.groupOrderEyebrow : labels.ticketEyebrow}
-          </p>
+          {isGroupSource ? (
+            <p className="text-[11px] font-bold tracking-[0.22em] text-[#ff6b00] uppercase">
+              {labels.groupOrderEyebrow}
+            </p>
+          ) : null}
           <h2 className="font-display mt-1 text-3xl leading-[0.9] text-[#1e1e1e] uppercase">
             {isGroupSource ? labels.groupOrder : labels.title}
           </h2>
           {hasItems ? (
-            <p className="mt-2 text-sm text-[#1e1e1e]/55">
-              {formatItemCount(badgeCount, labels)}
-            </p>
+            <p className="mt-2 text-sm text-[#1e1e1e]/55">{formatItemCount(badgeCount, labels)}</p>
           ) : null}
         </div>
 
         <div
           className={`min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4 ${
-            pending || loadingView ? "opacity-70" : ""
+            pending || loadingView ? 'opacity-70' : ''
           }`}
         >
           {loadingView && !view ? (
@@ -230,11 +232,14 @@ export function CartDrawer({
           aria-label={dictionary.nav.cart}
           aria-expanded={open}
         >
-          <span className="relative inline-flex h-11 w-11 items-center justify-center">
+          <span
+            {...{ [CART_TARGET_ATTR]: '' }}
+            className="relative inline-flex h-11 w-11 items-center justify-center"
+          >
             <ShoppingCart className="h-5 w-5" aria-hidden="true" />
             {badgeCount > 0 ? (
               <span className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ff6b00] px-1 text-[10px] font-semibold text-white">
-                {badgeCount > 99 ? "99+" : badgeCount}
+                {badgeCount > 99 ? '99+' : badgeCount}
               </span>
             ) : null}
           </span>

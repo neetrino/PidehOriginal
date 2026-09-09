@@ -1,18 +1,13 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 import {
   GROUP_ORDER_PAYMENT_MODES,
   GROUP_ORDER_STATUSES,
-} from "@/features/group-orders/domain/status";
+} from '@/features/group-orders/domain/status';
 
 export const createGroupOrderSchema = z.object({
   paymentMode: z.enum(GROUP_ORDER_PAYMENT_MODES),
-  spendLimitAmount: z
-    .number()
-    .int()
-    .positive()
-    .nullable()
-    .optional(),
+  spendLimitAmount: z.number().int().positive().nullable().optional(),
   organizerDisplayName: z.string().trim().min(1).max(80),
 });
 
@@ -90,9 +85,7 @@ export const adminGroupOrdersFilterSchema = z.object({
   page: z.coerce.number().int().min(1).max(500).default(1),
 });
 
-export type AdminGroupOrdersFilter = z.infer<
-  typeof adminGroupOrdersFilterSchema
->;
+export type AdminGroupOrdersFilter = z.infer<typeof adminGroupOrdersFilterSchema>;
 
 export const adminMarkParticipantPaidSchema = z.object({
   groupOrderId: z.string().uuid(),
@@ -101,7 +94,7 @@ export const adminMarkParticipantPaidSchema = z.object({
 
 export const completeParticipantCardPaymentSchema = z.object({
   inviteToken: z.string().uuid(),
-  provider: z.enum(["idram", "arca"]),
+  provider: z.enum(['idram', 'arca']),
 });
 
 export const adminRefundParticipantSchema = z.object({

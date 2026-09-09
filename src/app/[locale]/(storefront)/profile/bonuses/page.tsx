@@ -1,28 +1,23 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound, redirect } from 'next/navigation';
 
-import { getCustomerBonusSummary } from "@/features/bonuses/application/queries";
-import { formatYerevanDateTime } from "@/features/delivery/domain/delivery-schedule";
-import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { formatMoneyAmount } from "@/lib/money/format";
-import { AppLink } from "@/components/ui/AppLink";
+import { getCustomerBonusSummary } from '@/features/bonuses/application/queries';
+import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
+import { ProfileStatCard } from '@/features/profile/ui/ProfileStatCard';
+import { getCurrentUser } from '@/lib/auth/session';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { formatMoneyAmount } from '@/lib/money/format';
+import { AppLink } from '@/components/ui/AppLink';
 
 type ProfileBonusesPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-function typeLabel(
-  type: string,
-  labels: Record<string, string>,
-): string {
+function typeLabel(type: string, labels: Record<string, string>): string {
   return labels[type] ?? type;
 }
 
-export default async function ProfileBonusesPage({
-  params,
-}: ProfileBonusesPageProps) {
+export default async function ProfileBonusesPage({ params }: ProfileBonusesPageProps) {
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) {
     notFound();
@@ -46,27 +41,13 @@ export default async function ProfileBonusesPage({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <ProfileStatCard
-          label={copy.available}
-          value={summary.availableBalance}
-          suffix=" AMD"
-        />
-        <ProfileStatCard
-          label={copy.totalEarned}
-          value={summary.totalEarned}
-          suffix=" AMD"
-        />
-        <ProfileStatCard
-          label={copy.totalRedeemed}
-          value={summary.totalRedeemed}
-          suffix=" AMD"
-        />
+        <ProfileStatCard label={copy.available} value={summary.availableBalance} suffix=" AMD" />
+        <ProfileStatCard label={copy.totalEarned} value={summary.totalEarned} suffix=" AMD" />
+        <ProfileStatCard label={copy.totalRedeemed} value={summary.totalRedeemed} suffix=" AMD" />
       </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          {copy.history}
-        </h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">{copy.history}</h2>
         {summary.transactions.length === 0 ? (
           <p className="text-sm text-gray-600">{copy.empty}</p>
         ) : (
@@ -86,7 +67,7 @@ export default async function ProfileBonusesPage({
                       {formatYerevanDateTime(row.createdAt)}
                       {row.orderNumber ? (
                         <>
-                          {" · "}
+                          {' · '}
                           <AppLink
                             href={`/${rawLocale}/profile/orders?order=${encodeURIComponent(row.orderNumber)}`}
                             className="underline-offset-2 hover:underline"
@@ -96,13 +77,10 @@ export default async function ProfileBonusesPage({
                         </>
                       ) : null}
                     </p>
-                    {row.type === "EARN" ? (
+                    {row.type === 'EARN' ? (
                       <p className="text-xs text-gray-500">
                         {row.expiresAt
-                          ? copy.expires.replace(
-                              "{date}",
-                              row.expiresAt.toISOString().slice(0, 10),
-                            )
+                          ? copy.expires.replace('{date}', row.expiresAt.toISOString().slice(0, 10))
                           : copy.noExpiry}
                       </p>
                     ) : null}
@@ -110,12 +88,12 @@ export default async function ProfileBonusesPage({
                   <p
                     className={
                       positive
-                        ? "text-sm font-semibold text-emerald-700"
-                        : "text-sm font-semibold text-gray-900"
+                        ? 'text-sm font-semibold text-emerald-700'
+                        : 'text-sm font-semibold text-gray-900'
                     }
                   >
-                    {positive ? "+" : ""}
-                    {formatMoneyAmount(row.delta, "AMD", rawLocale)}
+                    {positive ? '+' : ''}
+                    {formatMoneyAmount(row.delta, 'AMD', rawLocale)}
                   </p>
                 </li>
               );

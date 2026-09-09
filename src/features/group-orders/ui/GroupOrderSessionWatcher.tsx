@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
 import {
   checkActiveGroupOrderSessionAction,
   leaveGroupOrderSessionAction,
-} from "@/features/group-orders/actions";
-import { alertGroupOrderCancelledOnce } from "@/features/group-orders/ui/alert-group-order-cancelled";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/group-orders/actions';
+import { alertGroupOrderCancelledOnce } from '@/features/group-orders/ui/alert-group-order-cancelled';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 const SESSION_POLL_MS = 8_000;
 
 type GroupOrderSessionWatcherProps = {
-  labels: Dictionary["groupOrder"];
+  labels: Dictionary['groupOrder'];
   inviteToken?: string;
   /**
    * `poll` — watch an active session for remote cancel.
    * `alert-cancelled` — show alert and clear immediately.
    * `clear-ended` — clear stale terminal session without alert.
    */
-  mode?: "poll" | "alert-cancelled" | "clear-ended";
+  mode?: 'poll' | 'alert-cancelled' | 'clear-ended';
 };
 
 /**
@@ -30,7 +30,7 @@ type GroupOrderSessionWatcherProps = {
 export function GroupOrderSessionWatcher({
   labels,
   inviteToken,
-  mode = "poll",
+  mode = 'poll',
 }: GroupOrderSessionWatcherProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -51,11 +51,11 @@ export function GroupOrderSessionWatcher({
   }
 
   useEffect(() => {
-    if (mode === "alert-cancelled") {
+    if (mode === 'alert-cancelled') {
       clearSession(true, inviteToken);
       return;
     }
-    if (mode === "clear-ended") {
+    if (mode === 'clear-ended') {
       clearSession(false);
       return;
     }
@@ -65,11 +65,11 @@ export function GroupOrderSessionWatcher({
       void (async () => {
         const next = await checkActiveGroupOrderSessionAction();
         if (cancelled || handledRef.current) return;
-        if (next.kind === "cancelled") {
+        if (next.kind === 'cancelled') {
           clearSession(true, inviteToken);
           return;
         }
-        if (next.kind === "ended" || next.kind === "none") {
+        if (next.kind === 'ended' || next.kind === 'none') {
           clearSession(false);
         }
       })();

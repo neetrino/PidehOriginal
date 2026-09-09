@@ -1,39 +1,29 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
-import type { AdminHeroSlideListItem } from "@/features/hero/application/queries";
-import { HeroSlideControls } from "@/features/hero/ui/HeroSlideControls";
-import { HeroSlideModal } from "@/features/hero/ui/HeroSlideModal";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { ADMIN_SECTION_TITLE } from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
+import { ADMIN_BADGE } from '@/features/admin/ui/status-badge';
+import type { AdminHeroSlideListItem } from '@/features/hero/application/queries';
+import { HeroSlideControls } from '@/features/hero/ui/HeroSlideControls';
+import { HeroSlideModal } from '@/features/hero/ui/HeroSlideModal';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminHeroViewProps = {
   locale: string;
   slides: AdminHeroSlideListItem[];
   initialEditId?: string;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-export function AdminHeroView({
-  locale,
-  slides,
-  initialEditId,
-  copy,
-}: AdminHeroViewProps) {
+export function AdminHeroView({ locale, slides, initialEditId, copy }: AdminHeroViewProps) {
   const initialSlide =
-    initialEditId != null
-      ? (slides.find((slide) => slide.id === initialEditId) ?? null)
-      : null;
+    initialEditId != null ? (slides.find((slide) => slide.id === initialEditId) ?? null) : null;
   const [modalOpen, setModalOpen] = useState(initialSlide != null);
-  const [editingSlide, setEditingSlide] =
-    useState<AdminHeroSlideListItem | null>(initialSlide);
+  const [editingSlide, setEditingSlide] = useState<AdminHeroSlideListItem | null>(initialSlide);
 
   function openCreate(): void {
     setEditingSlide(null);
@@ -57,11 +47,8 @@ export function AdminHeroView({
           title={copy.hero.title}
           description={
             slides.length === 1
-              ? copy.hero.slideCount.replace("{count}", "1")
-              : copy.hero.slideCountPlural.replace(
-                  "{count}",
-                  String(slides.length),
-                )
+              ? copy.hero.slideCount.replace('{count}', '1')
+              : copy.hero.slideCountPlural.replace('{count}', String(slides.length))
           }
         />
         <Button type="button" onClick={openCreate}>
@@ -71,7 +58,7 @@ export function AdminHeroView({
 
       <div className="mb-4">
         <h2 className={ADMIN_SECTION_TITLE}>
-          {copy.hero.slidesHeading.replace("{count}", String(slides.length))}
+          {copy.hero.slidesHeading.replace('{count}', String(slides.length))}
         </h2>
       </div>
 
@@ -104,13 +91,11 @@ export function AdminHeroView({
                   </p>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <span className="text-xs text-gray-500">
-                      {copy.hero.sortOrder.replace("{order}", String(slide.sortOrder))}
+                      {copy.hero.sortOrder.replace('{order}', String(slide.sortOrder))}
                     </span>
                     <span
                       className={`${ADMIN_BADGE} ${
-                        slide.isActive
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
+                        slide.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                       }`}
                     >
                       {slide.isActive ? copy.hero.published : copy.hero.draft}
@@ -134,9 +119,7 @@ export function AdminHeroView({
         ))}
         {slides.length === 0 ? (
           <Card className="p-6">
-            <p className="text-center text-sm text-gray-600">
-              {copy.hero.empty}
-            </p>
+            <p className="text-center text-sm text-gray-600">{copy.hero.empty}</p>
           </Card>
         ) : null}
       </div>
@@ -151,4 +134,3 @@ export function AdminHeroView({
     </section>
   );
 }
-

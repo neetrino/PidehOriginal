@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { LegalDocument } from "@/features/legal/ui/LegalDocument";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { LegalDocument } from '@/features/legal/ui/LegalDocument';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type PrivacyPageProps = {
   params: Promise<{ locale: string }>;

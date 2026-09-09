@@ -1,7 +1,7 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+import { AppLink } from '@/components/ui/AppLink';
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 
 type ShopBreadcrumbProps = {
   backHref: string;
@@ -9,11 +9,7 @@ type ShopBreadcrumbProps = {
   currentLabel: string;
 };
 
-export function ShopBreadcrumb({
-  backHref,
-  backLabel,
-  currentLabel,
-}: ShopBreadcrumbProps) {
+export function ShopBreadcrumb({ backHref, backLabel, currentLabel }: ShopBreadcrumbProps) {
   return (
     <nav aria-label={currentLabel} className="flex items-center gap-2">
       <AppLink

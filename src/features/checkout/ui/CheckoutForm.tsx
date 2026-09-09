@@ -1,30 +1,30 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition, type FormEvent } from "react";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState, useTransition, type FormEvent } from 'react';
 
-import { Card } from "@/components/ui/Card";
-import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
-import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
-import { createOrderAction } from "@/features/checkout/create-order";
-import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
-import type { CheckoutShippingMethod } from "@/features/checkout/domain/shipping-methods";
-import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
-import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
-import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
-import { useDistanceDeliveryQuote } from "@/features/checkout/ui/use-distance-delivery-quote";
+import { Card } from '@/components/ui/Card';
+import type { CheckoutOrderProduct } from '@/features/checkout/ui/checkout-order-product';
+import { previewCouponAction } from '@/features/checkout/application/preview-coupon';
+import { createOrderAction } from '@/features/checkout/create-order';
+import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
+import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
+import { CheckoutDetailsSections } from '@/features/checkout/ui/CheckoutDetailsSections';
+import { CheckoutOrderSummary } from '@/features/checkout/ui/CheckoutOrderSummary';
+import { CheckoutProductsInOrder } from '@/features/checkout/ui/CheckoutProductsInOrder';
+import { useDistanceDeliveryQuote } from '@/features/checkout/ui/use-distance-delivery-quote';
 import {
   calculateMaxRedeemAmount,
   clampBonusRedeemRequest,
-} from "@/features/bonuses/domain/bonus-rules";
-import { previewGiftCardAction } from "@/features/gift-cards/application/preview-gift-card";
-import type { GiftCardRedeemPreview } from "@/features/gift-cards/domain/gift-card-rules";
-import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
-import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
-import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
-import type { Locale } from "@/lib/i18n/config";
-import { formatMoneyAmount } from "@/lib/money/format";
+} from '@/features/bonuses/domain/bonus-rules';
+import { previewGiftCardAction } from '@/features/gift-cards/application/preview-gift-card';
+import type { GiftCardRedeemPreview } from '@/features/gift-cards/domain/gift-card-rules';
+import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delivery-schedule';
+import type { SelectedDeliverySlot } from '@/features/delivery/domain/delivery-schedule';
+import type { CashChangeDenominationView } from '@/features/delivery/domain/cash-change';
+import type { Locale } from '@/lib/i18n/config';
+import { formatMoneyAmount } from '@/lib/money/format';
 
 type CheckoutLabels = {
   title: string;
@@ -161,35 +161,28 @@ export function CheckoutForm({
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
-  const [shippingMethod, setShippingMethod] =
-    useState<CheckoutShippingMethod>("delivery");
+  const [shippingMethod, setShippingMethod] = useState<CheckoutShippingMethod>('delivery');
   const [line1, setLine1] = useState(defaultLine1);
   const [deliveryPoint, setDeliveryPoint] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
-  const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
-    null,
-  );
+  const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(null);
   const [cashChangeAmount, setCashChangeAmount] = useState<number | null>(null);
   const deliveryQuote = useDistanceDeliveryQuote(
-    shippingMethod === "delivery" ? line1 : "",
-    shippingMethod === "delivery" ? deliveryPoint : null,
+    shippingMethod === 'delivery' ? line1 : '',
+    shippingMethod === 'delivery' ? deliveryPoint : null,
   );
-  const [paymentMethod, setPaymentMethod] =
-    useState<CheckoutPaymentMethod>("cash_on_delivery");
+  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>('cash_on_delivery');
   const [error, setError] = useState<string | null>(null);
-  const [couponDraft, setCouponDraft] = useState("");
-  const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(
-    null,
-  );
+  const [couponDraft, setCouponDraft] = useState('');
+  const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [useBonuses, setUseBonuses] = useState(false);
   const [bonusRedeemAmount, setBonusRedeemAmount] = useState(0);
-  const [giftCardDraft, setGiftCardDraft] = useState("");
-  const [giftCardPreview, setGiftCardPreview] =
-    useState<GiftCardRedeemPreview | null>(null);
+  const [giftCardDraft, setGiftCardDraft] = useState('');
+  const [giftCardPreview, setGiftCardPreview] = useState<GiftCardRedeemPreview | null>(null);
   const [giftCardError, setGiftCardError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [applyingCoupon, startApplyCoupon] = useTransition();
@@ -198,12 +191,12 @@ export function CheckoutForm({
   const shippingOptions = useMemo(
     () => [
       {
-        id: "delivery" as const,
+        id: 'delivery' as const,
         name: labels.deliveryOption,
         description: labels.deliveryOptionDescription,
       },
       {
-        id: "pickup" as const,
+        id: 'pickup' as const,
         name: labels.storePickup,
         description: labels.storePickupDescription,
       },
@@ -219,22 +212,22 @@ export function CheckoutForm({
   const paymentOptions = useMemo(
     () => [
       {
-        id: "cash_on_delivery" as const,
+        id: 'cash_on_delivery' as const,
         name: labels.cashOnDelivery,
         description: labels.cashOnDeliveryDescription,
         logoSrc: null,
       },
       {
-        id: "idram" as const,
+        id: 'idram' as const,
         name: labels.idram,
         description: labels.idramDescription,
-        logoSrc: "/assets/payments/idram.svg",
+        logoSrc: '/assets/payments/idram.svg',
       },
       {
-        id: "arca" as const,
+        id: 'arca' as const,
         name: labels.arca,
         description: labels.arcaDescription,
-        logoSrc: "/assets/payments/arca.svg",
+        logoSrc: '/assets/payments/arca.png',
       },
     ],
     [
@@ -248,10 +241,10 @@ export function CheckoutForm({
   );
 
   function formatMoney(amount: number): string {
-    return formatMoneyAmount(amount, "AMD", locale);
+    return formatMoneyAmount(amount, 'AMD', locale);
   }
 
-  const isPickup = shippingMethod === "pickup";
+  const isPickup = shippingMethod === 'pickup';
   const lockedDelivery = groupOrderCheckout?.lockedDeliveryAmount;
   const shippingAmount = isPickup
     ? 0
@@ -267,9 +260,7 @@ export function CheckoutForm({
           availableBalance: bonusAvailableBalance,
           maxRedeemPercent: bonusMaxRedeemPercent,
         });
-  const appliedBonus = useBonuses
-    ? clampBonusRedeemRequest(bonusRedeemAmount, maxBonusRedeem)
-    : 0;
+  const appliedBonus = useBonuses ? clampBonusRedeemRequest(bonusRedeemAmount, maxBonusRedeem) : 0;
   const payableBeforeGiftCard =
     Math.max(0, merchandiseAfterDiscount - appliedBonus) + shippingAmount;
   const giftCardRedeem = giftCardPreview
@@ -376,7 +367,7 @@ export function CheckoutForm({
 
   if (!hasItems) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="py-12">
         <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
         <Card className="rounded-2xl border border-gray-200/80 p-6 text-center shadow-none">
           <p className="mb-4 text-gray-600">{labels.cartEmpty}</p>
@@ -396,12 +387,8 @@ export function CheckoutForm({
     const data = new FormData(event.currentTarget);
     setError(null);
 
-    if (shippingMethod === "delivery") {
-      if (
-        deliveryQuote.pending ||
-        deliveryQuote.error ||
-        !deliveryQuote.distanceLabel
-      ) {
+    if (shippingMethod === 'delivery') {
+      if (deliveryQuote.pending || deliveryQuote.error || !deliveryQuote.distanceLabel) {
         setError(labels.enterDeliveryAddress);
         return;
       }
@@ -413,7 +400,7 @@ export function CheckoutForm({
     }
 
     if (
-      paymentMethod === "cash_on_delivery" &&
+      paymentMethod === 'cash_on_delivery' &&
       cashChangeOptions.length > 0 &&
       cashChangeAmount == null
     ) {
@@ -425,35 +412,23 @@ export function CheckoutForm({
       const result = await createOrderAction({
         locale,
         idempotencyKey,
-        firstName: String(data.get("firstName") ?? ""),
-        lastName: String(data.get("lastName") ?? ""),
-        contactEmail: String(data.get("contactEmail") ?? ""),
-        contactPhone: String(data.get("contactPhone") ?? ""),
+        firstName: String(data.get('firstName') ?? ''),
+        lastName: String(data.get('lastName') ?? ''),
+        contactEmail: String(data.get('contactEmail') ?? ''),
+        contactPhone: String(data.get('contactPhone') ?? ''),
         shippingMethod,
         paymentMethod,
-        line1: shippingMethod === "delivery" ? line1 : undefined,
-        deliveryLat:
-          shippingMethod === "delivery" ? deliveryPoint?.lat : undefined,
-        deliveryLng:
-          shippingMethod === "delivery" ? deliveryPoint?.lng : undefined,
-        floor:
-          shippingMethod === "delivery"
-            ? String(data.get("floor") ?? "")
-            : undefined,
+        line1: shippingMethod === 'delivery' ? line1 : undefined,
+        deliveryLat: shippingMethod === 'delivery' ? deliveryPoint?.lat : undefined,
+        deliveryLng: shippingMethod === 'delivery' ? deliveryPoint?.lng : undefined,
+        floor: shippingMethod === 'delivery' ? String(data.get('floor') ?? '') : undefined,
         intercomCode:
-          shippingMethod === "delivery"
-            ? String(data.get("intercomCode") ?? "")
-            : undefined,
-        scheduledDeliveryDate:
-          shippingMethod === "delivery" ? deliverySlot?.date : undefined,
-        scheduledDeliveryStart:
-          shippingMethod === "delivery" ? deliverySlot?.startTime : undefined,
-        scheduledDeliveryEnd:
-          shippingMethod === "delivery" ? deliverySlot?.endTime : undefined,
+          shippingMethod === 'delivery' ? String(data.get('intercomCode') ?? '') : undefined,
+        scheduledDeliveryDate: shippingMethod === 'delivery' ? deliverySlot?.date : undefined,
+        scheduledDeliveryStart: shippingMethod === 'delivery' ? deliverySlot?.startTime : undefined,
+        scheduledDeliveryEnd: shippingMethod === 'delivery' ? deliverySlot?.endTime : undefined,
         cashChangeAmount:
-          paymentMethod === "cash_on_delivery"
-            ? (cashChangeAmount ?? undefined)
-            : undefined,
+          paymentMethod === 'cash_on_delivery' ? (cashChangeAmount ?? undefined) : undefined,
         couponCode: appliedCouponCode ?? undefined,
         bonusRedeemAmount: useBonuses ? appliedBonus : undefined,
         giftCardCode: giftCardPreview?.code,
@@ -470,7 +445,7 @@ export function CheckoutForm({
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="py-12">
       <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
 
       <CheckoutProductsInOrder
@@ -493,7 +468,7 @@ export function CheckoutForm({
               setShippingMethod(method);
               setError(null);
               setGiftCardPreview(null);
-              if (method === "pickup") {
+              if (method === 'pickup') {
                 setDeliverySlot(null);
                 setDeliveryPoint(null);
               }
@@ -521,7 +496,7 @@ export function CheckoutForm({
             paymentMethod={paymentMethod}
             onPaymentMethodChange={(method) => {
               setPaymentMethod(method);
-              if (method !== "cash_on_delivery") {
+              if (method !== 'cash_on_delivery') {
                 setCashChangeAmount(null);
               }
             }}
@@ -552,20 +527,14 @@ export function CheckoutForm({
             shippingLabel={labels.shipping}
             taxLabel={labels.tax}
             totalLabel={splitPrepaid ? labels.yourShare : labels.total}
-            participantsPrepaidLabel={
-              splitPrepaid ? labels.participantsPrepaid : undefined
-            }
+            participantsPrepaidLabel={splitPrepaid ? labels.participantsPrepaid : undefined}
             participantsPrepaidFormatted={
-              splitPrepaid && othersPrepaidAmount > 0
-                ? formatMoney(othersPrepaidAmount)
-                : null
+              splitPrepaid && othersPrepaidAmount > 0 ? formatMoney(othersPrepaidAmount) : null
             }
             subtotalFormatted={formatMoney(subtotalAmount)}
             shippingFormatted={shippingFormatted}
             taxFormatted={formatMoney(0)}
-            discountFormatted={
-              discountAmount > 0 ? formatMoney(discountAmount) : null
-            }
+            discountFormatted={discountAmount > 0 ? formatMoney(discountAmount) : null}
             totalFormatted={formatMoney(amountDue)}
             couponDraft={couponDraft}
             onCouponDraftChange={onCouponDraftChange}
@@ -583,8 +552,7 @@ export function CheckoutForm({
                     code: giftCardPreview.code,
                     initialAmount: giftCardPreview.initialAmount,
                     redeemAmount: giftCardRedeem,
-                    remainingBalance:
-                      giftCardPreview.balanceAmount - giftCardRedeem,
+                    remainingBalance: giftCardPreview.balanceAmount - giftCardRedeem,
                     payableAfter: amountDue,
                   }
                 : null

@@ -1,35 +1,29 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import {
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
-import type { AdminPopupListItem } from "@/features/popups/application/queries";
-import { PopupControls } from "@/features/popups/ui/PopupControls";
-import { PopupDrawer } from "@/features/popups/ui/PopupDrawer";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-form-classes';
+import { ADMIN_BADGE } from '@/features/admin/ui/status-badge';
+import type { AdminPopupListItem } from '@/features/popups/application/queries';
+import { PopupControls } from '@/features/popups/ui/PopupControls';
+import { PopupDrawer } from '@/features/popups/ui/PopupDrawer';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminPopupsViewProps = {
   locale: string;
   popups: AdminPopupListItem[];
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-export function AdminPopupsView({
-  locale,
-  popups,
-  copy,
-}: AdminPopupsViewProps) {
+export function AdminPopupsView({ locale, popups, copy }: AdminPopupsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editingPopup, setEditingPopup] = useState<AdminPopupListItem | null>(
-    null,
-  );
+  const [editingPopup, setEditingPopup] = useState<AdminPopupListItem | null>(null);
 
   function openCreate(): void {
     setEditingPopup(null);
@@ -53,11 +47,8 @@ export function AdminPopupsView({
           <h1 className={ADMIN_PAGE_TITLE}>{copy.popups.title}</h1>
           <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
             {popups.length === 1
-              ? copy.popups.count.replace("{count}", "1")
-              : copy.popups.countPlural.replace(
-                  "{count}",
-                  String(popups.length),
-                )}
+              ? copy.popups.count.replace('{count}', '1')
+              : copy.popups.countPlural.replace('{count}', String(popups.length))}
           </p>
         </div>
         <Button type="button" onClick={openCreate}>
@@ -67,7 +58,7 @@ export function AdminPopupsView({
 
       <div className="mb-4">
         <h2 className={ADMIN_SECTION_TITLE}>
-          {copy.popups.listHeading.replace("{count}", String(popups.length))}
+          {copy.popups.listHeading.replace('{count}', String(popups.length))}
         </h2>
       </div>
 
@@ -101,19 +92,13 @@ export function AdminPopupsView({
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <span
                       className={`${ADMIN_BADGE} ${
-                        popup.isActive
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
+                        popup.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                       }`}
                     >
-                      {popup.isActive
-                        ? copy.popups.active
-                        : copy.popups.inactive}
+                      {popup.isActive ? copy.popups.active : copy.popups.inactive}
                     </span>
                     {popup.linkUrl ? (
-                      <span className="truncate text-xs text-gray-500">
-                        {popup.linkUrl}
-                      </span>
+                      <span className="truncate text-xs text-gray-500">{popup.linkUrl}</span>
                     ) : null}
                   </div>
                 </div>
@@ -131,9 +116,7 @@ export function AdminPopupsView({
         ))}
         {popups.length === 0 ? (
           <Card className="p-6">
-            <p className="text-center text-sm text-gray-600">
-              {copy.popups.empty}
-            </p>
+            <p className="text-center text-sm text-gray-600">{copy.popups.empty}</p>
           </Card>
         ) : null}
       </div>

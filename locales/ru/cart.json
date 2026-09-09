@@ -1,6 +1,5 @@
 {
   "title": "Корзина",
-  "ticketEyebrow": "Кухонный заказ",
   "itemsOne": "1 товар",
   "itemsMany": "{count} товара",
   "empty": "Ваша корзина пуста.",

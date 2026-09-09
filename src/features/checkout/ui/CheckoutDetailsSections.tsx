@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { Card } from "@/components/ui/Card";
-import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
-import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
-import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
-import type { CheckoutShippingMethod } from "@/features/checkout/domain/shipping-methods";
-import { CashChangePicker } from "@/features/checkout/ui/CashChangePicker";
-import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
-import { CheckoutShippingMethods } from "@/features/checkout/ui/CheckoutShippingMethods";
-import { DeliverySlotPicker } from "@/features/checkout/ui/DeliverySlotPicker";
-import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
-import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
-import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
-import type { Locale } from "@/lib/i18n/config";
+import { Card } from '@/components/ui/Card';
+import { AddressAutocomplete } from '@/components/ui/AddressAutocomplete';
+import { AddressMapPicker } from '@/components/ui/AddressMapPicker';
+import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
+import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
+import { CashChangePicker } from '@/features/checkout/ui/CashChangePicker';
+import { CheckoutPaymentMethods } from '@/features/checkout/ui/CheckoutPaymentMethods';
+import { CheckoutShippingMethods } from '@/features/checkout/ui/CheckoutShippingMethods';
+import { DeliverySlotPicker } from '@/features/checkout/ui/DeliverySlotPicker';
+import type { CashChangeDenominationView } from '@/features/delivery/domain/cash-change';
+import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delivery-schedule';
+import type { SelectedDeliverySlot } from '@/features/delivery/domain/delivery-schedule';
+import type { Locale } from '@/lib/i18n/config';
 
 const FIELD_CLASS =
-  "h-11 w-full rounded-2xl border border-gray-200 px-4 text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300 disabled:bg-gray-50";
+  'h-11 w-full rounded-2xl border border-gray-200 px-4 text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300 disabled:bg-gray-50';
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -81,10 +81,7 @@ type CheckoutDetailsSectionsProps = {
   onCashChangeAmountChange: (amount: number) => void;
   line1: string;
   onLine1Change: (value: string) => void;
-  onMapAddressSelected: (
-    address: string,
-    point: { lat: number; lng: number },
-  ) => void;
+  onMapAddressSelected: (address: string, point: { lat: number; lng: number }) => void;
   deliveryQuotePending: boolean;
   deliveryQuoteError: string | null;
   deliveryQuoteHint: string | null;
@@ -125,14 +122,12 @@ export function CheckoutDetailsSections({
   defaultEmail,
   defaultPhone,
 }: CheckoutDetailsSectionsProps) {
-  const isDelivery = shippingMethod === "delivery";
+  const isDelivery = shippingMethod === 'delivery';
 
   return (
     <div className="space-y-6 lg:col-span-2">
       <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">
-          {labels.contactInformation}
-        </h2>
+        <h2 className="mb-6 text-xl font-semibold text-gray-900">{labels.contactInformation}</h2>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
@@ -196,16 +191,12 @@ export function CheckoutDetailsSections({
       />
 
       <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">
-          {labels.shippingAddress}
-        </h2>
+        <h2 className="mb-6 text-xl font-semibold text-gray-900">{labels.shippingAddress}</h2>
         <div className="space-y-4">
           {isDelivery ? (
             <>
               <div className="space-y-1.5">
-                <span className="text-sm font-medium text-gray-700">
-                  {labels.address}
-                </span>
+                <span className="text-sm font-medium text-gray-700">{labels.address}</span>
                 <div className="flex items-start gap-2">
                   <div className="min-w-0 flex-1">
                     <AddressAutocomplete
@@ -277,7 +268,7 @@ export function CheckoutDetailsSections({
                 : labels.pickupStoreHint}
             </p>
           )}
-          {paymentMethod === "cash_on_delivery" ? (
+          {paymentMethod === 'cash_on_delivery' ? (
             <CashChangePicker
               options={cashChangeOptions}
               value={cashChangeAmount}
@@ -293,17 +284,12 @@ export function CheckoutDetailsSections({
           ) : null}
         </div>
         {isDelivery && deliveryQuotePending ? (
-          <p className="mt-2 text-sm text-gray-500">
-            {labels.calculatingDelivery}
-          </p>
+          <p className="mt-2 text-sm text-gray-500">{labels.calculatingDelivery}</p>
         ) : null}
         {isDelivery && deliveryQuoteError ? (
           <p className="mt-2 text-sm text-red-700">{deliveryQuoteError}</p>
         ) : null}
-        {isDelivery &&
-        !deliveryQuotePending &&
-        !deliveryQuoteError &&
-        deliveryQuoteHint ? (
+        {isDelivery && !deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
           <p className="mt-2 text-sm text-gray-600">{deliveryQuoteHint}</p>
         ) : null}
       </Card>

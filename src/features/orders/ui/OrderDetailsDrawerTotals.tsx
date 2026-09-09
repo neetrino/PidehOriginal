@@ -1,16 +1,13 @@
-import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
+import { formatOrderDrawerMoney } from '@/features/orders/ui/order-drawer-format';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type OrderDetailsDrawerTotalsProps = {
   detail: AdminOrderDetailView;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-export function OrderDetailsDrawerTotals({
-  detail,
-  copy,
-}: OrderDetailsDrawerTotalsProps) {
+export function OrderDetailsDrawerTotals({ detail, copy }: OrderDetailsDrawerTotalsProps) {
   const d = copy.orders.drawer;
 
   const shippingLabel = detail.isPickup
@@ -19,11 +16,11 @@ export function OrderDetailsDrawerTotals({
 
   const deliveryRowLabel =
     !detail.isPickup && detail.deliveryLabel
-      ? d.deliveryWithLabel.replace("{label}", detail.deliveryLabel)
+      ? d.deliveryWithLabel.replace('{label}', detail.deliveryLabel)
       : d.delivery;
 
   const couponRowLabel = detail.couponCode
-    ? d.couponDiscountWithCode.replace("{code}", detail.couponCode)
+    ? d.couponDiscountWithCode.replace('{code}', detail.couponCode)
     : d.couponDiscount;
 
   const discountLabel =
@@ -50,7 +47,7 @@ export function OrderDetailsDrawerTotals({
           <span className="text-gray-600">{couponRowLabel}</span>
           <span
             className={`font-medium ${
-              detail.discountAmount > 0 ? "text-green-700" : "text-gray-900"
+              detail.discountAmount > 0 ? 'text-green-700' : 'text-gray-900'
             }`}
           >
             {discountLabel}
@@ -61,11 +58,7 @@ export function OrderDetailsDrawerTotals({
           <div className="flex items-center justify-between gap-4">
             <span className="text-gray-600">{d.bonusRedeemed}</span>
             <span className="font-medium text-green-700">
-              −
-              {formatOrderDrawerMoney(
-                detail.bonusRedeemedAmount,
-                detail.baseCurrency,
-              )}
+              −{formatOrderDrawerMoney(detail.bonusRedeemedAmount, detail.baseCurrency)}
             </span>
           </div>
         ) : null}
@@ -74,19 +67,13 @@ export function OrderDetailsDrawerTotals({
           <div className="flex items-center justify-between gap-4">
             <span className="text-gray-600">{d.giftCard}</span>
             <span className="font-medium text-green-700">
-              −
-              {formatOrderDrawerMoney(
-                detail.giftCardAmount,
-                detail.baseCurrency,
-              )}
+              −{formatOrderDrawerMoney(detail.giftCardAmount, detail.baseCurrency)}
             </span>
           </div>
         ) : null}
 
         <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-3">
-          <span className="text-base font-semibold text-gray-900">
-            {d.grandTotal}
-          </span>
+          <span className="text-base font-semibold text-gray-900">{d.grandTotal}</span>
           <span className="text-base font-semibold text-gray-900">
             {formatOrderDrawerMoney(detail.totalAmount, detail.baseCurrency)}
           </span>
@@ -96,11 +83,7 @@ export function OrderDetailsDrawerTotals({
           <div className="flex items-center justify-between gap-4">
             <span className="text-gray-600">{d.bonusEarned}</span>
             <span className="font-medium text-emerald-700">
-              +
-              {formatOrderDrawerMoney(
-                detail.bonusEarnedAmount,
-                detail.baseCurrency,
-              )}
+              +{formatOrderDrawerMoney(detail.bonusEarnedAmount, detail.baseCurrency)}
             </span>
           </div>
         ) : null}

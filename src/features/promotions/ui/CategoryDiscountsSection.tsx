@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Button } from "@/components/ui/Button";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
-import type { DiscountBoardCategory } from "@/features/promotions/application/discounts-board";
-import { saveCategoryDiscountsAction } from "@/features/promotions/application/manage-discounts";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { ADMIN_INPUT } from '@/features/admin/ui/admin-form-classes';
+import type { DiscountBoardCategory } from '@/features/promotions/application/discounts-board';
+import { saveCategoryDiscountsAction } from '@/features/promotions/application/manage-discounts';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type CategoryDiscountsSectionCopy = {
-  categories: Dictionary["admin"]["discounts"]["categories"];
-  common: Dictionary["admin"]["common"];
+  categories: Dictionary['admin']['discounts']['categories'];
+  common: Dictionary['admin']['common'];
 };
 
 type CategoryDiscountsSectionProps = {
@@ -20,11 +20,11 @@ type CategoryDiscountsSectionProps = {
   copy: CategoryDiscountsSectionCopy;
 };
 
-function parsePercent(raw: string): number | null | "invalid" {
+function parsePercent(raw: string): number | null | 'invalid' {
   const trimmed = raw.trim();
   if (!trimmed) return null;
   const next = Number(trimmed);
-  if (!Number.isInteger(next) || next < 1 || next > 100) return "invalid";
+  if (!Number.isInteger(next) || next < 1 || next > 100) return 'invalid';
   return next;
 }
 
@@ -38,9 +38,7 @@ export function CategoryDiscountsSection({
     Object.fromEntries(
       categories.map((category) => [
         category.id,
-        category.discountPercent != null
-          ? String(category.discountPercent)
-          : "",
+        category.discountPercent != null ? String(category.discountPercent) : '',
       ]),
     ),
   );
@@ -53,9 +51,7 @@ export function CategoryDiscountsSection({
       Object.fromEntries(
         categories.map((category) => [
           category.id,
-          category.discountPercent != null
-            ? String(category.discountPercent)
-            : "",
+          category.discountPercent != null ? String(category.discountPercent) : '',
         ]),
       ),
     );
@@ -63,11 +59,8 @@ export function CategoryDiscountsSection({
 
   const isDirty = useMemo(() => {
     return categories.some((category) => {
-      const draft = drafts[category.id] ?? "";
-      const saved =
-        category.discountPercent != null
-          ? String(category.discountPercent)
-          : "";
+      const draft = drafts[category.id] ?? '';
+      const saved = category.discountPercent != null ? String(category.discountPercent) : '';
       return draft !== saved;
     });
   }, [categories, drafts]);
@@ -75,11 +68,9 @@ export function CategoryDiscountsSection({
   function saveAll(): void {
     const items: Array<{ categoryId: string; percentage: number | null }> = [];
     for (const category of categories) {
-      const parsed = parsePercent(drafts[category.id] ?? "");
-      if (parsed === "invalid") {
-        setError(
-          copy.categories.invalidPercent.replace("{title}", category.title),
-        );
+      const parsed = parsePercent(drafts[category.id] ?? '');
+      if (parsed === 'invalid') {
+        setError(copy.categories.invalidPercent.replace('{title}', category.title));
         return;
       }
       items.push({ categoryId: category.id, percentage: parsed });
@@ -93,9 +84,7 @@ export function CategoryDiscountsSection({
         setError(result.error.message);
         return;
       }
-      setMessage(
-        copy.categories.savedCount.replace("{count}", String(result.value.saved)),
-      );
+      setMessage(copy.categories.savedCount.replace('{count}', String(result.value.saved)));
       router.refresh();
     });
   }
@@ -104,9 +93,7 @@ export function CategoryDiscountsSection({
     <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">
-            {copy.categories.title}
-          </h2>
+          <h2 className="text-base font-semibold text-gray-900">{copy.categories.title}</h2>
           <p className="text-sm text-gray-500">{copy.categories.subtitle}</p>
         </div>
         <Button
@@ -131,20 +118,12 @@ export function CategoryDiscountsSection({
               className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
             >
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-gray-900">
-                  {category.title}
-                </p>
+                <p className="truncate text-sm font-medium text-gray-900">{category.title}</p>
                 <p className="text-xs text-gray-500">{category.parentLabel}</p>
               </div>
               <div className="flex items-center gap-2">
-                <label
-                  className="sr-only"
-                  htmlFor={`cat-discount-${category.id}`}
-                >
-                  {copy.categories.discountForAria.replace(
-                    "{title}",
-                    category.title,
-                  )}
+                <label className="sr-only" htmlFor={`cat-discount-${category.id}`}>
+                  {copy.categories.discountForAria.replace('{title}', category.title)}
                 </label>
                 <input
                   id={`cat-discount-${category.id}`}
@@ -153,7 +132,7 @@ export function CategoryDiscountsSection({
                   max={100}
                   inputMode="numeric"
                   disabled={isPending}
-                  value={drafts[category.id] ?? ""}
+                  value={drafts[category.id] ?? ''}
                   onChange={(event) =>
                     setDrafts((prev) => ({
                       ...prev,
@@ -166,9 +145,7 @@ export function CategoryDiscountsSection({
                 <button
                   type="button"
                   disabled={isPending}
-                  onClick={() =>
-                    setDrafts((prev) => ({ ...prev, [category.id]: "" }))
-                  }
+                  onClick={() => setDrafts((prev) => ({ ...prev, [category.id]: '' }))}
                   className="text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-50"
                 >
                   {copy.common.clear}

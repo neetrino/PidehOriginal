@@ -1,4 +1,4 @@
-import { hash, verify } from "@node-rs/argon2";
+import { hash, verify } from '@node-rs/argon2';
 
 /** Argon2id algorithm id from @node-rs/argon2 (avoids ambient const enum). */
 const ARGON2ID = 2;
@@ -16,9 +16,6 @@ export async function hashPassword(password: string): Promise<string> {
 }
 
 /** Verify a password against an Argon2id hash. */
-export async function verifyPassword(
-  password: string,
-  passwordHash: string,
-): Promise<boolean> {
+export async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
   return verify(passwordHash, password, ARGON2_OPTIONS);
 }

@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from 'drizzle-orm';
 
 /**
  * SQL expression: participant final share for group orders, else order total.

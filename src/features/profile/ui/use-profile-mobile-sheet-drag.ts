@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   useCallback,
@@ -6,7 +6,7 @@ import {
   useRef,
   type PointerEvent as ReactPointerEvent,
   type RefObject,
-} from "react";
+} from 'react';
 
 const DISMISS_THRESHOLD_PX = 120;
 const SCROLL_DRAG_ARM_PX = 10;
@@ -74,10 +74,9 @@ export function useProfileMobileSheetDrag({
       if (!panel) return;
       latestOffsetRef.current = offsetY;
       panel.style.transition = withTransition
-        ? "transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)"
-        : "none";
-      panel.style.transform =
-        offsetY > 0 ? `translateY(${offsetY}px)` : "translateY(0)";
+        ? 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)'
+        : 'none';
+      panel.style.transform = offsetY > 0 ? `translateY(${offsetY}px)` : 'translateY(0)';
       onOffsetChangeRef.current(offsetY);
     },
     [panelRef],

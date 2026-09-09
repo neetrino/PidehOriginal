@@ -24,25 +24,25 @@ Open `http://localhost:3000/en`.
 
 ### Useful scripts
 
-| Script | Purpose |
-|---|---|
-| `pnpm dev` | Dev server |
-| `pnpm typecheck` | TypeScript |
-| `pnpm lint` | ESLint |
-| `pnpm test` | Vitest |
-| `pnpm build` | Production build |
+| Script            | Purpose              |
+| ----------------- | -------------------- |
+| `pnpm dev`        | Dev server           |
+| `pnpm typecheck`  | TypeScript           |
+| `pnpm lint`       | ESLint               |
+| `pnpm test`       | Vitest               |
+| `pnpm build`      | Production build     |
 | `pnpm db:migrate` | Apply SQL migrations |
-| `pnpm db:seed` | Idempotent seed |
+| `pnpm db:seed`    | Idempotent seed      |
 
 ## Documentation
 
-| Doc | Role |
-|---|---|
-| [`docs/TECH_CARD.md`](docs/TECH_CARD.md) | Approved stack decisions |
-| [`docs/01-ARCHITECTURE.md`](docs/01-ARCHITECTURE.md) | System boundaries |
-| [`docs/08-IMPLEMENTATION-PLAN.md`](docs/08-IMPLEMENTATION-PLAN.md) | Phases 0–11 |
-| [`docs/PROGRESS.md`](docs/PROGRESS.md) | Delivery status |
-| [`docs/ops/RELEASE-CHECKLIST.md`](docs/ops/RELEASE-CHECKLIST.md) | Launch / rollback |
+| Doc                                                                | Role                     |
+| ------------------------------------------------------------------ | ------------------------ |
+| [`docs/TECH_CARD.md`](docs/TECH_CARD.md)                           | Approved stack decisions |
+| [`docs/01-ARCHITECTURE.md`](docs/01-ARCHITECTURE.md)               | System boundaries        |
+| [`docs/08-IMPLEMENTATION-PLAN.md`](docs/08-IMPLEMENTATION-PLAN.md) | Phases 0–11              |
+| [`docs/PROGRESS.md`](docs/PROGRESS.md)                             | Delivery status          |
+| [`docs/ops/RELEASE-CHECKLIST.md`](docs/ops/RELEASE-CHECKLIST.md)   | Launch / rollback        |
 
 ## Phases
 

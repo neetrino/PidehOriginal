@@ -1,14 +1,14 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound, redirect } from 'next/navigation';
 
 import {
   getGiftCardDetail,
   listCustomerGiftCards,
-} from "@/features/gift-cards/application/queries";
-import { MyGiftCardsView } from "@/features/gift-cards/ui/MyGiftCardsView";
-import { getStoreGiftCardSettings } from "@/features/settings/application/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/gift-cards/application/queries';
+import { MyGiftCardsView } from '@/features/gift-cards/ui/MyGiftCardsView';
+import { getStoreGiftCardSettings } from '@/features/settings/application/queries';
+import { getCurrentUser } from '@/lib/auth/session';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type PageProps = {
   params: Promise<{ locale: string }>;

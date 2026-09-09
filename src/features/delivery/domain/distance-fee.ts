@@ -13,7 +13,7 @@ export function calculateDistanceDeliveryFee(
     distanceMeters < 0 ||
     pricePerKmAmount < 0
   ) {
-    throw new Error("Invalid distance fee inputs.");
+    throw new Error('Invalid distance fee inputs.');
   }
 
   const meters = Math.round(distanceMeters);

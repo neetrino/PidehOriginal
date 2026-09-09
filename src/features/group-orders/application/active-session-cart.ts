@@ -1,8 +1,8 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
+import { getDb } from '@/db/client';
 import {
   groupOrderItemModifiers,
   groupOrderItems,
@@ -10,16 +10,16 @@ import {
   groupOrders,
   mediaAssets,
   products,
-} from "@/db/schema";
-import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
-import { peekGroupOrderSession } from "@/features/group-orders/session";
-import type { Locale } from "@/lib/i18n/config";
-import { getCheckoutRateSnapshot } from "@/lib/fx/service";
-import { mediaPublicUrl } from "@/lib/media/public-url";
-import { defaultCurrency } from "@/lib/money/currency";
-import { convertAmount } from "@/lib/money/convert";
-import type { Currency } from "@/lib/money/currency";
-import { formatMoneyAmount } from "@/lib/money/format";
+} from '@/db/schema';
+import type { CartDrawerView } from '@/features/cart/get-cart-drawer-view';
+import { peekGroupOrderSession } from '@/features/group-orders/session';
+import type { Locale } from '@/lib/i18n/config';
+import { getCheckoutRateSnapshot } from '@/lib/fx/service';
+import { mediaPublicUrl } from '@/lib/media/public-url';
+import { defaultCurrency } from '@/lib/money/currency';
+import { convertAmount } from '@/lib/money/convert';
+import type { Currency } from '@/lib/money/currency';
+import { formatMoneyAmount } from '@/lib/money/format';
 
 function convertDisplayAmount(
   baseAmountAmd: number,
@@ -27,12 +27,7 @@ function convertDisplayAmount(
   currency: Currency,
   locale: Locale,
 ): { amount: number; formatted: string } {
-  const converted = convertAmount(
-    baseAmountAmd,
-    rate,
-    defaultCurrency,
-    currency,
-  );
+  const converted = convertAmount(baseAmountAmd, rate, defaultCurrency, currency);
   return {
     amount: Number(converted.amount),
     formatted: formatMoneyAmount(converted.amount, currency, locale),
@@ -56,15 +51,12 @@ async function loadActiveGroupParticipant(): Promise<{
       participantId: groupOrderParticipants.id,
     })
     .from(groupOrderParticipants)
-    .innerJoin(
-      groupOrders,
-      eq(groupOrderParticipants.groupOrderId, groupOrders.id),
-    )
+    .innerJoin(groupOrders, eq(groupOrderParticipants.groupOrderId, groupOrders.id))
     .where(
       and(
         eq(groupOrders.inviteToken, session.inviteToken),
         eq(groupOrderParticipants.id, session.participantId),
-        eq(groupOrderParticipants.status, "ACTIVE"),
+        eq(groupOrderParticipants.status, 'ACTIVE'),
       ),
     )
     .limit(1);
@@ -134,8 +126,8 @@ export async function getActiveGroupSessionCartView(
           .where(
             and(
               inArray(mediaAssets.productId, productIds),
-              eq(mediaAssets.role, "PRIMARY"),
-              eq(mediaAssets.uploadStatus, "READY"),
+              eq(mediaAssets.role, 'PRIMARY'),
+              eq(mediaAssets.uploadStatus, 'READY'),
             ),
           );
 
@@ -149,8 +141,7 @@ export async function getActiveGroupSessionCartView(
   const quote = await getCheckoutRateSnapshot(currency);
   let subtotalBase = 0;
   const items = rows.map((row) => {
-    const translation =
-      row.product.translations[locale] ?? row.product.translations.hy;
+    const translation = row.product.translations[locale] ?? row.product.translations.hy;
     subtotalBase += row.item.lineTotalAmount;
     const names = modifiersByItem.get(row.item.id) ?? [];
     return {
@@ -158,31 +149,22 @@ export async function getActiveGroupSessionCartView(
       title: translation?.title ?? row.product.sku,
       quantity: row.item.quantity,
       imageUrl: imageByProduct.get(row.product.id) ?? null,
-      unitPriceFormatted: convertDisplayAmount(
-        row.item.unitAmount,
-        quote.rate,
-        currency,
-        locale,
-      ).formatted,
+      unitPriceFormatted: convertDisplayAmount(row.item.unitAmount, quote.rate, currency, locale)
+        .formatted,
       lineTotalFormatted: convertDisplayAmount(
         row.item.lineTotalAmount,
         quote.rate,
         currency,
         locale,
       ).formatted,
-      modifierSummary: names.length > 0 ? names.join(", ") : null,
+      modifierSummary: names.length > 0 ? names.join(', ') : null,
     };
   });
 
-  const subtotal = convertDisplayAmount(
-    subtotalBase,
-    quote.rate,
-    currency,
-    locale,
-  );
+  const subtotal = convertDisplayAmount(subtotalBase, quote.rate, currency, locale);
 
   return {
-    source: "group",
+    source: 'group',
     groupInviteToken: active.inviteToken,
     checkoutHref: `/${locale}/group-orders/${active.inviteToken}`,
     itemCount: items.reduce((sum, item) => sum + item.quantity, 0),

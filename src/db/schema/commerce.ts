@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from 'drizzle-orm';
 import {
   check,
   index,
@@ -8,45 +8,39 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
+} from 'drizzle-orm/pg-core';
 
-import { products } from "@/db/schema/catalog";
-import {
-  createdAtColumn,
-  idColumn,
-  updatedAtColumn,
-} from "@/db/schema/columns";
-import { cartStatusEnum } from "@/db/schema/enums";
-import { users } from "@/db/schema/identity";
+import { products } from '@/db/schema/catalog';
+import { createdAtColumn, idColumn, updatedAtColumn } from '@/db/schema/columns';
+import { cartStatusEnum } from '@/db/schema/enums';
+import { users } from '@/db/schema/identity';
 
 export const carts = pgTable(
-  "carts",
+  'carts',
   {
     id: idColumn(),
-    userId: uuid("user_id").references(() => users.id, {
-      onDelete: "restrict",
+    userId: uuid('user_id').references(() => users.id, {
+      onDelete: 'restrict',
     }),
-    guestTokenHash: text("guest_token_hash"),
-    status: cartStatusEnum("status").notNull().default("ACTIVE"),
-    expiresAt: timestamp("expires_at", {
+    guestTokenHash: text('guest_token_hash'),
+    status: cartStatusEnum('status').notNull().default('ACTIVE'),
+    expiresAt: timestamp('expires_at', {
       withTimezone: true,
-      mode: "date",
+      mode: 'date',
     }),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
   (table) => [
-    uniqueIndex("carts_active_user_uidx")
+    uniqueIndex('carts_active_user_uidx')
       .on(table.userId)
       .where(sql`${table.status} = 'ACTIVE' AND ${table.userId} IS NOT NULL`),
-    uniqueIndex("carts_active_guest_uidx")
+    uniqueIndex('carts_active_guest_uidx')
       .on(table.guestTokenHash)
-      .where(
-        sql`${table.status} = 'ACTIVE' AND ${table.guestTokenHash} IS NOT NULL`,
-      ),
-    index("carts_status_idx").on(table.status),
+      .where(sql`${table.status} = 'ACTIVE' AND ${table.guestTokenHash} IS NOT NULL`),
+    index('carts_status_idx').on(table.status),
     check(
-      "carts_owner_chk",
+      'carts_owner_chk',
       sql`(
         (${table.userId} IS NOT NULL AND ${table.guestTokenHash} IS NULL)
         OR (${table.userId} IS NULL AND ${table.guestTokenHash} IS NOT NULL)
@@ -56,51 +50,46 @@ export const carts = pgTable(
 );
 
 export const cartItems = pgTable(
-  "cart_items",
+  'cart_items',
   {
     id: idColumn(),
-    cartId: uuid("cart_id")
+    cartId: uuid('cart_id')
       .notNull()
-      .references(() => carts.id, { onDelete: "cascade" }),
-    productId: uuid("product_id")
+      .references(() => carts.id, { onDelete: 'cascade' }),
+    productId: uuid('product_id')
       .notNull()
-      .references(() => products.id, { onDelete: "restrict" }),
+      .references(() => products.id, { onDelete: 'restrict' }),
     /**
      * Stable key of selected modifier IDs (sorted, comma-joined).
      * Empty string = no modifiers. Allows the same product with different
      * selections to coexist as separate cart lines.
      */
-    selectionKey: text("selection_key").notNull().default(""),
-    quantity: integer("quantity").notNull(),
+    selectionKey: text('selection_key').notNull().default(''),
+    quantity: integer('quantity').notNull(),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
   (table) => [
-    uniqueIndex("cart_items_cart_product_selection_uidx").on(
+    uniqueIndex('cart_items_cart_product_selection_uidx').on(
       table.cartId,
       table.productId,
       table.selectionKey,
     ),
-    check("cart_items_qty_chk", sql`${table.quantity} > 0`),
+    check('cart_items_qty_chk', sql`${table.quantity} > 0`),
   ],
 );
 
 export const wishlistItems = pgTable(
-  "wishlist_items",
+  'wishlist_items',
   {
     id: idColumn(),
-    userId: uuid("user_id")
+    userId: uuid('user_id')
       .notNull()
-      .references(() => users.id, { onDelete: "restrict" }),
-    productId: uuid("product_id")
+      .references(() => users.id, { onDelete: 'restrict' }),
+    productId: uuid('product_id')
       .notNull()
-      .references(() => products.id, { onDelete: "restrict" }),
+      .references(() => products.id, { onDelete: 'restrict' }),
     createdAt: createdAtColumn(),
   },
-  (table) => [
-    uniqueIndex("wishlist_items_user_product_uidx").on(
-      table.userId,
-      table.productId,
-    ),
-  ],
+  (table) => [uniqueIndex('wishlist_items_user_product_uidx').on(table.userId, table.productId)],
 );

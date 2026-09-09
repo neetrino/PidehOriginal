@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Button } from "@/components/ui/Button";
-import { SideSheet } from "@/components/ui/SideSheet";
+import { Button } from '@/components/ui/Button';
+import { SideSheet } from '@/components/ui/SideSheet';
 import {
   ADMIN_CHECKBOX,
   ADMIN_CHECKBOX_LABEL,
   ADMIN_INPUT,
   ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
-import { adminCreateGiftCardAction } from "@/features/gift-cards/application/admin-actions";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-form-classes';
+import { adminCreateGiftCardAction } from '@/features/gift-cards/application/admin-actions';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type GiftCardDrawerCopy = {
-  drawer: Dictionary["admin"]["giftCards"]["drawer"];
-  common: Dictionary["admin"]["common"];
+  drawer: Dictionary['admin']['giftCards']['drawer'];
+  common: Dictionary['admin']['common'];
 };
 
 type GiftCardDrawerProps = {
@@ -27,21 +27,15 @@ type GiftCardDrawerProps = {
   copy: GiftCardDrawerCopy;
 };
 
-export function GiftCardDrawer({
-  locale,
-  open,
-  onClose,
-  presets,
-  copy,
-}: GiftCardDrawerProps) {
+export function GiftCardDrawer({ locale, open, onClose, presets, copy }: GiftCardDrawerProps) {
   const router = useRouter();
   const [amount, setAmount] = useState(String(presets[0] ?? 20000));
-  const [recipientName, setRecipientName] = useState("");
-  const [recipientEmail, setRecipientEmail] = useState("");
-  const [recipientPhone, setRecipientPhone] = useState("");
-  const [purchaserName, setPurchaserName] = useState("White Shop");
-  const [message, setMessage] = useState("");
-  const [expiresAt, setExpiresAt] = useState("");
+  const [recipientName, setRecipientName] = useState('');
+  const [recipientEmail, setRecipientEmail] = useState('');
+  const [recipientPhone, setRecipientPhone] = useState('');
+  const [purchaserName, setPurchaserName] = useState('White Shop');
+  const [message, setMessage] = useState('');
+  const [expiresAt, setExpiresAt] = useState('');
   const [sendEmail, setSendEmail] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -70,12 +64,7 @@ export function GiftCardDrawer({
   }
 
   return (
-    <SideSheet
-      open={open}
-      onClose={onClose}
-      ariaLabel={copy.drawer.newAria}
-      variant="admin"
-    >
+    <SideSheet open={open} onClose={onClose} ariaLabel={copy.drawer.newAria} variant="admin">
       <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
         <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
           {copy.drawer.newTitle}

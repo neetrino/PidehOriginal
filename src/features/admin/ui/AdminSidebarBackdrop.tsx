@@ -1,15 +1,9 @@
-"use client";
+'use client';
 
-import { MeshGradient } from "@paper-design/shaders-react";
-import { useReducedMotion } from "motion/react";
+import { MeshGradient } from '@paper-design/shaders-react';
+import { useReducedMotion } from 'motion/react';
 
-const SIDEBAR_MESH_COLORS = [
-  "#140a04",
-  "#ff6b00",
-  "#5c1f00",
-  "#ffd54a",
-  "#1e1e1e",
-] as const;
+const SIDEBAR_MESH_COLORS = ['#140a04', '#ff6b00', '#5c1f00', '#ffd54a', '#1e1e1e'] as const;
 
 /**
  * Ember mesh + ticket-stripe veil for the admin sidebar (not the login heat).

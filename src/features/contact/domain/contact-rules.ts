@@ -1,33 +1,23 @@
-export const CONTACT_STATUSES = [
-  "UNREAD",
-  "READ",
-  "REPLIED",
-  "ARCHIVED",
-] as const;
+export const CONTACT_STATUSES = ['UNREAD', 'READ', 'REPLIED', 'ARCHIVED'] as const;
 
 export type ContactStatus = (typeof CONTACT_STATUSES)[number];
 
 const STATUS_TRANSITIONS: Record<ContactStatus, readonly ContactStatus[]> = {
-  UNREAD: ["READ", "ARCHIVED"],
-  READ: ["UNREAD", "REPLIED", "ARCHIVED"],
-  REPLIED: ["READ", "ARCHIVED"],
-  ARCHIVED: ["READ"],
+  UNREAD: ['READ', 'ARCHIVED'],
+  READ: ['UNREAD', 'REPLIED', 'ARCHIVED'],
+  REPLIED: ['READ', 'ARCHIVED'],
+  ARCHIVED: ['READ'],
 };
 
 export function isContactStatus(value: string): value is ContactStatus {
   return (CONTACT_STATUSES as readonly string[]).includes(value);
 }
 
-export function getEligibleContactStatuses(
-  from: ContactStatus,
-): ContactStatus[] {
+export function getEligibleContactStatuses(from: ContactStatus): ContactStatus[] {
   return [...STATUS_TRANSITIONS[from]];
 }
 
-export function canTransitionContactStatus(
-  from: ContactStatus,
-  to: ContactStatus,
-): boolean {
+export function canTransitionContactStatus(from: ContactStatus, to: ContactStatus): boolean {
   return STATUS_TRANSITIONS[from].includes(to);
 }
 
@@ -71,7 +61,7 @@ export function scoreContactSpam(input: ContactSpamInput): number {
     score += 40;
   }
 
-  const emailLocal = input.email.split("@")[0] ?? "";
+  const emailLocal = input.email.split('@')[0] ?? '';
   if (emailLocal.length > 40) {
     score += 15;
   }

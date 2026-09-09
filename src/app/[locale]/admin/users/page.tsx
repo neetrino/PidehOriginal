@@ -1,20 +1,18 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
-import { listAdminUsers } from "@/features/users/application/queries";
-import { adminUsersFilterSchema } from "@/features/users/schemas/admin-users";
-import { AdminUsersView } from "@/features/users/ui/AdminUsersView";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { listAdminUsers } from '@/features/users/application/queries';
+import { adminUsersFilterSchema } from '@/features/users/schemas/admin-users';
+import { AdminUsersView } from '@/features/users/ui/AdminUsersView';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminUsersPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-function firstParam(
-  value: string | string[] | undefined,
-): string | undefined {
+function firstParam(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
     return value[0];
   }
@@ -31,17 +29,14 @@ function buildUsersQuery(
   page: number,
 ): string {
   const params = new URLSearchParams();
-  if (filters.q) params.set("q", filters.q);
-  if (filters.role) params.set("role", filters.role);
-  if (filters.status) params.set("status", filters.status);
-  params.set("page", String(page));
+  if (filters.q) params.set('q', filters.q);
+  if (filters.role) params.set('role', filters.role);
+  if (filters.status) params.set('status', filters.status);
+  params.set('page', String(page));
   return params.toString();
 }
 
-export default async function AdminUsersPage({
-  params,
-  searchParams,
-}: AdminUsersPageProps) {
+export default async function AdminUsersPage({ params, searchParams }: AdminUsersPageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) {
     notFound();
@@ -53,7 +48,7 @@ export default async function AdminUsersPage({
     q: firstParam(raw.q) || undefined,
     role: firstParam(raw.role) || undefined,
     status: firstParam(raw.status) || undefined,
-    page: firstParam(raw.page) ?? "1",
+    page: firstParam(raw.page) ?? '1',
   });
 
   const filters = parsed.success
@@ -86,8 +81,8 @@ export default async function AdminUsersPage({
           ) : null}
           <span>
             {dictionary.admin.common.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{totalPages}", String(totalPages))}
+              .replace('{page}', String(filters.page))
+              .replace('{totalPages}', String(totalPages))}
           </span>
           {filters.page < totalPages ? (
             <Link

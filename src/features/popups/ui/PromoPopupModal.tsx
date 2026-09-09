@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { X } from 'lucide-react';
 
 type PromoPopupModalProps = {
   open: boolean;
@@ -34,16 +34,16 @@ export function PromoPopupModal({
     if (!open) return;
 
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") onClose();
+      if (event.key === 'Escape') onClose();
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [open, onClose]);
 
@@ -51,11 +51,7 @@ export function PromoPopupModal({
 
   const image = (
     // eslint-disable-next-line @next/next/no-img-element -- promo CMS image URL
-    <img
-      src={imageUrl}
-      alt={title}
-      className="max-h-[min(92vh,56rem)] w-full object-contain"
-    />
+    <img src={imageUrl} alt={title} className="max-h-[min(92vh,56rem)] w-full object-contain" />
   );
 
   return createPortal(

@@ -4,7 +4,7 @@
 
 export type SpendLimitCheck =
   | { ok: true }
-  | { ok: false; reason: "EXCEEDS_LIMIT"; limitAmount: number; subtotalAmount: number };
+  | { ok: false; reason: 'EXCEEDS_LIMIT'; limitAmount: number; subtotalAmount: number };
 
 /** Null/undefined limit means unlimited. */
 export function checkSpendLimit(
@@ -19,14 +19,12 @@ export function checkSpendLimit(
   }
   return {
     ok: false,
-    reason: "EXCEEDS_LIMIT",
+    reason: 'EXCEEDS_LIMIT',
     limitAmount: spendLimitAmount,
     subtotalAmount,
   };
 }
 
-export function isSuccessfulParticipantPayment(
-  status: string,
-): boolean {
-  return status === "PAID" || status === "MARKED_RECEIVED";
+export function isSuccessfulParticipantPayment(status: string): boolean {
+  return status === 'PAID' || status === 'MARKED_RECEIVED';
 }

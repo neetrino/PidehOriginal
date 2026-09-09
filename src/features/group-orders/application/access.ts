@@ -1,14 +1,10 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { groupOrderParticipants, groupOrders } from "@/db/schema";
-import {
-  getGuestCartToken,
-  hashGuestToken,
-  peekGuestCartToken,
-} from "@/features/cart/guest-token";
-import { peekGroupOrderSession } from "@/features/group-orders/session";
-import { getCurrentUser } from "@/lib/auth/session";
+import { getDb } from '@/db/client';
+import { groupOrderParticipants, groupOrders } from '@/db/schema';
+import { getGuestCartToken, hashGuestToken, peekGuestCartToken } from '@/features/cart/guest-token';
+import { peekGroupOrderSession } from '@/features/group-orders/session';
+import { getCurrentUser } from '@/lib/auth/session';
 
 type GroupOrderRow = typeof groupOrders.$inferSelect;
 type ParticipantRow = typeof groupOrderParticipants.$inferSelect;
@@ -21,9 +17,7 @@ export type AccessOk = {
 
 export type AccessErr = { ok: false; error: string };
 
-async function loadGroupOrderByInvite(
-  inviteToken: string,
-): Promise<GroupOrderRow | null> {
+async function loadGroupOrderByInvite(inviteToken: string): Promise<GroupOrderRow | null> {
   const [row] = await getDb()
     .select()
     .from(groupOrders)
@@ -33,9 +27,7 @@ async function loadGroupOrderByInvite(
 }
 
 async function resolveCallerIdentity(): Promise<
-  | { userId: string }
-  | { guestTokenHash: string }
-  | null
+  { userId: string } | { guestTokenHash: string } | null
 > {
   const user = await getCurrentUser();
   if (user) return { userId: user.id };
@@ -55,13 +47,10 @@ async function findActiveParticipant(
     .where(
       and(
         eq(groupOrderParticipants.groupOrderId, groupOrderId),
-        eq(groupOrderParticipants.status, "ACTIVE"),
-        "userId" in identity
+        eq(groupOrderParticipants.status, 'ACTIVE'),
+        'userId' in identity
           ? eq(groupOrderParticipants.userId, identity.userId)
-          : eq(
-              groupOrderParticipants.guestTokenHash,
-              identity.guestTokenHash,
-            ),
+          : eq(groupOrderParticipants.guestTokenHash, identity.guestTokenHash),
       ),
     )
     .limit(1);
@@ -72,11 +61,9 @@ async function findActiveParticipant(
  * Resolves the caller's participant for an invite token.
  * Prefers cookie participant id when it matches the invite session.
  */
-export async function assertParticipantAccess(
-  inviteToken: string,
-): Promise<AccessOk | AccessErr> {
+export async function assertParticipantAccess(inviteToken: string): Promise<AccessOk | AccessErr> {
   const groupOrder = await loadGroupOrderByInvite(inviteToken);
-  if (!groupOrder) return { ok: false, error: "Group order not found." };
+  if (!groupOrder) return { ok: false, error: 'Group order not found.' };
 
   const session = await peekGroupOrderSession();
   if (session.inviteToken === inviteToken && session.participantId) {
@@ -87,7 +74,7 @@ export async function assertParticipantAccess(
         and(
           eq(groupOrderParticipants.id, session.participantId),
           eq(groupOrderParticipants.groupOrderId, groupOrder.id),
-          eq(groupOrderParticipants.status, "ACTIVE"),
+          eq(groupOrderParticipants.status, 'ACTIVE'),
         ),
       )
       .limit(1);
@@ -104,19 +91,17 @@ export async function assertParticipantAccess(
 
   const participant = await findActiveParticipant(groupOrder.id, identity);
   if (!participant) {
-    return { ok: false, error: "Join the group order first." };
+    return { ok: false, error: 'Join the group order first.' };
   }
 
   return { ok: true, groupOrder, participant };
 }
 
-export async function assertOrganizerAccess(
-  inviteToken: string,
-): Promise<AccessOk | AccessErr> {
+export async function assertOrganizerAccess(inviteToken: string): Promise<AccessOk | AccessErr> {
   const access = await assertParticipantAccess(inviteToken);
   if (!access.ok) return access;
-  if (access.participant.role !== "ORGANIZER") {
-    return { ok: false, error: "Only the organizer can do this." };
+  if (access.participant.role !== 'ORGANIZER') {
+    return { ok: false, error: 'Only the organizer can do this.' };
   }
   return access;
 }

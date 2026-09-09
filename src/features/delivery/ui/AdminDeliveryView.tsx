@@ -1,34 +1,34 @@
-"use client";
+'use client';
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from 'react';
 
-import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
-import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { AddressAutocomplete } from '@/components/ui/AddressAutocomplete';
+import { AddressMapPicker } from '@/components/ui/AddressMapPicker';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import {
   ADMIN_CHECKBOX,
   ADMIN_CHECKBOX_LABEL,
   ADMIN_INPUT,
   ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
-import { getMapPickerConfigAction } from "@/features/delivery/application/get-map-picker-config";
-import { saveDeliverySettingsAction } from "@/features/delivery/application/save-delivery-settings";
-import type { CashChangeDenomination } from "@/features/delivery/domain/cash-change";
-import type { StoreDeliverySettings } from "@/features/delivery/domain/delivery-settings";
-import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
-import { timeToMinutes } from "@/features/delivery/domain/delivery-schedule";
-import { AdminCashChangeEditor } from "@/features/delivery/ui/AdminCashChangeEditor";
-import { AdminDeliveryScheduleEditor } from "@/features/delivery/ui/AdminDeliveryScheduleEditor";
-import { formatMoneyAmount } from "@/lib/money/format";
-import type { Locale } from "@/lib/i18n/config";
-import { isLocale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
+import { getMapPickerConfigAction } from '@/features/delivery/application/get-map-picker-config';
+import { saveDeliverySettingsAction } from '@/features/delivery/application/save-delivery-settings';
+import type { CashChangeDenomination } from '@/features/delivery/domain/cash-change';
+import type { StoreDeliverySettings } from '@/features/delivery/domain/delivery-settings';
+import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delivery-schedule';
+import { timeToMinutes } from '@/features/delivery/domain/delivery-schedule';
+import { AdminCashChangeEditor } from '@/features/delivery/ui/AdminCashChangeEditor';
+import { AdminDeliveryScheduleEditor } from '@/features/delivery/ui/AdminDeliveryScheduleEditor';
+import { formatMoneyAmount } from '@/lib/money/format';
+import type { Locale } from '@/lib/i18n/config';
+import { isLocale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminDeliveryViewCopy = {
-  delivery: Dictionary["admin"]["delivery"];
-  common: Dictionary["admin"]["common"];
+  delivery: Dictionary['admin']['delivery'];
+  common: Dictionary['admin']['common'];
 };
 
 type AdminDeliveryViewProps = {
@@ -41,12 +41,12 @@ type AdminDeliveryViewProps = {
 function minutesToTime(total: number): string {
   const hours = Math.floor(total / 60);
   const minutes = total % 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
 function normalizeScheduleForSave(
   schedule: DeliveryScheduleSettings,
-): DeliveryScheduleSettings["weekly"] {
+): DeliveryScheduleSettings['weekly'] {
   const weekly = { ...schedule.weekly };
   for (const day of [1, 2, 3, 4, 5, 6, 7] as const) {
     const hours = weekly[day];
@@ -76,26 +76,22 @@ export function AdminDeliveryView({
   const [originLat, setOriginLat] = useState(settings.originLat);
   const [originLng, setOriginLng] = useState(settings.originLng);
   const [pricePerKmAmount, setPricePerKmAmount] = useState(
-    settings.pricePerKmAmount > 0 ? String(settings.pricePerKmAmount) : "",
+    settings.pricePerKmAmount > 0 ? String(settings.pricePerKmAmount) : '',
   );
   const [isActive, setIsActive] = useState(settings.isActive);
-  const [schedule, setSchedule] = useState<DeliveryScheduleSettings>(
-    settings.schedule,
+  const [schedule, setSchedule] = useState<DeliveryScheduleSettings>(settings.schedule);
+  const [cashChangeDenominations, setCashChangeDenominations] = useState<CashChangeDenomination[]>(
+    settings.cashChangeDenominations,
   );
-  const [cashChangeDenominations, setCashChangeDenominations] = useState<
-    CashChangeDenomination[]
-  >(settings.cashChangeDenominations);
   const [imageUrls, setImageUrls] = useState(initialImageUrls);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const languageCode: Locale = isLocale(locale) ? locale : "hy";
+  const languageCode: Locale = isLocale(locale) ? locale : 'hy';
 
   const sortedDenominations = useMemo(
     () =>
-      [...cashChangeDenominations].sort(
-        (a, b) => a.sortOrder - b.sortOrder || a.amount - b.amount,
-      ),
+      [...cashChangeDenominations].sort((a, b) => a.sortOrder - b.sortOrder || a.amount - b.amount),
     [cashChangeDenominations],
   );
 
@@ -166,9 +162,7 @@ export function AdminDeliveryView({
               <h2 className="text-base font-semibold text-gray-900">
                 {copy.delivery.storeAndPricing}
               </h2>
-              <p className="mt-1 text-sm text-gray-600">
-                {copy.delivery.storeAndPricingHint}
-              </p>
+              <p className="mt-1 text-sm text-gray-600">{copy.delivery.storeAndPricingHint}</p>
             </div>
 
             <div>
@@ -210,8 +204,8 @@ export function AdminDeliveryView({
               {originLat != null && originLng != null ? (
                 <span className="mt-1 block text-xs text-gray-500">
                   {copy.delivery.geocoded
-                    .replace("{lat}", originLat.toFixed(5))
-                    .replace("{lng}", originLng.toFixed(5))}
+                    .replace('{lat}', originLat.toFixed(5))
+                    .replace('{lng}', originLng.toFixed(5))}
                 </span>
               ) : null}
             </div>
@@ -229,14 +223,13 @@ export function AdminDeliveryView({
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
-              {pricePerKmAmount !== "" &&
-              Number.isFinite(Number(pricePerKmAmount)) ? (
+              {pricePerKmAmount !== '' && Number.isFinite(Number(pricePerKmAmount)) ? (
                 <span className="mt-1 block text-xs text-gray-500">
                   {copy.delivery.pricePerKmExample.replace(
-                    "{amount}",
+                    '{amount}',
                     formatMoneyAmount(
                       Math.round((1101 * Number(pricePerKmAmount)) / 1000),
-                      "AMD",
+                      'AMD',
                       locale,
                     ),
                   )}

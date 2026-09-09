@@ -1,19 +1,15 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import {
-  ConfirmDialog,
-} from "@/components/ui/ConfirmDialog";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
-import {
-  ADMIN_BADGE,
-} from "@/features/admin/ui/status-badge";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { ADMIN_INPUT } from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
+import { ADMIN_BADGE } from '@/features/admin/ui/status-badge';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -29,16 +25,16 @@ import {
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
-import { getAdminUserDetailAction } from "@/features/users/application/get-admin-user-detail";
-import type { AdminUserDrawerDetail } from "@/features/users/application/get-admin-user-detail";
+} from '@/features/admin/ui/admin-table-classes';
+import { getAdminUserDetailAction } from '@/features/users/application/get-admin-user-detail';
+import type { AdminUserDrawerDetail } from '@/features/users/application/get-admin-user-detail';
 import {
   bulkAnonymizeUsersAction,
   updateUserStatusAction,
-} from "@/features/users/application/update-user";
-import type { AdminUserListItem } from "@/features/users/application/queries";
-import { AdminUserDetailsDrawer } from "@/features/users/ui/AdminUserDetailsDrawer";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/users/application/update-user';
+import type { AdminUserListItem } from '@/features/users/application/queries';
+import { AdminUserDetailsDrawer } from '@/features/users/ui/AdminUserDetailsDrawer';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminUsersViewProps = {
   locale: string;
@@ -46,21 +42,15 @@ type AdminUsersViewProps = {
   total: number;
   q?: string;
   role?: string;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-function roleFilterHref(
-  locale: string,
-  role: string | undefined,
-  q?: string,
-): string {
+function roleFilterHref(locale: string, role: string | undefined, q?: string): string {
   const params = new URLSearchParams();
-  if (q) params.set("q", q);
-  if (role) params.set("role", role);
+  if (q) params.set('q', q);
+  if (role) params.set('role', role);
   const query = params.toString();
-  return query
-    ? `/${locale}/admin/users?${query}`
-    : `/${locale}/admin/users`;
+  return query ? `/${locale}/admin/users?${query}` : `/${locale}/admin/users`;
 }
 
 function formatCreated(value: Date | string): string {
@@ -73,28 +63,19 @@ function displayName(user: AdminUserListItem): string {
   return name || user.email;
 }
 
-export function AdminUsersView({
-  locale,
-  users,
-  total,
-  q,
-  role,
-  copy,
-}: AdminUsersViewProps) {
+export function AdminUsersView({ locale, users, total, q, role, copy }: AdminUsersViewProps) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerDetail, setDrawerDetail] =
-    useState<AdminUserDrawerDetail | null>(null);
+  const [drawerDetail, setDrawerDetail] = useState<AdminUserDrawerDetail | null>(null);
   const [drawerError, setDrawerError] = useState<string | null>(null);
   const [drawerPending, startDrawerTransition] = useTransition();
 
   const allIds = users.map((user) => user.id);
-  const allSelected =
-    allIds.length > 0 && allIds.every((id) => selected.has(id));
+  const allSelected = allIds.length > 0 && allIds.every((id) => selected.has(id));
 
   function toggleOne(id: string): void {
     setSelected((prev) => {
@@ -161,8 +142,8 @@ export function AdminUsersView({
 
   const rolePills = [
     { label: copy.users.roleAll, value: undefined },
-    { label: copy.users.roleAdmins, value: "ADMIN" },
-    { label: copy.users.roleCustomers, value: "CUSTOMER" },
+    { label: copy.users.roleAdmins, value: 'ADMIN' },
+    { label: copy.users.roleCustomers, value: 'CUSTOMER' },
   ] as const;
 
   return (
@@ -171,7 +152,7 @@ export function AdminUsersView({
       <form method="get" className="mb-4 flex flex-wrap gap-3">
         <input
           name="q"
-          defaultValue={q ?? ""}
+          defaultValue={q ?? ''}
           placeholder={copy.users.searchPlaceholder}
           className={`${ADMIN_INPUT} min-w-[220px] flex-1`}
           aria-label={copy.users.searchAria}
@@ -195,8 +176,8 @@ export function AdminUsersView({
                 href={roleFilterHref(locale, pill.value, q)}
                 className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                   active
-                    ? "bg-gray-200 text-gray-900"
-                    : "bg-white text-gray-600 ring-1 ring-gray-300 hover:bg-gray-50"
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'bg-white text-gray-600 ring-1 ring-gray-300 hover:bg-gray-50'
                 }`}
               >
                 {pill.label}
@@ -207,7 +188,7 @@ export function AdminUsersView({
       </div>
 
       <p className="mb-3 text-sm text-gray-600">
-        {copy.users.totalUsers.replace("{total}", String(total))}
+        {copy.users.totalUsers.replace('{total}', String(total))}
       </p>
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
@@ -215,10 +196,13 @@ export function AdminUsersView({
       <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
         <p className="text-sm text-gray-700">
           {copy.common.selectedCount
-            .replace("{count}", String(selected.size))
-            .replace("{entity}", selected.size === 1
-              ? copy.common.entitySingular.user
-              : copy.common.entitySingular.users)}
+            .replace('{count}', String(selected.size))
+            .replace(
+              '{entity}',
+              selected.size === 1
+                ? copy.common.entitySingular.user
+                : copy.common.entitySingular.users,
+            )}
         </p>
         <Button
           type="button"
@@ -236,9 +220,7 @@ export function AdminUsersView({
 
       <Card className={ADMIN_TABLE_CARD}>
         {users.length === 0 ? (
-          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {copy.users.empty}
-          </p>
+          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>{copy.users.empty}</p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
@@ -264,9 +246,8 @@ export function AdminUsersView({
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
                 {users.map((user) => {
-                  const isActive = user.status === "ACTIVE";
-                  const canToggle =
-                    user.status === "ACTIVE" || user.status === "SUSPENDED";
+                  const isActive = user.status === 'ACTIVE';
+                  const canToggle = user.status === 'ACTIVE' || user.status === 'SUSPENDED';
                   const name = displayName(user);
 
                   return (
@@ -275,7 +256,7 @@ export function AdminUsersView({
                       className={`${ADMIN_TABLE_ROW} cursor-pointer`}
                       onClick={() => openUser(user.id)}
                       onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
+                        if (event.key === 'Enter' || event.key === ' ') {
                           event.preventDefault();
                           openUser(user.id);
                         }
@@ -293,33 +274,27 @@ export function AdminUsersView({
                           className={ADMIN_TABLE_CHECKBOX}
                           checked={selected.has(user.id)}
                           onChange={() => toggleOne(user.id)}
-                          disabled={isPending || user.status === "ANONYMIZED"}
-                          aria-label={copy.users.selectOneAria.replace("{name}", name)}
+                          disabled={isPending || user.status === 'ANONYMIZED'}
+                          aria-label={copy.users.selectOneAria.replace('{name}', name)}
                         />
                       </td>
                       <td className={ADMIN_TABLE_TD}>
                         <p className="font-medium text-gray-900">{name}</p>
-                        <p className="truncate text-xs text-gray-400">
-                          {user.id}
-                        </p>
+                        <p className="truncate text-xs text-gray-400">{user.id}</p>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
                         <p className="text-sm text-gray-600">{user.email}</p>
-                        <p className="text-sm text-gray-500">
-                          {user.phone ?? copy.common.none}
-                        </p>
+                        <p className="text-sm text-gray-500">{user.phone ?? copy.common.none}</p>
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>
-                        <span className="font-medium text-gray-900">
-                          {user.orderCount}
-                        </span>
+                        <span className="font-medium text-gray-900">{user.orderCount}</span>
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>
                         <span
                           className={`${ADMIN_BADGE} ${
-                            user.role === "ADMIN"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-sky-100 text-sky-800"
+                            user.role === 'ADMIN'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-sky-100 text-sky-800'
                           }`}
                         >
                           {user.role.toLowerCase()}
@@ -336,30 +311,27 @@ export function AdminUsersView({
                           disabled={isPending || !canToggle}
                           onClick={() =>
                             runAction(async () => {
-                              const result = await updateUserStatusAction(
-                                locale,
-                                {
-                                  userId: user.id,
-                                  status: isActive ? "SUSPENDED" : "ACTIVE",
-                                },
-                              );
+                              const result = await updateUserStatusAction(locale, {
+                                userId: user.id,
+                                status: isActive ? 'SUSPENDED' : 'ACTIVE',
+                              });
                               if (!result.ok) {
                                 throw new Error(result.error.message);
                               }
                             })
                           }
                           className={`relative mx-auto block h-5 w-9 rounded-full transition-colors disabled:opacity-40 ${
-                            isActive ? "bg-green-500" : "bg-gray-300"
+                            isActive ? 'bg-green-500' : 'bg-gray-300'
                           }`}
                           aria-label={
                             isActive
-                              ? copy.users.suspendAria.replace("{name}", name)
-                              : copy.users.activateAria.replace("{name}", name)
+                              ? copy.users.suspendAria.replace('{name}', name)
+                              : copy.users.activateAria.replace('{name}', name)
                           }
                         >
                           <span
                             className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
-                              isActive ? "translate-x-4" : "translate-x-0"
+                              isActive ? 'translate-x-4' : 'translate-x-0'
                             }`}
                           />
                         </button>
@@ -382,8 +354,8 @@ export function AdminUsersView({
         open={confirmOpen}
         title={copy.confirm.deleteTitle}
         description={copy.confirm.deleteSelectedUsers
-          .replace("{count}", String(selected.size))
-          .replace("{plural}", selected.size === 1 ? "" : "s")}
+          .replace('{count}', String(selected.size))
+          .replace('{plural}', selected.size === 1 ? '' : 's')}
         confirmLabel={copy.confirm.confirmLabel}
         cancelLabel={copy.confirm.cancelLabel}
         isPending={isPending}

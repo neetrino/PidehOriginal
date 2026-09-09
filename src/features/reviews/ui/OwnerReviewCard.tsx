@@ -1,15 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { RatingStars } from "@/features/products/ui/ProductReviewRating";
-import type { ViewerReview } from "@/features/reviews/application/queries";
-import {
-  canEditOwnReview,
-  isReviewModerationStatus,
-} from "@/features/reviews/domain/review-rules";
-import { ReviewForm } from "@/features/reviews/ui/ReviewForm";
-import type { Locale } from "@/lib/i18n/config";
+import { RatingStars } from '@/features/products/ui/ProductReviewRating';
+import type { ViewerReview } from '@/features/reviews/application/queries';
+import { canEditOwnReview, isReviewModerationStatus } from '@/features/reviews/domain/review-rules';
+import { ReviewForm } from '@/features/reviews/ui/ReviewForm';
+import type { Locale } from '@/lib/i18n/config';
 
 type OwnerReviewCardLabels = {
   editReview: string;
@@ -33,19 +30,13 @@ type OwnerReviewCardProps = {
 };
 
 const editButtonClassName =
-  "inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-8 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-gray-50";
+  'inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-8 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-gray-50';
 
-export function OwnerReviewCard({
-  locale,
-  productId,
-  review,
-  labels,
-}: OwnerReviewCardProps) {
+export function OwnerReviewCard({ locale, productId, review, labels }: OwnerReviewCardProps) {
   const [editing, setEditing] = useState(false);
-  const isPending = review.moderationStatus === "PENDING";
+  const isPending = review.moderationStatus === 'PENDING';
   const canEdit =
-    isReviewModerationStatus(review.moderationStatus) &&
-    canEditOwnReview(review.moderationStatus);
+    isReviewModerationStatus(review.moderationStatus) && canEditOwnReview(review.moderationStatus);
 
   if (editing && canEdit) {
     return (
@@ -54,7 +45,7 @@ export function OwnerReviewCard({
         productId={productId}
         reviewId={review.id}
         initialRating={review.rating}
-        initialComment={review.comment ?? ""}
+        initialComment={review.comment ?? ''}
         onCancel={() => setEditing(false)}
         labels={{
           title: labels.editReviewTitle,
@@ -78,9 +69,7 @@ export function OwnerReviewCard({
         <RatingStars average={review.rating} size="sm" />
       </div>
       {review.comment ? (
-        <p className="mt-2 text-sm whitespace-pre-wrap text-gray-700">
-          {review.comment}
-        </p>
+        <p className="mt-2 text-sm whitespace-pre-wrap text-gray-700">{review.comment}</p>
       ) : null}
       <p className="mt-3 text-sm text-gray-500">
         {isPending ? labels.reviewPending : labels.alreadyReviewed}

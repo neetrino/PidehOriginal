@@ -1,38 +1,28 @@
-import "server-only";
+import 'server-only';
 
-import {
-  and,
-  count,
-  eq,
-  gte,
-  inArray,
-  isNotNull,
-  lte,
-  or,
-  sql,
-} from "drizzle-orm";
+import { and, count, eq, gte, inArray, isNotNull, lte, or, sql } from 'drizzle-orm';
 
-import { getProviders } from "@/config/providers";
-import { getDb } from "@/db/client";
-import { orders } from "@/db/schema";
+import { getProviders } from '@/config/providers';
+import { getDb } from '@/db/client';
+import { orders } from '@/db/schema';
 import {
   queryTopCategories,
   queryTopSellingProducts,
   type AnalyticsTopCategory,
   type AnalyticsTopProduct,
-} from "@/features/analytics/application/top-rankings";
-import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
-import { percentChange } from "@/features/analytics/domain/date-range";
-import type { OrderStatus } from "@/features/orders/domain/order-status";
-import { getStoreRevenue } from "@/features/settings/application/queries";
-import type { Locale } from "@/lib/i18n/config";
+} from '@/features/analytics/application/top-rankings';
+import type { AnalyticsCsvRow } from '@/features/analytics/domain/csv';
+import { percentChange } from '@/features/analytics/domain/date-range';
+import type { OrderStatus } from '@/features/orders/domain/order-status';
+import { getStoreRevenue } from '@/features/settings/application/queries';
+import type { Locale } from '@/lib/i18n/config';
 
 export type {
   AnalyticsTopCategory,
   AnalyticsTopProduct,
-} from "@/features/analytics/application/top-rankings";
-export type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
-export { buildAnalyticsCsv, guardCsvCell } from "@/features/analytics/domain/csv";
+} from '@/features/analytics/application/top-rankings';
+export type { AnalyticsCsvRow } from '@/features/analytics/domain/csv';
+export { buildAnalyticsCsv, guardCsvCell } from '@/features/analytics/domain/csv';
 
 const CACHE_TTL_SECONDS = 300;
 const cacheKeys = new Set<string>();
@@ -72,7 +62,10 @@ export type AnalyticsSummary = {
   topCategories: AnalyticsTopCategory[];
 };
 
-function periodBounds(from: string, to: string): {
+function periodBounds(
+  from: string,
+  to: string,
+): {
   start: Date;
   end: Date;
   previousStart: Date;
@@ -82,10 +75,7 @@ function periodBounds(from: string, to: string): {
 } {
   const start = new Date(`${from}T00:00:00.000Z`);
   const end = new Date(`${to}T23:59:59.999Z`);
-  const durationMs = Math.max(
-    end.getTime() - start.getTime(),
-    24 * 60 * 60 * 1000 - 1,
-  );
+  const durationMs = Math.max(end.getTime() - start.getTime(), 24 * 60 * 60 * 1000 - 1);
   const previousEnd = new Date(start.getTime() - 1);
   const previousStart = new Date(previousEnd.getTime() - durationMs);
 
@@ -131,9 +121,7 @@ function metricBlock(
     revenueAmount,
     orderCount,
     averageOrderValue: averageOrderValue(revenueAmount, orderCount),
-    changePercent: withChange
-      ? percentChange(revenueAmount, previousRevenue)
-      : null,
+    changePercent: withChange ? percentChange(revenueAmount, previousRevenue) : null,
   };
 }
 
@@ -152,9 +140,7 @@ async function queryPeriodMetrics(input: {
     getDb().select({ value: count() }).from(orders).where(where),
     getDb()
       .select({
-        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(
-          Number,
-        ),
+        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(Number),
       })
       .from(orders)
       .where(and(where, inArray(orders.status, input.revenueStatuses))),
@@ -166,15 +152,13 @@ async function queryPeriodMetrics(input: {
   };
 }
 
-async function queryCustomerCount(input: {
-  start: Date;
-  end: Date;
-}): Promise<number> {
+async function queryCustomerCount(input: { start: Date; end: Date }): Promise<number> {
   const [row] = await getDb()
     .select({
-      value: sql<number>`count(distinct coalesce(${orders.userId}::text, ${orders.contactEmail}))`.mapWith(
-        Number,
-      ),
+      value:
+        sql<number>`count(distinct coalesce(${orders.userId}::text, ${orders.contactEmail}))`.mapWith(
+          Number,
+        ),
     })
     .from(orders)
     .where(
@@ -198,9 +182,7 @@ async function queryAllTimeMetrics(input: {
     getDb().select({ value: count() }).from(orders).where(where),
     getDb()
       .select({
-        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(
-          Number,
-        ),
+        value: sql<number>`coalesce(sum(${orders.totalAmount}), 0)`.mapWith(Number),
       })
       .from(orders)
       .where(and(where, inArray(orders.status, input.revenueStatuses))),
@@ -226,9 +208,10 @@ async function queryDailyRows(input: {
     .select({
       date: sql<string>`to_char(${orders.placedAt} at time zone 'UTC', 'YYYY-MM-DD')`,
       orderCount: count(),
-      revenueAmount: sql<number>`coalesce(sum(case when ${orders.status} in (${revenueStatusSql}) then ${orders.totalAmount} else 0 end), 0)`.mapWith(
-        Number,
-      ),
+      revenueAmount:
+        sql<number>`coalesce(sum(case when ${orders.status} in (${revenueStatusSql}) then ${orders.totalAmount} else 0 end), 0)`.mapWith(
+          Number,
+        ),
     })
     .from(orders)
     .where(
@@ -260,11 +243,7 @@ async function computeAnalyticsSummary(input: {
 
   const todayIso = toIsoDate(
     new Date(
-      Date.UTC(
-        new Date().getUTCFullYear(),
-        new Date().getUTCMonth(),
-        new Date().getUTCDate(),
-      ),
+      Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()),
     ),
   );
   const yesterdayDate = new Date(`${todayIso}T00:00:00.000Z`);
@@ -372,45 +351,24 @@ async function computeAnalyticsSummary(input: {
     previousFrom: bounds.previousFrom,
     previousTo: bounds.previousTo,
     snapshots: {
-      today: metricBlock(
-        today.revenueAmount,
-        today.orderCount,
-        yesterday.revenueAmount,
-        true,
-      ),
+      today: metricBlock(today.revenueAmount, today.orderCount, yesterday.revenueAmount, true),
       yesterday: metricBlock(
         yesterday.revenueAmount,
         yesterday.orderCount,
         dayBefore.revenueAmount,
         true,
       ),
-      month: metricBlock(
-        month.revenueAmount,
-        month.orderCount,
-        prevMonth.revenueAmount,
-        true,
-      ),
-      total: metricBlock(
-        allTime.revenueAmount,
-        allTime.orderCount,
-        0,
-        false,
-      ),
+      month: metricBlock(month.revenueAmount, month.orderCount, prevMonth.revenueAmount, true),
+      total: metricBlock(allTime.revenueAmount, allTime.orderCount, 0, false),
     },
     period: {
       revenueAmount: current.revenueAmount,
       orderCount: current.orderCount,
-      averageOrderValue: averageOrderValue(
-        current.revenueAmount,
-        current.orderCount,
-      ),
+      averageOrderValue: averageOrderValue(current.revenueAmount, current.orderCount),
       customerCount: currentCustomers,
       previousRevenueAmount: previous.revenueAmount,
       previousOrderCount: previous.orderCount,
-      previousAverageOrderValue: averageOrderValue(
-        previous.revenueAmount,
-        previous.orderCount,
-      ),
+      previousAverageOrderValue: averageOrderValue(previous.revenueAmount, previous.orderCount),
       previousCustomerCount: previousCustomers,
     },
     dailyRows,
@@ -425,7 +383,7 @@ export async function getAnalyticsSummary(input: {
   to: string;
   locale?: Locale;
 }): Promise<AnalyticsSummary> {
-  const locale = input.locale ?? "hy";
+  const locale = input.locale ?? 'hy';
   const key = cacheKey(input.from, input.to, locale);
   const redis = getProviders().redis.getClient();
   const cached = await redis.get(key);

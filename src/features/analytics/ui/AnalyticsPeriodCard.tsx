@@ -1,21 +1,18 @@
-"use client";
+'use client';
 
-import { CalendarDays, Download } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, useTransition, type FormEvent } from "react";
+import { CalendarDays, Download } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition, type FormEvent } from 'react';
 
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import {
   ANALYTICS_PERIOD_PRESETS,
   formatAnalyticsDisplayDate,
   rangeForAnalyticsPeriod,
   type AnalyticsPeriodPreset,
-} from "@/features/analytics/domain/date-range";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/analytics/domain/date-range';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AnalyticsPeriodCardProps = {
   locale: string;
@@ -24,7 +21,7 @@ type AnalyticsPeriodCardProps = {
   preset: AnalyticsPeriodPreset;
   exportQuery: string;
   rangeInvalid: boolean;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
 export function AnalyticsPeriodCard({
@@ -38,10 +35,8 @@ export function AnalyticsPeriodCard({
 }: AnalyticsPeriodCardProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [forceCustom, setForceCustom] = useState(preset === "custom");
-  const selectedPreset: AnalyticsPeriodPreset = forceCustom
-    ? "custom"
-    : preset;
+  const [forceCustom, setForceCustom] = useState(preset === 'custom');
+  const selectedPreset: AnalyticsPeriodPreset = forceCustom ? 'custom' : preset;
 
   const presetLabel = (p: AnalyticsPeriodPreset): string => {
     const map: Record<AnalyticsPeriodPreset, string> = {
@@ -64,7 +59,7 @@ export function AnalyticsPeriodCard({
 
   function onPeriodChange(value: string): void {
     const next = value as AnalyticsPeriodPreset;
-    if (next === "custom") {
+    if (next === 'custom') {
       setForceCustom(true);
       return;
     }
@@ -75,8 +70,8 @@ export function AnalyticsPeriodCard({
   function onCustomSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const nextFrom = String(data.get("from") ?? "");
-    const nextTo = String(data.get("to") ?? "");
+    const nextFrom = String(data.get('from') ?? '');
+    const nextTo = String(data.get('to') ?? '');
     if (!nextFrom || !nextTo) {
       return;
     }
@@ -90,8 +85,7 @@ export function AnalyticsPeriodCard({
           <div className="flex items-center gap-2 text-sm font-medium text-[#1e1e1e]">
             <CalendarDays className="size-4 shrink-0 text-[#ff6b00]" aria-hidden />
             <p>
-              {formatAnalyticsDisplayDate(from)} –{" "}
-              {formatAnalyticsDisplayDate(to)}
+              {formatAnalyticsDisplayDate(from)} – {formatAnalyticsDisplayDate(to)}
             </p>
           </div>
 
@@ -111,28 +105,15 @@ export function AnalyticsPeriodCard({
             />
           </div>
 
-          {selectedPreset === "custom" ? (
-            <form
-              onSubmit={onCustomSubmit}
-              className="mt-3 flex flex-wrap items-end gap-3"
-            >
+          {selectedPreset === 'custom' ? (
+            <form onSubmit={onCustomSubmit} className="mt-3 flex flex-wrap items-end gap-3">
               <label className="min-w-[140px] flex-1">
                 <span className={ADMIN_LABEL}>{copy.analytics.period.from}</span>
-                <input
-                  name="from"
-                  type="date"
-                  defaultValue={from}
-                  className={ADMIN_INPUT}
-                />
+                <input name="from" type="date" defaultValue={from} className={ADMIN_INPUT} />
               </label>
               <label className="min-w-[140px] flex-1">
                 <span className={ADMIN_LABEL}>{copy.analytics.period.to}</span>
-                <input
-                  name="to"
-                  type="date"
-                  defaultValue={to}
-                  className={ADMIN_INPUT}
-                />
+                <input name="to" type="date" defaultValue={to} className={ADMIN_INPUT} />
               </label>
               <button
                 type="submit"
@@ -145,9 +126,7 @@ export function AnalyticsPeriodCard({
           ) : null}
 
           {rangeInvalid ? (
-            <p className="mt-2 text-sm text-[#c2410c]">
-              {copy.analytics.period.invalidRange}
-            </p>
+            <p className="mt-2 text-sm text-[#c2410c]">{copy.analytics.period.invalidRange}</p>
           ) : null}
         </div>
 

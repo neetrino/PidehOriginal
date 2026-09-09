@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { ChangePasswordForm } from "@/features/profile/ui/ChangePasswordForm";
-import { requireUser } from "@/lib/auth/policies";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { ChangePasswordForm } from '@/features/profile/ui/ChangePasswordForm';
+import { requireUser } from '@/lib/auth/policies';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type PasswordPageProps = {
   params: Promise<{ locale: string }>;

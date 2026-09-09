@@ -1,65 +1,42 @@
-import "server-only";
+import 'server-only';
 
-import {
-  and,
-  asc,
-  desc,
-  eq,
-  gt,
-  inArray,
-  isNotNull,
-  isNull,
-  or,
-  sql,
-} from "drizzle-orm";
-import { unstable_cache } from "next/cache";
-import { cache } from "react";
+import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, or, sql } from 'drizzle-orm';
+import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 
-import { getDb } from "@/db/client";
-import {
-  categories,
-  mediaAssets,
-  productCategories,
-  products,
-  promotions,
-} from "@/db/schema";
-import { enrichCatalogProducts } from "@/features/products/application/catalog-product-enrichment";
-import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
-import { listLinkedModifiersForProduct } from "@/features/products/application/product-modifiers";
+import { getDb } from '@/db/client';
+import { categories, mediaAssets, productCategories, products, promotions } from '@/db/schema';
+import { enrichCatalogProducts } from '@/features/products/application/catalog-product-enrichment';
+import { listCatalogProducts } from '@/features/products/application/list-catalog-products';
+import { listLinkedModifiersForProduct } from '@/features/products/application/product-modifiers';
 import {
   DEFAULT_CATALOG_PAGE_SIZE,
   DEFAULT_CATALOG_SORT,
-} from "@/features/products/schemas/catalog-list";
+} from '@/features/products/schemas/catalog-list';
 import type {
   CatalogProduct,
   ProductCategoryRef,
   ProductDetail,
   ProductGalleryImage,
-} from "@/features/products/types";
-import {
-  CACHE_TAGS,
-  PUBLIC_CACHE_REVALIDATE_SECONDS,
-} from "@/lib/cache/tags";
-import type { Locale } from "@/lib/i18n/config";
-import { defaultCurrency } from "@/lib/money/currency";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+} from '@/features/products/types';
+import { CACHE_TAGS, PUBLIC_CACHE_REVALIDATE_SECONDS } from '@/lib/cache/tags';
+import type { Locale } from '@/lib/i18n/config';
+import { defaultCurrency } from '@/lib/money/currency';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 export type {
   CatalogProduct,
   ProductCategoryRef,
   ProductDetail,
   ProductGalleryImage,
-} from "@/features/products/types";
+} from '@/features/products/types';
 
 const RELATED_PRODUCTS_LIMIT = 4;
 const HOME_OFFERS_LIMIT = 8;
 const HOME_OFFERS_CANDIDATE_LIMIT = 48;
 export const CATALOG_PAGE_SIZE = DEFAULT_CATALOG_PAGE_SIZE;
 
-const activeCatalogWhere = and(
-  eq(products.status, "ACTIVE"),
-  isNull(products.deletedAt),
-);
+const activeCatalogWhere = and(eq(products.status, 'ACTIVE'), isNull(products.deletedAt));
 
 /** Active products by id — used by wishlist (not shared-cache; IDs are user-specific). */
 export async function getActiveProductsByIds(
@@ -104,9 +81,7 @@ export async function getActiveProductsPage(
 }
 
 /** @deprecated Prefer getActiveProductsPage — kept for narrow internal callers. */
-export async function getActiveProducts(
-  locale: Locale,
-): Promise<CatalogProduct[]> {
+export async function getActiveProducts(locale: Locale): Promise<CatalogProduct[]> {
   const result = await getActiveProductsPage(locale, 1);
   if (result.total <= result.pageSize) {
     return result.products;
@@ -116,35 +91,23 @@ export async function getActiveProducts(
   return enrichCatalogProducts(rows, locale);
 }
 
-async function loadFeaturedProducts(
-  locale: Locale,
-): Promise<CatalogProduct[]> {
+async function loadFeaturedProducts(locale: Locale): Promise<CatalogProduct[]> {
   const rows = await getDb()
     .select()
     .from(products)
     .where(
-      and(
-        eq(products.status, "ACTIVE"),
-        eq(products.isFeatured, true),
-        isNull(products.deletedAt),
-      ),
+      and(eq(products.status, 'ACTIVE'), eq(products.isFeatured, true), isNull(products.deletedAt)),
     )
     .limit(8);
 
   return enrichCatalogProducts(rows, locale);
 }
 
-export async function getFeaturedProducts(
-  locale: Locale,
-): Promise<CatalogProduct[]> {
-  return unstable_cache(
-    async () => loadFeaturedProducts(locale),
-    ["featured-products", locale],
-    {
-      tags: [CACHE_TAGS.products],
-      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
-    },
-  )();
+export async function getFeaturedProducts(locale: Locale): Promise<CatalogProduct[]> {
+  return unstable_cache(async () => loadFeaturedProducts(locale), ['featured-products', locale], {
+    tags: [CACHE_TAGS.products],
+    revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+  })();
 }
 
 async function loadOfferProducts(locale: Locale): Promise<CatalogProduct[]> {
@@ -154,12 +117,7 @@ async function loadOfferProducts(locale: Locale): Promise<CatalogProduct[]> {
       categoryId: promotions.categoryId,
     })
     .from(promotions)
-    .where(
-      and(
-        eq(promotions.kind, "AUTOMATIC"),
-        eq(promotions.isActive, true),
-      ),
-    );
+    .where(and(eq(promotions.kind, 'AUTOMATIC'), eq(promotions.isActive, true)));
 
   const promoProductIds = promoRows
     .map((row) => row.productId)
@@ -218,25 +176,16 @@ async function loadOfferProducts(locale: Locale): Promise<CatalogProduct[]> {
 
   const enriched = await enrichCatalogProducts([...byId.values()], locale);
   return enriched
-    .filter(
-      (product) =>
-        product.discountPercent != null && product.discountPercent > 0,
-    )
+    .filter((product) => product.discountPercent != null && product.discountPercent > 0)
     .slice(0, HOME_OFFERS_LIMIT);
 }
 
 /** Active products currently on sale for the home offers section. */
-export async function getOfferProducts(
-  locale: Locale,
-): Promise<CatalogProduct[]> {
-  return unstable_cache(
-    async () => loadOfferProducts(locale),
-    ["offer-products", locale],
-    {
-      tags: [CACHE_TAGS.products],
-      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
-    },
-  )();
+export async function getOfferProducts(locale: Locale): Promise<CatalogProduct[]> {
+  return unstable_cache(async () => loadOfferProducts(locale), ['offer-products', locale], {
+    tags: [CACHE_TAGS.products],
+    revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+  })();
 }
 
 export async function getProductBySlug(
@@ -248,7 +197,7 @@ export async function getProductBySlug(
     .from(products)
     .where(
       and(
-        eq(products.status, "ACTIVE"),
+        eq(products.status, 'ACTIVE'),
         isNull(products.deletedAt),
         sql`${products.translations}->${locale}->>'slug' = ${slug}`,
       ),
@@ -277,12 +226,7 @@ async function loadProductGallery(
       altTranslations: mediaAssets.altTranslations,
     })
     .from(mediaAssets)
-    .where(
-      and(
-        eq(mediaAssets.productId, productId),
-        eq(mediaAssets.uploadStatus, "READY"),
-      ),
-    )
+    .where(and(eq(mediaAssets.productId, productId), eq(mediaAssets.uploadStatus, 'READY')))
     .orderBy(asc(mediaAssets.sortOrder));
 
   return rows
@@ -311,7 +255,7 @@ async function loadProductCategories(
     .where(
       and(
         eq(productCategories.productId, productId),
-        eq(categories.status, "ACTIVE"),
+        eq(categories.status, 'ACTIVE'),
         isNull(categories.deletedAt),
       ),
     )
@@ -364,14 +308,14 @@ async function loadProductDetailBySlug(
     images: gallery,
     categories: productCats,
     additions: linkedModifiers
-      .filter((row) => row.kind === "ADDITION")
+      .filter((row) => row.kind === 'ADDITION')
       .map((row) => ({
         id: row.id,
         name: row.name,
         priceAmount: row.priceAmount,
       })),
     exceptions: linkedModifiers
-      .filter((row) => row.kind === "EXCEPTION")
+      .filter((row) => row.kind === 'EXCEPTION')
       .map((row) => ({
         id: row.id,
         name: row.name,
@@ -385,12 +329,9 @@ export const getProductDetailBySlug = cache(
   async (locale: Locale, slug: string): Promise<ProductDetail | null> => {
     return unstable_cache(
       async () => loadProductDetailBySlug(locale, slug),
-      ["product-detail-v2", locale, slug],
+      ['product-detail-v2', locale, slug],
       {
-        tags: [
-          CACHE_TAGS.productDetail,
-          CACHE_TAGS.productSlug(locale, slug),
-        ],
+        tags: [CACHE_TAGS.productDetail, CACHE_TAGS.productSlug(locale, slug)],
         revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
       },
     )();

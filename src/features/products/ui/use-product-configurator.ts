@@ -1,16 +1,14 @@
-"use client";
+'use client';
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from 'react';
 
-import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
-import { alertIfSpendLimitExceeded } from "@/features/group-orders/ui/alert-spend-limit-exceeded";
-import type { ProductModifierChoice } from "@/features/products/types";
-import {
-  formatPdpAmount,
-  sharedPositivePrice,
-} from "@/features/products/ui/format-pdp-price";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
+import { beginCartBadgeAdd } from '@/features/cart/ui/cart-badge-count';
+import { addProductToActiveCart } from '@/features/group-orders/application/add-to-active';
+import { alertIfSpendLimitExceeded } from '@/features/group-orders/ui/alert-spend-limit-exceeded';
+import type { ProductModifierChoice } from '@/features/products/types';
+import { formatPdpAmount, sharedPositivePrice } from '@/features/products/ui/format-pdp-price';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 type UseProductConfiguratorArgs = {
   locale: Locale;
@@ -21,8 +19,9 @@ type UseProductConfiguratorArgs = {
   basePriceAmount: number;
   compareAtAmount: number | null;
   additions: ProductModifierChoice[];
-  addedLabel: string;
   errorLabel: string;
+  /** Runs after a successful add, e.g. to fly the product image to the cart. */
+  onAdded: () => void;
 };
 
 export function useProductConfigurator({
@@ -34,15 +33,14 @@ export function useProductConfigurator({
   basePriceAmount,
   compareAtAmount,
   additions,
-  addedLabel,
   errorLabel,
+  onAdded,
 }: UseProductConfiguratorArgs) {
   const maxQty = Math.max(stockOnHand, 0);
   const disabled = maxQty < 1;
   const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
   const [additionIds, setAdditionIds] = useState<string[]>([]);
   const [exceptionIds, setExceptionIds] = useState<string[]>([]);
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -51,15 +49,11 @@ export function useProductConfigurator({
     return additionIds.reduce((sum, id) => sum + (byId.get(id) ?? 0), 0);
   }, [additionIds, additions]);
 
-  const formatAmount = (amount: number) =>
-    formatPdpAmount(amount, fxRate, currency, locale);
+  const formatAmount = (amount: number) => formatPdpAmount(amount, fxRate, currency, locale);
 
-  const extraHintPrice = sharedPositivePrice(
-    additions.map((row) => row.priceAmount),
-  );
+  const extraHintPrice = sharedPositivePrice(additions.map((row) => row.priceAmount));
 
   function clearStatus(): void {
-    setMessage(null);
     setError(null);
   }
 
@@ -78,32 +72,36 @@ export function useProductConfigurator({
   }
 
   function handleAdd(): void {
-    if (disabled || quantity < 1) return;
+    if (disabled || pending || quantity < 1) return;
     clearStatus();
+    // Both run before the server call, so the animation and the badge react to
+    // the click itself instead of to the round-trip.
+    onAdded();
+    const settleBadge = beginCartBadgeAdd(quantity);
     startTransition(async () => {
       try {
         const result = await addProductToActiveCart(productId, quantity, {
           modifierIds: [...additionIds, ...exceptionIds],
         });
         if (!result.ok) {
+          settleBadge(null);
           if (alertIfSpendLimitExceeded(locale, result)) {
             return;
           }
           setError(result.error);
           return;
         }
-        setMessage(addedLabel);
+        settleBadge(result.itemCount);
       } catch {
+        settleBadge(null);
         setError(errorLabel);
       }
     });
   }
 
   const qty = Math.max(quantity, 1);
-  const compareTotal =
-    compareAtAmount == null
-      ? null
-      : (compareAtAmount + additionExtras) * qty;
+  const totalAmount = (basePriceAmount + additionExtras) * qty;
+  const compareTotal = compareAtAmount == null ? null : (compareAtAmount + additionExtras) * qty;
 
   return {
     maxQty,
@@ -111,15 +109,14 @@ export function useProductConfigurator({
     quantity,
     additionIds,
     exceptionIds,
-    message,
     error,
     pending,
     extraHintPrice,
     formatAmount,
     unitPriceFormatted: formatAmount(basePriceAmount),
-    totalFormatted: formatAmount((basePriceAmount + additionExtras) * qty),
-    compareAtTotalFormatted:
-      compareTotal == null ? null : formatAmount(compareTotal),
+    totalAmount,
+    totalFormatted: formatAmount(totalAmount),
+    compareAtTotalFormatted: compareTotal == null ? null : formatAmount(compareTotal),
     setAdditionIds,
     setExceptionIds,
     changeQuantity,

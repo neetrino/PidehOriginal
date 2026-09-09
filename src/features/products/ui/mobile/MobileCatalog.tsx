@@ -1,11 +1,11 @@
-import { NAV_DOCK_HEIGHT_PX } from "@/components/layout/NavEllipse3469";
-import { MobileCopyright } from "@/features/home/ui/mobile/MobileCopyright";
-import type { MobileGridProduct } from "@/features/home/ui/mobile/MobileProductGrid";
-import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
-import { ShopCategoryChips } from "@/features/products/ui/ShopCategoryChips";
-import { MobileCatalogSection } from "@/features/products/ui/mobile/MobileCatalogSection";
-import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
+import { MobileCopyright } from '@/features/home/ui/mobile/MobileCopyright';
+import type { MobileGridProduct } from '@/features/home/ui/mobile/MobileProductGrid';
+import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
+import { ShopCategoryChips } from '@/features/products/ui/ShopCategoryChips';
+import { MobileCatalogSection } from '@/features/products/ui/mobile/MobileCatalogSection';
+import type { Locale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 /** Gap between copyright and the fixed nav dock. */
 const COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX - 48;
@@ -64,10 +64,8 @@ export function MobileCatalog({
 
       {sections.length === 0 ? (
         <div className="mx-6 mt-10 rounded-[26px] bg-white px-6 py-16 text-center shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
-          <h2 className="text-lg font-semibold text-[#1e1e1e]">
-            {catalog.emptyTitle}
-          </h2>
-          <p className="mt-2 text-sm text-[#6b6b6b]">
+          <h2 className="text-lg font-semibold text-[#1e1e1e]">{catalog.emptyTitle}</h2>
+          <p className="font-noto-armenian mt-2 text-sm text-[#6b6b6b]">
             {catalog.emptyDescription}
           </p>
         </div>
@@ -91,12 +89,7 @@ export function MobileCatalog({
       )}
 
       <div className="pt-12">
-        <MobileCopyright
-          text={dictionary.footer.copyrightMobile.replace(
-            "{year}",
-            String(year),
-          )}
-        />
+        <MobileCopyright text={dictionary.footer.copyrightMobile.replace('{year}', String(year))} />
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/Button";
-import { PROFILE_OUTLINE_BTN } from "@/features/profile/ui/profile-ui-classes";
-import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
+import { Button } from '@/components/ui/Button';
+import { PROFILE_OUTLINE_BTN } from '@/features/profile/ui/profile-ui-classes';
+import type { CustomerAddressListItem } from '@/features/profile/application/address-queries';
 
 type ProfileAddressCardProps = {
   address: CustomerAddressListItem;
@@ -38,7 +38,6 @@ export function ProfileAddressCard({
             ) : null}
           </div>
           <p className="text-sm text-[#1e1e1e] sm:text-base">{address.line1}</p>
-          <p className="text-sm text-[#1e1e1e] sm:text-base">{address.city}</p>
           {address.phone ? (
             <p className="text-sm text-[#1e1e1e]/65 sm:text-base">{address.phone}</p>
           ) : null}

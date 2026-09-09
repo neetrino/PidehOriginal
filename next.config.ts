@@ -1,19 +1,19 @@
-import type { NextConfig } from "next";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import type { NextConfig } from 'next';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const securityHeaders = [
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "DENY" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   {
-    key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=()',
   },
   {
-    key: "Content-Security-Policy",
+    key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
       // Google Maps JS loads from maps.googleapis.com / maps.gstatic.com
@@ -27,37 +27,34 @@ const securityHeaders = [
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
-    ].join("; "),
+    ].join('; '),
   },
 ];
 
-function buildImageRemotePatterns(): NonNullable<
-  NextConfig["images"]
->["remotePatterns"] {
+function buildImageRemotePatterns(): NonNullable<NextConfig['images']>['remotePatterns'] {
   // `remotePatterns` is evaluated at build time. Always allow R2 public hosts so
   // Vercel builds work even when R2_PUBLIC_BASE_URL is only set at runtime.
-  const patterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
+  const patterns: NonNullable<NextConfig['images']>['remotePatterns'] = [
     {
-      protocol: "https",
-      hostname: "images.pexels.com",
+      protocol: 'https',
+      hostname: 'images.pexels.com',
     },
     {
-      protocol: "https",
-      hostname: "**.r2.dev",
-      pathname: "/**",
+      protocol: 'https',
+      hostname: '**.r2.dev',
+      pathname: '/**',
     },
   ];
 
-  const r2Base =
-    process.env.R2_PUBLIC_BASE_URL || process.env.R2_PUBLIC_URL;
+  const r2Base = process.env.R2_PUBLIC_BASE_URL || process.env.R2_PUBLIC_URL;
   if (r2Base) {
     try {
       const url = new URL(r2Base);
-      if (url.protocol === "https:" || url.protocol === "http:") {
+      if (url.protocol === 'https:' || url.protocol === 'http:') {
         patterns.push({
-          protocol: url.protocol.replace(":", "") as "http" | "https",
+          protocol: url.protocol.replace(':', '') as 'http' | 'https',
           hostname: url.hostname,
-          pathname: "/**",
+          pathname: '/**',
         });
       }
     } catch {
@@ -68,11 +65,10 @@ function buildImageRemotePatterns(): NonNullable<
   return patterns;
 }
 
-const r2PublicBase = (
-  process.env.R2_PUBLIC_BASE_URL ||
-  process.env.R2_PUBLIC_URL ||
-  ""
-).replace(/\/$/, "");
+const r2PublicBase = (process.env.R2_PUBLIC_BASE_URL || process.env.R2_PUBLIC_URL || '').replace(
+  /\/$/,
+  '',
+);
 
 const nextConfig: NextConfig = {
   turbopack: {
@@ -84,7 +80,7 @@ const nextConfig: NextConfig = {
   // Product/category/hero drawers upload images via Server Actions (up to 5MB each).
   experimental: {
     serverActions: {
-      bodySizeLimit: "25mb",
+      bodySizeLimit: '25mb',
     },
   },
   images: {
@@ -93,7 +89,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/:path*",
+        source: '/:path*',
         headers: securityHeaders,
       },
     ];

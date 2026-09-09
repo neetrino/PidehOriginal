@@ -1,7 +1,7 @@
 import {
   computeDiscountAmount,
   type DiscountType,
-} from "@/features/promotions/domain/promotion-rules";
+} from '@/features/promotions/domain/promotion-rules';
 
 export type CouponDiscountInput = {
   isActive: boolean;
@@ -16,12 +16,12 @@ export type CouponDiscountInput = {
 };
 
 export type CouponDiscountError =
-  | "INVALID_OR_INACTIVE"
-  | "NOT_YET_ACTIVE"
-  | "EXPIRED"
-  | "MINIMUM_NOT_MET"
-  | "USAGE_LIMIT"
-  | "USER_NOT_ELIGIBLE";
+  | 'INVALID_OR_INACTIVE'
+  | 'NOT_YET_ACTIVE'
+  | 'EXPIRED'
+  | 'MINIMUM_NOT_MET'
+  | 'USAGE_LIMIT'
+  | 'USER_NOT_ELIGIBLE';
 
 /**
  * Empty allowlist = unrestricted (all customers/guests).
@@ -44,33 +44,25 @@ export function evaluateCouponDiscount(
   coupon: CouponDiscountInput | null | undefined,
   subtotal: number,
   now: Date = new Date(),
-):
-  | { ok: true; discountAmount: number }
-  | { ok: false; error: CouponDiscountError } {
+): { ok: true; discountAmount: number } | { ok: false; error: CouponDiscountError } {
   if (!coupon || !coupon.isActive) {
-    return { ok: false, error: "INVALID_OR_INACTIVE" };
+    return { ok: false, error: 'INVALID_OR_INACTIVE' };
   }
 
   if (coupon.startsAt && coupon.startsAt > now) {
-    return { ok: false, error: "NOT_YET_ACTIVE" };
+    return { ok: false, error: 'NOT_YET_ACTIVE' };
   }
 
   if (coupon.endsAt && coupon.endsAt < now) {
-    return { ok: false, error: "EXPIRED" };
+    return { ok: false, error: 'EXPIRED' };
   }
 
-  if (
-    coupon.minimumOrderAmount !== null &&
-    subtotal < coupon.minimumOrderAmount
-  ) {
-    return { ok: false, error: "MINIMUM_NOT_MET" };
+  if (coupon.minimumOrderAmount !== null && subtotal < coupon.minimumOrderAmount) {
+    return { ok: false, error: 'MINIMUM_NOT_MET' };
   }
 
-  if (
-    coupon.totalUsageLimit !== null &&
-    coupon.usedCount >= coupon.totalUsageLimit
-  ) {
-    return { ok: false, error: "USAGE_LIMIT" };
+  if (coupon.totalUsageLimit !== null && coupon.usedCount >= coupon.totalUsageLimit) {
+    return { ok: false, error: 'USAGE_LIMIT' };
   }
 
   return {
@@ -86,17 +78,17 @@ export function evaluateCouponDiscount(
 
 export function couponDiscountErrorMessage(error: CouponDiscountError): string {
   switch (error) {
-    case "INVALID_OR_INACTIVE":
-      return "Invalid or inactive coupon.";
-    case "NOT_YET_ACTIVE":
-      return "Coupon is not active yet.";
-    case "EXPIRED":
-      return "Coupon has expired.";
-    case "MINIMUM_NOT_MET":
-      return "Order does not meet coupon minimum.";
-    case "USAGE_LIMIT":
-      return "Coupon usage limit reached.";
-    case "USER_NOT_ELIGIBLE":
-      return "This coupon is not available for your account.";
+    case 'INVALID_OR_INACTIVE':
+      return 'Invalid or inactive coupon.';
+    case 'NOT_YET_ACTIVE':
+      return 'Coupon is not active yet.';
+    case 'EXPIRED':
+      return 'Coupon has expired.';
+    case 'MINIMUM_NOT_MET':
+      return 'Order does not meet coupon minimum.';
+    case 'USAGE_LIMIT':
+      return 'Coupon usage limit reached.';
+    case 'USER_NOT_ELIGIBLE':
+      return 'This coupon is not available for your account.';
   }
 }

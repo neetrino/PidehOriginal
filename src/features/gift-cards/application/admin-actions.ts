@@ -1,29 +1,27 @@
-"use server";
+'use server';
 
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { auditLogs, giftCards } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
+import { auditLogs, giftCards } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
 import {
   activateGiftCardRecord,
   createGiftCardRecord,
-} from "@/features/gift-cards/application/create-gift-card";
-import { sendGiftCardEmail } from "@/features/gift-cards/application/send-gift-card-email";
-import {
-  isValidGiftCardAmount,
-} from "@/features/gift-cards/domain/gift-card-rules";
+} from '@/features/gift-cards/application/create-gift-card';
+import { sendGiftCardEmail } from '@/features/gift-cards/application/send-gift-card-email';
+import { isValidGiftCardAmount } from '@/features/gift-cards/domain/gift-card-rules';
 import {
   adminCreateGiftCardSchema,
   adminGiftCardIdSchema,
   purchaseGiftCardSchema,
-} from "@/features/gift-cards/schemas";
-import { getStoreGiftCardSettings } from "@/features/settings/application/queries";
-import { requireAdmin } from "@/lib/auth/policies";
-import { getCurrentUser } from "@/lib/auth/session";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/features/gift-cards/schemas';
+import { getStoreGiftCardSettings } from '@/features/settings/application/queries';
+import { requireAdmin } from '@/lib/auth/policies';
+import { getCurrentUser } from '@/lib/auth/session';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 function revalidateGiftCardPaths(locale: string, id?: string): void {
   revalidatePath(`/${locale}/admin/gift-cards`);
@@ -40,21 +38,21 @@ export async function purchaseGiftCardAction(
 ): Promise<Result<{ id: string; code: string; status: string }>> {
   const parsed = purchaseGiftCardSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid gift card purchase payload.");
+    return err('VALIDATION_ERROR', 'Invalid gift card purchase payload.');
   }
   if (!isLocale(parsed.data.locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const user = await getCurrentUser();
   if (!user) {
-    return err("UNAUTHORIZED", "Sign in to purchase a gift card.");
+    return err('UNAUTHORIZED', 'Sign in to purchase a gift card.');
   }
 
   const settings = await getStoreGiftCardSettings();
   if (!isValidGiftCardAmount(parsed.data.amount, settings)) {
     return err(
-      "INVALID_AMOUNT",
+      'INVALID_AMOUNT',
       `Amount must be between ${settings.minAmount} and ${settings.maxAmount} AMD.`,
     );
   }
@@ -72,9 +70,7 @@ export async function purchaseGiftCardAction(
         recipientPhone: parsed.data.recipientPhone,
         message: parsed.data.message,
         paymentMethod: parsed.data.paymentMethod,
-        scheduledSendAt: parsed.data.scheduledSendAt
-          ? new Date(parsed.data.scheduledSendAt)
-          : null,
+        scheduledSendAt: parsed.data.scheduledSendAt ? new Date(parsed.data.scheduledSendAt) : null,
         settings,
       });
 
@@ -92,14 +88,14 @@ export async function purchaseGiftCardAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: user.id,
-        action: "gift_card.purchase",
-        targetType: "gift_card",
+        action: 'gift_card.purchase',
+        targetType: 'gift_card',
         targetId: created.id,
         afterDiff: {
           amount: parsed.data.amount,
           paymentMethod: parsed.data.paymentMethod,
           code: created.code,
-          status: "ACTIVE",
+          status: 'ACTIVE',
         },
         correlationId: created.id,
       });
@@ -108,11 +104,11 @@ export async function purchaseGiftCardAction(
     });
 
     revalidateGiftCardPaths(parsed.data.locale, result.id);
-    return ok({ id: result.id, code: result.code, status: "ACTIVE" });
+    return ok({ id: result.id, code: result.code, status: 'ACTIVE' });
   } catch (caught) {
     return err(
-      "PURCHASE_FAILED",
-      caught instanceof Error ? caught.message : "Gift card purchase failed.",
+      'PURCHASE_FAILED',
+      caught instanceof Error ? caught.message : 'Gift card purchase failed.',
     );
   }
 }
@@ -123,19 +119,19 @@ export async function adminCreateGiftCardAction(
   raw: unknown,
 ): Promise<Result<{ id: string; code: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = adminCreateGiftCardSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid gift card payload.");
+    return err('VALIDATION_ERROR', 'Invalid gift card payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
   const settings = await getStoreGiftCardSettings();
   if (!isValidGiftCardAmount(parsed.data.amount, settings)) {
     return err(
-      "INVALID_AMOUNT",
+      'INVALID_AMOUNT',
       `Amount must be between ${settings.minAmount} and ${settings.maxAmount} AMD.`,
     );
   }
@@ -151,11 +147,9 @@ export async function adminCreateGiftCardAction(
         recipientEmail: parsed.data.recipientEmail,
         recipientPhone: parsed.data.recipientPhone,
         message: parsed.data.message,
-        expiresAt: parsed.data.expiresAt
-          ? new Date(parsed.data.expiresAt)
-          : null,
+        expiresAt: parsed.data.expiresAt ? new Date(parsed.data.expiresAt) : null,
         createdByUserId: actor.id,
-        paymentMethod: "ADMIN_ISSUE",
+        paymentMethod: 'ADMIN_ISSUE',
         settings,
       });
 
@@ -173,8 +167,8 @@ export async function adminCreateGiftCardAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "gift_card.create",
-        targetType: "gift_card",
+        action: 'gift_card.create',
+        targetType: 'gift_card',
         targetId: created.id,
         afterDiff: {
           amount: parsed.data.amount,
@@ -191,8 +185,8 @@ export async function adminCreateGiftCardAction(
     return ok(result);
   } catch (caught) {
     return err(
-      "CREATE_FAILED",
-      caught instanceof Error ? caught.message : "Gift card create failed.",
+      'CREATE_FAILED',
+      caught instanceof Error ? caught.message : 'Gift card create failed.',
     );
   }
 }
@@ -203,11 +197,11 @@ export async function adminActivateGiftCardAction(
   raw: unknown,
 ): Promise<Result<{ code: string; sent: boolean }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
   const parsed = adminGiftCardIdSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid gift card id.");
+    return err('VALIDATION_ERROR', 'Invalid gift card id.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -226,8 +220,8 @@ export async function adminActivateGiftCardAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "gift_card.activate",
-        targetType: "gift_card",
+        action: 'gift_card.activate',
+        targetType: 'gift_card',
         targetId: parsed.data.id,
         afterDiff: { code: activated.code, sent: activated.sent },
         correlationId: parsed.data.id,
@@ -239,10 +233,7 @@ export async function adminActivateGiftCardAction(
     revalidateGiftCardPaths(locale, parsed.data.id);
     return ok(result);
   } catch (caught) {
-    return err(
-      "ACTIVATE_FAILED",
-      caught instanceof Error ? caught.message : "Activation failed.",
-    );
+    return err('ACTIVATE_FAILED', caught instanceof Error ? caught.message : 'Activation failed.');
   }
 }
 
@@ -252,11 +243,11 @@ export async function adminDisableGiftCardAction(
   raw: unknown,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
   const parsed = adminGiftCardIdSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid gift card id.");
+    return err('VALIDATION_ERROR', 'Invalid gift card id.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -268,21 +259,21 @@ export async function adminDisableGiftCardAction(
         .select({ id: giftCards.id, status: giftCards.status })
         .from(giftCards)
         .where(eq(giftCards.id, parsed.data.id))
-        .for("update")
+        .for('update')
         .limit(1);
       if (!card) {
-        throw new Error("GIFT_CARD_NOT_FOUND");
+        throw new Error('GIFT_CARD_NOT_FOUND');
       }
-      if (card.status === "DISABLED") {
+      if (card.status === 'DISABLED') {
         return;
       }
 
       await tx
         .update(giftCards)
         .set({
-          status: "DISABLED",
+          status: 'DISABLED',
           disabledAt: now,
-          disabledReason: "Disabled by admin",
+          disabledReason: 'Disabled by admin',
           updatedAt: now,
         })
         .where(eq(giftCards.id, card.id));
@@ -290,8 +281,8 @@ export async function adminDisableGiftCardAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "gift_card.disable",
-        targetType: "gift_card",
+        action: 'gift_card.disable',
+        targetType: 'gift_card',
         targetId: card.id,
         correlationId: card.id,
       });
@@ -300,10 +291,7 @@ export async function adminDisableGiftCardAction(
     revalidateGiftCardPaths(locale, parsed.data.id);
     return ok({ id: parsed.data.id });
   } catch (caught) {
-    return err(
-      "DISABLE_FAILED",
-      caught instanceof Error ? caught.message : "Disable failed.",
-    );
+    return err('DISABLE_FAILED', caught instanceof Error ? caught.message : 'Disable failed.');
   }
 }
 
@@ -313,11 +301,11 @@ export async function adminResendGiftCardEmailAction(
   raw: unknown,
 ): Promise<Result<{ sent: boolean }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
   const parsed = adminGiftCardIdSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid gift card id.");
+    return err('VALIDATION_ERROR', 'Invalid gift card id.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -328,13 +316,13 @@ export async function adminResendGiftCardEmailAction(
         .select()
         .from(giftCards)
         .where(eq(giftCards.id, parsed.data.id))
-        .for("update")
+        .for('update')
         .limit(1);
       if (!card) {
-        throw new Error("GIFT_CARD_NOT_FOUND");
+        throw new Error('GIFT_CARD_NOT_FOUND');
       }
-      if (card.status !== "ACTIVE" && card.status !== "USED") {
-        throw new Error("GIFT_CARD_NOT_ACTIVE");
+      if (card.status !== 'ACTIVE' && card.status !== 'USED') {
+        throw new Error('GIFT_CARD_NOT_ACTIVE');
       }
 
       await sendGiftCardEmail({
@@ -357,8 +345,8 @@ export async function adminResendGiftCardEmailAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "gift_card.resend_email",
-        targetType: "gift_card",
+        action: 'gift_card.resend_email',
+        targetType: 'gift_card',
         targetId: card.id,
         correlationId: card.id,
       });
@@ -369,9 +357,6 @@ export async function adminResendGiftCardEmailAction(
     revalidateGiftCardPaths(locale, parsed.data.id);
     return ok(result);
   } catch (caught) {
-    return err(
-      "RESEND_FAILED",
-      caught instanceof Error ? caught.message : "Resend failed.",
-    );
+    return err('RESEND_FAILED', caught instanceof Error ? caught.message : 'Resend failed.');
   }
 }

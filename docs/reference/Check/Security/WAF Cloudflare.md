@@ -1,4 +1,5 @@
-___
+---
+
 # REG-SEC-EDGE-001
 
 ## Cloudflare-first WAF & Edge Security Standard (Vercel + Render)
@@ -23,15 +24,14 @@ ___
 ### 1.1 DNS в Cloudflare
 
 - Все публичные записи сайта должны быть **Proxied (оранжевая тучка ON)**:
-    
-    - `@` (apex)
-        
-    - `www`
-        
-    - `api` (если отдельный сабдомен)
-        
-    - любые публичные сервисы (если они должны быть публичны)
-        
+
+  - `@` (apex)
+
+  - `www`
+
+  - `api` (если отдельный сабдомен)
+
+  - любые публичные сервисы (если они должны быть публичны)
 
 **Запрещено:** “DNS only” для публичных endpoint’ов (кроме редких случаев типа почты).
 
@@ -40,28 +40,26 @@ ___
 Cloudflare → SSL/TLS:
 
 - **Mode: Full (strict)**
-    
+
 - Origin должен иметь валидный сертификат:
-    
-    - Vercel: ок
-        
-    - Render: ок
-        
-    - VPS: поставить origin cert (Cloudflare Origin Certificate) или Let’s Encrypt
-        
+
+  - Vercel: ок
+
+  - Render: ок
+
+  - VPS: поставить origin cert (Cloudflare Origin Certificate) или Let’s Encrypt
 
 ### 1.3 HSTS (после проверки)
 
 Cloudflare → SSL/TLS → Edge Certificates:
 
 - Включить **HSTS** (рекомендуется после теста):
-    
-    - Start: `max-age=31536000`
-        
-    - Include subdomains: по готовности
-        
-    - Preload: только когда уверен на 100%
-        
+
+  - Start: `max-age=31536000`
+
+  - Include subdomains: по готовности
+
+  - Preload: только когда уверен на 100%
 
 ---
 
@@ -74,23 +72,20 @@ Cloudflare → Security → WAF
 Обязательные наборы:
 
 1. **Cloudflare Managed Ruleset**
-    
+
 2. **OWASP Core Ruleset (CRS)**
-    
 
 **Стартовая политика действий**
 
 - Первый запуск: **Managed Challenge** для “высокого риска”, чтобы не ломать легитимный трафик.
-    
+
 - Через 3–7 дней логов: перевести самые шумные угрозы в **Block**.
-    
 
 ### 2.2 Логи и тюнинг
 
 Обязательное правило:
 
 - Любой блок/челлендж, который задел оплату/авторизацию/вебхуки, фиксится через исключение или точечное правило (см. раздел 6).
-    
 
 ---
 
@@ -106,35 +101,30 @@ Cloudflare → Security → WAF → Rate limiting rules
 **A. Auth / identity (самое атакуемое)**
 
 - `/api/auth/*`
-    
+
 - `/login`, `/register`, `/forgot-password`, `/reset-password`
-    
+
 - magic links, OTP verify endpoints
-    
 
 **B. Public forms (лиды, подписки, контакты)**
 
 - `/api/contact`, `/api/lead`, `/api/subscribe`
-    
 
 **C. “Дорогие” endpoints**
 
 - поиск, фильтры, генерации, отчёты
-    
+
 - любые endpoints с внешними вызовами (LLM, платежи, сторонние API)
-    
 
 **D. Webhooks**
 
 - `/api/webhooks/*` (Stripe/PayPal/…)
-    
+
 - `/api/clerk/webhook` (пример)
-    
 
 **E. Admin**
 
 - `/admin/*`, `/api/admin/*`
-    
 
 ---
 
@@ -145,47 +135,42 @@ Cloudflare → Security → WAF → Rate limiting rules
 **A) Auth**
 
 - `POST /api/auth/login` или аналог: **10 req / 1 min / IP**
-    
+
 - `POST /api/auth/register`: **5 req / 10 min / IP**
-    
+
 - `POST /api/auth/reset/forgot`: **5 req / 10 min / IP**
-    
+
 - `POST /api/auth/verify-otp`: **20 req / 5 min / IP**
-    
 
 **Action:** Managed Challenge (потом Block, если явно бот)
 
 **B) Public forms**
 
 - `POST /api/contact|lead|subscribe`: **10 req / 10 min / IP**  
-    **Action:** Managed Challenge
-    
+  **Action:** Managed Challenge
 
 **C) Дорогие endpoints**
 
 - `GET /api/search` и аналоги: **120 req / 1 min / IP**
-    
+
 - “очень дорогие” (LLM, heavy compute): **30 req / 1 min / IP**  
-    **Action:** Managed Challenge, при систематике Block
-    
+  **Action:** Managed Challenge, при систематике Block
 
 **D) Webhooks**
 
 - **НЕ лимитить как обычных пользователей.**
-    
+
 - Делать отдельное правило:
-    
-    - Allow если `User-Agent/headers` соответствуют провайдеру **или** запрос подписан (см. раздел 5.3)
-        
-    - Иначе challenge/block
-        
+
+  - Allow если `User-Agent/headers` соответствуют провайдеру **или** запрос подписан (см. раздел 5.3)
+
+  - Иначе challenge/block
 
 **E) Admin**
 
 - `/admin/*`:
-    
-    - по умолчанию **Block**, затем **Allowlist** по IP/VPN/Access (см. раздел 4 и 6)
-        
+
+  - по умолчанию **Block**, затем **Allowlist** по IP/VPN/Access (см. раздел 4 и 6)
 
 ---
 
@@ -196,20 +181,18 @@ Cloudflare → Security → Bots (если доступно на плане)
 **Стандарт:**
 
 - Включить защиту от ботов
-    
+
 - Для “подозрительных” запросов:
-    
-    - challenge по плохим User-Agent
-        
-    - challenge по аномальному поведению (высокая частота, однотипные пути)
-        
+
+  - challenge по плохим User-Agent
+
+  - challenge по аномальному поведению (высокая частота, однотипные пути)
 
 **Разрешённые боты:**
 
 - поисковые боты (если SEO нужен)
-    
+
 - мониторинг (UptimeRobot и т.п.) при whitelist
-    
 
 ---
 
@@ -222,40 +205,36 @@ Cloudflare не заменяет код. Cloudflare делает так, что�
 **Backend (Render Nest или Vercel API)**
 
 - Разрешать origin только твоим доменам:
-    
-    - `https://example.com`
-        
-    - `https://www.example.com`
-        
-    - staging домены по необходимости
-        
+
+  - `https://example.com`
+
+  - `https://www.example.com`
+
+  - staging домены по необходимости
+
 - Запрещено `*` для приватных API/сессионных cookie.
-    
 
 ### 5.2 Ограничение размера тела запроса
 
 На уровне приложения (обязательно):
 
 - формы: 100–300 KB
-    
+
 - json api: 1–2 MB максимум
-    
+
 - uploads: только через отдельный upload flow (signed URLs)
-    
 
 ### 5.3 Webhooks: обязательная подпись
 
 Любой webhook endpoint должен:
 
 - проверять **подпись** (Stripe signature, HMAC secret и т.п.)
-    
+
 - отклонять запрос без подписи
-    
 
 Cloudflare-правило:
 
 - Всё к `/api/webhooks/*` без валидных признаков (headers/UA) получает challenge/block, но **не ломаем легит**.
-    
 
 ---
 
@@ -267,15 +246,14 @@ Cloudflare → Zero Trust → Access
 **Политика:**
 
 - `/admin/*` закрыт Access-правилом
-    
+
 - доступ только:
-    
-    - твой email/команда (Google Workspace) **или**
-        
-    - VPN/IP allowlist **или**
-        
-    - One-time PIN (как минимум)
-        
+
+  - твой email/команда (Google Workspace) **или**
+
+  - VPN/IP allowlist **или**
+
+  - One-time PIN (как минимум)
 
 **Зачем:** это проще и надежнее, чем надеяться, что “никто не угадает /admin”.
 
@@ -286,35 +264,32 @@ Cloudflare → Zero Trust → Access
 ### 7.1 Vercel (Next.js)
 
 - Origin в целом “managed”, но минимум:
-    
-    - не светить secret endpoints без auth
-        
-    - включить логирование 401/403/429
-        
-    - отдельные endpoints для webhook с подписью
-        
+
+  - не светить secret endpoints без auth
+
+  - включить логирование 401/403/429
+
+  - отдельные endpoints для webhook с подписью
 
 ### 7.2 Render (NestJS)
 
 - Обязательно:
-    
-    - `helmet` (security headers)
-        
-    - `rate limit` в приложении (на всякий случай)
-        
-    - строгий CORS
-        
-    - trust proxy (если используешь real IP из CF headers)
-        
+
+  - `helmet` (security headers)
+
+  - `rate limit` в приложении (на всякий случай)
+
+  - строгий CORS
+
+  - trust proxy (если используешь real IP из CF headers)
 
 **Важно про real IP:**
 
 - Если нужно “настоящий IP клиента” в приложении:
-    
-    - используешь `CF-Connecting-IP` / `X-Forwarded-For`
-        
-    - в Nest/Express включить корректный `trust proxy`, но аккуратно (только если уверенно за CF).
-        
+
+  - используешь `CF-Connecting-IP` / `X-Forwarded-For`
+
+  - в Nest/Express включить корректный `trust proxy`, но аккуратно (только если уверенно за CF).
 
 ---
 
@@ -323,15 +298,14 @@ Cloudflare → Zero Trust → Access
 **Обязательно настроить:**
 
 - Cloudflare Security Events мониторинг
-    
+
 - Алерт/лог на всплеск:
-    
-    - 401/403 (подбор)
-        
-    - 429 (rate limit)
-        
-    - 5xx (просадка)
-        
+
+  - 401/403 (подбор)
+
+  - 429 (rate limit)
+
+  - 5xx (просадка)
 
 **Норма:** после включения WAF ты увидишь много “мусора”. Это не баг. Это реальность интернета.
 
@@ -341,57 +315,51 @@ Cloudflare → Zero Trust → Access
 
 ### 9.1 Инфраструктура
 
--  Домен в Cloudflare
-    
--  DNS для `@`, `www`, `api` proxied ON
-    
--  SSL/TLS = Full (strict)
-    
--  HSTS включен (после проверки)
-    
+- Домен в Cloudflare
+
+- DNS для `@`, `www`, `api` proxied ON
+
+- SSL/TLS = Full (strict)
+
+- HSTS включен (после проверки)
 
 ### 9.2 WAF / Rulesets
 
--  Cloudflare Managed Ruleset включен
-    
--  OWASP CRS включен
-    
--  Стартовый action = Managed Challenge, потом тюнинг до Block
-    
+- Cloudflare Managed Ruleset включен
+
+- OWASP CRS включен
+
+- Стартовый action = Managed Challenge, потом тюнинг до Block
 
 ### 9.3 Rate limiting
 
--  Auth endpoints лимиты поставлены
-    
--  Public forms лимиты поставлены
-    
--  Search/expensive endpoints лимиты поставлены
-    
--  Webhooks отдельная политика (подпись + исключения)
-    
+- Auth endpoints лимиты поставлены
+
+- Public forms лимиты поставлены
+
+- Search/expensive endpoints лимиты поставлены
+
+- Webhooks отдельная политика (подпись + исключения)
 
 ### 9.4 Bot protection
 
--  Bot защита включена
-    
--  Whitelist для нужных ботов/мониторов
-    
+- Bot защита включена
+
+- Whitelist для нужных ботов/мониторов
 
 ### 9.5 App-level
 
--  CORS строгий
-    
--  request body size limits
-    
--  webhooks signature verification
-    
--  security headers (helmet/next headers)
-    
+- CORS строгий
+
+- request body size limits
+
+- webhooks signature verification
+
+- security headers (helmet/next headers)
 
 ### 9.6 Admin protection
 
--  `/admin/*` закрыт через Cloudflare Access или allowlist
-    
+- `/admin/*` закрыт через Cloudflare Access или allowlist
 
 ---
 
@@ -400,20 +368,18 @@ Cloudflare → Zero Trust → Access
 ### Webhooks (Stripe и прочее)
 
 - Не ставить агрессивный rate limit как для пользователей
-    
+
 - Разрешать по подписи, а не “по вере”
-    
 
 ### Платёжные страницы/checkout
 
 - Слишком строгий challenge может снижать конверсию
-    
+
 - Для `/checkout` и `POST /api/checkout/*`:
-    
-    - лучше умеренные лимиты
-        
-    - лучше “Managed Challenge” только при явной атаке
-        
+
+  - лучше умеренные лимиты
+
+  - лучше “Managed Challenge” только при явной атаке
 
 ---
 
@@ -422,37 +388,34 @@ Cloudflare → Zero Trust → Access
 **Production**
 
 - Все правила включены
-    
 
 **Staging**
 
 - WAF включен, но больше в режиме “challenge”, чтобы тест не ломался
-    
+
 - Можно ослабить лимиты, но не выключать полностью (иначе сюрпризы на проде)
-    
 
 ---
 
 ## 12) Минимальные “значения по умолчанию” (таблица для регламента)
 
 - Auth login: 10/min/IP
-    
+
 - Register: 5/10min/IP
-    
+
 - Forgot/reset: 5/10min/IP
-    
+
 - OTP verify: 20/5min/IP
-    
+
 - Contact/lead forms: 10/10min/IP
-    
+
 - Search GET: 120/min/IP
-    
+
 - Heavy endpoints: 30/min/IP
-    
+
 - Admin: Access/Allowlist, иначе Block
-    
+
 - Webhooks: signature required + отдельная политика
-    
 
 ---
 

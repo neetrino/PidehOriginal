@@ -2,10 +2,10 @@ import {
   FX_CACHE_TTL_SECONDS,
   FX_MAX_STALE_AGE_MS,
   FX_STALE_TTL_SECONDS,
-} from "@/lib/fx/constants";
-import type { ExchangeRateAdapter, ExchangeRateQuote } from "@/lib/fx/types";
-import type { Currency } from "@/lib/money/currency";
-import type { RedisClient } from "@/lib/redis/types";
+} from '@/lib/fx/constants';
+import type { ExchangeRateAdapter, ExchangeRateQuote } from '@/lib/fx/types';
+import type { Currency } from '@/lib/money/currency';
+import type { RedisClient } from '@/lib/redis/types';
 
 type CachedQuote = {
   base: Currency;
@@ -51,9 +51,9 @@ function deserializeQuote(raw: string): ExchangeRateQuote | null {
   try {
     const parsed = JSON.parse(raw) as CachedQuote;
     if (
-      typeof parsed.rate !== "string" ||
-      typeof parsed.asOf !== "string" ||
-      typeof parsed.source !== "string"
+      typeof parsed.rate !== 'string' ||
+      typeof parsed.asOf !== 'string' ||
+      typeof parsed.source !== 'string'
     ) {
       return null;
     }
@@ -87,9 +87,9 @@ export async function resolveExchangeQuote(
     return {
       base,
       quote,
-      rate: "1",
+      rate: '1',
       asOf: deps.now ?? new Date(),
-      source: "identity",
+      source: 'identity',
     };
   }
 
@@ -121,7 +121,7 @@ export async function resolveExchangeQuote(
         quote,
         source: stale.source,
         asOf: stale.asOf.toISOString(),
-        error: error instanceof Error ? error.message : "unknown",
+        error: error instanceof Error ? error.message : 'unknown',
       });
       return {
         ...stale,

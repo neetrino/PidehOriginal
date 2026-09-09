@@ -1,18 +1,16 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 /** Normalizes `HH:mm` / `HH:mm:ss` from `<input type="time">` to `HH:mm`. */
 function normalizeTimeHHmm(value: unknown): unknown {
-  if (typeof value !== "string") return value;
-  const match = value
-    .trim()
-    .match(/^([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d(?:\.\d+)?)?$/);
+  if (typeof value !== 'string') return value;
+  const match = value.trim().match(/^([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d(?:\.\d+)?)?$/);
   if (!match) return value;
   return `${match[1]}:${match[2]}`;
 }
 
 const timeHHmm = z.preprocess(
   normalizeTimeHHmm,
-  z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time"),
+  z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time'),
 );
 
 const dayHoursSchema = z
@@ -24,18 +22,18 @@ const dayHoursSchema = z
   .superRefine((value, ctx) => {
     if (!value.isOpen) return;
     const openMinutes = (() => {
-      const [hours, minutes] = value.openTime.split(":");
+      const [hours, minutes] = value.openTime.split(':');
       return Number(hours) * 60 + Number(minutes);
     })();
     const closeMinutes = (() => {
-      const [hours, minutes] = value.closeTime.split(":");
+      const [hours, minutes] = value.closeTime.split(':');
       return Number(hours) * 60 + Number(minutes);
     })();
     if (closeMinutes <= openMinutes) {
       ctx.addIssue({
-        code: "custom",
-        path: ["closeTime"],
-        message: "Close time must be after open time.",
+        code: 'custom',
+        path: ['closeTime'],
+        message: 'Close time must be after open time.',
       });
     }
   });
@@ -62,7 +60,7 @@ const cashChangeDenominationSchema = z.object({
   id: z.string().trim().min(1).max(64),
   amount: z.coerce.number().int().min(1).max(100_000_000),
   imageObjectKey: z.preprocess((value) => {
-    if (value === "" || value == null) return null;
+    if (value === '' || value == null) return null;
     return value;
   }, z.string().trim().min(1).max(500).nullable()),
   isActive: z.boolean(),
@@ -77,19 +75,16 @@ export const deliverySettingsSchema = z
     pricePerKmAmount: z.coerce.number().int().min(0).max(10_000_000),
     isActive: z.boolean(),
     schedule: deliveryScheduleSchema,
-    cashChangeDenominations: z
-      .array(cashChangeDenominationSchema)
-      .max(20)
-      .default([]),
+    cashChangeDenominations: z.array(cashChangeDenominationSchema).max(20).default([]),
   })
   .superRefine((value, ctx) => {
     const hasLat = value.originLat != null;
     const hasLng = value.originLng != null;
     if (hasLat !== hasLng) {
       ctx.addIssue({
-        code: "custom",
-        path: hasLat ? ["originLng"] : ["originLat"],
-        message: "Store map pin requires both latitude and longitude.",
+        code: 'custom',
+        path: hasLat ? ['originLng'] : ['originLat'],
+        message: 'Store map pin requires both latitude and longitude.',
       });
     }
 
@@ -97,9 +92,9 @@ export const deliverySettingsSchema = z
     for (const [index, item] of value.cashChangeDenominations.entries()) {
       if (amounts.has(item.amount)) {
         ctx.addIssue({
-          code: "custom",
-          path: ["cashChangeDenominations", index, "amount"],
-          message: "Duplicate cash-change amount.",
+          code: 'custom',
+          path: ['cashChangeDenominations', index, 'amount'],
+          message: 'Duplicate cash-change amount.',
         });
       }
       amounts.add(item.amount);
@@ -114,9 +109,7 @@ export const quoteDistanceDeliverySchema = z.object({
   lng: z.number().finite().min(-180).max(180).optional(),
 });
 
-export type QuoteDistanceDeliveryInput = z.infer<
-  typeof quoteDistanceDeliverySchema
->;
+export type QuoteDistanceDeliveryInput = z.infer<typeof quoteDistanceDeliverySchema>;
 
 export type DeliveryDestinationPoint = {
   lat: number;
@@ -129,7 +122,7 @@ export const deliveryLocationSchema = z.object({
   city: z.string().trim().min(1).max(80),
   priceAmount: z.coerce.number().int().min(0).max(10_000_000),
   freeThresholdAmount: z.preprocess((value) => {
-    if (value === "" || value == null) return null;
+    if (value === '' || value == null) return null;
     return value;
   }, z.coerce.number().int().min(0).max(100_000_000).nullable()),
 });

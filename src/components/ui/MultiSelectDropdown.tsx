@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { Check, ChevronDown } from 'lucide-react';
 
-import { DROPDOWN_ANIMATION_MS } from "@/components/ui/SelectDropdown";
+import { DROPDOWN_ANIMATION_MS } from '@/components/ui/SelectDropdown';
 
 export type MultiSelectOption = {
   label: string;
@@ -19,7 +19,7 @@ type MultiSelectDropdownProps = {
   className?: string;
   disabled?: boolean;
   /** Prefer opening above the trigger (e.g. near the bottom of a sheet). */
-  placement?: "bottom" | "top";
+  placement?: 'bottom' | 'top';
   /** When set, shows a search field that filters by label and hint. */
   searchPlaceholder?: string;
   noResultsLabel?: string;
@@ -28,7 +28,7 @@ type MultiSelectDropdownProps = {
 
 function matchesQuery(option: MultiSelectOption, query: string): boolean {
   if (!query) return true;
-  const haystack = `${option.label} ${option.hint ?? ""}`.toLowerCase();
+  const haystack = `${option.label} ${option.hint ?? ''}`.toLowerCase();
   return haystack.includes(query);
 }
 
@@ -37,16 +37,16 @@ export function MultiSelectDropdown({
   options,
   values,
   emptyLabel,
-  className = "",
+  className = '',
   disabled = false,
-  placement = "bottom",
+  placement = 'bottom',
   searchPlaceholder,
-  noResultsLabel = "No results",
+  noResultsLabel = 'No results',
   onValuesChange,
 }: MultiSelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const [elevated, setElevated] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const rootRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const listId = useId();
@@ -57,9 +57,7 @@ export function MultiSelectDropdown({
 
   const filteredOptions = useMemo(
     () =>
-      searchable
-        ? options.filter((option) => matchesQuery(option, normalizedQuery))
-        : options,
+      searchable ? options.filter((option) => matchesQuery(option, normalizedQuery)) : options,
     [options, searchable, normalizedQuery],
   );
 
@@ -69,7 +67,7 @@ export function MultiSelectDropdown({
       : options
           .filter((option) => selected.has(option.value))
           .map((option) => option.label)
-          .join(", ");
+          .join(', ');
 
   useEffect(() => {
     if (open) {
@@ -82,7 +80,7 @@ export function MultiSelectDropdown({
 
   useEffect(() => {
     if (!open) {
-      setQuery("");
+      setQuery('');
       return;
     }
     if (searchable) {
@@ -100,14 +98,14 @@ export function MultiSelectDropdown({
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === 'Escape') setOpen(false);
     }
 
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [open]);
 
@@ -133,7 +131,7 @@ export function MultiSelectDropdown({
       >
         <span className="min-w-0 flex-1 truncate">{summary}</span>
         <ChevronDown
-          className={`h-4 w-4 shrink-0 text-gray-500 transition ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 shrink-0 text-gray-500 transition ${open ? 'rotate-180' : ''}`}
           aria-hidden
         />
       </button>
@@ -141,8 +139,8 @@ export function MultiSelectDropdown({
       {elevated ? (
         <div
           className={`absolute z-20 w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg transition ${
-            placement === "top" ? "bottom-full mb-1" : "mt-1"
-          } ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+            placement === 'top' ? 'bottom-full mb-1' : 'mt-1'
+          } ${open ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
         >
           {searchable ? (
             <div className="border-b border-gray-100 p-2">
@@ -159,7 +157,7 @@ export function MultiSelectDropdown({
                 className="h-9 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-gray-400"
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === "Escape") {
+                  if (event.key === 'Escape') {
                     event.stopPropagation();
                     setOpen(false);
                   }
@@ -174,18 +172,12 @@ export function MultiSelectDropdown({
             className="max-h-48 overflow-y-auto py-1"
           >
             {filteredOptions.length === 0 ? (
-              <li className="px-3 py-2 text-sm text-gray-500">
-                {noResultsLabel}
-              </li>
+              <li className="px-3 py-2 text-sm text-gray-500">{noResultsLabel}</li>
             ) : (
               filteredOptions.map((option) => {
                 const isSelected = selected.has(option.value);
                 return (
-                  <li
-                    key={option.value}
-                    role="option"
-                    aria-selected={isSelected}
-                  >
+                  <li key={option.value} role="option" aria-selected={isSelected}>
                     <button
                       type="button"
                       className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-800 hover:bg-gray-50"
@@ -193,18 +185,12 @@ export function MultiSelectDropdown({
                     >
                       <span
                         className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
-                          isSelected
-                            ? "border-gray-900 bg-gray-900 text-white"
-                            : "border-gray-300"
+                          isSelected ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-300'
                         }`}
                       >
-                        {isSelected ? (
-                          <Check className="h-3 w-3" aria-hidden />
-                        ) : null}
+                        {isSelected ? <Check className="h-3 w-3" aria-hidden /> : null}
                       </span>
-                      <span className="min-w-0 flex-1 truncate">
-                        {option.label}
-                      </span>
+                      <span className="min-w-0 flex-1 truncate">{option.label}</span>
                       {option.hint ? (
                         <span className="max-w-[40%] shrink-0 truncate text-xs text-gray-500">
                           {option.hint}

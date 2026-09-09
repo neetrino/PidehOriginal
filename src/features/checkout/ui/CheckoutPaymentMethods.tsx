@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
 
-const RADIO_SELECTED = "border-gray-900 bg-gray-50";
-const RADIO_IDLE = "border-gray-300 hover:bg-gray-50";
+const RADIO_SELECTED = 'border-gray-900 bg-gray-50';
+const RADIO_IDLE = 'border-gray-300 hover:bg-gray-50';
 
 type PaymentOption = {
   id: CheckoutPaymentMethod;
@@ -75,21 +75,17 @@ export function CheckoutPaymentMethods({
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element -- payment logos
                     <img
-                      src={option.logoSrc ?? ""}
+                      src={option.logoSrc ?? ''}
                       alt={option.name}
                       className="h-full w-full object-contain p-1.5"
                       loading="lazy"
-                      onError={() =>
-                        setLogoErrors((prev) => ({ ...prev, [option.id]: true }))
-                      }
+                      onError={() => setLogoErrors((prev) => ({ ...prev, [option.id]: true }))}
                     />
                   )}
                 </div>
                 <div className="flex-1">
                   <div className="font-medium text-gray-900">{option.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {option.description}
-                  </div>
+                  <div className="text-sm text-gray-600">{option.description}</div>
                 </div>
               </div>
             </label>

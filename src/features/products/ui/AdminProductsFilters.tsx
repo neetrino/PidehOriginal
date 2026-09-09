@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import { flushSync } from "react-dom";
+import { useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
-import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import { ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import type { AdminCategoryOption } from '@/features/products/application/list-admin-products';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 const FILTER_INPUT =
-  "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-300";
+  'h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-300';
 
 type AdminProductsFiltersProps = {
   total: number;
   q?: string;
   sku?: string;
   categoryId?: string;
-  stock: "all" | "in_stock" | "out_of_stock" | "low_stock";
+  stock: 'all' | 'in_stock' | 'out_of_stock' | 'low_stock';
   categories: AdminCategoryOption[];
   sort: string;
   dir: string;
-  copy: Dictionary["admin"]["products"]["filters"];
+  copy: Dictionary['admin']['products']['filters'];
 };
 
 export function AdminProductsFilters({
@@ -35,7 +35,7 @@ export function AdminProductsFilters({
   copy,
 }: AdminProductsFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [categoryValue, setCategoryValue] = useState(categoryId ?? "");
+  const [categoryValue, setCategoryValue] = useState(categoryId ?? '');
   const [stockValue, setStockValue] = useState(stock);
 
   const categoryOptions = categories.map((category) => ({
@@ -44,10 +44,10 @@ export function AdminProductsFilters({
   }));
 
   const stockOptions = [
-    { label: copy.allProducts, value: "all" as const },
-    { label: copy.inStock, value: "in_stock" as const },
-    { label: copy.outOfStock, value: "out_of_stock" as const },
-    { label: copy.lowStock, value: "low_stock" as const },
+    { label: copy.allProducts, value: 'all' as const },
+    { label: copy.inStock, value: 'in_stock' as const },
+    { label: copy.outOfStock, value: 'out_of_stock' as const },
+    { label: copy.lowStock, value: 'low_stock' as const },
   ];
 
   function applyCategory(next: string): void {
@@ -56,29 +56,23 @@ export function AdminProductsFilters({
   }
 
   function applyStock(next: string): void {
-    flushSync(() =>
-      setStockValue(next as AdminProductsFiltersProps["stock"]),
-    );
+    flushSync(() => setStockValue(next as AdminProductsFiltersProps['stock']));
     formRef.current?.requestSubmit();
   }
 
   return (
     <div className="mb-4">
       <p className="mb-3 text-sm text-gray-600">
-        {copy.totalProducts.replace("{total}", String(total))}
+        {copy.totalProducts.replace('{total}', String(total))}
       </p>
-      <form
-        ref={formRef}
-        method="get"
-        className="grid grid-cols-1 gap-4 md:grid-cols-2"
-      >
+      <form ref={formRef} method="get" className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <input type="hidden" name="sort" value={sort} />
         <input type="hidden" name="dir" value={dir} />
         <label>
           <span className={ADMIN_LABEL}>{copy.searchByTitleOrSlug}</span>
           <input
             name="q"
-            defaultValue={q ?? ""}
+            defaultValue={q ?? ''}
             placeholder={copy.searchByTitleOrSlugPlaceholder}
             className={`${FILTER_INPUT} mt-1`}
             aria-label={copy.searchByTitleOrSlugAria}
@@ -88,7 +82,7 @@ export function AdminProductsFilters({
           <span className={ADMIN_LABEL}>{copy.searchBySku}</span>
           <input
             name="sku"
-            defaultValue={sku ?? ""}
+            defaultValue={sku ?? ''}
             placeholder={copy.searchBySkuPlaceholder}
             className={`${FILTER_INPUT} mt-1`}
             aria-label={copy.searchBySkuAria}

@@ -1,18 +1,18 @@
-import { MobileBrandBar } from "@/components/layout/MobileBrandBar";
-import { NAV_DOCK_HEIGHT_PX } from "@/components/layout/NavEllipse3469";
-import { MobileCopyright } from "@/features/home/ui/mobile/MobileCopyright";
-import { MobileEllipse3469 } from "@/features/home/ui/mobile/MobileEllipse3469";
-import { MobileFrame440 } from "@/features/home/ui/mobile/MobileFrame440";
-import { MobileHomeBranches } from "@/features/home/ui/mobile/MobileHomeBranches";
-import { MobileHomeFeatured } from "@/features/home/ui/mobile/MobileHomeFeatured";
+import { MobileBrandBar } from '@/components/layout/MobileBrandBar';
+import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
+import { MobileCopyright } from '@/features/home/ui/mobile/MobileCopyright';
+import { MobileEllipse3469 } from '@/features/home/ui/mobile/MobileEllipse3469';
+import { MobileFrame440 } from '@/features/home/ui/mobile/MobileFrame440';
+import { MobileHomeBranches } from '@/features/home/ui/mobile/MobileHomeBranches';
+import { MobileHomeFeatured } from '@/features/home/ui/mobile/MobileHomeFeatured';
 import {
   MOBILE_FEATURE_LAYOUT,
   MobileHomeFeatures,
-} from "@/features/home/ui/mobile/MobileHomeFeatures";
-import { MobileHomeHero } from "@/features/home/ui/mobile/MobileHomeHero";
-import { toTelHref } from "@/lib/contact/tel-href";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
+} from '@/features/home/ui/mobile/MobileHomeFeatures';
+import { MobileHomeHero } from '@/features/home/ui/mobile/MobileHomeHero';
+import { toTelHref } from '@/lib/contact/tel-href';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
 
 /**
  * Figma top band through product grid start (y=588).
@@ -54,11 +54,11 @@ type MobileHomeProps = {
 function splitFeaturedTitle(title: string): { line1: string; line2: string } {
   const parts = title.trim().split(/\s+/);
   if (parts.length <= 1) {
-    return { line1: title, line2: "" };
+    return { line1: title, line2: '' };
   }
   return {
     line1: parts[0] ?? title,
-    line2: parts.slice(1).join(" "),
+    line2: parts.slice(1).join(' '),
   };
 }
 
@@ -79,10 +79,7 @@ export function MobileHome({
   const featuredTitle = splitFeaturedTitle(home.featuredTitle);
   const phoneHref = toTelHref(contact.storePhone);
   const year = new Date().getFullYear();
-  const copyright = dictionary.footer.copyrightMobile.replace(
-    "{year}",
-    String(year),
-  );
+  const copyright = dictionary.footer.copyrightMobile.replace('{year}', String(year));
 
   const featureTitles = {
     delivery: home.features.deliveryTitle,
@@ -93,13 +90,13 @@ export function MobileHome({
 
   const branches = [
     {
-      id: "branch-1",
+      id: 'branch-1',
       address: contact.storeAddress,
       phoneHref,
       contactLabel: home.branchContact,
     },
     {
-      id: "branch-2",
+      id: 'branch-2',
       address: contact.storeAddressSecondary,
       phoneHref,
       contactLabel: home.branchContact,

@@ -1,17 +1,14 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
 
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
-import { catalogHref } from "@/features/products/application/catalog-search-params";
-import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
-import {
-  CATALOG_SORT_VALUES,
-  type CatalogSort,
-} from "@/features/products/schemas/catalog-list";
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
+import { catalogHref } from '@/features/products/application/catalog-search-params';
+import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
+import { CATALOG_SORT_VALUES, type CatalogSort } from '@/features/products/schemas/catalog-list';
 
 type ShopSortLabels = {
   sortAction: string;
@@ -29,13 +26,13 @@ type ShopSortButtonProps = {
 
 function sortOptionLabel(sort: CatalogSort, labels: ShopSortLabels): string {
   switch (sort) {
-    case "price_asc":
+    case 'price_asc':
       return labels.sortPriceAsc;
-    case "price_desc":
+    case 'price_desc':
       return labels.sortPriceDesc;
-    case "popular":
+    case 'popular':
       return labels.sortPopular;
-    case "newest":
+    case 'newest':
     default:
       return labels.sortNewest;
   }
@@ -52,10 +49,9 @@ export function ShopSortButton({ locale, filters, labels }: ShopSortButtonProps)
 
   function navigateSort(next: string): void {
     startTransition(() => {
-      router.push(
-        catalogHref(locale, filters, { sort: next as CatalogSort, page: 1 }),
-        { scroll: false },
-      );
+      router.push(catalogHref(locale, filters, { sort: next as CatalogSort, page: 1 }), {
+        scroll: false,
+      });
     });
   }
 

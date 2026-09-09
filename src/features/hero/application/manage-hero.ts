@@ -1,18 +1,12 @@
-"use server";
+'use server';
 
-import { and, asc, desc, eq, gt, lt } from "drizzle-orm";
-import { revalidatePath, updateTag } from "next/cache";
+import { and, asc, desc, eq, gt, lt } from 'drizzle-orm';
+import { revalidatePath, updateTag } from 'next/cache';
 
-import { auditLogs, heroSlides, mediaAssets, type HeroTranslationsJson } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
-import {
-  persistHeroImage,
-  removeHeroImage,
-} from "@/features/hero/application/persist-hero-media";
-import {
-  heroRuleErrorMessage,
-  validateHeroTranslations,
-} from "@/features/hero/domain/hero-rules";
+import { auditLogs, heroSlides, mediaAssets, type HeroTranslationsJson } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
+import { persistHeroImage, removeHeroImage } from '@/features/hero/application/persist-hero-media';
+import { heroRuleErrorMessage, validateHeroTranslations } from '@/features/hero/domain/hero-rules';
 import {
   deleteHeroSlideSchema,
   reorderHeroSlideSchema,
@@ -22,19 +16,18 @@ import {
   type ReorderHeroSlideInput,
   type ToggleHeroSlideInput,
   type UpsertHeroSlideInput,
-} from "@/features/hero/schemas/admin-hero";
-import { requireAdmin } from "@/lib/auth/policies";
-import { CACHE_TAGS } from "@/lib/cache/tags";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/features/hero/schemas/admin-hero';
+import { requireAdmin } from '@/lib/auth/policies';
+import { CACHE_TAGS } from '@/lib/cache/tags';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 function buildTranslations(
   data: UpsertHeroSlideInput,
   existing?: HeroTranslationsJson,
 ): HeroTranslationsJson {
-  const previous =
-    existing?.en ?? existing?.hy ?? existing?.ru ?? undefined;
+  const previous = existing?.en ?? existing?.hy ?? existing?.ru ?? undefined;
 
   const copy = {
     title: data.title,
@@ -48,8 +41,8 @@ function buildTranslations(
 
 function parseModalFormData(formData: FormData): UpsertHeroSlideInput | null {
   const parsed = upsertHeroSlideSchema.safeParse({
-    title: formData.get("title"),
-    subtitle: String(formData.get("subtitle") ?? "") || undefined,
+    title: formData.get('title'),
+    subtitle: String(formData.get('subtitle') ?? '') || undefined,
   });
   return parsed.success ? parsed.data : null;
 }
@@ -59,7 +52,7 @@ function revalidateHero(locale: string, slideId?: string): void {
   if (slideId) {
     revalidatePath(`/${locale}/admin/hero/${slideId}`);
   }
-  for (const loc of ["hy", "en", "ru"] as const) {
+  for (const loc of ['hy', 'en', 'ru'] as const) {
     revalidatePath(`/${loc}`);
   }
   updateTag(CACHE_TAGS.hero);
@@ -71,12 +64,12 @@ export async function createHeroSlideAction(
   formData: FormData,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const data = parseModalFormData(formData);
   if (!data) {
-    return err("VALIDATION_ERROR", "Invalid hero slide payload.");
+    return err('VALIDATION_ERROR', 'Invalid hero slide payload.');
   }
 
   const translations = buildTranslations(data);
@@ -100,8 +93,8 @@ export async function createHeroSlideAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "hero.create",
-        targetType: "hero_slide",
+        action: 'hero.create',
+        targetType: 'hero_slide',
         targetId: id,
         afterDiff: {
           title: data.title,
@@ -112,18 +105,18 @@ export async function createHeroSlideAction(
       });
     });
 
-    const image = formData.get("image");
+    const image = formData.get('image');
     if (image instanceof File && image.size > 0) {
       const mediaResult = await persistHeroImage(id, image);
       if (mediaResult.error) {
-        return err("VALIDATION_ERROR", mediaResult.error);
+        return err('VALIDATION_ERROR', mediaResult.error);
       }
     }
 
     revalidateHero(locale, id);
     return ok({ id });
   } catch {
-    return err("HERO_CREATE_FAILED", "Unable to create hero slide.");
+    return err('HERO_CREATE_FAILED', 'Unable to create hero slide.');
   }
 }
 
@@ -134,12 +127,12 @@ export async function updateHeroSlideAction(
   formData: FormData,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const data = parseModalFormData(formData);
   if (!data) {
-    return err("VALIDATION_ERROR", "Invalid hero slide payload.");
+    return err('VALIDATION_ERROR', 'Invalid hero slide payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -150,11 +143,11 @@ export async function updateHeroSlideAction(
         .select()
         .from(heroSlides)
         .where(eq(heroSlides.id, slideId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!row) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
       const translations = buildTranslations(data, row.translations);
@@ -174,8 +167,8 @@ export async function updateHeroSlideAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "hero.update",
-        targetType: "hero_slide",
+        action: 'hero.update',
+        targetType: 'hero_slide',
         targetId: slideId,
         beforeDiff: {
           isActive: row.isActive,
@@ -192,33 +185,33 @@ export async function updateHeroSlideAction(
       return row;
     });
 
-    if (formData.get("removeImage") === "1") {
+    if (formData.get('removeImage') === '1') {
       await removeHeroImage(slideId);
     }
 
-    const image = formData.get("image");
+    const image = formData.get('image');
     if (image instanceof File && image.size > 0) {
       const mediaResult = await persistHeroImage(slideId, image);
       if (mediaResult.error) {
-        return err("VALIDATION_ERROR", mediaResult.error);
+        return err('VALIDATION_ERROR', mediaResult.error);
       }
     }
 
     revalidateHero(locale, existing.id);
     return ok({ id: slideId });
   } catch (error) {
-    if (error instanceof Error && error.message === "NOT_FOUND") {
-      return err("NOT_FOUND", "Hero slide not found.");
+    if (error instanceof Error && error.message === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Hero slide not found.');
     }
-    if (error instanceof Error && error.message.startsWith("RULE:")) {
+    if (error instanceof Error && error.message.startsWith('RULE:')) {
       const code = error.message.slice(5) as
-        | "TITLE_REQUIRED"
-        | "INVALID_BUTTON_URL"
-        | "BUTTON_LABEL_WITHOUT_URL"
-        | "BUTTON_URL_WITHOUT_LABEL";
+        | 'TITLE_REQUIRED'
+        | 'INVALID_BUTTON_URL'
+        | 'BUTTON_LABEL_WITHOUT_URL'
+        | 'BUTTON_URL_WITHOUT_LABEL';
       return err(code, heroRuleErrorMessage(code));
     }
-    return err("HERO_UPDATE_FAILED", "Unable to update hero slide.");
+    return err('HERO_UPDATE_FAILED', 'Unable to update hero slide.');
   }
 }
 
@@ -228,12 +221,12 @@ export async function toggleHeroSlideAction(
   raw: ToggleHeroSlideInput,
 ): Promise<Result<{ id: string; isActive: boolean }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = toggleHeroSlideSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid publish payload.");
+    return err('VALIDATION_ERROR', 'Invalid publish payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -244,11 +237,11 @@ export async function toggleHeroSlideAction(
         .select()
         .from(heroSlides)
         .where(eq(heroSlides.id, parsed.data.slideId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
       await tx
@@ -259,8 +252,8 @@ export async function toggleHeroSlideAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "hero.toggle",
-        targetType: "hero_slide",
+        action: 'hero.toggle',
+        targetType: 'hero_slide',
         targetId: existing.id,
         beforeDiff: { isActive: existing.isActive },
         afterDiff: { isActive: parsed.data.isActive },
@@ -273,10 +266,10 @@ export async function toggleHeroSlideAction(
     revalidateHero(locale, result.id);
     return ok(result);
   } catch (error) {
-    if (error instanceof Error && error.message === "NOT_FOUND") {
-      return err("NOT_FOUND", "Hero slide not found.");
+    if (error instanceof Error && error.message === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Hero slide not found.');
     }
-    return err("HERO_TOGGLE_FAILED", "Unable to publish hero slide.");
+    return err('HERO_TOGGLE_FAILED', 'Unable to publish hero slide.');
   }
 }
 
@@ -286,12 +279,12 @@ export async function reorderHeroSlideAction(
   raw: ReorderHeroSlideInput,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = reorderHeroSlideSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid reorder payload.");
+    return err('VALIDATION_ERROR', 'Invalid reorder payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -302,32 +295,32 @@ export async function reorderHeroSlideAction(
         .select()
         .from(heroSlides)
         .where(eq(heroSlides.id, parsed.data.slideId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!current) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
       const [neighbor] =
-        parsed.data.direction === "up"
+        parsed.data.direction === 'up'
           ? await tx
               .select()
               .from(heroSlides)
               .where(and(lt(heroSlides.sortOrder, current.sortOrder)))
               .orderBy(desc(heroSlides.sortOrder))
-              .for("update")
+              .for('update')
               .limit(1)
           : await tx
               .select()
               .from(heroSlides)
               .where(and(gt(heroSlides.sortOrder, current.sortOrder)))
               .orderBy(asc(heroSlides.sortOrder))
-              .for("update")
+              .for('update')
               .limit(1);
 
       if (!neighbor) {
-        throw new Error("NO_NEIGHBOR");
+        throw new Error('NO_NEIGHBOR');
       }
 
       const lockedNeighbor = neighbor;
@@ -348,8 +341,8 @@ export async function reorderHeroSlideAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "hero.reorder",
-        targetType: "hero_slide",
+        action: 'hero.reorder',
+        targetType: 'hero_slide',
         targetId: current.id,
         beforeDiff: { sortOrder: currentOrder },
         afterDiff: { sortOrder: neighborOrder },
@@ -364,14 +357,14 @@ export async function reorderHeroSlideAction(
     revalidateHero(locale, parsed.data.slideId);
     return ok({ id: parsed.data.slideId });
   } catch (error) {
-    const code = error instanceof Error ? error.message : "UNKNOWN";
-    if (code === "NOT_FOUND") {
-      return err("NOT_FOUND", "Hero slide not found.");
+    const code = error instanceof Error ? error.message : 'UNKNOWN';
+    if (code === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Hero slide not found.');
     }
-    if (code === "NO_NEIGHBOR") {
-      return err("NO_NEIGHBOR", "Slide is already at the edge.");
+    if (code === 'NO_NEIGHBOR') {
+      return err('NO_NEIGHBOR', 'Slide is already at the edge.');
     }
-    return err("HERO_REORDER_FAILED", "Unable to reorder hero slide.");
+    return err('HERO_REORDER_FAILED', 'Unable to reorder hero slide.');
   }
 }
 
@@ -381,12 +374,12 @@ export async function deleteHeroSlideAction(
   raw: DeleteHeroSlideInput,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = deleteHeroSlideSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid delete payload.");
+    return err('VALIDATION_ERROR', 'Invalid delete payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -397,24 +390,22 @@ export async function deleteHeroSlideAction(
         .select()
         .from(heroSlides)
         .where(eq(heroSlides.id, parsed.data.slideId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
-      await tx
-        .delete(mediaAssets)
-        .where(eq(mediaAssets.heroSlideId, existing.id));
+      await tx.delete(mediaAssets).where(eq(mediaAssets.heroSlideId, existing.id));
 
       await tx.delete(heroSlides).where(eq(heroSlides.id, existing.id));
 
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "hero.delete",
-        targetType: "hero_slide",
+        action: 'hero.delete',
+        targetType: 'hero_slide',
         targetId: existing.id,
         beforeDiff: {
           isActive: existing.isActive,
@@ -427,9 +418,9 @@ export async function deleteHeroSlideAction(
     revalidateHero(locale, parsed.data.slideId);
     return ok({ id: parsed.data.slideId });
   } catch (error) {
-    if (error instanceof Error && error.message === "NOT_FOUND") {
-      return err("NOT_FOUND", "Hero slide not found.");
+    if (error instanceof Error && error.message === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Hero slide not found.');
     }
-    return err("HERO_DELETE_FAILED", "Unable to delete hero slide.");
+    return err('HERO_DELETE_FAILED', 'Unable to delete hero slide.');
   }
 }

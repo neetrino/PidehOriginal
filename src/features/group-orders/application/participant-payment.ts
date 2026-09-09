@@ -1,17 +1,16 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { groupOrderParticipants } from "@/db/schema";
-import { assertParticipantAccess } from "@/features/group-orders/application/access";
-import { advanceSplitGroupOrderIfAllPaid } from "@/features/group-orders/application/advance-after-payments";
-import { appendGroupOrderEvent } from "@/features/group-orders/application/money";
-import { isSuccessfulParticipantPayment } from "@/features/group-orders/domain/spend-limit";
-import type { CheckoutOnlineProvider } from "@/features/checkout/domain/payment-modes";
-import { createId } from "@/lib/id";
+import { getDb } from '@/db/client';
+import { groupOrderParticipants } from '@/db/schema';
+import { assertParticipantAccess } from '@/features/group-orders/application/access';
+import { advanceSplitGroupOrderIfAllPaid } from '@/features/group-orders/application/advance-after-payments';
+import { appendGroupOrderEvent } from '@/features/group-orders/application/money';
+import { isSuccessfulParticipantPayment } from '@/features/group-orders/domain/spend-limit';
+import type { CheckoutOnlineProvider } from '@/features/checkout/domain/payment-modes';
+import { createId } from '@/lib/id';
 
 export type ParticipantPaymentResult =
-  | { ok: true; advancedToCheckout: boolean }
-  | { ok: false; error: string };
+  { ok: true; advancedToCheckout: boolean } | { ok: false; error: string };
 
 export type ParticipantPaymentView =
   | {
@@ -21,7 +20,7 @@ export type ParticipantPaymentView =
       amount: number;
       amountFormatted: string;
       alreadyPaid: boolean;
-      currency: "AMD";
+      currency: 'AMD';
     }
   | { ok: false; error: string };
 
@@ -41,29 +40,29 @@ export async function completeParticipantCardPayment(input: {
 
   const { groupOrder, participant } = access;
 
-  if (groupOrder.paymentMode !== "SPLIT_PER_PARTICIPANT") {
+  if (groupOrder.paymentMode !== 'SPLIT_PER_PARTICIPANT') {
     return {
       ok: false,
-      error: "Card payment per participant is only for split payment mode.",
+      error: 'Card payment per participant is only for split payment mode.',
     };
   }
-  if (participant.role === "ORGANIZER") {
+  if (participant.role === 'ORGANIZER') {
     return {
       ok: false,
-      error: "The organizer pays their share on the checkout page.",
+      error: 'The organizer pays their share on the checkout page.',
     };
   }
-  if (groupOrder.status !== "AWAITING_PAYMENTS") {
+  if (groupOrder.status !== 'AWAITING_PAYMENTS') {
     return {
       ok: false,
-      error: "This group order is not awaiting payments.",
+      error: 'This group order is not awaiting payments.',
     };
   }
   if (isSuccessfulParticipantPayment(participant.paymentStatus)) {
     return { ok: true, advancedToCheckout: false };
   }
   if (participant.finalAmount <= 0) {
-    return { ok: false, error: "Nothing to pay for this participant." };
+    return { ok: false, error: 'Nothing to pay for this participant.' };
   }
 
   const paymentId = createId();
@@ -72,7 +71,7 @@ export async function completeParticipantCardPayment(input: {
   await db
     .update(groupOrderParticipants)
     .set({
-      paymentStatus: "PAID",
+      paymentStatus: 'PAID',
       paymentId,
       updatedAt: new Date(),
     })
@@ -85,15 +84,15 @@ export async function completeParticipantCardPayment(input: {
 
   await appendGroupOrderEvent(db, {
     groupOrderId: groupOrder.id,
-    eventType: "PAYMENT_STATUS",
+    eventType: 'PAYMENT_STATUS',
     actorParticipantId: participant.id,
     payload: {
       participantId: participant.id,
-      status: "PAID",
+      status: 'PAID',
       provider: input.provider,
       paymentId,
       amount: participant.finalAmount,
-      source: "participant_card",
+      source: 'participant_card',
     },
   });
 
@@ -114,20 +113,20 @@ export async function getParticipantPaymentContext(input: {
   if (!access.ok) return access;
 
   const { groupOrder, participant } = access;
-  if (groupOrder.paymentMode !== "SPLIT_PER_PARTICIPANT") {
-    return { ok: false, error: "Split payment mode required." };
+  if (groupOrder.paymentMode !== 'SPLIT_PER_PARTICIPANT') {
+    return { ok: false, error: 'Split payment mode required.' };
   }
-  if (participant.role === "ORGANIZER") {
+  if (participant.role === 'ORGANIZER') {
     return {
       ok: false,
-      error: "The organizer pays their share on the checkout page.",
+      error: 'The organizer pays their share on the checkout page.',
     };
   }
   if (
-    groupOrder.status !== "AWAITING_PAYMENTS" &&
+    groupOrder.status !== 'AWAITING_PAYMENTS' &&
     !isSuccessfulParticipantPayment(participant.paymentStatus)
   ) {
-    return { ok: false, error: "This group order is not awaiting payments." };
+    return { ok: false, error: 'This group order is not awaiting payments.' };
   }
 
   return {
@@ -137,6 +136,6 @@ export async function getParticipantPaymentContext(input: {
     amount: participant.finalAmount,
     amountFormatted: input.formatAmount(participant.finalAmount),
     alreadyPaid: isSuccessfulParticipantPayment(participant.paymentStatus),
-    currency: "AMD",
+    currency: 'AMD',
   };
 }

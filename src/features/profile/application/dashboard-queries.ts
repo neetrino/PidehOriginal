@@ -1,11 +1,11 @@
-import "server-only";
+import 'server-only';
 
-import { count, desc, sql } from "drizzle-orm";
+import { count, desc, sql } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { orders } from "@/db/schema";
-import { customerVisibleOrdersWhere } from "@/features/orders/application/customer-order-access";
-import { customerFacingOrderAmountSql } from "@/features/orders/application/customer-facing-order-amount-sql";
+import { getDb } from '@/db/client';
+import { orders } from '@/db/schema';
+import { customerVisibleOrdersWhere } from '@/features/orders/application/customer-order-access';
+import { customerFacingOrderAmountSql } from '@/features/orders/application/customer-facing-order-amount-sql';
 
 const RECENT_ORDERS_LIMIT = 5;
 
@@ -19,15 +19,13 @@ export type ProfileDashboardStats = {
 export type ProfileRecentOrder = {
   id: string;
   orderNumber: string;
-  status: (typeof orders.$inferSelect)["status"];
+  status: (typeof orders.$inferSelect)['status'];
   totalAmount: number;
   placedAt: Date;
 };
 
 /** Aggregated order stats for the profile dashboard (SQL, not full-row scan). */
-export async function getProfileDashboardStats(
-  userId: string,
-): Promise<ProfileDashboardStats> {
+export async function getProfileDashboardStats(userId: string): Promise<ProfileDashboardStats> {
   const visibility = customerVisibleOrdersWhere(userId);
   const customerAmount = customerFacingOrderAmountSql(userId);
   const [row] = await getDb()

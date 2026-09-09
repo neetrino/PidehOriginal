@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
-import { and, eq, ne } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { and, eq, ne } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
-import { getDb } from "@/db/client";
-import { users } from "@/db/schema";
-import { requireUser } from "@/lib/auth/policies";
-import { isLocale, type Locale } from "@/lib/i18n/config";
+import { getDb } from '@/db/client';
+import { users } from '@/db/schema';
+import { requireUser } from '@/lib/auth/policies';
+import { isLocale, type Locale } from '@/lib/i18n/config';
 
 const profileSchema = z.object({
   firstName: z.string().trim().min(1).max(100),
@@ -33,31 +33,29 @@ export async function updateProfileAction(
   formData: FormData,
 ): Promise<UpdateProfileActionState> {
   if (!isLocale(locale)) {
-    return { error: "Invalid locale." };
+    return { error: 'Invalid locale.' };
   }
 
   const user = await requireUser(locale as Locale);
   const parsed = profileSchema.safeParse({
-    firstName: formData.get("firstName"),
-    lastName: formData.get("lastName"),
-    email: formData.get("email"),
+    firstName: formData.get('firstName'),
+    lastName: formData.get('lastName'),
+    email: formData.get('email'),
   });
 
   if (!parsed.success) {
-    return { error: "Please check the form fields and try again." };
+    return { error: 'Please check the form fields and try again.' };
   }
 
   if (parsed.data.email !== user.email) {
     const [existing] = await getDb()
       .select({ id: users.id })
       .from(users)
-      .where(
-        and(eq(users.email, parsed.data.email), ne(users.id, user.id)),
-      )
+      .where(and(eq(users.email, parsed.data.email), ne(users.id, user.id)))
       .limit(1);
 
     if (existing) {
-      return { error: "That email is already in use." };
+      return { error: 'That email is already in use.' };
     }
   }
 
@@ -75,5 +73,5 @@ export async function updateProfileAction(
   revalidatePath(`/${locale}/profile/personal-information`);
   revalidatePath(`/${locale}/checkout`);
 
-  return { success: "Personal information saved." };
+  return { success: 'Personal information saved.' };
 }

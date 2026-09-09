@@ -1,9 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import {
-  USER_ROLES,
-  USER_STATUSES,
-} from "@/features/users/domain/user-lifecycle";
+import { USER_ROLES, USER_STATUSES } from '@/features/users/domain/user-lifecycle';
 
 export const adminUsersFilterSchema = z.object({
   q: z.string().trim().max(100).optional(),

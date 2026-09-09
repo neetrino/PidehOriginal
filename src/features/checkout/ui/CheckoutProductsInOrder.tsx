@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { X } from "lucide-react";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useTransition } from 'react';
+import { X } from 'lucide-react';
 
-import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
-import { removeItem } from "@/features/cart/cart";
+import type { CheckoutOrderProduct } from '@/features/checkout/ui/checkout-order-product';
+import { removeItem } from '@/features/cart/cart';
 
 type CheckoutProductsInOrderProps = {
   products: CheckoutOrderProduct[];
@@ -17,15 +17,11 @@ type CheckoutProductsInOrderProps = {
   onCartChanged?: () => void;
 };
 
-function formatItemCount(
-  count: number,
-  itemsOneLabel: string,
-  itemsManyLabel: string,
-): string {
+function formatItemCount(count: number, itemsOneLabel: string, itemsManyLabel: string): string {
   if (count === 1) {
     return itemsOneLabel;
   }
-  return itemsManyLabel.replace("{count}", String(count));
+  return itemsManyLabel.replace('{count}', String(count));
 }
 
 export function CheckoutProductsInOrder({
@@ -61,14 +57,9 @@ export function CheckoutProductsInOrder({
   }
 
   return (
-    <section
-      className="mb-8 rounded-3xl bg-[#eef3f8] px-5 py-5 sm:px-6"
-      aria-label={title}
-    >
+    <section className="mb-8 rounded-3xl bg-[#eef3f8] px-5 py-5 sm:px-6" aria-label={title}>
       <div className="mb-4 flex items-start justify-between gap-4">
-        <h2 className="text-sm font-bold tracking-wide text-gray-900 uppercase">
-          {title}
-        </h2>
+        <h2 className="text-sm font-bold tracking-wide text-gray-900 uppercase">{title}</h2>
         <p className="shrink-0 text-sm text-gray-800">
           {formatItemCount(itemCount, itemsOneLabel, itemsManyLabel)}
         </p>

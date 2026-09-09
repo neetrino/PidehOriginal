@@ -1,23 +1,20 @@
-"use client";
+'use client';
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
-import { SideSheet } from "@/components/ui/SideSheet";
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
+import { SideSheet } from '@/components/ui/SideSheet';
+import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import {
   createDeliveryLocationAction,
   updateDeliveryLocationAction,
-} from "@/features/delivery/application/manage-delivery";
-import type { AdminDeliveryLocation } from "@/features/delivery/application/queries";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/delivery/application/manage-delivery';
+import type { AdminDeliveryLocation } from '@/features/delivery/application/queries';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type LocationDrawerCopy = {
-  locationDrawer: Dictionary["admin"]["delivery"]["locationDrawer"];
-  common: Dictionary["admin"]["common"];
+  locationDrawer: Dictionary['admin']['delivery']['locationDrawer'];
+  common: Dictionary['admin']['common'];
 };
 
 type DeliveryLocationDrawerProps = {
@@ -35,23 +32,14 @@ type DeliveryLocationFormProps = {
   copy: LocationDrawerCopy;
 };
 
-function DeliveryLocationForm({
-  locale,
-  location,
-  onClose,
-  copy,
-}: DeliveryLocationFormProps) {
+function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocationFormProps) {
   const router = useRouter();
   const isEdit = location != null;
-  const [country, setCountry] = useState(location?.country ?? "");
-  const [city, setCity] = useState(location?.city ?? "");
-  const [priceAmount, setPriceAmount] = useState(
-    location ? String(location.priceAmount) : "",
-  );
+  const [country, setCountry] = useState(location?.country ?? '');
+  const [city, setCity] = useState(location?.city ?? '');
+  const [priceAmount, setPriceAmount] = useState(location ? String(location.priceAmount) : '');
   const [freeThresholdAmount, setFreeThresholdAmount] = useState(
-    location?.freeThresholdAmount != null
-      ? String(location.freeThresholdAmount)
-      : "",
+    location?.freeThresholdAmount != null ? String(location.freeThresholdAmount) : '',
   );
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -67,20 +55,14 @@ function DeliveryLocationForm({
           city,
           priceAmount: Number(priceAmount),
           freeThresholdAmount:
-            freeThresholdAmount.trim() === ""
-              ? null
-              : Number(freeThresholdAmount),
+            freeThresholdAmount.trim() === '' ? null : Number(freeThresholdAmount),
         };
 
         startTransition(async () => {
           setError(null);
           const result =
             isEdit && location
-              ? await updateDeliveryLocationAction(
-                  locale,
-                  location.id,
-                  payload,
-                )
+              ? await updateDeliveryLocationAction(locale, location.id, payload)
               : await createDeliveryLocationAction(locale, payload);
 
           if (!result.ok) {
@@ -137,9 +119,7 @@ function DeliveryLocationForm({
           </label>
 
           <label>
-            <span className={ADMIN_LABEL}>
-              {copy.locationDrawer.freeDeliveryFrom}
-            </span>
+            <span className={ADMIN_LABEL}>{copy.locationDrawer.freeDeliveryFrom}</span>
             <input
               type="number"
               min={0}
@@ -179,24 +159,18 @@ export function DeliveryLocationDrawer({
   location = null,
   copy,
 }: DeliveryLocationDrawerProps) {
-  const formKey = location?.id ?? "new";
+  const formKey = location?.id ?? 'new';
 
   return (
     <SideSheet
       open={open}
       onClose={onClose}
-      ariaLabel={
-        location
-          ? copy.locationDrawer.editAria
-          : copy.locationDrawer.addAria
-      }
+      ariaLabel={location ? copy.locationDrawer.editAria : copy.locationDrawer.addAria}
       variant="admin"
     >
       <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
         <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
-          {location
-            ? copy.locationDrawer.editTitle
-            : copy.locationDrawer.addTitle}
+          {location ? copy.locationDrawer.editTitle : copy.locationDrawer.addTitle}
         </h2>
       </div>
 

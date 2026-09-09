@@ -26,7 +26,7 @@ type LegalDocumentProps = {
   copy: LegalDocumentCopy;
 };
 
-const BODY_TEXT = "text-base leading-7 text-[#1e1e1e]/75";
+const BODY_TEXT = 'font-noto-armenian text-base leading-7 text-[#1e1e1e]/75';
 const BULLET_LIST = `list-disc space-y-2 pl-5 marker:text-[#ff6b00] ${BODY_TEXT}`;
 
 /**

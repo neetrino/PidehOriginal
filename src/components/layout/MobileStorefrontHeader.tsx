@@ -1,9 +1,9 @@
-import { MobileBrandBar } from "@/components/layout/MobileBrandBar";
-import { MobileHeaderSearch } from "@/components/layout/MobileHeaderSearch";
-import { toTelHref } from "@/lib/contact/tel-href";
-import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Currency } from "@/lib/money/currency";
+import { MobileBrandBar } from '@/components/layout/MobileBrandBar';
+import { MobileHeaderSearch } from '@/components/layout/MobileHeaderSearch';
+import { toTelHref } from '@/lib/contact/tel-href';
+import type { Locale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Currency } from '@/lib/money/currency';
 
 type MobileStorefrontHeaderProps = {
   locale: Locale;

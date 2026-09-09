@@ -1,32 +1,24 @@
-import { MapPin } from "lucide-react";
+import { MapPin } from 'lucide-react';
 
-import {
-  ADMIN_BADGE,
-  paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
-import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
+import { ADMIN_BADGE, paymentStatusBadgeClass } from '@/features/admin/ui/status-badge';
+import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
 import {
   formatOrderDrawerMoney,
   formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/orders/ui/order-drawer-format';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type OrderDetailsDrawerShippingProps = {
   detail: AdminOrderDetailView;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-export function OrderDetailsDrawerShipping({
-  detail,
-  copy,
-}: OrderDetailsDrawerShippingProps) {
+export function OrderDetailsDrawerShipping({ detail, copy }: OrderDetailsDrawerShippingProps) {
   const d = copy.orders.drawer;
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <section className="rounded-2xl border border-gray-200 px-5 py-4">
-        <h3 className="mb-4 text-base font-semibold text-gray-900">
-          {d.shippingAddress}
-        </h3>
+        <h3 className="mb-4 text-base font-semibold text-gray-900">{d.shippingAddress}</h3>
         <dl className="space-y-3 text-sm">
           <div className="flex flex-wrap items-center gap-x-2">
             <dt className="text-gray-500">{d.shippingMethod}</dt>
@@ -41,13 +33,11 @@ export function OrderDetailsDrawerShipping({
           <div className="flex items-center gap-2">
             <MapPin
               className={`h-4 w-4 shrink-0 ${
-                detail.participants ? "text-emerald-700" : "text-gray-400"
+                detail.participants ? 'text-emerald-700' : 'text-gray-400'
               }`}
               aria-hidden
             />
-            <dd className="min-w-0 font-medium text-gray-900">
-              {detail.addressLine}
-            </dd>
+            <dd className="min-w-0 font-medium text-gray-900">{detail.addressLine}</dd>
           </div>
           {!detail.isPickup && detail.floor ? (
             <div className="flex flex-wrap items-center gap-x-2">
@@ -64,9 +54,7 @@ export function OrderDetailsDrawerShipping({
           {!detail.isPickup && detail.scheduledDelivery ? (
             <div className="flex flex-wrap items-center gap-x-2">
               <dt className="text-gray-500">{d.deliverySlot}</dt>
-              <dd className="font-medium text-gray-900">
-                {detail.scheduledDelivery}
-              </dd>
+              <dd className="font-medium text-gray-900">{detail.scheduledDelivery}</dd>
             </div>
           ) : null}
           {!detail.isPickup && detail.cashChangeAmount != null ? (
@@ -81,10 +69,7 @@ export function OrderDetailsDrawerShipping({
                     className="h-8 w-12 rounded object-contain"
                   />
                 ) : null}
-                {formatOrderDrawerMoney(
-                  detail.cashChangeAmount,
-                  detail.baseCurrency,
-                )}
+                {formatOrderDrawerMoney(detail.cashChangeAmount, detail.baseCurrency)}
               </dd>
             </div>
           ) : null}
@@ -104,18 +89,13 @@ export function OrderDetailsDrawerShipping({
           <div className="flex flex-wrap items-center gap-x-2">
             <dt className="text-gray-500">{d.amount}</dt>
             <dd className="font-medium text-gray-900">
-              {formatOrderDrawerMoney(
-                detail.paymentAmount,
-                detail.baseCurrency,
-              )}
+              {formatOrderDrawerMoney(detail.paymentAmount, detail.baseCurrency)}
             </dd>
           </div>
           <div className="flex flex-wrap items-center gap-x-2">
             <dt className="text-gray-500">{d.paymentStatus}</dt>
             <dd>
-              <span
-                className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(detail.paymentStatus)}`}
-              >
+              <span className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(detail.paymentStatus)}`}>
                 {formatOrderStatusLabel(detail.paymentStatus)}
               </span>
             </dd>

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -17,16 +17,16 @@ import {
   ADMIN_TABLE_TH,
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
+} from '@/features/admin/ui/admin-table-classes';
 import {
   duplicateProductAction,
   softDeleteProductsAction,
   toggleProductFeaturedAction,
   toggleProductVisibilityAction,
-} from "@/features/products/application/admin-product-actions";
-import type { AdminProductListItem } from "@/features/products/application/list-admin-products";
-import { AdminProductRow } from "@/features/products/ui/AdminProductRow";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/products/application/admin-product-actions';
+import type { AdminProductListItem } from '@/features/products/application/list-admin-products';
+import { AdminProductRow } from '@/features/products/ui/AdminProductRow';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminProductsSortLinks = {
   title: string;
@@ -36,9 +36,9 @@ type AdminProductsSortLinks = {
 };
 
 type TableCopy = {
-  table: Dictionary["admin"]["products"]["table"];
-  common: Dictionary["admin"]["common"];
-  confirm: Dictionary["admin"]["confirm"];
+  table: Dictionary['admin']['products']['table'];
+  common: Dictionary['admin']['common'];
+  confirm: Dictionary['admin']['confirm'];
 };
 
 type AdminProductsTableProps = {
@@ -61,14 +61,13 @@ export function AdminProductsTable({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [pendingDelete, setPendingDelete] = useState<{
-    kind: "single" | "bulk";
+    kind: 'single' | 'bulk';
     productIds: string[];
     label: string;
   } | null>(null);
 
   const allIds = products.map((product) => product.id);
-  const allSelected =
-    allIds.length > 0 && allIds.every((id) => selected.has(id));
+  const allSelected = allIds.length > 0 && allIds.every((id) => selected.has(id));
 
   function toggleOne(id: string): void {
     setSelected((prev) => {
@@ -101,9 +100,9 @@ export function AdminProductsTable({
     const label =
       count === 1
         ? copy.confirm.selectedProduct
-        : copy.confirm.selectedProducts.replace("{count}", String(count));
+        : copy.confirm.selectedProducts.replace('{count}', String(count));
     setPendingDelete({
-      kind: "bulk",
+      kind: 'bulk',
       productIds: [...selected],
       label,
     });
@@ -132,9 +131,9 @@ export function AdminProductsTable({
   }
 
   const selectedLabel = copy.common.selectedCount
-    .replace("{count}", String(selected.size))
+    .replace('{count}', String(selected.size))
     .replace(
-      "{entity}",
+      '{entity}',
       selected.size === 1
         ? copy.common.entitySingular.product
         : copy.common.entitySingular.products,
@@ -159,9 +158,7 @@ export function AdminProductsTable({
 
       <Card className={ADMIN_TABLE_CARD}>
         {products.length === 0 ? (
-          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {copy.table.empty}
-          </p>
+          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>{copy.table.empty}</p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
@@ -196,10 +193,7 @@ export function AdminProductsTable({
                   <th className={ADMIN_TABLE_TH}>{copy.table.featured}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.table.actions}</th>
                   <th className={ADMIN_TABLE_TH}>
-                    <Link
-                      href={sortLinks.created}
-                      className="hover:text-gray-900"
-                    >
+                    <Link href={sortLinks.created} className="hover:text-gray-900">
                       {copy.table.created}
                     </Link>
                   </th>
@@ -218,35 +212,26 @@ export function AdminProductsTable({
                     onEdit={() => onEdit(product)}
                     onFeatured={() =>
                       runAction(async () => {
-                        const result = await toggleProductFeaturedAction(
-                          locale,
-                          product.id,
-                        );
+                        const result = await toggleProductFeaturedAction(locale, product.id);
                         if (!result.ok) throw new Error(result.error.message);
                       })
                     }
                     onDuplicate={() =>
                       runAction(async () => {
-                        const result = await duplicateProductAction(
-                          locale,
-                          product.id,
-                        );
+                        const result = await duplicateProductAction(locale, product.id);
                         if (!result.ok) throw new Error(result.error.message);
                       })
                     }
                     onDelete={() =>
                       setPendingDelete({
-                        kind: "single",
+                        kind: 'single',
                         productIds: [product.id],
                         label: product.title,
                       })
                     }
                     onVisibility={() =>
                       runAction(async () => {
-                        const result = await toggleProductVisibilityAction(
-                          locale,
-                          product.id,
-                        );
+                        const result = await toggleProductVisibilityAction(locale, product.id);
                         if (!result.ok) throw new Error(result.error.message);
                       })
                     }
@@ -264,16 +249,13 @@ export function AdminProductsTable({
         confirmLabel={copy.confirm.confirmLabel}
         cancelLabel={copy.confirm.cancelLabel}
         description={
-          pendingDelete?.kind === "bulk"
-            ? copy.confirm.deleteSelectedProducts.replace(
-                "{label}",
-                pendingDelete.label,
-              )
+          pendingDelete?.kind === 'bulk'
+            ? copy.confirm.deleteSelectedProducts.replace('{label}', pendingDelete.label)
             : pendingDelete
               ? copy.confirm.deleteEntity
-                  .replace("{entity}", copy.confirm.entityLabels.product)
-                  .replace("{name}", pendingDelete.label)
-              : ""
+                  .replace('{entity}', copy.confirm.entityLabels.product)
+                  .replace('{name}', pendingDelete.label)
+              : ''
         }
         isPending={isPending}
         onClose={() => {

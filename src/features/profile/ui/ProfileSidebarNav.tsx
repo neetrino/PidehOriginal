@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import type { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   Gift,
   LayoutDashboard,
@@ -12,15 +12,15 @@ import {
   Sparkles,
   Trash2,
   User,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { AppLink } from "@/components/ui/AppLink";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
+import { AppLink } from '@/components/ui/AppLink';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
 
 type ProfileSidebarNavProps = {
   locale: Locale;
-  dictionary: Dictionary["profile"];
+  dictionary: Dictionary['profile'];
   logoutAction: (formData: FormData) => void | Promise<void>;
 };
 
@@ -33,17 +33,13 @@ type NavItem = {
 
 function navClassName(active: boolean): string {
   const base =
-    "flex w-full items-center gap-3 rounded-xl border-l-[3px] px-3 py-2 text-left text-sm font-medium transition-colors";
+    'flex w-full items-center gap-3 rounded-xl border-l-[3px] px-3 py-2 text-left text-sm font-medium transition-colors';
   return active
     ? `${base} border-[#ff6b00] bg-white text-[#1e1e1e] shadow-sm`
     : `${base} border-transparent text-[#1e1e1e]/65 hover:bg-white/70 hover:text-[#1e1e1e]`;
 }
 
-export function ProfileSidebarNav({
-  locale,
-  dictionary,
-  logoutAction,
-}: ProfileSidebarNavProps) {
+export function ProfileSidebarNav({ locale, dictionary, logoutAction }: ProfileSidebarNavProps) {
   const pathname = usePathname();
 
   const items: NavItem[] = [
@@ -104,13 +100,13 @@ export function ProfileSidebarNav({
               href={item.href}
               prefetchPolicy="intent"
               className={navClassName(active)}
-              aria-current={active ? "page" : undefined}
+              aria-current={active ? 'page' : undefined}
             >
               <span
                 className={
                   active
-                    ? "flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff6b00] text-white shadow-sm"
-                    : "flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#ff6b00]"
+                    ? 'flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff6b00] text-white shadow-sm'
+                    : 'flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#ff6b00]'
                 }
               >
                 {item.icon}

@@ -1,16 +1,13 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { Check, Copy, Pencil, Plus, Trash2 } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { Check, Copy, Pencil, Plus, Trash2 } from 'lucide-react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import {
-  ConfirmDialog,
-  deleteConfirmDescription,
-} from "@/components/ui/ConfirmDialog";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { ConfirmDialog, deleteConfirmDescription } from '@/components/ui/ConfirmDialog';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -23,22 +20,22 @@ import {
   ADMIN_TABLE_TH,
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
+} from '@/features/admin/ui/admin-table-classes';
 import {
   deletePromotionAction,
   duplicatePromotionAction,
-} from "@/features/promotions/application/upsert-promotion";
+} from '@/features/promotions/application/upsert-promotion';
 import type {
   AdminPromotionListItem,
   CouponUserOption,
-} from "@/features/promotions/application/queries";
-import { CouponDrawer } from "@/features/promotions/ui/CouponDrawer";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/promotions/application/queries';
+import { CouponDrawer } from '@/features/promotions/ui/CouponDrawer';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminCouponsViewCopy = {
-  coupons: Dictionary["admin"]["coupons"];
-  common: Dictionary["admin"]["common"];
-  confirm: Dictionary["admin"]["confirm"];
+  coupons: Dictionary['admin']['coupons'];
+  common: Dictionary['admin']['common'];
+  confirm: Dictionary['admin']['confirm'];
 };
 
 type AdminCouponsViewProps = {
@@ -48,24 +45,15 @@ type AdminCouponsViewProps = {
   copy: AdminCouponsViewCopy;
 };
 
-function formatValidUntil(
-  endsAt: Date | string | null,
-  locale: string,
-): string {
-  if (!endsAt) return "—";
+function formatValidUntil(endsAt: Date | string | null, locale: string): string {
+  if (!endsAt) return '—';
   return new Date(endsAt).toLocaleString(locale);
 }
 
-export function AdminCouponsView({
-  locale,
-  coupons,
-  userOptions,
-  copy,
-}: AdminCouponsViewProps) {
+export function AdminCouponsView({ locale, coupons, userOptions, copy }: AdminCouponsViewProps) {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editingCoupon, setEditingCoupon] =
-    useState<AdminPromotionListItem | null>(null);
+  const [editingCoupon, setEditingCoupon] = useState<AdminPromotionListItem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [pendingDelete, setPendingDelete] = useState<{
@@ -95,9 +83,7 @@ export function AdminCouponsView({
         await action();
         router.refresh();
       } catch (caught) {
-        setError(
-          caught instanceof Error ? caught.message : copy.common.actionFailed,
-        );
+        setError(caught instanceof Error ? caught.message : copy.common.actionFailed);
       }
     });
   }
@@ -115,9 +101,7 @@ export function AdminCouponsView({
         setPendingDelete(null);
         router.refresh();
       } catch (caught) {
-        setError(
-          caught instanceof Error ? caught.message : copy.common.actionFailed,
-        );
+        setError(caught instanceof Error ? caught.message : copy.common.actionFailed);
       }
     });
   }
@@ -126,10 +110,7 @@ export function AdminCouponsView({
     <section>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <AdminPageHeading
-            title={copy.coupons.title}
-            description={copy.coupons.subtitle}
-          />
+          <AdminPageHeading title={copy.coupons.title} description={copy.coupons.subtitle} />
         </div>
         <Button
           type="button"
@@ -146,9 +127,7 @@ export function AdminCouponsView({
 
       <Card className={ADMIN_TABLE_CARD}>
         {coupons.length === 0 ? (
-          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {copy.coupons.empty}
-          </p>
+          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>{copy.coupons.empty}</p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
@@ -168,23 +147,19 @@ export function AdminCouponsView({
                 {coupons.map((promo) => (
                   <tr key={promo.id} className={ADMIN_TABLE_ROW}>
                     <td className={ADMIN_TABLE_TD}>
-                      <span className="font-medium text-gray-900">
-                        {promo.code}
-                      </span>
+                      <span className="font-medium text-gray-900">{promo.code}</span>
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
-                      {promo.discountType === "PERCENTAGE"
+                      {promo.discountType === 'PERCENTAGE'
                         ? copy.coupons.table.percentOff
                         : copy.coupons.table.fixedAmountAmd}
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
-                      {promo.discountType === "PERCENTAGE"
+                      {promo.discountType === 'PERCENTAGE'
                         ? `${promo.discountValue}%`
                         : String(promo.discountValue)}
                     </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      {promo.totalUsageLimit ?? "—"}
-                    </td>
+                    <td className={ADMIN_TABLE_TD_CENTER}>{promo.totalUsageLimit ?? '—'}</td>
                     <td className={ADMIN_TABLE_TD_CENTER}>{promo.usedCount}</td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
                       {promo.isActive ? (
@@ -207,8 +182,8 @@ export function AdminCouponsView({
                           type="button"
                           className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                           aria-label={copy.coupons.table.editAria.replace(
-                            "{code}",
-                            promo.code ?? "",
+                            '{code}',
+                            promo.code ?? '',
                           )}
                           onClick={() => openEdit(promo)}
                         >
@@ -219,15 +194,12 @@ export function AdminCouponsView({
                           disabled={isPending}
                           className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                           aria-label={copy.coupons.table.duplicateAria.replace(
-                            "{code}",
-                            promo.code ?? "",
+                            '{code}',
+                            promo.code ?? '',
                           )}
                           onClick={() =>
                             runAction(async () => {
-                              const result = await duplicatePromotionAction(
-                                locale,
-                                promo.id,
-                              );
+                              const result = await duplicatePromotionAction(locale, promo.id);
                               if (!result.ok) {
                                 throw new Error(result.error.message);
                               }
@@ -241,13 +213,13 @@ export function AdminCouponsView({
                           disabled={isPending}
                           className="rounded p-1.5 text-red-600 hover:bg-red-50"
                           aria-label={copy.coupons.table.deleteAria.replace(
-                            "{code}",
-                            promo.code ?? "",
+                            '{code}',
+                            promo.code ?? '',
                           )}
                           onClick={() =>
                             setPendingDelete({
                               id: promo.id,
-                              code: promo.code ?? "promo",
+                              code: promo.code ?? 'promo',
                             })
                           }
                         >
@@ -280,11 +252,8 @@ export function AdminCouponsView({
         title={copy.confirm.deleteTitle}
         description={
           pendingDelete
-            ? deleteConfirmDescription(
-                copy.confirm.entityLabels.promoCode,
-                pendingDelete.code,
-              )
-            : ""
+            ? deleteConfirmDescription(copy.confirm.entityLabels.promoCode, pendingDelete.code)
+            : ''
         }
         isPending={isPending}
         onClose={() => {

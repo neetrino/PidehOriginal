@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useState } from "react";
+import Image from 'next/image';
+import { useState } from 'react';
 
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 
 type HomeHeroMediaProps = {
   imageSrc: string;
@@ -15,10 +15,7 @@ type HomeHeroMediaProps = {
  * Figma hero media (51:133). Uses video when provided and loadable;
  * otherwise the static pide with a float loop approximating the clip.
  */
-export function HomeHeroMedia({
-  imageSrc,
-  videoSrc = null,
-}: HomeHeroMediaProps) {
+export function HomeHeroMedia({ imageSrc, videoSrc = null }: HomeHeroMediaProps) {
   const [videoFailed, setVideoFailed] = useState(false);
   const showVideo = Boolean(videoSrc) && !videoFailed;
 

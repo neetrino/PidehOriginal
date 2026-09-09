@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import {
   ADMIN_LABEL,
   ADMIN_SECTION_TITLE,
   ADMIN_TEXTAREA,
-} from "@/features/admin/ui/admin-form-classes";
-import { addOrderNoteAction } from "@/features/orders/application/add-order-note";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-form-classes';
+import { addOrderNoteAction } from '@/features/orders/application/add-order-note';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AddOrderNoteFormProps = {
   locale: string;
   orderNumber: string;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
 export function AddOrderNoteForm({ locale, orderNumber, copy }: AddOrderNoteFormProps) {
@@ -31,7 +31,7 @@ export function AddOrderNoteForm({ locale, orderNumber, copy }: AddOrderNoteForm
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          const note = String(formData.get("note") ?? "").trim();
+          const note = String(formData.get('note') ?? '').trim();
 
           startTransition(async () => {
             setError(null);

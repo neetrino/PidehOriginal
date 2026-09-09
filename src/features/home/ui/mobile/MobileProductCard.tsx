@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState, useTransition, type MouseEvent } from "react";
+import Image from 'next/image';
+import { useState, useTransition, type MouseEvent } from 'react';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
-import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
-import type { Locale } from "@/lib/i18n/config";
+import { AppLink } from '@/components/ui/AppLink';
+import { beginCartBadgeAdd } from '@/features/cart/ui/cart-badge-count';
+import { addProductToActiveCart } from '@/features/group-orders/application/add-to-active';
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
+import { WishlistButton } from '@/features/wishlist/ui/WishlistButton';
+import type { Locale } from '@/lib/i18n/config';
 
 type MobileProductCardProps = {
   href: string;
@@ -51,7 +51,6 @@ export function MobileProductCard({
   prepTimeLabel,
   priority = false,
 }: MobileProductCardProps) {
-  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [justAdded, setJustAdded] = useState(false);
 
@@ -60,17 +59,20 @@ export function MobileProductCard({
     event.stopPropagation();
     if (!inStock || pending) return;
 
+    setJustAdded(true);
+    const settleBadge = beginCartBadgeAdd();
     startTransition(async () => {
       try {
         const result = await addProductToActiveCart(productId, 1);
         if (!result.ok) {
+          settleBadge(null);
           setJustAdded(false);
           return;
         }
-        setJustAdded(true);
-        router.refresh();
+        settleBadge(result.itemCount);
         window.setTimeout(() => setJustAdded(false), 1500);
       } catch {
+        settleBadge(null);
         setJustAdded(false);
       }
     });
@@ -81,13 +83,10 @@ export function MobileProductCard({
       data-node-id="260:512"
       className="relative box-border flex h-[340px] w-[200px] flex-col gap-2 overflow-visible rounded-[26px] bg-white pt-[27px] pr-4 pb-4 pl-3.5 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]"
     >
-      <div
-        data-node-id="260:513"
-        className="relative mx-auto h-[123px] w-[193px] shrink-0"
-      >
+      <div data-node-id="260:513" className="relative mx-auto h-[123px] w-[193px] shrink-0">
         <AppLink
           href={href}
-          prefetchPolicy={priority ? "intent" : "auto"}
+          prefetchPolicy={priority ? 'intent' : 'auto'}
           className="absolute inset-0 block"
         >
           {imageUrl ? (
@@ -140,27 +139,23 @@ export function MobileProductCard({
         data-node-id="260:519"
         className="font-montserrat-arm h-[19px] w-full shrink-0 overflow-hidden text-base leading-[1.25] font-extrabold text-[#1e1e1e]"
       >
-        <AppLink
-          href={href}
-          prefetchPolicy="auto"
-          className="block truncate hover:underline"
-        >
+        <AppLink href={href} prefetchPolicy="auto" className="block truncate hover:underline">
           {title}
         </AppLink>
       </div>
 
       <p
         data-node-id="260:520"
-        className="font-montserrat-arm line-clamp-3 min-h-[48px] w-full shrink-0 overflow-hidden text-sm leading-[1.14] text-[#6b6b6b]"
+        className="font-noto-armenian line-clamp-3 min-h-[48px] w-full shrink-0 overflow-hidden text-sm leading-[1.14] text-[#6b6b6b]"
       >
-        {description ?? "\u00A0"}
+        {description ?? '\u00A0'}
       </p>
 
       <p
         data-node-id="260:521"
-        className="font-montserrat-arm h-4 w-full shrink-0 text-[13px] leading-[1.25] font-medium text-[#6b6b6b]"
+        className="font-noto-armenian h-4 w-full shrink-0 text-[13px] leading-[1.25] text-[#6b6b6b]"
       >
-        {prepTimeLabel ?? "\u00A0"}
+        {prepTimeLabel ?? '\u00A0'}
       </p>
 
       <div

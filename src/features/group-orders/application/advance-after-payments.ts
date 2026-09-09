@@ -1,10 +1,10 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { groupOrderParticipants, groupOrders } from "@/db/schema";
-import { appendGroupOrderEvent } from "@/features/group-orders/application/money";
-import { canTransitionGroupOrderStatus } from "@/features/group-orders/domain/status";
-import { isSuccessfulParticipantPayment } from "@/features/group-orders/domain/spend-limit";
+import { getDb } from '@/db/client';
+import { groupOrderParticipants, groupOrders } from '@/db/schema';
+import { appendGroupOrderEvent } from '@/features/group-orders/application/money';
+import { canTransitionGroupOrderStatus } from '@/features/group-orders/domain/status';
+import { isSuccessfulParticipantPayment } from '@/features/group-orders/domain/spend-limit';
 
 type Db = ReturnType<typeof getDb>;
 
@@ -27,13 +27,13 @@ export async function advanceSplitGroupOrderIfAllPaid(input: {
     .limit(1);
 
   if (!groupOrder) return { advanced: false };
-  if (groupOrder.paymentMode !== "SPLIT_PER_PARTICIPANT") {
+  if (groupOrder.paymentMode !== 'SPLIT_PER_PARTICIPANT') {
     return { advanced: false };
   }
-  if (groupOrder.status !== "AWAITING_PAYMENTS") {
+  if (groupOrder.status !== 'AWAITING_PAYMENTS') {
     return { advanced: false };
   }
-  if (!canTransitionGroupOrderStatus("AWAITING_PAYMENTS", "CHECKOUT")) {
+  if (!canTransitionGroupOrderStatus('AWAITING_PAYMENTS', 'CHECKOUT')) {
     return { advanced: false };
   }
 
@@ -43,31 +43,26 @@ export async function advanceSplitGroupOrderIfAllPaid(input: {
     .where(
       and(
         eq(groupOrderParticipants.groupOrderId, input.groupOrderId),
-        eq(groupOrderParticipants.status, "ACTIVE"),
+        eq(groupOrderParticipants.status, 'ACTIVE'),
       ),
     );
 
   const needingPay = active.filter(
-    (p) =>
-      p.role !== "ORGANIZER" &&
-      p.finalAmount > 0 &&
-      p.paymentStatus !== "NOT_REQUIRED",
+    (p) => p.role !== 'ORGANIZER' && p.finalAmount > 0 && p.paymentStatus !== 'NOT_REQUIRED',
   );
-  const allPaid = needingPay.every((p) =>
-    isSuccessfulParticipantPayment(p.paymentStatus),
-  );
+  const allPaid = needingPay.every((p) => isSuccessfulParticipantPayment(p.paymentStatus));
   if (!allPaid) return { advanced: false };
 
   await db
     .update(groupOrders)
-    .set({ status: "CHECKOUT", updatedAt: new Date() })
+    .set({ status: 'CHECKOUT', updatedAt: new Date() })
     .where(eq(groupOrders.id, input.groupOrderId));
 
   await appendGroupOrderEvent(db, {
     groupOrderId: input.groupOrderId,
-    eventType: "STATUS_CHANGE",
-    fromState: "AWAITING_PAYMENTS",
-    toState: "CHECKOUT",
+    eventType: 'STATUS_CHANGE',
+    fromState: 'AWAITING_PAYMENTS',
+    toState: 'CHECKOUT',
     actorUserId: input.actorUserId ?? null,
     actorParticipantId: input.actorParticipantId ?? null,
   });

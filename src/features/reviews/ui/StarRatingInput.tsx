@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Star } from "lucide-react";
-import { useState } from "react";
+import { Star } from 'lucide-react';
+import { useState } from 'react';
 
 type StarRatingInputProps = {
   value: number;
@@ -46,9 +46,7 @@ export function StarRatingInput({
             >
               <Star
                 className={`h-8 w-8 ${
-                  isFilled
-                    ? "fill-amber-400 text-amber-400"
-                    : "fill-gray-200 text-gray-200"
+                  isFilled ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-200'
                 }`}
                 aria-hidden
               />

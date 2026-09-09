@@ -1,4 +1,4 @@
-export type PopupRuleError = "TITLE_REQUIRED" | "INVALID_LINK_URL";
+export type PopupRuleError = 'TITLE_REQUIRED' | 'INVALID_LINK_URL';
 
 const LINK_URL_PATTERN = /^(?:\/[A-Za-z0-9/_-]*)|(?:https?:\/\/.+)$/;
 
@@ -8,12 +8,12 @@ export function validatePopupFields(input: {
   linkUrl?: string | null;
 }): PopupRuleError | null {
   if (!input.title.trim()) {
-    return "TITLE_REQUIRED";
+    return 'TITLE_REQUIRED';
   }
 
-  const url = input.linkUrl?.trim() ?? "";
+  const url = input.linkUrl?.trim() ?? '';
   if (url && !LINK_URL_PATTERN.test(url)) {
-    return "INVALID_LINK_URL";
+    return 'INVALID_LINK_URL';
   }
 
   return null;
@@ -21,10 +21,10 @@ export function validatePopupFields(input: {
 
 export function popupRuleErrorMessage(code: PopupRuleError): string {
   switch (code) {
-    case "TITLE_REQUIRED":
-      return "Title is required.";
-    case "INVALID_LINK_URL":
-      return "Link URL must be a site path or http(s) URL.";
+    case 'TITLE_REQUIRED':
+      return 'Title is required.';
+    case 'INVALID_LINK_URL':
+      return 'Link URL must be a site path or http(s) URL.';
   }
 }
 
@@ -36,7 +36,5 @@ export function popupIdsToDeactivate(
   popups: Array<{ id: string; isActive: boolean }>,
   targetId: string,
 ): string[] {
-  return popups
-    .filter((popup) => popup.isActive && popup.id !== targetId)
-    .map((popup) => popup.id);
+  return popups.filter((popup) => popup.isActive && popup.id !== targetId).map((popup) => popup.id);
 }

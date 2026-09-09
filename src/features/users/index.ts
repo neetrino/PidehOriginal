@@ -2,12 +2,9 @@ export {
   bulkAnonymizeUsersAction,
   updateUserRoleAction,
   updateUserStatusAction,
-} from "@/features/users/application/update-user";
-export { getAdminUserDetailAction } from "@/features/users/application/get-admin-user-detail";
-export {
-  getAdminUserById,
-  listAdminUsers,
-} from "@/features/users/application/queries";
+} from '@/features/users/application/update-user';
+export { getAdminUserDetailAction } from '@/features/users/application/get-admin-user-detail';
+export { getAdminUserById, listAdminUsers } from '@/features/users/application/queries';
 export {
   getEligibleUserStatuses,
   isUserRole,
@@ -18,10 +15,10 @@ export {
   wouldRemoveLastActiveAdmin,
   type UserRole,
   type UserStatus,
-} from "@/features/users/domain/user-lifecycle";
+} from '@/features/users/domain/user-lifecycle';
 export {
   adminUsersFilterSchema,
   bulkAnonymizeUsersSchema,
   updateUserRoleSchema,
   updateUserStatusSchema,
-} from "@/features/users/schemas/admin-users";
+} from '@/features/users/schemas/admin-users';

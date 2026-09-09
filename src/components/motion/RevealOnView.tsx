@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { motion, useReducedMotion, type Variants } from "motion/react";
-import type { CSSProperties, ReactNode } from "react";
+import { motion, useReducedMotion, type Variants } from 'motion/react';
+import type { CSSProperties, ReactNode } from 'react';
 
-import { VIEWPORT_ONCE, fadeUp } from "@/components/motion/presets";
+import { VIEWPORT_ONCE, fadeUp } from '@/components/motion/presets';
 
 type RevealOnViewProps = {
   children: ReactNode;

@@ -1,31 +1,23 @@
-import { Package } from "lucide-react";
+import { Package } from 'lucide-react';
 
 import type {
   AnalyticsTopCategory,
   AnalyticsTopProduct,
-} from "@/features/analytics/application/queries";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/analytics/application/queries';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AnalyticsTopRankingsProps = {
   products: AnalyticsTopProduct[];
   categories: AnalyticsTopCategory[];
   formatMoney: (amount: number) => string;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
-function RankBadge({
-  rank,
-  tone,
-}: {
-  rank: number;
-  tone: "ink" | "orange";
-}) {
+function RankBadge({ rank, tone }: { rank: number; tone: 'ink' | 'orange' }) {
   return (
     <div
       className={`flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-        tone === "ink"
-          ? "bg-[#1e1e1e]/10 text-[#1e1e1e]"
-          : "bg-[#ff6b00]/15 text-[#ff6b00]"
+        tone === 'ink' ? 'bg-[#1e1e1e]/10 text-[#1e1e1e]' : 'bg-[#ff6b00]/15 text-[#ff6b00]'
       }`}
     >
       {rank}
@@ -55,22 +47,16 @@ export function AnalyticsTopRankings({
               <div className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
                 {product.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element -- remote R2 URLs; admin list pattern
-                  <img
-                    src={product.imageUrl}
-                    alt=""
-                    className="size-full object-cover"
-                  />
+                  <img src={product.imageUrl} alt="" className="size-full object-cover" />
                 ) : (
                   <Package className="size-5 text-[#1e1e1e]/35" aria-hidden />
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold text-[#1e1e1e]">
-                  {product.title}
-                </p>
+                <p className="truncate text-sm font-bold text-[#1e1e1e]">{product.title}</p>
                 <p className="mt-0.5 text-xs text-[#1e1e1e]/50">
                   {copy.analytics.topProducts.sold.replace(
-                    "{quantity}",
+                    '{quantity}',
                     String(product.quantitySold),
                   )}
                 </p>
@@ -100,12 +86,10 @@ export function AnalyticsTopRankings({
             >
               <RankBadge rank={index + 1} tone="orange" />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold text-[#1e1e1e]">
-                  {category.title}
-                </p>
+                <p className="truncate text-sm font-bold text-[#1e1e1e]">{category.title}</p>
                 <p className="mt-0.5 text-xs text-[#1e1e1e]/50">
                   {copy.analytics.topCategories.items.replace(
-                    "{count}",
+                    '{count}',
                     String(category.itemCount),
                   )}
                 </p>

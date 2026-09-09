@@ -1,24 +1,18 @@
-"use server";
+'use server';
 
-import { createHash } from "node:crypto";
+import { createHash } from 'node:crypto';
 
-import { and, desc, eq, gt } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { and, desc, eq, gt } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { getProviders } from "@/config/providers";
-import { getDb } from "@/db/client";
-import { contactMessages } from "@/db/schema";
-import {
-  normalizeContactEmail,
-  scoreContactSpam,
-} from "@/features/contact/domain/contact-rules";
-import {
-  submitContactSchema,
-  type SubmitContactInput,
-} from "@/features/contact/schemas/contact";
-import { createId } from "@/lib/id";
-import { locales } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+import { getProviders } from '@/config/providers';
+import { getDb } from '@/db/client';
+import { contactMessages } from '@/db/schema';
+import { normalizeContactEmail, scoreContactSpam } from '@/features/contact/domain/contact-rules';
+import { submitContactSchema, type SubmitContactInput } from '@/features/contact/schemas/contact';
+import { createId } from '@/lib/id';
+import { locales } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
 /** Max contact submissions per email per window (documented Phase 9 default). */
@@ -40,7 +34,7 @@ export async function submitContactMessageAction(
 ): Promise<Result<{ id: string }>> {
   const parsed = submitContactSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Please check the form fields.");
+    return err('VALIDATION_ERROR', 'Please check the form fields.');
   }
 
   const data = parsed.data;
@@ -57,12 +51,12 @@ export async function submitContactMessageAction(
   });
 
   const email = normalizeContactEmail(data.email);
-  const rateKey = `contact:rate:${createHash("sha256").update(email).digest("hex")}`;
+  const rateKey = `contact:rate:${createHash('sha256').update(email).digest('hex')}`;
   const redis = getProviders().redis.getClient();
   const currentRaw = await redis.get(rateKey);
   const currentCount = currentRaw ? Number.parseInt(currentRaw, 10) : 0;
   if (Number.isFinite(currentCount) && currentCount >= CONTACT_RATE_LIMIT) {
-    return err("RATE_LIMITED", "Too many messages. Please try again later.");
+    return err('RATE_LIMITED', 'Too many messages. Please try again later.');
   }
 
   const since = new Date(Date.now() - DUPLICATE_WINDOW_MS);
@@ -86,16 +80,18 @@ export async function submitContactMessageAction(
 
   try {
     const id = createId();
-    await getDb().insert(contactMessages).values({
-      id,
-      name: data.name.trim(),
-      email,
-      phone: data.phone?.trim() || null,
-      subject,
-      message,
-      status: "UNREAD",
-      spamScore,
-    });
+    await getDb()
+      .insert(contactMessages)
+      .values({
+        id,
+        name: data.name.trim(),
+        email,
+        phone: data.phone?.trim() || null,
+        subject,
+        message,
+        status: 'UNREAD',
+        spamScore,
+      });
 
     const nextCount = (Number.isFinite(currentCount) ? currentCount : 0) + 1;
     await redis.set(rateKey, String(nextCount), {
@@ -105,6 +101,6 @@ export async function submitContactMessageAction(
     revalidateContactInbox();
     return ok({ id });
   } catch {
-    return err("CONTACT_SUBMIT_FAILED", "Unable to send your message.");
+    return err('CONTACT_SUBMIT_FAILED', 'Unable to send your message.');
   }
 }

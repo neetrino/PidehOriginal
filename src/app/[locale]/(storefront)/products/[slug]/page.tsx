@@ -1,19 +1,16 @@
-import type { Metadata } from "next";
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import type { Metadata } from 'next';
+import { Suspense } from 'react';
+import { notFound } from 'next/navigation';
 
-import { getEnv } from "@/config/env";
-import { getProductDetailBySlug } from "@/features/products/queries";
-import { ProductDetailView } from "@/features/products/ui/ProductDetailView";
-import { ProductRelatedSection } from "@/features/products/ui/ProductRelatedSection";
-import { isProductInWishlist } from "@/features/wishlist/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import {
-  createDisplayPriceFormatter,
-  getSelectedCurrency,
-} from "@/lib/money/display-price";
+import { getEnv } from '@/config/env';
+import { getProductDetailBySlug } from '@/features/products/queries';
+import { ProductDetailView } from '@/features/products/ui/ProductDetailView';
+import { ProductRelatedSection } from '@/features/products/ui/ProductRelatedSection';
+import { isProductInWishlist } from '@/features/wishlist/queries';
+import { getCurrentUser } from '@/lib/auth/session';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { createDisplayPriceFormatter, getSelectedCurrency } from '@/lib/money/display-price';
 
 type ProductPageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -29,41 +26,32 @@ function buildProductJsonLd(input: {
   imageUrl: string | null;
   inStock: boolean;
 }): Record<string, unknown> {
-  const appUrl = getEnv().NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  const appUrl = getEnv().NEXT_PUBLIC_APP_URL.replace(/\/$/, '');
   const url = `${appUrl}/${input.locale}/products/${input.slug}`;
 
   return {
-    "@context": "https://schema.org",
-    "@type": "Product",
+    '@context': 'https://schema.org',
+    '@type': 'Product',
     name: input.title,
     sku: input.sku,
     url,
     ...(input.description ? { description: input.description } : {}),
     ...(input.imageUrl ? { image: input.imageUrl } : {}),
     offers: {
-      "@type": "Offer",
+      '@type': 'Offer',
       url,
-      priceCurrency: "AMD",
+      priceCurrency: 'AMD',
       price: String(input.priceAmount),
-      availability: input.inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+      availability: input.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
     },
   };
 }
 
 function SectionFallback() {
-  return (
-    <div
-      className="h-40 animate-pulse rounded-[24px] bg-white/20"
-      aria-hidden="true"
-    />
-  );
+  return <div className="h-40 animate-pulse rounded-[24px] bg-white/20" aria-hidden="true" />;
 }
 
-export async function generateMetadata({
-  params,
-}: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { locale: rawLocale, slug } = await params;
   if (!isLocale(rawLocale)) {
     return {};
@@ -75,8 +63,7 @@ export async function generateMetadata({
   }
 
   const title = product.translation.seoTitle ?? product.translation.title;
-  const description =
-    product.translation.seoDescription ?? product.translation.description;
+  const description = product.translation.seoDescription ?? product.translation.description;
   const canonicalPath = `/${rawLocale}/products/${product.translation.slug}`;
 
   return {
@@ -86,7 +73,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      type: "website",
+      type: 'website',
       url: canonicalPath,
       ...(product.imageUrl ? { images: [{ url: product.imageUrl }] } : {}),
     },

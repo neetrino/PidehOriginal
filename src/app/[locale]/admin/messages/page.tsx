@@ -1,14 +1,10 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-  ADMIN_SELECT,
-} from "@/features/admin/ui/admin-form-classes";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { ADMIN_INPUT, ADMIN_LABEL, ADMIN_SELECT } from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -21,22 +17,20 @@ import {
   ADMIN_TABLE_TH,
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
-import { listAdminContactMessages } from "@/features/contact/application/queries";
-import { CONTACT_STATUSES } from "@/features/contact/domain/contact-rules";
-import { adminContactFilterSchema } from "@/features/contact/schemas/contact";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-table-classes';
+import { ADMIN_BADGE } from '@/features/admin/ui/status-badge';
+import { listAdminContactMessages } from '@/features/contact/application/queries';
+import { CONTACT_STATUSES } from '@/features/contact/domain/contact-rules';
+import { adminContactFilterSchema } from '@/features/contact/schemas/contact';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminMessagesPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-function firstParam(
-  value: string | string[] | undefined,
-): string | undefined {
+function firstParam(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
     return value[0];
   }
@@ -45,17 +39,14 @@ function firstParam(
 
 function contactStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
-  if (normalized === "UNREAD") return "bg-blue-100 text-blue-800";
-  if (normalized === "READ") return "bg-yellow-100 text-yellow-800";
-  if (normalized === "REPLIED") return "bg-green-100 text-green-800";
-  if (normalized === "ARCHIVED") return "bg-gray-100 text-gray-800";
-  return "bg-gray-100 text-gray-800";
+  if (normalized === 'UNREAD') return 'bg-blue-100 text-blue-800';
+  if (normalized === 'READ') return 'bg-yellow-100 text-yellow-800';
+  if (normalized === 'REPLIED') return 'bg-green-100 text-green-800';
+  if (normalized === 'ARCHIVED') return 'bg-gray-100 text-gray-800';
+  return 'bg-gray-100 text-gray-800';
 }
 
-export default async function AdminMessagesPage({
-  params,
-  searchParams,
-}: AdminMessagesPageProps) {
+export default async function AdminMessagesPage({ params, searchParams }: AdminMessagesPageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) {
     notFound();
@@ -68,7 +59,7 @@ export default async function AdminMessagesPage({
   const parsed = adminContactFilterSchema.safeParse({
     status: firstParam(raw.status) || undefined,
     q: firstParam(raw.q) || undefined,
-    page: firstParam(raw.page) ?? "1",
+    page: firstParam(raw.page) ?? '1',
   });
 
   const filters = parsed.success
@@ -80,20 +71,16 @@ export default async function AdminMessagesPage({
 
   const countLabel = filters.status
     ? t.countWithStatus
-        .replace("{total}", String(total))
-        .replace("{plural}", total === 1 ? "" : "s")
-        .replace("{status}", filters.status)
+        .replace('{total}', String(total))
+        .replace('{plural}', total === 1 ? '' : 's')
+        .replace('{status}', filters.status)
     : total === 1
-      ? t.count.replace("{total}", String(total))
-      : t.countPlural.replace("{total}", String(total));
+      ? t.count.replace('{total}', String(total))
+      : t.countPlural.replace('{total}', String(total));
 
   return (
     <section>
-      <AdminPageHeading
-        className="mb-6"
-        title={t.title}
-        description={countLabel}
-      />
+      <AdminPageHeading className="mb-6" title={t.title} description={countLabel} />
 
       <Card className="mb-6 p-4">
         <form method="get" className="flex flex-wrap items-end gap-3">
@@ -101,18 +88,14 @@ export default async function AdminMessagesPage({
             <span className={ADMIN_LABEL}>{t.search}</span>
             <input
               name="q"
-              defaultValue={filters.q ?? ""}
+              defaultValue={filters.q ?? ''}
               placeholder={t.searchPlaceholder}
               className={ADMIN_INPUT}
             />
           </label>
           <label className="min-w-[140px]">
             <span className={ADMIN_LABEL}>{t.status}</span>
-            <select
-              name="status"
-              defaultValue={filters.status ?? ""}
-              className={ADMIN_SELECT}
-            >
+            <select name="status" defaultValue={filters.status ?? ''} className={ADMIN_SELECT}>
               <option value="">{t.all}</option>
               {CONTACT_STATUSES.map((status) => (
                 <option key={status} value={status}>
@@ -129,9 +112,7 @@ export default async function AdminMessagesPage({
 
       <Card className={ADMIN_TABLE_CARD}>
         {rows.length === 0 ? (
-          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {t.empty}
-          </p>
+          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>{t.empty}</p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
@@ -159,26 +140,18 @@ export default async function AdminMessagesPage({
                       <p className="text-xs text-gray-500">{message.email}</p>
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
-                      <span
-                        className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
-                      >
+                      <span className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}>
                         {message.status}
                       </span>
                       {message.spamScore !== null ? (
                         <p className="mt-1 text-xs text-gray-500">
-                          {t.table.spamScore.replace(
-                            "{score}",
-                            String(message.spamScore),
-                          )}
+                          {t.table.spamScore.replace('{score}', String(message.spamScore))}
                         </p>
                       ) : null}
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <span className="text-xs text-gray-500">
-                        {message.createdAt
-                          .toISOString()
-                          .slice(0, 16)
-                          .replace("T", " ")}{" "}
+                        {message.createdAt.toISOString().slice(0, 16).replace('T', ' ')}{' '}
                         {dictionary.admin.common.utc}
                       </span>
                     </td>
@@ -194,8 +167,8 @@ export default async function AdminMessagesPage({
         <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
           <span>
             {dictionary.admin.common.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{totalPages}", String(totalPages))}
+              .replace('{page}', String(filters.page))
+              .replace('{totalPages}', String(totalPages))}
           </span>
         </nav>
       ) : null}

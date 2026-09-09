@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql } from 'drizzle-orm';
 import {
   boolean,
   check,
@@ -11,21 +11,13 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-} from "drizzle-orm/pg-core";
+} from 'drizzle-orm/pg-core';
 
-import { products } from "@/db/schema/catalog";
-import {
-  createdAtColumn,
-  idColumn,
-  updatedAtColumn,
-} from "@/db/schema/columns";
-import {
-  orderEventTypeEnum,
-  orderStatusEnum,
-  paymentStatusEnum,
-} from "@/db/schema/enums";
-import { users } from "@/db/schema/identity";
-import { deliveryRules, promotions } from "@/db/schema/pricing";
+import { products } from '@/db/schema/catalog';
+import { createdAtColumn, idColumn, updatedAtColumn } from '@/db/schema/columns';
+import { orderEventTypeEnum, orderStatusEnum, paymentStatusEnum } from '@/db/schema/enums';
+import { users } from '@/db/schema/identity';
+import { deliveryRules, promotions } from '@/db/schema/pricing';
 
 export type AddressSnapshot = {
   recipientFirstName: string;
@@ -54,66 +46,64 @@ export type AddressSnapshot = {
 };
 
 export const orders = pgTable(
-  "orders",
+  'orders',
   {
     id: idColumn(),
-    orderNumber: text("order_number").notNull(),
-    userId: uuid("user_id").references(() => users.id, {
-      onDelete: "restrict",
+    orderNumber: text('order_number').notNull(),
+    userId: uuid('user_id').references(() => users.id, {
+      onDelete: 'restrict',
     }),
-    contactEmail: text("contact_email").notNull(),
-    contactPhone: text("contact_phone").notNull(),
-    contactName: text("contact_name").notNull(),
-    status: orderStatusEnum("status").notNull().default("PENDING"),
-    paymentStatus: paymentStatusEnum("payment_status")
-      .notNull()
-      .default("PENDING"),
-    isArchived: boolean("is_archived").notNull().default(false),
-    baseCurrency: text("base_currency").notNull().default("AMD"),
-    displayCurrency: text("display_currency").notNull().default("AMD"),
-    exchangeRate: numeric("exchange_rate", { precision: 18, scale: 8 }),
-    exchangeRateSource: text("exchange_rate_source"),
-    exchangeRateAsOf: timestamp("exchange_rate_as_of", {
+    contactEmail: text('contact_email').notNull(),
+    contactPhone: text('contact_phone').notNull(),
+    contactName: text('contact_name').notNull(),
+    status: orderStatusEnum('status').notNull().default('PENDING'),
+    paymentStatus: paymentStatusEnum('payment_status').notNull().default('PENDING'),
+    isArchived: boolean('is_archived').notNull().default(false),
+    baseCurrency: text('base_currency').notNull().default('AMD'),
+    displayCurrency: text('display_currency').notNull().default('AMD'),
+    exchangeRate: numeric('exchange_rate', { precision: 18, scale: 8 }),
+    exchangeRateSource: text('exchange_rate_source'),
+    exchangeRateAsOf: timestamp('exchange_rate_as_of', {
       withTimezone: true,
-      mode: "date",
+      mode: 'date',
     }),
-    subtotalAmount: integer("subtotal_amount").notNull(),
-    discountAmount: integer("discount_amount").notNull().default(0),
-    taxAmount: integer("tax_amount").notNull().default(0),
-    deliveryAmount: integer("delivery_amount").notNull().default(0),
+    subtotalAmount: integer('subtotal_amount').notNull(),
+    discountAmount: integer('discount_amount').notNull().default(0),
+    taxAmount: integer('tax_amount').notNull().default(0),
+    deliveryAmount: integer('delivery_amount').notNull().default(0),
     /** Bonus points redeemed at checkout (1 point = 1 AMD). */
-    bonusRedeemedAmount: integer("bonus_redeemed_amount").notNull().default(0),
+    bonusRedeemedAmount: integer('bonus_redeemed_amount').notNull().default(0),
     /** Bonus points earned when order reached DELIVERED (snapshot). */
-    bonusEarnedAmount: integer("bonus_earned_amount").notNull().default(0),
+    bonusEarnedAmount: integer('bonus_earned_amount').notNull().default(0),
     /** Gift card applied at checkout (no FK — avoids circular import with gift_cards). */
-    giftCardId: uuid("gift_card_id"),
-    giftCardCodeSnapshot: text("gift_card_code_snapshot"),
-    giftCardAmount: integer("gift_card_amount").notNull().default(0),
-    totalAmount: integer("total_amount").notNull(),
-    shippingAddress: jsonb("shipping_address").$type<AddressSnapshot>().notNull(),
-    billingAddress: jsonb("billing_address").$type<AddressSnapshot>().notNull(),
-    promotionId: uuid("promotion_id").references(() => promotions.id, {
-      onDelete: "restrict",
+    giftCardId: uuid('gift_card_id'),
+    giftCardCodeSnapshot: text('gift_card_code_snapshot'),
+    giftCardAmount: integer('gift_card_amount').notNull().default(0),
+    totalAmount: integer('total_amount').notNull(),
+    shippingAddress: jsonb('shipping_address').$type<AddressSnapshot>().notNull(),
+    billingAddress: jsonb('billing_address').$type<AddressSnapshot>().notNull(),
+    promotionId: uuid('promotion_id').references(() => promotions.id, {
+      onDelete: 'restrict',
     }),
-    promotionCodeSnapshot: text("promotion_code_snapshot"),
-    promotionTypeSnapshot: text("promotion_type_snapshot"),
-    promotionValueSnapshot: integer("promotion_value_snapshot"),
-    promotionDiscountAmount: integer("promotion_discount_amount"),
-    deliveryRuleId: uuid("delivery_rule_id").references(() => deliveryRules.id, {
-      onDelete: "restrict",
+    promotionCodeSnapshot: text('promotion_code_snapshot'),
+    promotionTypeSnapshot: text('promotion_type_snapshot'),
+    promotionValueSnapshot: integer('promotion_value_snapshot'),
+    promotionDiscountAmount: integer('promotion_discount_amount'),
+    deliveryRuleId: uuid('delivery_rule_id').references(() => deliveryRules.id, {
+      onDelete: 'restrict',
     }),
-    deliveryLabelSnapshot: text("delivery_label_snapshot"),
-    deliveryEstimateSnapshot: text("delivery_estimate_snapshot"),
+    deliveryLabelSnapshot: text('delivery_label_snapshot'),
+    deliveryEstimateSnapshot: text('delivery_estimate_snapshot'),
     /** Source group order when this order was created from a group session. */
-    groupOrderId: uuid("group_order_id"),
-    idempotencyScopeHash: text("idempotency_scope_hash").notNull(),
-    idempotencyKeyHash: text("idempotency_key_hash").notNull(),
-    requestFingerprint: text("request_fingerprint").notNull(),
-    locale: text("locale").notNull(),
-    correlationId: text("correlation_id"),
-    placedAt: timestamp("placed_at", {
+    groupOrderId: uuid('group_order_id'),
+    idempotencyScopeHash: text('idempotency_scope_hash').notNull(),
+    idempotencyKeyHash: text('idempotency_key_hash').notNull(),
+    requestFingerprint: text('request_fingerprint').notNull(),
+    locale: text('locale').notNull(),
+    correlationId: text('correlation_id'),
+    placedAt: timestamp('placed_at', {
       withTimezone: true,
-      mode: "date",
+      mode: 'date',
     })
       .notNull()
       .default(sql`now()`),
@@ -121,129 +111,110 @@ export const orders = pgTable(
     updatedAt: updatedAtColumn(),
   },
   (table) => [
-    uniqueIndex("orders_order_number_uidx").on(table.orderNumber),
-    uniqueIndex("orders_idempotency_uidx").on(
+    uniqueIndex('orders_order_number_uidx').on(table.orderNumber),
+    uniqueIndex('orders_idempotency_uidx').on(
       table.idempotencyScopeHash,
       table.idempotencyKeyHash,
       table.requestFingerprint,
     ),
-    index("orders_user_placed_idx").on(table.userId, table.placedAt),
-    index("orders_status_placed_idx").on(table.status, table.placedAt),
-    index("orders_payment_status_placed_idx").on(
-      table.paymentStatus,
-      table.placedAt,
-    ),
-    index("orders_promotion_user_status_idx").on(
-      table.promotionId,
-      table.userId,
-      table.status,
-    ),
-    check("orders_money_nonneg_chk", sql`${table.totalAmount} >= 0`),
-    check(
-      "orders_bonus_redeemed_nonneg_chk",
-      sql`${table.bonusRedeemedAmount} >= 0`,
-    ),
-    check(
-      "orders_bonus_earned_nonneg_chk",
-      sql`${table.bonusEarnedAmount} >= 0`,
-    ),
-    check(
-      "orders_gift_card_amount_nonneg_chk",
-      sql`${table.giftCardAmount} >= 0`,
-    ),
+    index('orders_user_placed_idx').on(table.userId, table.placedAt),
+    index('orders_status_placed_idx').on(table.status, table.placedAt),
+    index('orders_payment_status_placed_idx').on(table.paymentStatus, table.placedAt),
+    index('orders_promotion_user_status_idx').on(table.promotionId, table.userId, table.status),
+    check('orders_money_nonneg_chk', sql`${table.totalAmount} >= 0`),
+    check('orders_bonus_redeemed_nonneg_chk', sql`${table.bonusRedeemedAmount} >= 0`),
+    check('orders_bonus_earned_nonneg_chk', sql`${table.bonusEarnedAmount} >= 0`),
+    check('orders_gift_card_amount_nonneg_chk', sql`${table.giftCardAmount} >= 0`),
   ],
 );
 
 export const orderItems = pgTable(
-  "order_items",
+  'order_items',
   {
     id: idColumn(),
-    orderId: uuid("order_id")
+    orderId: uuid('order_id')
       .notNull()
-      .references(() => orders.id, { onDelete: "restrict" }),
-    productId: uuid("product_id").references(() => products.id, {
-      onDelete: "restrict",
+      .references(() => orders.id, { onDelete: 'restrict' }),
+    productId: uuid('product_id').references(() => products.id, {
+      onDelete: 'restrict',
     }),
-    productTitleSnapshot: text("product_title_snapshot").notNull(),
-    productSkuSnapshot: text("product_sku_snapshot").notNull(),
-    productImageKeySnapshot: text("product_image_key_snapshot"),
-    quantity: integer("quantity").notNull(),
-    unitBaseAmount: integer("unit_base_amount").notNull(),
-    unitDisplayAmount: integer("unit_display_amount").notNull(),
-    compareAtAmount: integer("compare_at_amount"),
-    discountAmount: integer("discount_amount").notNull().default(0),
-    taxAmount: integer("tax_amount").notNull().default(0),
-    lineTotalAmount: integer("line_total_amount").notNull(),
-    currency: text("currency").notNull().default("AMD"),
+    productTitleSnapshot: text('product_title_snapshot').notNull(),
+    productSkuSnapshot: text('product_sku_snapshot').notNull(),
+    productImageKeySnapshot: text('product_image_key_snapshot'),
+    quantity: integer('quantity').notNull(),
+    unitBaseAmount: integer('unit_base_amount').notNull(),
+    unitDisplayAmount: integer('unit_display_amount').notNull(),
+    compareAtAmount: integer('compare_at_amount'),
+    discountAmount: integer('discount_amount').notNull().default(0),
+    taxAmount: integer('tax_amount').notNull().default(0),
+    lineTotalAmount: integer('line_total_amount').notNull(),
+    currency: text('currency').notNull().default('AMD'),
     /** Group-order participant who selected this line (nullable for solo orders). */
-    groupOrderParticipantId: uuid("group_order_participant_id"),
-    participantNameSnapshot: text("participant_name_snapshot"),
+    groupOrderParticipantId: uuid('group_order_participant_id'),
+    participantNameSnapshot: text('participant_name_snapshot'),
     createdAt: createdAtColumn(),
   },
   (table) => [
-    index("order_items_order_idx").on(table.orderId),
-    index("order_items_product_idx").on(table.productId),
-    index("order_items_group_participant_idx").on(table.groupOrderParticipantId),
-    check("order_items_qty_chk", sql`${table.quantity} > 0`),
+    index('order_items_order_idx').on(table.orderId),
+    index('order_items_product_idx').on(table.productId),
+    index('order_items_group_participant_idx').on(table.groupOrderParticipantId),
+    check('order_items_qty_chk', sql`${table.quantity} > 0`),
   ],
 );
 
 export const orderEvents = pgTable(
-  "order_events",
+  'order_events',
   {
     id: idColumn(),
-    orderId: uuid("order_id")
+    orderId: uuid('order_id')
       .notNull()
-      .references(() => orders.id, { onDelete: "restrict" }),
-    eventType: orderEventTypeEnum("event_type").notNull(),
-    fromState: text("from_state"),
-    toState: text("to_state"),
-    actorUserId: uuid("actor_user_id").references(() => users.id, {
-      onDelete: "set null",
+      .references(() => orders.id, { onDelete: 'restrict' }),
+    eventType: orderEventTypeEnum('event_type').notNull(),
+    fromState: text('from_state'),
+    toState: text('to_state'),
+    actorUserId: uuid('actor_user_id').references(() => users.id, {
+      onDelete: 'set null',
     }),
-    isCustomerVisible: boolean("is_customer_visible").notNull().default(false),
-    payload: jsonb("payload").$type<Record<string, unknown>>(),
-    providerEventId: text("provider_event_id"),
-    correlationId: text("correlation_id"),
+    isCustomerVisible: boolean('is_customer_visible').notNull().default(false),
+    payload: jsonb('payload').$type<Record<string, unknown>>(),
+    providerEventId: text('provider_event_id'),
+    correlationId: text('correlation_id'),
     createdAt: createdAtColumn(),
   },
   (table) => [
-    index("order_events_order_created_idx").on(table.orderId, table.createdAt),
-    index("order_events_type_idx").on(table.eventType),
-    uniqueIndex("order_events_provider_event_uidx")
+    index('order_events_order_created_idx').on(table.orderId, table.createdAt),
+    index('order_events_type_idx').on(table.eventType),
+    uniqueIndex('order_events_provider_event_uidx')
       .on(table.providerEventId)
       .where(sql`${table.providerEventId} IS NOT NULL`),
   ],
 );
 
 export const payments = pgTable(
-  "payments",
+  'payments',
   {
     id: idColumn(),
-    orderId: uuid("order_id")
+    orderId: uuid('order_id')
       .notNull()
-      .references(() => orders.id, { onDelete: "restrict" }),
-    provider: text("provider").notNull(),
-    method: text("method").notNull(),
-    providerReference: text("provider_reference"),
-    amount: integer("amount").notNull(),
-    currency: text("currency").notNull().default("AMD"),
-    status: paymentStatusEnum("status").notNull().default("PENDING"),
-    attemptNumber: integer("attempt_number").notNull().default(1),
+      .references(() => orders.id, { onDelete: 'restrict' }),
+    provider: text('provider').notNull(),
+    method: text('method').notNull(),
+    providerReference: text('provider_reference'),
+    amount: integer('amount').notNull(),
+    currency: text('currency').notNull().default('AMD'),
+    status: paymentStatusEnum('status').notNull().default('PENDING'),
+    attemptNumber: integer('attempt_number').notNull().default(1),
     /** Split group-order payment owner (nullable for solo / organizer-pays-all). */
-    groupOrderParticipantId: uuid("group_order_participant_id"),
-    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    groupOrderParticipantId: uuid('group_order_participant_id'),
+    metadata: jsonb('metadata').$type<Record<string, unknown>>(),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
   (table) => [
-    index("payments_order_attempt_idx").on(table.orderId, table.attemptNumber),
-    index("payments_provider_ref_status_idx").on(
-      table.providerReference,
-      table.status,
-    ),
-    index("payments_group_participant_idx").on(table.groupOrderParticipantId),
-    check("payments_amount_chk", sql`${table.amount} >= 0`),
-    check("payments_attempt_chk", sql`${table.attemptNumber} > 0`),
+    index('payments_order_attempt_idx').on(table.orderId, table.attemptNumber),
+    index('payments_provider_ref_status_idx').on(table.providerReference, table.status),
+    index('payments_group_participant_idx').on(table.groupOrderParticipantId),
+    check('payments_amount_chk', sql`${table.amount} >= 0`),
+    check('payments_attempt_chk', sql`${table.attemptNumber} > 0`),
   ],
 );

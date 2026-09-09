@@ -1,9 +1,9 @@
 /** Canonical user roles from the database enum. */
-export const USER_ROLES = ["ADMIN", "CUSTOMER"] as const;
+export const USER_ROLES = ['ADMIN', 'CUSTOMER'] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
 /** Canonical account statuses from the database enum. */
-export const USER_STATUSES = ["ACTIVE", "SUSPENDED", "ANONYMIZED"] as const;
+export const USER_STATUSES = ['ACTIVE', 'SUSPENDED', 'ANONYMIZED'] as const;
 export type UserStatus = (typeof USER_STATUSES)[number];
 
 export function isUserRole(value: string): value is UserRole {
@@ -25,15 +25,13 @@ export function wouldRemoveLastActiveAdmin(input: {
   nextStatus: UserStatus;
   activeAdminCount: number;
 }): boolean {
-  const isActiveAdmin =
-    input.targetRole === "ADMIN" && input.targetStatus === "ACTIVE";
+  const isActiveAdmin = input.targetRole === 'ADMIN' && input.targetStatus === 'ACTIVE';
 
   if (!isActiveAdmin) {
     return false;
   }
 
-  const remainsActiveAdmin =
-    input.nextRole === "ADMIN" && input.nextStatus === "ACTIVE";
+  const remainsActiveAdmin = input.nextRole === 'ADMIN' && input.nextStatus === 'ACTIVE';
 
   return !remainsActiveAdmin && input.activeAdminCount <= 1;
 }
@@ -41,11 +39,11 @@ export function wouldRemoveLastActiveAdmin(input: {
 /** Statuses an admin may assign from the current status. */
 export function getEligibleUserStatuses(from: UserStatus): UserStatus[] {
   switch (from) {
-    case "ACTIVE":
-      return ["SUSPENDED", "ANONYMIZED"];
-    case "SUSPENDED":
-      return ["ACTIVE", "ANONYMIZED"];
-    case "ANONYMIZED":
+    case 'ACTIVE':
+      return ['SUSPENDED', 'ANONYMIZED'];
+    case 'SUSPENDED':
+      return ['ACTIVE', 'ANONYMIZED'];
+    case 'ANONYMIZED':
       return [];
   }
 }
@@ -57,11 +55,11 @@ export function shouldRevokeSessions(input: {
   toRole: UserRole;
   toStatus: UserStatus;
 }): boolean {
-  if (input.toStatus === "SUSPENDED" || input.toStatus === "ANONYMIZED") {
+  if (input.toStatus === 'SUSPENDED' || input.toStatus === 'ANONYMIZED') {
     return true;
   }
 
-  if (input.fromRole === "ADMIN" && input.toRole === "CUSTOMER") {
+  if (input.fromRole === 'ADMIN' && input.toRole === 'CUSTOMER') {
     return true;
   }
 

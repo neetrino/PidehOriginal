@@ -1,16 +1,13 @@
-"use client";
+'use client';
 
-import { ChevronDown } from "lucide-react";
-import { useId, useState, useTransition } from "react";
+import { ChevronDown } from 'lucide-react';
+import { useId, useState, useTransition } from 'react';
 
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
-import { createCategoryAction } from "@/features/categories/actions";
-import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
-import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import { createCategoryAction } from '@/features/categories/actions';
+import { slugifyCategoryTitle } from '@/features/categories/domain/slugify';
+import type { AdminCategoryOption } from '@/features/products/application/list-admin-products';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ProductDrawerCategoriesProps = {
   locale: string;
@@ -19,7 +16,7 @@ type ProductDrawerCategoriesProps = {
   disabled: boolean;
   onCategoriesChange: (categories: AdminCategoryOption[]) => void;
   onSelectedChange: (ids: string[]) => void;
-  copy: Dictionary["admin"]["products"]["categories"];
+  copy: Dictionary['admin']['products']['categories'];
 };
 
 export function ProductDrawerCategories({
@@ -34,7 +31,7 @@ export function ProductDrawerCategories({
   const listId = useId();
   const [open, setOpen] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
+  const [newTitle, setNewTitle] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -42,9 +39,7 @@ export function ProductDrawerCategories({
     .filter((category) => selectedIds.includes(category.id))
     .map((category) => category.title);
   const triggerLabel =
-    selectedTitles.length === 0
-      ? copy.selectCategories
-      : selectedTitles.join(", ");
+    selectedTitles.length === 0 ? copy.selectCategories : selectedTitles.join(', ');
 
   function toggleCategory(id: string): void {
     if (selectedIds.includes(id)) {
@@ -67,7 +62,7 @@ export function ProductDrawerCategories({
         title,
         slug: slugifyCategoryTitle(title),
         parentId: null,
-        status: "ACTIVE",
+        status: 'ACTIVE',
       });
 
       if (!result.ok) {
@@ -78,7 +73,7 @@ export function ProductDrawerCategories({
       const created = { id: result.value.id, title };
       onCategoriesChange([...categories, created]);
       onSelectedChange([...selectedIds, created.id]);
-      setNewTitle("");
+      setNewTitle('');
       setShowAdd(false);
       setOpen(true);
     });
@@ -87,7 +82,7 @@ export function ProductDrawerCategories({
   return (
     <div>
       <span className={ADMIN_LABEL}>{copy.label}</span>
-      <div className={`relative mt-1 ${open ? "z-50" : "z-0"}`}>
+      <div className={`relative mt-1 ${open ? 'z-50' : 'z-0'}`}>
         <button
           type="button"
           disabled={disabled || isPending}
@@ -98,14 +93,14 @@ export function ProductDrawerCategories({
         >
           <span
             className={`min-w-0 flex-1 truncate ${
-              selectedTitles.length === 0 ? "text-gray-400" : "text-gray-900"
+              selectedTitles.length === 0 ? 'text-gray-400' : 'text-gray-900'
             }`}
           >
             {triggerLabel}
           </span>
           <ChevronDown
             className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              open ? "rotate-180" : ""
+              open ? 'rotate-180' : ''
             }`}
             aria-hidden
           />
@@ -114,8 +109,8 @@ export function ProductDrawerCategories({
         <div
           className={`absolute top-[calc(100%+0.5rem)] left-0 z-[100] grid w-full transition-[grid-template-rows,opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             open
-              ? "translate-y-0 grid-rows-[1fr] opacity-100"
-              : "pointer-events-none -translate-y-1 grid-rows-[0fr] opacity-0"
+              ? 'translate-y-0 grid-rows-[1fr] opacity-100'
+              : 'pointer-events-none -translate-y-1 grid-rows-[0fr] opacity-0'
           }`}
           aria-hidden={!open}
         >
@@ -125,9 +120,7 @@ export function ProductDrawerCategories({
               className="max-h-56 overflow-y-auto rounded-2xl border border-gray-100 bg-white py-2"
             >
               {categories.length === 0 ? (
-                <p className="px-4 py-2.5 text-sm text-gray-500">
-                  {copy.empty}
-                </p>
+                <p className="px-4 py-2.5 text-sm text-gray-500">{copy.empty}</p>
               ) : (
                 categories.map((category) => {
                   const selected = selectedIds.includes(category.id);
@@ -142,17 +135,13 @@ export function ProductDrawerCategories({
                       <span
                         className={
                           selected
-                            ? "flex h-4 w-4 shrink-0 items-center justify-center rounded border border-gray-900 bg-gray-900 text-white"
-                            : "flex h-4 w-4 shrink-0 rounded border border-gray-300 bg-white"
+                            ? 'flex h-4 w-4 shrink-0 items-center justify-center rounded border border-gray-900 bg-gray-900 text-white'
+                            : 'flex h-4 w-4 shrink-0 rounded border border-gray-300 bg-white'
                         }
                         aria-hidden
                       >
                         {selected ? (
-                          <svg
-                            viewBox="0 0 12 12"
-                            className="h-3 w-3"
-                            fill="none"
-                          >
+                          <svg viewBox="0 0 12 12" className="h-3 w-3" fill="none">
                             <path
                               d="M2.5 6.2 4.8 8.5 9.5 3.5"
                               stroke="currentColor"
@@ -212,7 +201,7 @@ export function ProductDrawerCategories({
               disabled={isPending}
               onClick={() => {
                 setShowAdd(false);
-                setNewTitle("");
+                setNewTitle('');
                 setError(null);
               }}
               className="text-sm font-medium text-gray-600 hover:text-gray-900"

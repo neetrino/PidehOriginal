@@ -1,24 +1,22 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { listCustomerOrders } from "@/features/orders/application/queries";
-import type { OrderStatus } from "@/features/orders/domain/order-status";
-import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status";
-import { CustomerOrdersFilters } from "@/features/orders/ui/CustomerOrdersFilters";
-import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
-import { ProfilePageHeading } from "@/features/profile/ui/ProfilePageHeading";
-import { requireUser } from "@/lib/auth/policies";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { AppLink } from '@/components/ui/AppLink';
+import { listCustomerOrders } from '@/features/orders/application/queries';
+import type { OrderStatus } from '@/features/orders/domain/order-status';
+import { adminOrdersFilterSchema } from '@/features/orders/schemas/change-status';
+import { CustomerOrdersFilters } from '@/features/orders/ui/CustomerOrdersFilters';
+import { CustomerOrdersView } from '@/features/orders/ui/CustomerOrdersView';
+import { ProfilePageHeading } from '@/features/profile/ui/ProfilePageHeading';
+import { requireUser } from '@/lib/auth/policies';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type OrdersPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-function firstParam(
-  value: string | string[] | undefined,
-): string | undefined {
+function firstParam(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
     return value[0];
   }
@@ -35,17 +33,14 @@ function buildOrdersQuery(
   page: number,
 ): string {
   const params = new URLSearchParams();
-  if (filters.q) params.set("q", filters.q);
-  if (filters.status) params.set("status", filters.status);
-  if (filters.paymentStatus) params.set("paymentStatus", filters.paymentStatus);
-  params.set("page", String(page));
+  if (filters.q) params.set('q', filters.q);
+  if (filters.status) params.set('status', filters.status);
+  if (filters.paymentStatus) params.set('paymentStatus', filters.paymentStatus);
+  params.set('page', String(page));
   return params.toString();
 }
 
-export default async function OrdersPage({
-  params,
-  searchParams,
-}: OrdersPageProps) {
+export default async function OrdersPage({ params, searchParams }: OrdersPageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) {
     notFound();
@@ -58,16 +53,16 @@ export default async function OrdersPage({
   const parsed = adminOrdersFilterSchema.safeParse({
     status: firstParam(raw.status) || undefined,
     paymentStatus: firstParam(raw.paymentStatus) || undefined,
-    archived: "active",
+    archived: 'active',
     q: firstParam(raw.q) || undefined,
-    page: firstParam(raw.page) ?? "1",
+    page: firstParam(raw.page) ?? '1',
   });
 
   const filters = parsed.success
     ? parsed.data
     : {
         page: 1 as const,
-        archived: "active" as const,
+        archived: 'active' as const,
         status: undefined,
         paymentStatus: undefined,
         dateFrom: undefined,
@@ -112,8 +107,8 @@ export default async function OrdersPage({
           ) : null}
           <span>
             {dictionary.profile.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{total}", String(totalPages))}
+              .replace('{page}', String(filters.page))
+              .replace('{total}', String(totalPages))}
           </span>
           {filters.page < totalPages ? (
             <AppLink

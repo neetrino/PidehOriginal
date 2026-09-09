@@ -1,22 +1,22 @@
-"use server";
+'use server';
 
-import { and, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { and, eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
-import { auditLogs, promotions } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
-import { upsertStoreSettingAction } from "@/features/settings/application/upsert-settings";
-import { requireAdmin } from "@/lib/auth/policies";
-import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+import { auditLogs, promotions } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
+import { upsertStoreSettingAction } from '@/features/settings/application/upsert-settings';
+import { requireAdmin } from '@/lib/auth/policies';
+import { invalidateProductsCache } from '@/lib/cache/invalidate-public';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 const nullablePercentSchema = z.number().int().min(1).max(100).nullable();
 
 const targetDiscountSchema = z.object({
-  target: z.enum(["product", "category"]),
+  target: z.enum(['product', 'category']),
   targetId: z.string().uuid(),
   percentage: nullablePercentSchema,
 });
@@ -47,16 +47,16 @@ export async function setGlobalDiscountAction(
   percentage: number | null,
 ): Promise<Result<{ percentage: number | null }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = nullablePercentSchema.safeParse(percentage);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Percentage must be 1–100 or empty.");
+    return err('VALIDATION_ERROR', 'Percentage must be 1–100 or empty.');
   }
 
   const result = await upsertStoreSettingAction(locale, {
-    key: "store.globalDiscount",
+    key: 'store.globalDiscount',
     value: { percentage: parsed.data },
   });
 
@@ -75,12 +75,12 @@ export async function upsertTargetDiscountAction(
   raw: z.infer<typeof targetDiscountSchema>,
 ): Promise<Result<{ targetId: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = targetDiscountSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid discount payload.");
+    return err('VALIDATION_ERROR', 'Invalid discount payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -93,8 +93,8 @@ export async function upsertTargetDiscountAction(
         .from(promotions)
         .where(
           and(
-            eq(promotions.kind, "AUTOMATIC"),
-            target === "product"
+            eq(promotions.kind, 'AUTOMATIC'),
+            target === 'product'
               ? eq(promotions.productId, targetId)
               : eq(promotions.categoryId, targetId),
           ),
@@ -110,8 +110,8 @@ export async function upsertTargetDiscountAction(
         await tx.insert(auditLogs).values({
           id: createId(),
           actorUserId: actor.id,
-          action: "promotion.delete",
-          targetType: "promotion",
+          action: 'promotion.delete',
+          targetType: 'promotion',
           targetId: existing.id,
           beforeDiff: {
             kind: existing.kind,
@@ -126,7 +126,7 @@ export async function upsertTargetDiscountAction(
         await tx
           .update(promotions)
           .set({
-            discountType: "PERCENTAGE",
+            discountType: 'PERCENTAGE',
             discountValue: percentage,
             isActive: true,
             updatedAt: now,
@@ -136,8 +136,8 @@ export async function upsertTargetDiscountAction(
         await tx.insert(auditLogs).values({
           id: createId(),
           actorUserId: actor.id,
-          action: "promotion.update",
-          targetType: "promotion",
+          action: 'promotion.update',
+          targetType: 'promotion',
           targetId: existing.id,
           beforeDiff: { discountValue: existing.discountValue },
           afterDiff: { discountValue: percentage },
@@ -149,26 +149,26 @@ export async function upsertTargetDiscountAction(
       const id = createId();
       await tx.insert(promotions).values({
         id,
-        kind: "AUTOMATIC",
+        kind: 'AUTOMATIC',
         code: null,
-        productId: target === "product" ? targetId : null,
-        categoryId: target === "category" ? targetId : null,
-        discountType: "PERCENTAGE",
+        productId: target === 'product' ? targetId : null,
+        categoryId: target === 'category' ? targetId : null,
+        discountType: 'PERCENTAGE',
         discountValue: percentage,
         isActive: true,
-        priority: target === "product" ? 10 : 5,
+        priority: target === 'product' ? 10 : 5,
         allowStacking: false,
       });
 
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "promotion.create",
-        targetType: "promotion",
+        action: 'promotion.create',
+        targetType: 'promotion',
         targetId: id,
         afterDiff: {
-          kind: "AUTOMATIC",
-          discountType: "PERCENTAGE",
+          kind: 'AUTOMATIC',
+          discountType: 'PERCENTAGE',
           discountValue: percentage,
         },
         correlationId,
@@ -178,7 +178,7 @@ export async function upsertTargetDiscountAction(
     revalidateDiscounts(locale);
     return ok({ targetId });
   } catch {
-    return err("DISCOUNT_UPSERT_FAILED", "Unable to save discount.");
+    return err('DISCOUNT_UPSERT_FAILED', 'Unable to save discount.');
   }
 }
 
@@ -188,17 +188,17 @@ export async function saveCategoryDiscountsAction(
   raw: z.infer<typeof categoryBatchSchema>,
 ): Promise<Result<{ saved: number }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = categoryBatchSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid category discounts payload.");
+    return err('VALIDATION_ERROR', 'Invalid category discounts payload.');
   }
 
   for (const item of parsed.data.items) {
     const result = await upsertTargetDiscountAction(locale, {
-      target: "category",
+      target: 'category',
       targetId: item.categoryId,
       percentage: item.percentage,
     });

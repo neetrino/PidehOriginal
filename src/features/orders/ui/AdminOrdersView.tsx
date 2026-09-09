@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useTransition } from "react";
+import { useState, useTransition } from 'react';
 
-import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
-import { BulkChangeOrderStatusForm } from "@/features/orders/ui/BulkChangeOrderStatusForm";
-import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
+import { getAdminOrderDetailAction } from '@/features/orders/application/get-order-detail';
+import { BulkChangeOrderStatusForm } from '@/features/orders/ui/BulkChangeOrderStatusForm';
+import { OrderDetailsDrawer } from '@/features/orders/ui/OrderDetailsDrawer';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminOrdersViewOrder = {
   id: string;
@@ -26,7 +26,7 @@ type AdminOrdersViewOrder = {
 type AdminOrdersViewProps = {
   locale: string;
   orders: AdminOrdersViewOrder[];
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
 export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) {

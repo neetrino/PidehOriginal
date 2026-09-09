@@ -1,23 +1,19 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import {
-  groupOrderItems,
-  groupOrderParticipants,
-  groupOrders,
-} from "@/db/schema";
-import { assertOrganizerAccess } from "@/features/group-orders/application/access";
+import { getDb } from '@/db/client';
+import { groupOrderItems, groupOrderParticipants, groupOrders } from '@/db/schema';
+import { assertOrganizerAccess } from '@/features/group-orders/application/access';
 import {
   appendGroupOrderEvent,
   recalculateGroupOrderMoney,
-} from "@/features/group-orders/application/money";
+} from '@/features/group-orders/application/money';
 import {
   canTransitionGroupOrderStatus,
   nextStatusAfterLock,
   type GroupOrderStatus,
-} from "@/features/group-orders/domain/status";
-import { advanceSplitGroupOrderIfAllPaid } from "@/features/group-orders/application/advance-after-payments";
-import { isSuccessfulParticipantPayment } from "@/features/group-orders/domain/spend-limit";
+} from '@/features/group-orders/domain/status';
+import { advanceSplitGroupOrderIfAllPaid } from '@/features/group-orders/application/advance-after-payments';
+import { isSuccessfulParticipantPayment } from '@/features/group-orders/domain/spend-limit';
 
 export type ManageResult = { ok: true } | { ok: false; error: string };
 
@@ -39,7 +35,7 @@ export async function updateGroupOrderSpendLimit(input: {
 
   await appendGroupOrderEvent(db, {
     groupOrderId: access.groupOrder.id,
-    eventType: "SPEND_LIMIT_CHANGED",
+    eventType: 'SPEND_LIMIT_CHANGED',
     actorParticipantId: access.participant.id,
     payload: { spendLimitAmount: input.spendLimitAmount },
   });
@@ -62,7 +58,7 @@ export async function setGroupOrderJoinsClosed(input: {
 
   await appendGroupOrderEvent(db, {
     groupOrderId: access.groupOrder.id,
-    eventType: "JOINS_CLOSED",
+    eventType: 'JOINS_CLOSED',
     actorParticipantId: access.participant.id,
     payload: { joinsClosed: input.joinsClosed },
   });
@@ -78,7 +74,7 @@ export async function removeGroupOrderParticipant(input: {
   if (!access.ok) return access;
 
   if (input.participantId === access.participant.id) {
-    return { ok: false, error: "Organizer cannot remove themselves." };
+    return { ok: false, error: 'Organizer cannot remove themselves.' };
   }
 
   const db = getDb();
@@ -93,30 +89,28 @@ export async function removeGroupOrderParticipant(input: {
     )
     .limit(1);
 
-  if (!target || target.status !== "ACTIVE") {
-    return { ok: false, error: "Participant not found." };
+  if (!target || target.status !== 'ACTIVE') {
+    return { ok: false, error: 'Participant not found.' };
   }
 
   if (isSuccessfulParticipantPayment(target.paymentStatus)) {
     return {
       ok: false,
-      error: "Cannot remove a participant with a successful payment.",
+      error: 'Cannot remove a participant with a successful payment.',
     };
   }
 
-  await db
-    .delete(groupOrderItems)
-    .where(eq(groupOrderItems.participantId, target.id));
+  await db.delete(groupOrderItems).where(eq(groupOrderItems.participantId, target.id));
 
   await db
     .update(groupOrderParticipants)
-    .set({ status: "REMOVED", updatedAt: new Date() })
+    .set({ status: 'REMOVED', updatedAt: new Date() })
     .where(eq(groupOrderParticipants.id, target.id));
 
   await recalculateGroupOrderMoney(db, access.groupOrder.id);
   await appendGroupOrderEvent(db, {
     groupOrderId: access.groupOrder.id,
-    eventType: "PARTICIPANT_REMOVED",
+    eventType: 'PARTICIPANT_REMOVED',
     actorParticipantId: access.participant.id,
     payload: { participantId: target.id, displayName: target.displayName },
   });
@@ -127,15 +121,13 @@ export async function removeGroupOrderParticipant(input: {
 /**
  * Locks item collection and advances toward checkout / awaiting payments.
  */
-export async function lockGroupOrder(input: {
-  inviteToken: string;
-}): Promise<ManageResult> {
+export async function lockGroupOrder(input: { inviteToken: string }): Promise<ManageResult> {
   const access = await assertOrganizerAccess(input.inviteToken);
   if (!access.ok) return access;
 
   const { groupOrder, participant } = access;
-  if (groupOrder.status !== "OPEN") {
-    return { ok: false, error: "Group order is not open." };
+  if (groupOrder.status !== 'OPEN') {
+    return { ok: false, error: 'Group order is not open.' };
   }
 
   const db = getDb();
@@ -145,19 +137,19 @@ export async function lockGroupOrder(input: {
     .where(
       and(
         eq(groupOrderParticipants.groupOrderId, groupOrder.id),
-        eq(groupOrderParticipants.status, "ACTIVE"),
+        eq(groupOrderParticipants.status, 'ACTIVE'),
       ),
     );
 
   const withItems = active.filter((p) => p.subtotalAmount > 0);
   if (withItems.length === 0) {
-    return { ok: false, error: "Add at least one item before locking." };
+    return { ok: false, error: 'Add at least one item before locking.' };
   }
 
   await db
     .update(groupOrders)
     .set({
-      status: "LOCKED",
+      status: 'LOCKED',
       lockedAt: new Date(),
       joinsClosed: true,
       updatedAt: new Date(),
@@ -166,15 +158,15 @@ export async function lockGroupOrder(input: {
 
   await appendGroupOrderEvent(db, {
     groupOrderId: groupOrder.id,
-    eventType: "STATUS_CHANGE",
-    fromState: "OPEN",
-    toState: "LOCKED",
+    eventType: 'STATUS_CHANGE',
+    fromState: 'OPEN',
+    toState: 'LOCKED',
     actorParticipantId: participant.id,
   });
 
   const next = nextStatusAfterLock(groupOrder.paymentMode);
-  if (!canTransitionGroupOrderStatus("LOCKED", next)) {
-    return { ok: false, error: "Invalid status transition." };
+  if (!canTransitionGroupOrderStatus('LOCKED', next)) {
+    return { ok: false, error: 'Invalid status transition.' };
   }
 
   await db
@@ -184,18 +176,17 @@ export async function lockGroupOrder(input: {
 
   await appendGroupOrderEvent(db, {
     groupOrderId: groupOrder.id,
-    eventType: "STATUS_CHANGE",
-    fromState: "LOCKED",
+    eventType: 'STATUS_CHANGE',
+    fromState: 'LOCKED',
     toState: next,
     actorParticipantId: participant.id,
   });
 
   await recalculateGroupOrderMoney(db, groupOrder.id);
 
-  if (next === "AWAITING_PAYMENTS") {
-    const { advanceSplitGroupOrderIfAllPaid } = await import(
-      "@/features/group-orders/application/advance-after-payments"
-    );
+  if (next === 'AWAITING_PAYMENTS') {
+    const { advanceSplitGroupOrderIfAllPaid } =
+      await import('@/features/group-orders/application/advance-after-payments');
     await advanceSplitGroupOrderIfAllPaid({
       db,
       groupOrderId: groupOrder.id,
@@ -206,28 +197,26 @@ export async function lockGroupOrder(input: {
   return { ok: true };
 }
 
-export async function cancelGroupOrder(input: {
-  inviteToken: string;
-}): Promise<ManageResult> {
+export async function cancelGroupOrder(input: { inviteToken: string }): Promise<ManageResult> {
   const access = await assertOrganizerAccess(input.inviteToken);
   if (!access.ok) return access;
 
   const from = access.groupOrder.status as GroupOrderStatus;
-  if (!canTransitionGroupOrderStatus(from, "CANCELLED")) {
-    return { ok: false, error: "Cannot cancel in the current status." };
+  if (!canTransitionGroupOrderStatus(from, 'CANCELLED')) {
+    return { ok: false, error: 'Cannot cancel in the current status.' };
   }
 
   const db = getDb();
   await db
     .update(groupOrders)
-    .set({ status: "CANCELLED", updatedAt: new Date() })
+    .set({ status: 'CANCELLED', updatedAt: new Date() })
     .where(eq(groupOrders.id, access.groupOrder.id));
 
   await appendGroupOrderEvent(db, {
     groupOrderId: access.groupOrder.id,
-    eventType: "STATUS_CHANGE",
+    eventType: 'STATUS_CHANGE',
     fromState: from,
-    toState: "CANCELLED",
+    toState: 'CANCELLED',
     actorParticipantId: access.participant.id,
   });
 
@@ -244,7 +233,7 @@ export async function markParticipantPaymentFailed(input: {
   const db = getDb();
   await db
     .update(groupOrderParticipants)
-    .set({ paymentStatus: "FAILED", updatedAt: new Date() })
+    .set({ paymentStatus: 'FAILED', updatedAt: new Date() })
     .where(
       and(
         eq(groupOrderParticipants.id, input.participantId),
@@ -254,9 +243,9 @@ export async function markParticipantPaymentFailed(input: {
 
   await appendGroupOrderEvent(db, {
     groupOrderId: access.groupOrder.id,
-    eventType: "PAYMENT_STATUS",
+    eventType: 'PAYMENT_STATUS',
     actorParticipantId: access.participant.id,
-    payload: { participantId: input.participantId, status: "FAILED" },
+    payload: { participantId: input.participantId, status: 'FAILED' },
   });
 
   return { ok: true };
@@ -274,11 +263,11 @@ export async function markParticipantPaid(input: {
     .from(groupOrders)
     .where(eq(groupOrders.id, input.groupOrderId))
     .limit(1);
-  if (!groupOrder) return { ok: false, error: "Not found." };
+  if (!groupOrder) return { ok: false, error: 'Not found.' };
 
   await db
     .update(groupOrderParticipants)
-    .set({ paymentStatus: "PAID", updatedAt: new Date() })
+    .set({ paymentStatus: 'PAID', updatedAt: new Date() })
     .where(
       and(
         eq(groupOrderParticipants.id, input.participantId),
@@ -288,12 +277,12 @@ export async function markParticipantPaid(input: {
 
   await appendGroupOrderEvent(db, {
     groupOrderId: input.groupOrderId,
-    eventType: "PAYMENT_STATUS",
+    eventType: 'PAYMENT_STATUS',
     actorUserId: input.actorUserId ?? null,
     payload: {
       participantId: input.participantId,
-      status: "PAID",
-      source: "admin_mark_paid",
+      status: 'PAID',
+      source: 'admin_mark_paid',
     },
   });
 

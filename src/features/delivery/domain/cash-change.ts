@@ -1,4 +1,4 @@
-import { createId } from "@/lib/id";
+import { createId } from '@/lib/id';
 
 export type CashChangeDenomination = {
   id: string;
@@ -30,17 +30,17 @@ export function createDefaultCashChangeDenominations(): CashChangeDenomination[]
 }
 
 function isFiniteNumber(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value);
+  return typeof value === 'number' && Number.isFinite(value);
 }
 
 function parseOne(raw: unknown, index: number): CashChangeDenomination | null {
-  if (!raw || typeof raw !== "object") return null;
+  if (!raw || typeof raw !== 'object') return null;
   const record = raw as Record<string, unknown>;
   const amountRaw = record.amount;
   const amount =
-    typeof amountRaw === "number"
+    typeof amountRaw === 'number'
       ? amountRaw
-      : typeof amountRaw === "string"
+      : typeof amountRaw === 'string'
         ? Number(amountRaw)
         : NaN;
   if (!Number.isInteger(amount) || amount < 1 || amount > 100_000_000) {
@@ -48,12 +48,11 @@ function parseOne(raw: unknown, index: number): CashChangeDenomination | null {
   }
 
   const id =
-    typeof record.id === "string" && record.id.trim().length > 0
+    typeof record.id === 'string' && record.id.trim().length > 0
       ? record.id.trim().slice(0, 64)
       : createId();
   const imageObjectKey =
-    typeof record.imageObjectKey === "string" &&
-    record.imageObjectKey.trim().length > 0
+    typeof record.imageObjectKey === 'string' && record.imageObjectKey.trim().length > 0
       ? record.imageObjectKey.trim().slice(0, 500)
       : null;
   const sortOrder = isFiniteNumber(record.sortOrder)
@@ -70,9 +69,7 @@ function parseOne(raw: unknown, index: number): CashChangeDenomination | null {
 }
 
 /** Parses cash-change denominations from `store.delivery` JSON. */
-export function parseCashChangeDenominations(
-  value: unknown,
-): CashChangeDenomination[] {
+export function parseCashChangeDenominations(value: unknown): CashChangeDenomination[] {
   if (value == null) {
     return createDefaultCashChangeDenominations();
   }
@@ -106,8 +103,6 @@ export function findActiveCashChangeByAmount(
   amount: number,
 ): CashChangeDenomination | null {
   return (
-    listActiveCashChangeDenominations(denominations).find(
-      (item) => item.amount === amount,
-    ) ?? null
+    listActiveCashChangeDenominations(denominations).find((item) => item.amount === amount) ?? null
   );
 }

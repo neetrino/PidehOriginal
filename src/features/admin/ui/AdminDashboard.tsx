@@ -1,21 +1,18 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
-import { fadeUp } from "@/components/motion/presets";
-import { StaggerGroup, StaggerItem } from "@/components/motion/StaggerGroup";
+import { fadeUp } from '@/components/motion/presets';
+import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
 import {
   ADMIN_CARD,
   ADMIN_GHOST_LINK,
   ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
-import { DashboardStatsGrid } from "@/features/admin/ui/DashboardStatsGrid";
-import {
-  ADMIN_BADGE,
-  paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
+import { DashboardStatsGrid } from '@/features/admin/ui/DashboardStatsGrid';
+import { ADMIN_BADGE, paymentStatusBadgeClass } from '@/features/admin/ui/status-badge';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type RecentOrder = {
   id: string;
@@ -34,7 +31,7 @@ type TopProduct = {
 
 type AdminDashboardProps = {
   locale: string;
-  dash: Dictionary["admin"]["dashboard"];
+  dash: Dictionary['admin']['dashboard'];
   navTitle: string;
   users: number;
   products: number;
@@ -46,7 +43,7 @@ type AdminDashboardProps = {
 };
 
 function formatMoney(amount: number): string {
-  return amount.toLocaleString("en-US", {
+  return amount.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
@@ -54,24 +51,24 @@ function formatMoney(amount: number): string {
 
 const QUICK_ACTION_DEFS = [
   {
-    href: "products/new",
-    titleKey: "addProduct" as const,
-    subtitleKey: "addProductSubtitle" as const,
+    href: 'products/new',
+    titleKey: 'addProduct' as const,
+    subtitleKey: 'addProductSubtitle' as const,
   },
   {
-    href: "orders",
-    titleKey: "manageOrders" as const,
-    subtitleKey: "manageOrdersSubtitle" as const,
+    href: 'orders',
+    titleKey: 'manageOrders' as const,
+    subtitleKey: 'manageOrdersSubtitle' as const,
   },
   {
-    href: "users",
-    titleKey: "manageUsers" as const,
-    subtitleKey: "manageUsersSubtitle" as const,
+    href: 'users',
+    titleKey: 'manageUsers' as const,
+    subtitleKey: 'manageUsersSubtitle' as const,
   },
   {
-    href: "settings",
-    titleKey: "settings" as const,
-    subtitleKey: "settingsSubtitle" as const,
+    href: 'settings',
+    titleKey: 'settings' as const,
+    subtitleKey: 'settingsSubtitle' as const,
   },
 ] as const;
 
@@ -89,11 +86,7 @@ export function AdminDashboard({
 }: AdminDashboardProps) {
   return (
     <section>
-      <AdminPageHeading
-        className="mb-6"
-        title={navTitle}
-        description={dash.welcome}
-      />
+      <AdminPageHeading className="mb-6" title={navTitle} description={dash.welcome} />
 
       <DashboardStatsGrid
         locale={locale}
@@ -123,18 +116,12 @@ export function AdminDashboard({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex flex-wrap items-center gap-2">
-                        <p className="text-sm font-bold text-[#1e1e1e]">
-                          #{order.orderNumber}
-                        </p>
-                        <span
-                          className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.status)}`}
-                        >
+                        <p className="text-sm font-bold text-[#1e1e1e]">#{order.orderNumber}</p>
+                        <span className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.status)}`}>
                           {order.status}
                         </span>
                       </div>
-                      <p className="truncate text-xs text-[#1e1e1e]/55">
-                        {order.contactEmail}
-                      </p>
+                      <p className="truncate text-xs text-[#1e1e1e]/55">{order.contactEmail}</p>
                     </div>
                     <p className="shrink-0 text-sm font-bold text-[#ff6b00]">
                       {formatMoney(order.totalAmount)} {order.baseCurrency}
@@ -145,9 +132,7 @@ export function AdminDashboard({
             ))}
           </StaggerGroup>
           {recentOrders.length === 0 ? (
-            <p className="py-8 text-center text-sm text-[#1e1e1e]/55">
-              {dash.noRecentOrders}
-            </p>
+            <p className="py-8 text-center text-sm text-[#1e1e1e]/55">{dash.noRecentOrders}</p>
           ) : null}
         </div>
 
@@ -166,14 +151,9 @@ export function AdminDashboard({
                     {index + 1}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold text-[#1e1e1e]">
-                      {product.title}
-                    </p>
+                    <p className="truncate text-sm font-bold text-[#1e1e1e]">{product.title}</p>
                     <p className="text-xs text-[#1e1e1e]/55">
-                      {dash.soldCount.replace(
-                        "{quantity}",
-                        String(product.quantity),
-                      )}
+                      {dash.soldCount.replace('{quantity}', String(product.quantity))}
                     </p>
                   </div>
                 </div>
@@ -181,9 +161,7 @@ export function AdminDashboard({
             ))}
           </StaggerGroup>
           {topProducts.length === 0 ? (
-            <p className="py-8 text-center text-sm text-[#1e1e1e]/55">
-              {dash.noProductSales}
-            </p>
+            <p className="py-8 text-center text-sm text-[#1e1e1e]/55">{dash.noProductSales}</p>
           ) : null}
         </div>
       </div>
@@ -205,9 +183,7 @@ export function AdminDashboard({
               </span>
               <div className="text-left">
                 <p className="font-bold text-[#1e1e1e]">{dash[action.titleKey]}</p>
-                <p className="text-xs text-[#1e1e1e]/55">
-                  {dash[action.subtitleKey]}
-                </p>
+                <p className="text-xs text-[#1e1e1e]/55">{dash[action.subtitleKey]}</p>
               </div>
             </Link>
           ))}

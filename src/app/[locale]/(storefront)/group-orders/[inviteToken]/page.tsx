@@ -1,11 +1,11 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { getGroupOrderDetailByInvite } from "@/features/group-orders/application/queries";
-import { GroupOrderPageClient } from "@/features/group-orders/ui/GroupOrderPageClient";
-import { peekGroupOrderSession } from "@/features/group-orders/session";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { getSelectedCurrency } from "@/lib/money/display-price";
+import { getGroupOrderDetailByInvite } from '@/features/group-orders/application/queries';
+import { GroupOrderPageClient } from '@/features/group-orders/ui/GroupOrderPageClient';
+import { peekGroupOrderSession } from '@/features/group-orders/session';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { getSelectedCurrency } from '@/lib/money/display-price';
 
 type PageProps = {
   params: Promise<{ locale: string; inviteToken: string }>;
@@ -27,8 +27,7 @@ export default async function GroupOrderInvitePage({ params }: PageProps) {
   if (!view) notFound();
 
   const session = await peekGroupOrderSession();
-  const needsJoin =
-    session.inviteToken !== inviteToken || !session.participantId;
+  const needsJoin = session.inviteToken !== inviteToken || !session.participantId;
 
   return (
     <GroupOrderPageClient

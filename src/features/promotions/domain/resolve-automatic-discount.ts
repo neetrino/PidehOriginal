@@ -4,7 +4,7 @@
  * Product rules may be percentage or fixed AMD amount.
  */
 
-export type AutomaticDiscountSource = "product" | "category" | "global" | null;
+export type AutomaticDiscountSource = 'product' | 'category' | 'global' | null;
 
 export type AutomaticDiscountPick = {
   percent: number | null;
@@ -12,8 +12,7 @@ export type AutomaticDiscountPick = {
 };
 
 export type ProductAutomaticDiscount =
-  | { type: "PERCENTAGE"; value: number }
-  | { type: "FIXED"; value: number };
+  { type: 'PERCENTAGE'; value: number } | { type: 'FIXED'; value: number };
 
 export type ResolvedCatalogPrice = {
   listAmount: number;
@@ -43,24 +42,21 @@ export function pickAutomaticDiscountPercent(input: {
 }): AutomaticDiscountPick {
   const productPercent = normalizePercent(input.productPercent ?? null);
   if (productPercent != null) {
-    return { percent: productPercent, source: "product" };
+    return { percent: productPercent, source: 'product' };
   }
 
   const categoryBest = (input.categoryPercents ?? [])
     .map((value) => normalizePercent(value ?? null))
     .filter((value): value is number => value != null)
-    .reduce<number | null>(
-      (best, value) => (best == null || value > best ? value : best),
-      null,
-    );
+    .reduce<number | null>((best, value) => (best == null || value > best ? value : best), null);
 
   if (categoryBest != null) {
-    return { percent: categoryBest, source: "category" };
+    return { percent: categoryBest, source: 'category' };
   }
 
   const globalPercent = normalizePercent(input.globalPercent ?? null);
   if (globalPercent != null) {
-    return { percent: globalPercent, source: "global" };
+    return { percent: globalPercent, source: 'global' };
   }
 
   return { percent: null, source: null };
@@ -104,7 +100,7 @@ export function applyPercentageToListPrice(
 export function applyFixedToListPrice(
   listAmount: number,
   fixedAmount: number | null,
-  source: AutomaticDiscountSource = "product",
+  source: AutomaticDiscountSource = 'product',
 ): ResolvedCatalogPrice {
   const safeList = Math.max(0, Math.floor(listAmount));
   const safeFixed = normalizeFixed(fixedAmount);
@@ -121,16 +117,13 @@ export function applyFixedToListPrice(
 
   const unitAmount = Math.max(0, safeList - safeFixed);
   const discountPercent =
-    safeList > 0
-      ? Math.min(100, Math.round(((safeList - unitAmount) * 100) / safeList))
-      : null;
+    safeList > 0 ? Math.min(100, Math.round(((safeList - unitAmount) * 100) / safeList)) : null;
 
   return {
     listAmount: safeList,
     unitAmount,
     compareAtAmount: unitAmount < safeList ? safeList : null,
-    discountPercent:
-      discountPercent != null && discountPercent > 0 ? discountPercent : null,
+    discountPercent: discountPercent != null && discountPercent > 0 ? discountPercent : null,
     source: unitAmount < safeList ? source : null,
   };
 }
@@ -145,11 +138,11 @@ export function resolveCatalogPrice(input: {
   /** Manual compare-at from the product row when no automatic discount applies. */
   manualCompareAtAmount?: number | null;
 }): ResolvedCatalogPrice {
-  if (input.productDiscount?.type === "FIXED") {
+  if (input.productDiscount?.type === 'FIXED') {
     const fixedResolved = applyFixedToListPrice(
       input.listAmount,
       input.productDiscount.value,
-      "product",
+      'product',
     );
     if (fixedResolved.source != null) {
       return fixedResolved;
@@ -157,7 +150,7 @@ export function resolveCatalogPrice(input: {
   }
 
   const productPercent =
-    input.productDiscount?.type === "PERCENTAGE"
+    input.productDiscount?.type === 'PERCENTAGE'
       ? input.productDiscount.value
       : input.productPercent;
 
@@ -166,22 +159,14 @@ export function resolveCatalogPrice(input: {
     categoryPercents: input.categoryPercents,
     globalPercent: input.globalPercent,
   });
-  const resolved = applyPercentageToListPrice(
-    input.listAmount,
-    picked.percent,
-    picked.source,
-  );
+  const resolved = applyPercentageToListPrice(input.listAmount, picked.percent, picked.source);
 
   if (resolved.discountPercent != null) {
     return resolved;
   }
 
   const manual = input.manualCompareAtAmount;
-  if (
-    manual != null &&
-    Number.isInteger(manual) &&
-    manual > resolved.unitAmount
-  ) {
+  if (manual != null && Number.isInteger(manual) && manual > resolved.unitAmount) {
     return {
       ...resolved,
       compareAtAmount: manual,

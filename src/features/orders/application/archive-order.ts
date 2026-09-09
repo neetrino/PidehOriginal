@@ -1,18 +1,18 @@
-"use server";
+'use server';
 
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { auditLogs, orderEvents, orders } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
+import { auditLogs, orderEvents, orders } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
 import {
   archiveOrderSchema,
   type ArchiveOrderInput,
-} from "@/features/orders/schemas/change-status";
-import { requireAdmin } from "@/lib/auth/policies";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/features/orders/schemas/change-status';
+import { requireAdmin } from '@/lib/auth/policies';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 /** Archives or restores an order (soft archive, never hard delete). */
 export async function archiveOrderAction(
@@ -20,12 +20,12 @@ export async function archiveOrderAction(
   raw: ArchiveOrderInput,
 ): Promise<Result<{ orderNumber: string; isArchived: boolean }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = archiveOrderSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid archive payload.");
+    return err('VALIDATION_ERROR', 'Invalid archive payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -36,15 +36,15 @@ export async function archiveOrderAction(
         .select()
         .from(orders)
         .where(eq(orders.orderNumber, parsed.data.orderNumber))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
       if (existing.isArchived === parsed.data.archive) {
-        throw new Error("SAME_STATE");
+        throw new Error('SAME_STATE');
       }
 
       const now = new Date();
@@ -56,19 +56,19 @@ export async function archiveOrderAction(
       await tx.insert(orderEvents).values({
         id: createId(),
         orderId: existing.id,
-        eventType: "NOTE",
-        fromState: existing.isArchived ? "ARCHIVED" : "ACTIVE",
-        toState: parsed.data.archive ? "ARCHIVED" : "ACTIVE",
+        eventType: 'NOTE',
+        fromState: existing.isArchived ? 'ARCHIVED' : 'ACTIVE',
+        toState: parsed.data.archive ? 'ARCHIVED' : 'ACTIVE',
         actorUserId: actor.id,
         isCustomerVisible: false,
-        payload: { action: parsed.data.archive ? "archive" : "restore" },
+        payload: { action: parsed.data.archive ? 'archive' : 'restore' },
       });
 
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: parsed.data.archive ? "order.archive" : "order.restore",
-        targetType: "order",
+        action: parsed.data.archive ? 'order.archive' : 'order.restore',
+        targetType: 'order',
         targetId: existing.id,
         beforeDiff: { isArchived: existing.isArchived },
         afterDiff: { isArchived: parsed.data.archive },
@@ -85,13 +85,13 @@ export async function archiveOrderAction(
     revalidatePath(`/${locale}/admin/orders/${result.orderNumber}`);
     return ok(result);
   } catch (error) {
-    const code = error instanceof Error ? error.message : "UNKNOWN";
-    if (code === "NOT_FOUND") {
-      return err("NOT_FOUND", "Order not found.");
+    const code = error instanceof Error ? error.message : 'UNKNOWN';
+    if (code === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Order not found.');
     }
-    if (code === "SAME_STATE") {
-      return err("SAME_STATE", "Order already in that archive state.");
+    if (code === 'SAME_STATE') {
+      return err('SAME_STATE', 'Order already in that archive state.');
     }
-    return err("ARCHIVE_FAILED", "Unable to update archive state.");
+    return err('ARCHIVE_FAILED', 'Unable to update archive state.');
   }
 }

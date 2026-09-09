@@ -1,18 +1,18 @@
-"use server";
+'use server';
 
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { auditLogs, orderEvents, orders } from "@/db/schema";
-import { withTransaction } from "@/db/transaction";
+import { auditLogs, orderEvents, orders } from '@/db/schema';
+import { withTransaction } from '@/db/transaction';
 import {
   bulkArchiveOrdersSchema,
   type BulkArchiveOrdersInput,
-} from "@/features/orders/schemas/change-status";
-import { requireAdmin } from "@/lib/auth/policies";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/features/orders/schemas/change-status';
+import { requireAdmin } from '@/lib/auth/policies';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 /** Soft-archives selected orders (never hard delete). */
 export async function bulkArchiveOrdersAction(
@@ -20,12 +20,12 @@ export async function bulkArchiveOrdersAction(
   raw: BulkArchiveOrdersInput,
 ): Promise<Result<{ archived: number; skipped: number }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = bulkArchiveOrdersSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid bulk archive payload.");
+    return err('VALIDATION_ERROR', 'Invalid bulk archive payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -39,7 +39,7 @@ export async function bulkArchiveOrdersAction(
           .select()
           .from(orders)
           .where(eq(orders.orderNumber, orderNumber))
-          .for("update")
+          .for('update')
           .limit(1);
 
         if (!existing || existing.isArchived) {
@@ -55,19 +55,19 @@ export async function bulkArchiveOrdersAction(
         await tx.insert(orderEvents).values({
           id: createId(),
           orderId: existing.id,
-          eventType: "NOTE",
-          fromState: "ACTIVE",
-          toState: "ARCHIVED",
+          eventType: 'NOTE',
+          fromState: 'ACTIVE',
+          toState: 'ARCHIVED',
           actorUserId: actor.id,
           isCustomerVisible: false,
-          payload: { action: "archive", source: "bulk" },
+          payload: { action: 'archive', source: 'bulk' },
         });
 
         await tx.insert(auditLogs).values({
           id: createId(),
           actorUserId: actor.id,
-          action: "order.bulk_archive",
-          targetType: "order",
+          action: 'order.bulk_archive',
+          targetType: 'order',
           targetId: existing.id,
           beforeDiff: { isArchived: false },
           afterDiff: { isArchived: true },

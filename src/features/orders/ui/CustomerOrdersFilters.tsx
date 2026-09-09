@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import { flushSync } from "react-dom";
+import { useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 
-import { PROFILE_PANEL } from "@/features/profile/ui/profile-ui-classes";
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import type { OrderStatus } from "@/features/orders/domain/order-status";
-import type { PaymentStatus } from "@/features/orders/domain/payment-status";
+import { PROFILE_PANEL } from '@/features/profile/ui/profile-ui-classes';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import type { OrderStatus } from '@/features/orders/domain/order-status';
+import type { PaymentStatus } from '@/features/orders/domain/payment-status';
 
 const FILTER_SEARCH =
-  "h-11 w-full min-w-0 shrink-0 rounded-2xl border border-[#ff6b00]/20 bg-[#fff8e7] px-4 text-sm text-[#1e1e1e] outline-none transition placeholder:text-[#1e1e1e]/40 hover:border-[#ff6b00]/40 focus:border-[#ff6b00] lg:flex-1 lg:shrink";
+  'h-11 w-full min-w-0 shrink-0 rounded-2xl border border-[#ff6b00]/20 bg-[#fff8e7] px-4 text-sm text-[#1e1e1e] outline-none transition placeholder:text-[#1e1e1e]/40 hover:border-[#ff6b00]/40 focus:border-[#ff6b00] lg:flex-1 lg:shrink';
 
 const ORDER_STATUS_FILTERS = [
-  { label: "Pending", value: "PENDING" },
-  { label: "Processing", value: "PROCESSING" },
-  { label: "Completed", value: "DELIVERED" },
-  { label: "Cancelled", value: "CANCELLED" },
+  { label: 'Pending', value: 'PENDING' },
+  { label: 'Processing', value: 'PROCESSING' },
+  { label: 'Completed', value: 'DELIVERED' },
+  { label: 'Cancelled', value: 'CANCELLED' },
 ] as const satisfies ReadonlyArray<{ label: string; value: OrderStatus }>;
 
 const PAYMENT_STATUS_FILTERS = [
-  { label: "Paid", value: "CAPTURED" },
-  { label: "Pending", value: "PENDING" },
-  { label: "Failed", value: "FAILED" },
+  { label: 'Paid', value: 'CAPTURED' },
+  { label: 'Pending', value: 'PENDING' },
+  { label: 'Failed', value: 'FAILED' },
 ] as const satisfies ReadonlyArray<{ label: string; value: PaymentStatus }>;
 
 type CustomerOrdersFiltersProps = {
@@ -38,8 +38,8 @@ export function CustomerOrdersFilters({
   q,
 }: CustomerOrdersFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [statusValue, setStatusValue] = useState(status ?? "");
-  const [paymentValue, setPaymentValue] = useState(paymentStatus ?? "");
+  const [statusValue, setStatusValue] = useState(status ?? '');
+  const [paymentValue, setPaymentValue] = useState(paymentStatus ?? '');
 
   function applyStatus(next: string): void {
     flushSync(() => setStatusValue(next));
@@ -78,7 +78,7 @@ export function CustomerOrdersFilters({
         />
         <input
           name="q"
-          defaultValue={q ?? ""}
+          defaultValue={q ?? ''}
           placeholder="Search by order #"
           className={FILTER_SEARCH}
           aria-label="Search orders"

@@ -1,23 +1,18 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { bonusTransactions, orders, users } from "@/db/schema";
-import type { DbTransaction } from "@/db/transaction";
+import { bonusTransactions, orders, users } from '@/db/schema';
+import type { DbTransaction } from '@/db/transaction';
 import {
   calculateBonusEarnAmount,
   nextBonusBalance,
   resolveEarnExpiresAt,
   type BonusSettings,
-} from "@/features/bonuses/domain/bonus-rules";
-import { createId } from "@/lib/id";
+} from '@/features/bonuses/domain/bonus-rules';
+import { createId } from '@/lib/id';
 
-type BonusTxType =
-  | "EARN"
-  | "REDEEM"
-  | "REVERSAL_EARN"
-  | "REVERSAL_REDEEM"
-  | "EXPIRE";
+type BonusTxType = 'EARN' | 'REDEEM' | 'REVERSAL_EARN' | 'REVERSAL_REDEEM' | 'EXPIRE';
 
 type LedgerWriteInput = {
   tx: DbTransaction;
@@ -38,10 +33,7 @@ async function hasTransactionOfType(
   type: BonusTxType,
   userId?: string,
 ): Promise<boolean> {
-  const conditions = [
-    eq(bonusTransactions.orderId, orderId),
-    eq(bonusTransactions.type, type),
-  ];
+  const conditions = [eq(bonusTransactions.orderId, orderId), eq(bonusTransactions.type, type)];
   if (userId) {
     conditions.push(eq(bonusTransactions.userId, userId));
   }
@@ -62,17 +54,14 @@ async function writeLedgerEntry(input: LedgerWriteInput): Promise<number> {
     })
     .from(users)
     .where(eq(users.id, input.userId))
-    .for("update")
+    .for('update')
     .limit(1);
 
   if (!lockedUser) {
-    throw new Error("BONUS_USER_NOT_FOUND");
+    throw new Error('BONUS_USER_NOT_FOUND');
   }
 
-  const resultingBalance = nextBonusBalance(
-    lockedUser.bonusBalance,
-    input.delta,
-  );
+  const resultingBalance = nextBonusBalance(lockedUser.bonusBalance, input.delta);
   const appliedDelta = resultingBalance - lockedUser.bonusBalance;
   if (appliedDelta === 0) {
     return resultingBalance;
@@ -114,7 +103,7 @@ export async function redeemBonusesForOrder(input: {
     return;
   }
 
-  if (await hasTransactionOfType(input.tx, input.orderId, "REDEEM")) {
+  if (await hasTransactionOfType(input.tx, input.orderId, 'REDEEM')) {
     return;
   }
 
@@ -122,7 +111,7 @@ export async function redeemBonusesForOrder(input: {
     tx: input.tx,
     userId: input.userId,
     orderId: input.orderId,
-    type: "REDEEM",
+    type: 'REDEEM',
     delta: -input.amount,
     correlationId: input.correlationId,
   });
@@ -141,16 +130,14 @@ export async function earnBonusesForOrder(input: {
   /** When true, adds to orders.bonusEarnedAmount instead of replacing. */
   accumulateOrderSnapshot?: boolean;
 }): Promise<number> {
-  if (
-    await hasTransactionOfType(input.tx, input.orderId, "EARN", input.userId)
-  ) {
+  if (await hasTransactionOfType(input.tx, input.orderId, 'EARN', input.userId)) {
     const [existing] = await input.tx
       .select({ delta: bonusTransactions.delta })
       .from(bonusTransactions)
       .where(
         and(
           eq(bonusTransactions.orderId, input.orderId),
-          eq(bonusTransactions.type, "EARN"),
+          eq(bonusTransactions.type, 'EARN'),
           eq(bonusTransactions.userId, input.userId),
         ),
       )
@@ -173,7 +160,7 @@ export async function earnBonusesForOrder(input: {
     tx: input.tx,
     userId: input.userId,
     orderId: input.orderId,
-    type: "EARN",
+    type: 'EARN',
     delta: amount,
     actorUserId: input.actorUserId,
     correlationId: input.correlationId,
@@ -216,19 +203,10 @@ export async function reverseEarnBonusesForOrder(input: {
   if (input.earnAmount <= 0) {
     return;
   }
-  if (
-    await hasTransactionOfType(
-      input.tx,
-      input.orderId,
-      "REVERSAL_EARN",
-      input.userId,
-    )
-  ) {
+  if (await hasTransactionOfType(input.tx, input.orderId, 'REVERSAL_EARN', input.userId)) {
     return;
   }
-  if (
-    !(await hasTransactionOfType(input.tx, input.orderId, "EARN", input.userId))
-  ) {
+  if (!(await hasTransactionOfType(input.tx, input.orderId, 'EARN', input.userId))) {
     return;
   }
 
@@ -236,11 +214,11 @@ export async function reverseEarnBonusesForOrder(input: {
     tx: input.tx,
     userId: input.userId,
     orderId: input.orderId,
-    type: "REVERSAL_EARN",
+    type: 'REVERSAL_EARN',
     delta: -input.earnAmount,
     actorUserId: input.actorUserId,
     correlationId: input.correlationId,
-    note: "Clamped to non-negative balance when prior spend exceeded remaining earn.",
+    note: 'Clamped to non-negative balance when prior spend exceeded remaining earn.',
   });
 }
 
@@ -260,12 +238,7 @@ export async function reverseAllEarnBonusesForOrder(input: {
       delta: bonusTransactions.delta,
     })
     .from(bonusTransactions)
-    .where(
-      and(
-        eq(bonusTransactions.orderId, input.orderId),
-        eq(bonusTransactions.type, "EARN"),
-      ),
-    );
+    .where(and(eq(bonusTransactions.orderId, input.orderId), eq(bonusTransactions.type, 'EARN')));
 
   for (const row of earnRows) {
     await reverseEarnBonusesForOrder({
@@ -296,10 +269,10 @@ export async function reverseRedeemBonusesForOrder(input: {
   if (input.redeemAmount <= 0) {
     return;
   }
-  if (await hasTransactionOfType(input.tx, input.orderId, "REVERSAL_REDEEM")) {
+  if (await hasTransactionOfType(input.tx, input.orderId, 'REVERSAL_REDEEM')) {
     return;
   }
-  if (!(await hasTransactionOfType(input.tx, input.orderId, "REDEEM"))) {
+  if (!(await hasTransactionOfType(input.tx, input.orderId, 'REDEEM'))) {
     return;
   }
 
@@ -307,7 +280,7 @@ export async function reverseRedeemBonusesForOrder(input: {
     tx: input.tx,
     userId: input.userId,
     orderId: input.orderId,
-    type: "REVERSAL_REDEEM",
+    type: 'REVERSAL_REDEEM',
     delta: input.redeemAmount,
     actorUserId: input.actorUserId,
     correlationId: input.correlationId,

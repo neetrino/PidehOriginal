@@ -1,25 +1,21 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
-import {
-  ADMIN_PAGE_SUBTITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
+import { ADMIN_PAGE_SUBTITLE } from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import {
   getAdminPromotionById,
   listPromotionTargetOptions,
-} from "@/features/promotions/application/queries";
-import { PromotionForm } from "@/features/promotions/ui/PromotionForm";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/promotions/application/queries';
+import { PromotionForm } from '@/features/promotions/ui/PromotionForm';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminDiscountDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
 
-export default async function AdminDiscountDetailPage({
-  params,
-}: AdminDiscountDetailPageProps) {
+export default async function AdminDiscountDetailPage({ params }: AdminDiscountDetailPageProps) {
   const { locale, id } = await params;
   if (!isLocale(locale)) {
     notFound();
@@ -31,7 +27,7 @@ export default async function AdminDiscountDetailPage({
     getDictionary(locale),
   ]);
 
-  if (!promo || promo.kind !== "AUTOMATIC") {
+  if (!promo || promo.kind !== 'AUTOMATIC') {
     notFound();
   }
 

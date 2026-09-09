@@ -1,11 +1,11 @@
-import "server-only";
+import 'server-only';
 
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm';
 
-import { giftCards } from "@/db/schema";
-import type { DbTransaction } from "@/db/transaction";
-import { syncGiftCardLedgerForOrderStatus } from "@/features/gift-cards/application/gift-card-ledger";
-import type { OrderStatus } from "@/features/orders/domain/order-status";
+import { giftCards } from '@/db/schema';
+import type { DbTransaction } from '@/db/transaction';
+import { syncGiftCardLedgerForOrderStatus } from '@/features/gift-cards/application/gift-card-ledger';
+import type { OrderStatus } from '@/features/orders/domain/order-status';
 
 export type OrderGiftCardSnapshot = {
   id: string;

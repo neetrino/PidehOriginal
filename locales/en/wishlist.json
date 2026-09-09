@@ -1,4 +1,9 @@
 {
-  "empty": "Your wishlist is empty.",
-  "signInPrompt": "Sign in to save products to your wishlist."
+  "empty": "Nothing saved yet",
+  "emptyDescription": "Tap the heart on a product to keep it here.",
+  "browseCta": "Browse the menu",
+  "signInTitle": "Sign in",
+  "signInPrompt": "Sign in to save products to your favorites.",
+  "countOne": "1 product",
+  "countMany": "{count} products"
 }

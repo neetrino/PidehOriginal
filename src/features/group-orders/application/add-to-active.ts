@@ -1,19 +1,19 @@
-"use server";
+'use server';
 
-import { addToCart } from "@/features/cart/cart";
-import { addGroupOrderItem } from "@/features/group-orders/application/items";
-import { peekGroupOrderSession } from "@/features/group-orders/session";
+import { addToCart } from '@/features/cart/cart';
+import { addGroupOrderItem } from '@/features/group-orders/application/items';
+import { peekGroupOrderSession } from '@/features/group-orders/session';
 
 /**
  * Adds to the active group order when a session cookie is present;
  * otherwise falls back to the personal cart.
  */
 export type AddProductToActiveCartResult =
-  | { ok: true; target: "group" | "cart" }
+  | { ok: true; target: 'group' | 'cart'; itemCount: number }
   | {
       ok: false;
       error: string;
-      code?: "SPEND_LIMIT_EXCEEDED";
+      code?: 'SPEND_LIMIT_EXCEEDED';
       limitAmount?: number;
     };
 
@@ -31,16 +31,18 @@ export async function addProductToActiveCart(
       modifierIds: options?.modifierIds,
     });
     if (!result.ok) return result;
-    return { ok: true, target: "group" };
+    const { getActiveGroupSessionItemCount } =
+      await import('@/features/group-orders/application/active-session-cart');
+    return { ok: true, target: 'group', itemCount: (await getActiveGroupSessionItemCount()) ?? 0 };
   }
 
   try {
-    await addToCart(productId, quantity, options);
-    return { ok: true, target: "cart" };
+    const itemCount = await addToCart(productId, quantity, options);
+    return { ok: true, target: 'cart', itemCount };
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : "Unable to add to cart.",
+      error: error instanceof Error ? error.message : 'Unable to add to cart.',
     };
   }
 }

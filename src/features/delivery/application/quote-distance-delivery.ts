@@ -1,23 +1,21 @@
-"use server";
+'use server';
 
-import {
-  getDeliverySettings,
-} from "@/features/delivery/application/get-delivery-settings";
-import { isDistanceDeliveryReady } from "@/features/delivery/domain/delivery-settings";
+import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
+import { isDistanceDeliveryReady } from '@/features/delivery/domain/delivery-settings';
 import {
   calculateDistanceDeliveryFee,
   formatDistanceKmLabel,
-} from "@/features/delivery/domain/distance-fee";
+} from '@/features/delivery/domain/distance-fee';
 import {
   quoteDistanceDeliverySchema,
   type DeliveryDestinationPoint,
-} from "@/features/delivery/schemas";
+} from '@/features/delivery/schemas';
 import {
   geocodeAddress,
   getDrivingDistanceMeters,
   type GeocodeResult,
-} from "@/lib/maps/google-maps";
-import { logger } from "@/lib/observability/logger";
+} from '@/lib/maps/google-maps';
+import { logger } from '@/lib/observability/logger';
 
 export type DistanceDeliveryQuote = {
   distanceMeters: number;
@@ -30,8 +28,7 @@ export type DistanceDeliveryQuote = {
 };
 
 export type QuoteDistanceDeliveryResult =
-  | { ok: true; quote: DistanceDeliveryQuote }
-  | { ok: false; error: string };
+  { ok: true; quote: DistanceDeliveryQuote } | { ok: false; error: string };
 
 /**
  * Quotes delivery fee for a destination address using store origin + AMD/km.
@@ -48,22 +45,19 @@ export async function quoteDistanceDelivery(
     lng: destinationPoint?.lng,
   });
   if (!parsed.success) {
-    return { ok: false, error: "Enter a delivery address." };
+    return { ok: false, error: 'Enter a delivery address.' };
   }
 
   const settings = await getDeliverySettings();
   if (!isDistanceDeliveryReady(settings)) {
     return {
       ok: false,
-      error: "Delivery is not configured. Choose store pickup.",
+      error: 'Delivery is not configured. Choose store pickup.',
     };
   }
 
-  if (
-    settings.originLat == null ||
-    settings.originLng == null
-  ) {
-    return { ok: false, error: "Store location is not configured." };
+  if (settings.originLat == null || settings.originLng == null) {
+    return { ok: false, error: 'Store location is not configured.' };
   }
 
   try {
@@ -95,15 +89,12 @@ export async function quoteDistanceDelivery(
       },
     };
   } catch (error) {
-    logger.warn("delivery.quote_failed", {
-      message: error instanceof Error ? error.message : "unknown",
+    logger.warn('delivery.quote_failed', {
+      message: error instanceof Error ? error.message : 'unknown',
     });
     return {
       ok: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Unable to calculate delivery price.",
+      error: error instanceof Error ? error.message : 'Unable to calculate delivery price.',
     };
   }
 }

@@ -1,16 +1,13 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from 'drizzle-orm';
 
-import { getProviders } from "@/config/providers";
-import { getDb } from "@/db/client";
-import { mediaAssets } from "@/db/schema";
-import { createId } from "@/lib/id";
-import {
-  extensionForImageMime,
-  validateImageFile,
-} from "@/lib/media/image-file";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+import { getProviders } from '@/config/providers';
+import { getDb } from '@/db/client';
+import { mediaAssets } from '@/db/schema';
+import { createId } from '@/lib/id';
+import { extensionForImageMime, validateImageFile } from '@/lib/media/image-file';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 const MAX_IMAGES = 12;
 
@@ -38,9 +35,7 @@ export async function persistProductMedia(
     .where(eq(mediaAssets.productId, input.productId))
     .orderBy(asc(mediaAssets.sortOrder));
 
-  const remainingAfterRemove = existing.filter(
-    (row) => !input.removeImageIds.includes(row.id),
-  );
+  const remainingAfterRemove = existing.filter((row) => !input.removeImageIds.includes(row.id));
 
   if (remainingAfterRemove.length + input.files.length > MAX_IMAGES) {
     return { error: `At most ${MAX_IMAGES} images are allowed.` };
@@ -51,29 +46,23 @@ export async function persistProductMedia(
     if (validationError) {
       return {
         error:
-          validationError === "Image must be 5MB or smaller."
-            ? "Each image must be 5MB or smaller."
+          validationError === 'Image must be 5MB or smaller.'
+            ? 'Each image must be 5MB or smaller.'
             : validationError,
       };
     }
   }
 
   if (input.removeImageIds.length > 0) {
-    const toRemove = existing.filter((row) =>
-      input.removeImageIds.includes(row.id),
-    );
+    const toRemove = existing.filter((row) => input.removeImageIds.includes(row.id));
     if (toRemove.length > 0) {
-      await db
-        .delete(mediaAssets)
-        .where(
-          inArray(
-            mediaAssets.id,
-            toRemove.map((row) => row.id),
-          ),
-        );
-      await Promise.all(
-        toRemove.map((row) => storage.deleteObject(row.objectKey)),
+      await db.delete(mediaAssets).where(
+        inArray(
+          mediaAssets.id,
+          toRemove.map((row) => row.id),
+        ),
       );
+      await Promise.all(toRemove.map((row) => storage.deleteObject(row.objectKey)));
     }
   }
 
@@ -95,8 +84,8 @@ export async function persistProductMedia(
       objectKey,
       mimeType: file.type,
       byteSize: file.size,
-      uploadStatus: "READY",
-      role: "GALLERY",
+      uploadStatus: 'READY',
+      role: 'GALLERY',
       sortOrder: sortBase,
       isPrimary: false,
       productId: input.productId,
@@ -112,10 +101,7 @@ export async function persistProductMedia(
     input.primaryNewIndex < createdIds.length
   ) {
     nextPrimaryId = createdIds[input.primaryNewIndex] ?? null;
-  } else if (
-    input.primaryExistingId &&
-    !input.removeImageIds.includes(input.primaryExistingId)
-  ) {
+  } else if (input.primaryExistingId && !input.removeImageIds.includes(input.primaryExistingId)) {
     nextPrimaryId = input.primaryExistingId;
   } else if (remainingAfterRemove[0]) {
     nextPrimaryId = remainingAfterRemove[0].id;
@@ -125,20 +111,15 @@ export async function persistProductMedia(
 
   await db
     .update(mediaAssets)
-    .set({ isPrimary: false, role: "GALLERY", updatedAt: new Date() })
-    .where(
-      and(
-        eq(mediaAssets.productId, input.productId),
-        eq(mediaAssets.isPrimary, true),
-      ),
-    );
+    .set({ isPrimary: false, role: 'GALLERY', updatedAt: new Date() })
+    .where(and(eq(mediaAssets.productId, input.productId), eq(mediaAssets.isPrimary, true)));
 
   if (nextPrimaryId) {
     await db
       .update(mediaAssets)
       .set({
         isPrimary: true,
-        role: "PRIMARY",
+        role: 'PRIMARY',
         updatedAt: new Date(),
       })
       .where(eq(mediaAssets.id, nextPrimaryId));
@@ -151,10 +132,7 @@ export async function persistProductMedia(
 export async function loadProductImagesForAdmin(
   productIds: string[],
 ): Promise<Map<string, { id: string; url: string; isPrimary: boolean }[]>> {
-  const map = new Map<
-    string,
-    { id: string; url: string; isPrimary: boolean }[]
-  >();
+  const map = new Map<string, { id: string; url: string; isPrimary: boolean }[]>();
   if (productIds.length === 0) return map;
 
   const rows = await getDb()
@@ -166,12 +144,7 @@ export async function loadProductImagesForAdmin(
       sortOrder: mediaAssets.sortOrder,
     })
     .from(mediaAssets)
-    .where(
-      and(
-        inArray(mediaAssets.productId, productIds),
-        eq(mediaAssets.uploadStatus, "READY"),
-      ),
-    )
+    .where(and(inArray(mediaAssets.productId, productIds), eq(mediaAssets.uploadStatus, 'READY')))
     .orderBy(asc(mediaAssets.sortOrder));
 
   for (const row of rows) {

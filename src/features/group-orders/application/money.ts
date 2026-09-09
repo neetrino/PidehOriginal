@@ -1,7 +1,7 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import type { DbTransaction } from "@/db/transaction";
+import { getDb } from '@/db/client';
+import type { DbTransaction } from '@/db/transaction';
 import {
   groupOrderEvents,
   groupOrderItemModifiers,
@@ -10,13 +10,13 @@ import {
   groupOrders,
   productModifiers,
   products,
-} from "@/db/schema";
+} from '@/db/schema';
 import {
   organizerPaysAllDeliveryShares,
   splitDeliveryFee,
-} from "@/features/group-orders/domain/delivery-split";
-import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
-import { createId } from "@/lib/id";
+} from '@/features/group-orders/domain/delivery-split';
+import type { GroupOrderPaymentMode } from '@/features/group-orders/domain/status';
+import { createId } from '@/lib/id';
 
 type DbLike = ReturnType<typeof getDb> | DbTransaction;
 
@@ -25,17 +25,17 @@ export async function appendGroupOrderEvent(
   input: {
     groupOrderId: string;
     eventType:
-      | "STATUS_CHANGE"
-      | "PARTICIPANT_JOINED"
-      | "PARTICIPANT_REMOVED"
-      | "PARTICIPANT_LEFT"
-      | "ITEMS_CHANGED"
-      | "ITEMS_READY"
-      | "SPEND_LIMIT_CHANGED"
-      | "JOINS_CLOSED"
-      | "PAYMENT_STATUS"
-      | "NOTE"
-      | "ADMIN_ACTION";
+      | 'STATUS_CHANGE'
+      | 'PARTICIPANT_JOINED'
+      | 'PARTICIPANT_REMOVED'
+      | 'PARTICIPANT_LEFT'
+      | 'ITEMS_CHANGED'
+      | 'ITEMS_READY'
+      | 'SPEND_LIMIT_CHANGED'
+      | 'JOINS_CLOSED'
+      | 'PAYMENT_STATUS'
+      | 'NOTE'
+      | 'ADMIN_ACTION';
     fromState?: string | null;
     toState?: string | null;
     actorUserId?: string | null;
@@ -59,10 +59,7 @@ export async function appendGroupOrderEvent(
  * Recalculate participant subtotals, delivery shares, and final amounts.
  * Call after item mutations or delivery amount changes.
  */
-export async function recalculateGroupOrderMoney(
-  db: DbLike,
-  groupOrderId: string,
-): Promise<void> {
+export async function recalculateGroupOrderMoney(db: DbLike, groupOrderId: string): Promise<void> {
   const [groupOrder] = await db
     .select()
     .from(groupOrders)
@@ -76,7 +73,7 @@ export async function recalculateGroupOrderMoney(
     .where(
       and(
         eq(groupOrderParticipants.groupOrderId, groupOrderId),
-        eq(groupOrderParticipants.status, "ACTIVE"),
+        eq(groupOrderParticipants.status, 'ACTIVE'),
       ),
     );
 
@@ -98,13 +95,13 @@ export async function recalculateGroupOrderMoney(
     .filter((p) => (subtotalByParticipant.get(p.id) ?? 0) > 0)
     .map((p) => p.id);
 
-  const organizer = participants.find((p) => p.role === "ORGANIZER");
+  const organizer = participants.find((p) => p.role === 'ORGANIZER');
   const organizerId = organizer?.id;
 
   let shares = new Map<string, number>();
   if (organizerId && withItems.length > 0) {
     const split =
-      groupOrder.paymentMode === "ORGANIZER_PAYS_ALL"
+      groupOrder.paymentMode === 'ORGANIZER_PAYS_ALL'
         ? organizerPaysAllDeliveryShares({
             deliveryAmount: groupOrder.deliveryAmount,
             organizerParticipantId: organizerId,
@@ -117,24 +114,22 @@ export async function recalculateGroupOrderMoney(
           });
 
     if (split.ok) {
-      shares = new Map(
-        split.shares.map((s) => [s.participantId, s.deliveryShareAmount]),
-      );
+      shares = new Map(split.shares.map((s) => [s.participantId, s.deliveryShareAmount]));
     }
   }
 
   for (const participant of participants) {
     const subtotal = subtotalByParticipant.get(participant.id) ?? 0;
     const deliveryShare =
-      groupOrder.paymentMode === "ORGANIZER_PAYS_ALL"
-        ? participant.role === "ORGANIZER"
+      groupOrder.paymentMode === 'ORGANIZER_PAYS_ALL'
+        ? participant.role === 'ORGANIZER'
           ? groupOrder.deliveryAmount
           : 0
         : (shares.get(participant.id) ?? 0);
 
     const finalAmount =
-      groupOrder.paymentMode === "ORGANIZER_PAYS_ALL"
-        ? participant.role === "ORGANIZER"
+      groupOrder.paymentMode === 'ORGANIZER_PAYS_ALL'
+        ? participant.role === 'ORGANIZER'
           ? sumMap(subtotalByParticipant) + groupOrder.deliveryAmount
           : 0
         : subtotal + deliveryShare;
@@ -186,8 +181,8 @@ export async function resolveLinePricing(input: {
     .where(eq(products.id, input.productId))
     .limit(1);
 
-  if (!product || product.status !== "ACTIVE" || product.stock < 1) {
-    return { ok: false, error: "Product unavailable." };
+  if (!product || product.status !== 'ACTIVE' || product.stock < 1) {
+    return { ok: false, error: 'Product unavailable.' };
   }
 
   let modifiers: Array<{
@@ -209,13 +204,13 @@ export async function resolveLinePricing(input: {
       .where(inArray(productModifiers.id, [...input.modifierIds]));
 
     if (rows.length !== input.modifierIds.length) {
-      return { ok: false, error: "Invalid modifiers." };
+      return { ok: false, error: 'Invalid modifiers.' };
     }
     modifiers = rows;
   }
 
   const additionTotal = modifiers
-    .filter((m) => m.kind === "ADDITION")
+    .filter((m) => m.kind === 'ADDITION')
     .reduce((sum, m) => sum + m.priceAmount, 0);
   const unitAmount = product.price + additionTotal;
   const qty = Math.min(input.quantity, product.stock);
@@ -262,10 +257,10 @@ export function buildInvitePath(locale: string, inviteToken: string): string {
 
 export function paymentStatusForMode(
   paymentMode: GroupOrderPaymentMode,
-  role: "ORGANIZER" | "PARTICIPANT",
-): "NOT_REQUIRED" | "PENDING" {
-  if (paymentMode === "ORGANIZER_PAYS_ALL") {
-    return role === "ORGANIZER" ? "PENDING" : "NOT_REQUIRED";
+  role: 'ORGANIZER' | 'PARTICIPANT',
+): 'NOT_REQUIRED' | 'PENDING' {
+  if (paymentMode === 'ORGANIZER_PAYS_ALL') {
+    return role === 'ORGANIZER' ? 'PENDING' : 'NOT_REQUIRED';
   }
-  return "PENDING";
+  return 'PENDING';
 }

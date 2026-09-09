@@ -1,18 +1,18 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { giftCardTransactions, giftCards } from "@/db/schema";
-import type { DbTransaction } from "@/db/transaction";
+import { giftCardTransactions, giftCards } from '@/db/schema';
+import type { DbTransaction } from '@/db/transaction';
 import {
   nextGiftCardBalance,
   resolveGiftCardStatusAfterBalance,
   giftCardLedgerTargetNet,
   type GiftCardStatus,
-} from "@/features/gift-cards/domain/gift-card-rules";
-import { createId } from "@/lib/id";
+} from '@/features/gift-cards/domain/gift-card-rules';
+import { createId } from '@/lib/id';
 
-type GiftCardTxType = "ISSUE" | "REDEEM" | "REVERSAL" | "ADJUST";
+type GiftCardTxType = 'ISSUE' | 'REDEEM' | 'REVERSAL' | 'ADJUST';
 
 async function hasOrderTransactionOfType(
   tx: DbTransaction,
@@ -22,12 +22,7 @@ async function hasOrderTransactionOfType(
   const [existing] = await tx
     .select({ id: giftCardTransactions.id })
     .from(giftCardTransactions)
-    .where(
-      and(
-        eq(giftCardTransactions.orderId, orderId),
-        eq(giftCardTransactions.type, type),
-      ),
-    )
+    .where(and(eq(giftCardTransactions.orderId, orderId), eq(giftCardTransactions.type, type)))
     .limit(1);
   return Boolean(existing);
 }
@@ -53,11 +48,11 @@ async function writeLedgerEntry(input: {
     })
     .from(giftCards)
     .where(eq(giftCards.id, input.giftCardId))
-    .for("update")
+    .for('update')
     .limit(1);
 
   if (!locked) {
-    throw new Error("GIFT_CARD_NOT_FOUND");
+    throw new Error('GIFT_CARD_NOT_FOUND');
   }
 
   const resultingBalance = nextGiftCardBalance(locked.balanceAmount, input.delta);
@@ -67,8 +62,7 @@ async function writeLedgerEntry(input: {
   }
 
   const nextStatus =
-    input.forceStatus ??
-    resolveGiftCardStatusAfterBalance(resultingBalance, locked.status);
+    input.forceStatus ?? resolveGiftCardStatusAfterBalance(resultingBalance, locked.status);
 
   await input.tx
     .update(giftCards)
@@ -113,7 +107,7 @@ export async function issueGiftCardBalance(input: {
     .where(
       and(
         eq(giftCardTransactions.giftCardId, input.giftCardId),
-        eq(giftCardTransactions.type, "ISSUE"),
+        eq(giftCardTransactions.type, 'ISSUE'),
       ),
     )
     .limit(1);
@@ -124,12 +118,12 @@ export async function issueGiftCardBalance(input: {
   await writeLedgerEntry({
     tx: input.tx,
     giftCardId: input.giftCardId,
-    type: "ISSUE",
+    type: 'ISSUE',
     delta: input.amount,
     actorUserId: input.actorUserId,
     correlationId: input.correlationId,
     now: input.now,
-    forceStatus: "ACTIVE",
+    forceStatus: 'ACTIVE',
   });
 }
 
@@ -144,7 +138,7 @@ export async function redeemGiftCardForOrder(input: {
   if (input.amount <= 0) {
     return;
   }
-  if (await hasOrderTransactionOfType(input.tx, input.orderId, "REDEEM")) {
+  if (await hasOrderTransactionOfType(input.tx, input.orderId, 'REDEEM')) {
     return;
   }
 
@@ -152,7 +146,7 @@ export async function redeemGiftCardForOrder(input: {
     tx: input.tx,
     giftCardId: input.giftCardId,
     orderId: input.orderId,
-    type: "REDEEM",
+    type: 'REDEEM',
     delta: -input.amount,
     correlationId: input.correlationId,
   });
@@ -170,10 +164,10 @@ export async function reverseGiftCardRedeemForOrder(input: {
   if (input.redeemAmount <= 0) {
     return;
   }
-  if (await hasOrderTransactionOfType(input.tx, input.orderId, "REVERSAL")) {
+  if (await hasOrderTransactionOfType(input.tx, input.orderId, 'REVERSAL')) {
     return;
   }
-  if (!(await hasOrderTransactionOfType(input.tx, input.orderId, "REDEEM"))) {
+  if (!(await hasOrderTransactionOfType(input.tx, input.orderId, 'REDEEM'))) {
     return;
   }
 
@@ -181,7 +175,7 @@ export async function reverseGiftCardRedeemForOrder(input: {
     tx: input.tx,
     giftCardId: input.giftCardId,
     orderId: input.orderId,
-    type: "REVERSAL",
+    type: 'REVERSAL',
     delta: input.redeemAmount,
     actorUserId: input.actorUserId,
     correlationId: input.correlationId,
@@ -226,7 +220,7 @@ export async function syncGiftCardLedgerForOrderStatus(input: {
     tx: input.tx,
     giftCardId: input.giftCardId,
     orderId: input.orderId,
-    type: "ADJUST",
+    type: 'ADJUST',
     delta: correction,
     actorUserId: input.actorUserId,
     correlationId: input.correlationId,

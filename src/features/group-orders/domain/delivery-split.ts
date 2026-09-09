@@ -18,47 +18,37 @@ export type SplitDeliveryInput = {
 
 export type SplitDeliveryResult =
   | { ok: true; shares: DeliveryShareAllocation[] }
-  | { ok: false; reason: "NEGATIVE" | "NOT_INTEGER" | "NO_PARTICIPANTS" };
+  | { ok: false; reason: 'NEGATIVE' | 'NOT_INTEGER' | 'NO_PARTICIPANTS' };
 
 /**
  * Divide `deliveryAmount` across participants who have items.
  * Base share = floor(total / n); remainder AMD added to the organizer's share.
  */
-export function splitDeliveryFee(
-  input: SplitDeliveryInput,
-): SplitDeliveryResult {
-  const { deliveryAmount, participantIdsWithItems, organizerParticipantId } =
-    input;
+export function splitDeliveryFee(input: SplitDeliveryInput): SplitDeliveryResult {
+  const { deliveryAmount, participantIdsWithItems, organizerParticipantId } = input;
 
   if (!Number.isInteger(deliveryAmount) || deliveryAmount < 0) {
     return {
       ok: false,
-      reason: deliveryAmount < 0 ? "NEGATIVE" : "NOT_INTEGER",
+      reason: deliveryAmount < 0 ? 'NEGATIVE' : 'NOT_INTEGER',
     };
   }
 
   if (participantIdsWithItems.length === 0) {
-    return { ok: false, reason: "NO_PARTICIPANTS" };
+    return { ok: false, reason: 'NO_PARTICIPANTS' };
   }
 
   const count = participantIdsWithItems.length;
   const baseShare = Math.floor(deliveryAmount / count);
   const remainder = deliveryAmount - baseShare * count;
 
-  const organizerInList = participantIdsWithItems.includes(
-    organizerParticipantId,
-  );
-  const remainderTargetId = organizerInList
-    ? organizerParticipantId
-    : participantIdsWithItems[0]!;
+  const organizerInList = participantIdsWithItems.includes(organizerParticipantId);
+  const remainderTargetId = organizerInList ? organizerParticipantId : participantIdsWithItems[0]!;
 
-  const shares: DeliveryShareAllocation[] = participantIdsWithItems.map(
-    (participantId) => ({
-      participantId,
-      deliveryShareAmount:
-        baseShare + (participantId === remainderTargetId ? remainder : 0),
-    }),
-  );
+  const shares: DeliveryShareAllocation[] = participantIdsWithItems.map((participantId) => ({
+    participantId,
+    deliveryShareAmount: baseShare + (participantId === remainderTargetId ? remainder : 0),
+  }));
 
   return { ok: true, shares };
 }
@@ -72,7 +62,7 @@ export function organizerPaysAllDeliveryShares(input: {
   if (!Number.isInteger(input.deliveryAmount) || input.deliveryAmount < 0) {
     return {
       ok: false,
-      reason: input.deliveryAmount < 0 ? "NEGATIVE" : "NOT_INTEGER",
+      reason: input.deliveryAmount < 0 ? 'NEGATIVE' : 'NOT_INTEGER',
     };
   }
 
@@ -81,9 +71,7 @@ export function organizerPaysAllDeliveryShares(input: {
     shares: input.activeParticipantIds.map((participantId) => ({
       participantId,
       deliveryShareAmount:
-        participantId === input.organizerParticipantId
-          ? input.deliveryAmount
-          : 0,
+        participantId === input.organizerParticipantId ? input.deliveryAmount : 0,
     })),
   };
 }

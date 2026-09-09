@@ -1,17 +1,11 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import {
-  animate,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useTransform,
-} from "motion/react";
-import type { CSSProperties } from "react";
-import { useEffect, useMemo, useRef } from "react";
+import Image from 'next/image';
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import type { CSSProperties } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
-import { HomeCategoryArc } from "@/features/home/ui/HomeCategoryArc";
+import { HomeCategoryArc } from '@/features/home/ui/HomeCategoryArc';
 import {
   CATEGORY_FRAME,
   ORBIT_CIRCLE,
@@ -19,7 +13,7 @@ import {
   SLOT_COUNT,
   orbitArcAngleDelta,
   type OrbitSlotPose,
-} from "@/features/home/ui/category-orbit-slots";
+} from '@/features/home/ui/category-orbit-slots';
 
 type OrbitItem = {
   id: string;
@@ -58,13 +52,7 @@ type OrbitPideProps = {
  * Glides along the white ring with uniform scale. Settled pose is authoritative —
  * mid-flight interrupts snap to the intended end so tilts never desync.
  */
-function OrbitPide({
-  src,
-  pose,
-  poseIndex,
-  crop,
-  reduceMotion,
-}: OrbitPideProps) {
+function OrbitPide({ src, pose, poseIndex, crop, reduceMotion }: OrbitPideProps) {
   const settledPoseIndexRef = useRef(poseIndex);
   const angle = useMotionValue(pose.angleDeg);
   const radius = useMotionValue(pose.radius);
@@ -157,7 +145,7 @@ function OrbitPide({
         width: pose.box.width,
         height: pose.box.height,
         scale,
-        transformOrigin: "center center",
+        transformOrigin: 'center center',
         zIndex: pose.zIndex,
       }}
     >
@@ -195,12 +183,7 @@ function wrapIndex(value: number, size: number): number {
  * Pides travel around the ring on an arc path. Uniform scale grows/shrinks
  * during the move; each rider keeps a stable key across spins.
  */
-export function HomeCategoriesOrbit({
-  items,
-  spin,
-  crop,
-  arcStyle,
-}: HomeCategoriesOrbitProps) {
+export function HomeCategoriesOrbit({ items, spin, crop, arcStyle }: HomeCategoriesOrbitProps) {
   const reduceMotion = useReducedMotion();
   const count = items.length;
 
@@ -256,10 +239,7 @@ export function HomeCategoriesOrbit({
 }
 
 /** Category shown in the featured (slot 0) pose for the current spin. */
-export function featuredOrbitCategoryIndex(
-  spin: number,
-  categoryCount: number,
-): number {
+export function featuredOrbitCategoryIndex(spin: number, categoryCount: number): number {
   if (categoryCount <= 0) {
     return 0;
   }

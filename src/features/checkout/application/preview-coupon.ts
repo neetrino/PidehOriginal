@@ -1,28 +1,27 @@
-"use server";
+'use server';
 
-import { and, eq } from "drizzle-orm";
-import { z } from "zod";
+import { and, eq } from 'drizzle-orm';
+import { z } from 'zod';
 
-import { getDb } from "@/db/client";
-import { promotionUsers, promotions } from "@/db/schema";
-import { getCartWithItems } from "@/features/cart/cart";
-import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
+import { getDb } from '@/db/client';
+import { promotionUsers, promotions } from '@/db/schema';
+import { getCartWithItems } from '@/features/cart/cart';
+import { cartLineUnitAmount } from '@/features/cart/domain/line-price';
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
   isCouponUserEligible,
-} from "@/features/promotions/domain/evaluate-coupon";
-import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
-import { getCurrentUser } from "@/lib/auth/session";
+} from '@/features/promotions/domain/evaluate-coupon';
+import { normalizePromotionCode } from '@/features/promotions/domain/promotion-rules';
+import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
+import { getCurrentUser } from '@/lib/auth/session';
 
 const previewCouponSchema = z.object({
   couponCode: z.string().trim().min(1).max(64),
 });
 
 export type PreviewCouponResult =
-  | { ok: true; code: string; discountAmount: number }
-  | { ok: false; error: string };
+  { ok: true; code: string; discountAmount: number } | { ok: false; error: string };
 
 /** Validates a coupon against the current cart subtotal without consuming usage. */
 export async function previewCouponAction(
@@ -30,17 +29,17 @@ export async function previewCouponAction(
 ): Promise<PreviewCouponResult> {
   const parsed = previewCouponSchema.safeParse(raw);
   if (!parsed.success) {
-    return { ok: false, error: "Enter a coupon code." };
+    return { ok: false, error: 'Enter a coupon code.' };
   }
 
   const code = normalizePromotionCode(parsed.data.couponCode);
   if (!code) {
-    return { ok: false, error: "Enter a coupon code." };
+    return { ok: false, error: 'Enter a coupon code.' };
   }
 
   const { items } = await getCartWithItems();
   if (items.length === 0) {
-    return { ok: false, error: "Cart is empty." };
+    return { ok: false, error: 'Cart is empty.' };
   }
 
   const prices = await resolveProductPrices(
@@ -58,16 +57,14 @@ export async function previewCouponAction(
   const [coupon] = await getDb()
     .select()
     .from(promotions)
-    .where(and(eq(promotions.kind, "COUPON"), eq(promotions.code, code)))
+    .where(and(eq(promotions.kind, 'COUPON'), eq(promotions.code, code)))
     .limit(1);
 
   const evaluated = evaluateCouponDiscount(coupon, subtotal);
   if (!evaluated.ok || !coupon) {
     return {
       ok: false,
-      error: couponDiscountErrorMessage(
-        evaluated.ok ? "INVALID_OR_INACTIVE" : evaluated.error,
-      ),
+      error: couponDiscountErrorMessage(evaluated.ok ? 'INVALID_OR_INACTIVE' : evaluated.error),
     };
   }
 
@@ -82,7 +79,7 @@ export async function previewCouponAction(
       user?.id,
     )
   ) {
-    return { ok: false, error: couponDiscountErrorMessage("USER_NOT_ELIGIBLE") };
+    return { ok: false, error: couponDiscountErrorMessage('USER_NOT_ELIGIBLE') };
   }
 
   return {

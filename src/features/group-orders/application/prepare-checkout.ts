@@ -1,19 +1,18 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
+import { getDb } from '@/db/client';
 import {
   cartItemModifiers,
   cartItems,
   groupOrderItemModifiers,
   groupOrderItems,
-} from "@/db/schema";
-import { getOrCreateCart } from "@/features/cart/cart";
-import { assertOrganizerAccess } from "@/features/group-orders/application/access";
-import { createId } from "@/lib/id";
+} from '@/db/schema';
+import { getOrCreateCart } from '@/features/cart/cart';
+import { assertOrganizerAccess } from '@/features/group-orders/application/access';
+import { createId } from '@/lib/id';
 
 export type PrepareGroupOrderCheckoutResult =
-  | { ok: true; inviteToken: string }
-  | { ok: false; error: string };
+  { ok: true; inviteToken: string } | { ok: false; error: string };
 
 /**
  * Copies locked group-order lines into the organizer's personal cart
@@ -25,10 +24,10 @@ export async function prepareGroupOrderCheckout(
   const access = await assertOrganizerAccess(inviteToken);
   if (!access.ok) return access;
 
-  if (access.groupOrder.status !== "CHECKOUT") {
+  if (access.groupOrder.status !== 'CHECKOUT') {
     return {
       ok: false,
-      error: "Group order is not ready for checkout yet.",
+      error: 'Group order is not ready for checkout yet.',
     };
   }
 
@@ -39,7 +38,7 @@ export async function prepareGroupOrderCheckout(
     .where(eq(groupOrderItems.groupOrderId, access.groupOrder.id));
 
   if (lines.length === 0) {
-    return { ok: false, error: "No items to checkout." };
+    return { ok: false, error: 'No items to checkout.' };
   }
 
   const cart = await getOrCreateCart();

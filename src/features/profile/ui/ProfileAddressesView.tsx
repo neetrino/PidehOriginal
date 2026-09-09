@@ -1,32 +1,29 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition, type FormEvent } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition, type FormEvent } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import {
-  ConfirmDialog,
-} from "@/components/ui/ConfirmDialog";
+import { Button } from '@/components/ui/Button';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
   PROFILE_FIELD,
   PROFILE_LABEL,
   PROFILE_OUTLINE_BTN,
   PROFILE_PANEL,
   PROFILE_PRIMARY_BTN,
-} from "@/features/profile/ui/profile-ui-classes";
-import { ProfilePageHeading } from "@/features/profile/ui/ProfilePageHeading";
+} from '@/features/profile/ui/profile-ui-classes';
+import { ProfilePageHeading } from '@/features/profile/ui/ProfilePageHeading';
 import {
   createCustomerAddressAction,
   deleteCustomerAddressAction,
   setDefaultCustomerAddressAction,
   updateCustomerAddressAction,
-} from "@/features/profile/application/manage-addresses";
-import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
-import { ProfileAddressCard } from "@/features/profile/ui/ProfileAddressCard";
+} from '@/features/profile/application/manage-addresses';
+import type { CustomerAddressListItem } from '@/features/profile/application/address-queries';
+import { ProfileAddressCard } from '@/features/profile/ui/ProfileAddressCard';
 
 type AddressFormState = {
   line1: string;
-  city: string;
   phone: string;
   isDefault: boolean;
 };
@@ -47,7 +44,6 @@ type ProfileAddressesViewProps = {
     formAddTitle: string;
     formEditTitle: string;
     line1: string;
-    city: string;
     phone: string;
     phonePlaceholder: string;
     isDefault: string;
@@ -59,17 +55,12 @@ type ProfileAddressesViewProps = {
 };
 
 const emptyForm: AddressFormState = {
-  line1: "",
-  city: "",
-  phone: "",
+  line1: '',
+  phone: '',
   isDefault: false,
 };
 
-export function ProfileAddressesView({
-  locale,
-  addresses,
-  labels,
-}: ProfileAddressesViewProps) {
+export function ProfileAddressesView({ locale, addresses, labels }: ProfileAddressesViewProps) {
   const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -98,7 +89,6 @@ export function ProfileAddressesView({
     setEditingId(address.id);
     setForm({
       line1: address.line1,
-      city: address.city,
       phone: address.phone,
       isDefault: address.isDefaultShipping,
     });
@@ -122,7 +112,7 @@ export function ProfileAddressesView({
         return;
       }
 
-      setMessage(editingId ? "Address updated." : "Address added.");
+      setMessage(editingId ? 'Address updated.' : 'Address added.');
       setShowForm(false);
       resetForm();
       router.refresh();
@@ -145,7 +135,7 @@ export function ProfileAddressesView({
         setError(result.error.message);
         return;
       }
-      setMessage("Address deleted.");
+      setMessage('Address deleted.');
       setPendingDeleteId(null);
       if (editingId === addressId) {
         setShowForm(false);
@@ -164,7 +154,7 @@ export function ProfileAddressesView({
         setError(result.error.message);
         return;
       }
-      setMessage("Default address updated.");
+      setMessage('Default address updated.');
       router.refresh();
     });
   }
@@ -184,7 +174,6 @@ export function ProfileAddressesView({
         </Button>
       </div>
       <div className={PROFILE_PANEL}>
-
         {showForm ? (
           <form
             onSubmit={onSave}
@@ -193,40 +182,24 @@ export function ProfileAddressesView({
             <h2 className="text-base font-semibold text-[#1e1e1e]">
               {editingId ? labels.formEditTitle : labels.formAddTitle}
             </h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
+            <div className="space-y-5 sm:space-y-6">
               <label className={PROFILE_LABEL}>
                 {labels.line1}
                 <input
                   required
                   value={form.line1}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, line1: event.target.value }))
-                  }
+                  onChange={(event) => setForm((prev) => ({ ...prev, line1: event.target.value }))}
                   className={PROFILE_FIELD}
                   autoComplete="street-address"
                 />
               </label>
               <label className={PROFILE_LABEL}>
-                {labels.city}
-                <input
-                  required
-                  value={form.city}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, city: event.target.value }))
-                  }
-                  className={PROFILE_FIELD}
-                  autoComplete="address-level2"
-                />
-              </label>
-              <label className={`${PROFILE_LABEL} sm:col-span-2`}>
                 {labels.phone}
                 <input
                   required
                   type="tel"
                   value={form.phone}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, phone: event.target.value }))
-                  }
+                  onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
                   placeholder={labels.phonePlaceholder}
                   className={PROFILE_FIELD}
                   autoComplete="tel"
@@ -266,11 +239,7 @@ export function ProfileAddressesView({
                 className={`h-11 w-full sm:w-auto ${PROFILE_PRIMARY_BTN}`}
                 disabled={isPending}
               >
-                {isPending
-                  ? labels.saving
-                  : editingId
-                    ? labels.update
-                    : labels.add}
+                {isPending ? labels.saving : editingId ? labels.update : labels.add}
               </Button>
             </div>
           </form>

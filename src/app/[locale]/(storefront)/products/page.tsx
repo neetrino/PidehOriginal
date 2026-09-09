@@ -1,40 +1,35 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { RevealOnView } from "@/components/motion/RevealOnView";
-import { fadeUp, titleSweep } from "@/components/motion/presets";
-import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
+import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import { RevealOnView } from '@/components/motion/RevealOnView';
+import { fadeUp, titleSweep } from '@/components/motion/presets';
+import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
 import {
   catalogHref,
   parseCatalogSearchParams,
-} from "@/features/products/application/catalog-search-params";
-import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
+} from '@/features/products/application/catalog-search-params';
+import { listCatalogProducts } from '@/features/products/application/list-catalog-products';
 import {
   listCatalogSections,
   type CatalogSection,
-} from "@/features/products/application/list-catalog-sections";
-import { CatalogControls } from "@/features/products/ui/CatalogControls";
-import { ShopBreadcrumb } from "@/features/products/ui/ShopBreadcrumb";
-import { ShopProductGrid } from "@/features/products/ui/ShopProductGrid";
-import { MobileCatalog } from "@/features/products/ui/mobile/MobileCatalog";
-import { buildMobileCatalogSections } from "@/features/products/ui/mobile/mobile-catalog-sections";
-import { getWishlistProductIds } from "@/features/wishlist/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import {
-  createDisplayPriceFormatter,
-  getSelectedCurrency,
-} from "@/lib/money/display-price";
+} from '@/features/products/application/list-catalog-sections';
+import { CatalogControls } from '@/features/products/ui/CatalogControls';
+import { ShopBreadcrumb } from '@/features/products/ui/ShopBreadcrumb';
+import { ShopProductGrid } from '@/features/products/ui/ShopProductGrid';
+import { MobileCatalog } from '@/features/products/ui/mobile/MobileCatalog';
+import { buildMobileCatalogSections } from '@/features/products/ui/mobile/mobile-catalog-sections';
+import { getWishlistProductIds } from '@/features/wishlist/queries';
+import { getCurrentUser } from '@/lib/auth/session';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { createDisplayPriceFormatter, getSelectedCurrency } from '@/lib/money/display-price';
 
 type ProductsPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function ProductsPage({
-  params,
-  searchParams,
-}: ProductsPageProps) {
+export default async function ProductsPage({ params, searchParams }: ProductsPageProps) {
   const { locale: rawLocale } = await params;
   const raw = await searchParams;
 
@@ -65,9 +60,7 @@ export default async function ProductsPage({
     catalog = await listCatalogProducts(rawLocale, filters, currency);
   }
 
-  const activeCategory = categories.find(
-    (category) => category.slug === filters.category,
-  );
+  const activeCategory = categories.find((category) => category.slug === filters.category);
   const sections: CatalogSection[] = filters.category
     ? [
         {
@@ -82,11 +75,7 @@ export default async function ProductsPage({
   const wishlistTargets = new Set(
     catalog.products
       .map((product) => product.id)
-      .concat(
-        sections.flatMap((section) =>
-          section.products.map((product) => product.id),
-        ),
-      ),
+      .concat(sections.flatMap((section) => section.products.map((product) => product.id))),
   );
 
   const [wishlistIds, formatPrice] = await Promise.all([
@@ -96,10 +85,7 @@ export default async function ProductsPage({
 
   const priced = catalog.products.map((product) => {
     const price = formatPrice(product.priceAmount);
-    const compareAt =
-      product.compareAtAmount != null
-        ? formatPrice(product.compareAtAmount)
-        : null;
+    const compareAt = product.compareAtAmount != null ? formatPrice(product.compareAtAmount) : null;
 
     return {
       product,
@@ -129,7 +115,7 @@ export default async function ProductsPage({
         isSignedIn={Boolean(user)}
       />
 
-      <div className="mx-auto hidden w-full max-w-[1440px] px-4 pt-6 pb-28 sm:px-6 md:block md:px-[66px] md:pt-8 md:pb-32">
+      <div className={`hidden pt-6 pb-28 md:block md:pt-8 md:pb-32 ${PAGE_CONTAINER}`}>
         <RevealOnView variants={fadeUp}>
           <ShopBreadcrumb
             backHref={`/${rawLocale}`}
@@ -185,9 +171,7 @@ export default async function ProductsPage({
               pageStatus={catalogCopy.pageStatus}
               page={filters.page}
               totalPages={totalPages}
-              pageHref={(targetPage) =>
-                catalogHref(rawLocale, filters, { page: targetPage })
-              }
+              pageHref={(targetPage) => catalogHref(rawLocale, filters, { page: targetPage })}
             />
           </CatalogControls>
         </div>

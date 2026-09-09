@@ -1,16 +1,14 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { ForgotPasswordForm } from "@/features/auth/ui/ForgotPasswordForm";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { ForgotPasswordForm } from '@/features/auth/ui/ForgotPasswordForm';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type ForgotPasswordPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function ForgotPasswordPage({
-  params,
-}: ForgotPasswordPageProps) {
+export default async function ForgotPasswordPage({ params }: ForgotPasswordPageProps) {
   const { locale: rawLocale } = await params;
 
   if (!isLocale(rawLocale)) {
@@ -25,9 +23,7 @@ export default async function ForgotPasswordPage({
         <h1 className="mb-2 text-3xl font-bold tracking-tight text-gray-900">
           {dictionary.auth.forgotPasswordTitle}
         </h1>
-        <p className="mb-8 text-gray-600">
-          {dictionary.auth.forgotPasswordSubtitle}
-        </p>
+        <p className="mb-8 text-gray-600">{dictionary.auth.forgotPasswordSubtitle}</p>
         <ForgotPasswordForm locale={rawLocale} dictionary={dictionary.auth} />
       </div>
     </section>

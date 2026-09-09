@@ -1,9 +1,9 @@
-import "server-only";
+import 'server-only';
 
-import { desc, eq } from "drizzle-orm";
+import { desc, eq } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { bonusTransactions, orders, users } from "@/db/schema";
+import { getDb } from '@/db/client';
+import { bonusTransactions, orders, users } from '@/db/schema';
 
 export type BonusTransactionView = {
   id: string;
@@ -48,9 +48,9 @@ export async function getCustomerBonusSummary(
   let totalEarned = 0;
   let totalRedeemed = 0;
   for (const row of ledger) {
-    if (row.type === "EARN") {
+    if (row.type === 'EARN') {
       totalEarned += row.delta;
-    } else if (row.type === "REDEEM") {
+    } else if (row.type === 'REDEEM') {
       totalRedeemed += Math.abs(row.delta);
     }
   }

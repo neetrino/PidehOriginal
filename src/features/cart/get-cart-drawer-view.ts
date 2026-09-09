@@ -1,19 +1,19 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, eq, inArray, or } from "drizzle-orm";
+import { and, asc, eq, inArray, or } from 'drizzle-orm';
 
-import { getCartItemCount, getCartWithItems } from "@/features/cart/cart";
-import { getDb } from "@/db/client";
-import { mediaAssets } from "@/db/schema";
-import { sumAdditionPrices } from "@/features/products/domain/modifier-selection";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
-import type { Locale } from "@/lib/i18n/config";
-import { getCheckoutRateSnapshot } from "@/lib/fx/service";
-import { mediaPublicUrl } from "@/lib/media/public-url";
-import { convertAmount } from "@/lib/money/convert";
-import type { Currency } from "@/lib/money/currency";
-import { defaultCurrency } from "@/lib/money/currency";
-import { formatMoneyAmount } from "@/lib/money/format";
+import { getCartItemCount, getCartWithItems } from '@/features/cart/cart';
+import { getDb } from '@/db/client';
+import { mediaAssets } from '@/db/schema';
+import { sumAdditionPrices } from '@/features/products/domain/modifier-selection';
+import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
+import type { Locale } from '@/lib/i18n/config';
+import { getCheckoutRateSnapshot } from '@/lib/fx/service';
+import { mediaPublicUrl } from '@/lib/media/public-url';
+import { convertAmount } from '@/lib/money/convert';
+import type { Currency } from '@/lib/money/currency';
+import { defaultCurrency } from '@/lib/money/currency';
+import { formatMoneyAmount } from '@/lib/money/format';
 
 export type CartDrawerItemView = {
   id: string;
@@ -26,7 +26,7 @@ export type CartDrawerItemView = {
 };
 
 export type CartDrawerView = {
-  source: "cart" | "group";
+  source: 'cart' | 'group';
   groupInviteToken: string | null;
   checkoutHref: string;
   itemCount: number;
@@ -40,9 +40,7 @@ export type CartDrawerView = {
   currency: Currency;
 };
 
-async function loadPrimaryProductImages(
-  productIds: string[],
-): Promise<Map<string, string>> {
+async function loadPrimaryProductImages(productIds: string[]): Promise<Map<string, string>> {
   const map = new Map<string, string>();
   if (productIds.length === 0) {
     return map;
@@ -57,8 +55,8 @@ async function loadPrimaryProductImages(
     .where(
       and(
         inArray(mediaAssets.productId, productIds),
-        eq(mediaAssets.uploadStatus, "READY"),
-        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, "PRIMARY")),
+        eq(mediaAssets.uploadStatus, 'READY'),
+        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, 'PRIMARY')),
       ),
     )
     .orderBy(asc(mediaAssets.sortOrder));
@@ -79,12 +77,7 @@ function convertDisplayAmount(
   currency: Currency,
   locale: Locale,
 ): { amount: number; formatted: string } {
-  const converted = convertAmount(
-    baseAmountAmd,
-    rate,
-    defaultCurrency,
-    currency,
-  );
+  const converted = convertAmount(baseAmountAmd, rate, defaultCurrency, currency);
   return {
     amount: Number(converted.amount),
     formatted: formatMoneyAmount(converted.amount, currency, locale),
@@ -93,9 +86,8 @@ function convertDisplayAmount(
 
 /** Header/mobile badge — group-order session takes precedence over personal cart. */
 export async function getStorefrontCartItemCount(): Promise<number> {
-  const { getActiveGroupSessionItemCount } = await import(
-    "@/features/group-orders/application/active-session-cart"
-  );
+  const { getActiveGroupSessionItemCount } =
+    await import('@/features/group-orders/application/active-session-cart');
   const groupCount = await getActiveGroupSessionItemCount();
   if (groupCount != null) {
     return groupCount;
@@ -108,9 +100,8 @@ export async function getCartDrawerView(
   locale: Locale,
   currency: Currency,
 ): Promise<CartDrawerView> {
-  const { getActiveGroupSessionCartView } = await import(
-    "@/features/group-orders/application/active-session-cart"
-  );
+  const { getActiveGroupSessionCartView } =
+    await import('@/features/group-orders/application/active-session-cart');
   const groupView = await getActiveGroupSessionCartView(locale, currency);
   if (groupView) {
     return groupView;
@@ -133,19 +124,17 @@ export async function getCartDrawerView(
   let subtotalBase = 0;
 
   for (const { item, product, modifiers } of rows) {
-    const translation =
-      product.translations[locale] ?? product.translations.hy;
-    const baseUnit =
-      prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    const translation = product.translations[locale] ?? product.translations.hy;
+    const baseUnit = prices.get(product.id)?.unitAmount ?? product.priceAmount;
     const unitAmount = baseUnit + sumAdditionPrices(modifiers);
-    const additions = modifiers.filter((row) => row.kind === "ADDITION");
-    const exceptions = modifiers.filter((row) => row.kind === "EXCEPTION");
+    const additions = modifiers.filter((row) => row.kind === 'ADDITION');
+    const exceptions = modifiers.filter((row) => row.kind === 'EXCEPTION');
     const parts: string[] = [];
     if (additions.length > 0) {
-      parts.push(`+ ${additions.map((row) => row.name).join(", ")}`);
+      parts.push(`+ ${additions.map((row) => row.name).join(', ')}`);
     }
     if (exceptions.length > 0) {
-      parts.push(`− ${exceptions.map((row) => row.name).join(", ")}`);
+      parts.push(`− ${exceptions.map((row) => row.name).join(', ')}`);
     }
 
     items.push({
@@ -153,32 +142,22 @@ export async function getCartDrawerView(
       title: translation?.title ?? product.sku,
       quantity: item.quantity,
       imageUrl: images.get(product.id) ?? null,
-      unitPriceFormatted: convertDisplayAmount(
-        unitAmount,
-        quote.rate,
-        currency,
-        locale,
-      ).formatted,
+      unitPriceFormatted: convertDisplayAmount(unitAmount, quote.rate, currency, locale).formatted,
       lineTotalFormatted: convertDisplayAmount(
         unitAmount * item.quantity,
         quote.rate,
         currency,
         locale,
       ).formatted,
-      modifierSummary: parts.length > 0 ? parts.join(" · ") : null,
+      modifierSummary: parts.length > 0 ? parts.join(' · ') : null,
     });
     subtotalBase += item.quantity * unitAmount;
   }
 
-  const subtotal = convertDisplayAmount(
-    subtotalBase,
-    quote.rate,
-    currency,
-    locale,
-  );
+  const subtotal = convertDisplayAmount(subtotalBase, quote.rate, currency, locale);
 
   return {
-    source: "cart",
+    source: 'cart',
     groupInviteToken: null,
     checkoutHref: `/${locale}/checkout`,
     itemCount: items.reduce((sum, item) => sum + item.quantity, 0),

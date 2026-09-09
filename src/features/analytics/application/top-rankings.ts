@@ -1,18 +1,18 @@
-import "server-only";
+import 'server-only';
 
-import { and, countDistinct, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, countDistinct, desc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
+import { getDb } from '@/db/client';
 import {
   categories,
   orderItems,
   orders,
   productCategories,
   type TranslationsJson,
-} from "@/db/schema";
-import type { OrderStatus } from "@/features/orders/domain/order-status";
-import type { Locale } from "@/lib/i18n/config";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+} from '@/db/schema';
+import type { OrderStatus } from '@/features/orders/domain/order-status';
+import type { Locale } from '@/lib/i18n/config';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 export type AnalyticsTopProduct = {
   productId: string;
@@ -39,7 +39,7 @@ function categoryTitle(translations: TranslationsJson, locale: Locale): string {
     translations.hy?.title ??
     translations.en?.title ??
     translations.ru?.title ??
-    "Untitled category"
+    'Untitled category'
   );
 }
 
@@ -57,16 +57,10 @@ export async function queryTopSellingProducts(input: {
       title: orderItems.productTitleSnapshot,
       sku: orderItems.productSkuSnapshot,
       imageKey: orderItems.productImageKeySnapshot,
-      quantitySold: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(
-        Number,
-      ),
+      quantitySold: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(Number),
       orderCount: countDistinct(orderItems.orderId),
-      revenueAmount: sql<number>`coalesce(sum(${orderItems.lineTotalAmount}), 0)`.mapWith(
-        Number,
-      ),
-      unitPriceAmount: sql<number>`coalesce(max(${orderItems.unitBaseAmount}), 0)`.mapWith(
-        Number,
-      ),
+      revenueAmount: sql<number>`coalesce(sum(${orderItems.lineTotalAmount}), 0)`.mapWith(Number),
+      unitPriceAmount: sql<number>`coalesce(max(${orderItems.unitBaseAmount}), 0)`.mapWith(Number),
     })
     .from(orderItems)
     .innerJoin(orders, eq(orderItems.orderId, orders.id))
@@ -112,20 +106,13 @@ export async function queryTopCategories(input: {
     .select({
       categoryId: categories.id,
       translations: categories.translations,
-      itemCount: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(
-        Number,
-      ),
+      itemCount: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(Number),
       orderCount: countDistinct(orders.id),
-      revenueAmount: sql<number>`coalesce(sum(${orderItems.lineTotalAmount}), 0)`.mapWith(
-        Number,
-      ),
+      revenueAmount: sql<number>`coalesce(sum(${orderItems.lineTotalAmount}), 0)`.mapWith(Number),
     })
     .from(orderItems)
     .innerJoin(orders, eq(orderItems.orderId, orders.id))
-    .innerJoin(
-      productCategories,
-      eq(productCategories.productId, orderItems.productId),
-    )
+    .innerJoin(productCategories, eq(productCategories.productId, orderItems.productId))
     .innerJoin(categories, eq(categories.id, productCategories.categoryId))
     .where(
       and(

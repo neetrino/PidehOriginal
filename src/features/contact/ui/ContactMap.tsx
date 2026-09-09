@@ -1,20 +1,19 @@
-"use client";
+'use client';
 
-import dynamic from "next/dynamic";
-import { useState } from "react";
+import dynamic from 'next/dynamic';
+import { useState } from 'react';
 
-import type { ContactBranchId } from "@/features/contact/ui/contact-locations";
+import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import type { ContactBranchId } from '@/features/contact/ui/contact-locations';
 
 const ContactMapCanvas = dynamic(
   () =>
-    import("@/features/contact/ui/ContactMapCanvas").then((mod) => ({
+    import('@/features/contact/ui/ContactMapCanvas').then((mod) => ({
       default: mod.ContactMapCanvas,
     })),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-[min(70vh,540px)] w-full animate-pulse bg-pideh-cream" />
-    ),
+    loading: () => <div className="h-[min(70vh,540px)] w-full animate-pulse bg-pideh-cream" />,
   },
 );
 
@@ -33,27 +32,23 @@ export function ContactMap({
   zoomInLabel,
   zoomOutLabel,
 }: ContactMapProps) {
-  const [activeBranchId, setActiveBranchId] = useState<ContactBranchId | null>(
-    null,
-  );
+  const [activeBranchId, setActiveBranchId] = useState<ContactBranchId | null>(null);
 
   return (
-    <section className="relative z-0 px-4 pb-16 sm:px-6 lg:px-8">
-      <div className="relative mx-auto max-w-7xl">
+    <section className="relative z-0 pb-16">
+      <div className={`relative ${PAGE_CONTAINER}`}>
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="font-display text-3xl text-pideh-ink uppercase md:text-4xl">
-            {title}
-          </h2>
+          <h2 className="font-display text-3xl text-pideh-ink uppercase md:text-4xl">{title}</h2>
           <div className="flex flex-wrap gap-2">
             <BranchChip
               label={primaryLabel}
-              selected={activeBranchId === "andranik"}
-              onSelect={() => setActiveBranchId("andranik")}
+              selected={activeBranchId === 'andranik'}
+              onSelect={() => setActiveBranchId('andranik')}
             />
             <BranchChip
               label={secondaryLabel}
-              selected={activeBranchId === "koghbatsi"}
-              onSelect={() => setActiveBranchId("koghbatsi")}
+              selected={activeBranchId === 'koghbatsi'}
+              onSelect={() => setActiveBranchId('koghbatsi')}
             />
           </div>
         </div>
@@ -91,9 +86,7 @@ function BranchChip({
       type="button"
       onClick={onSelect}
       className={`rounded-full px-4 py-2 text-sm font-bold transition ${
-        selected
-          ? "bg-pideh-orange text-white"
-          : "bg-white text-pideh-ink hover:bg-pideh-yellow"
+        selected ? 'bg-pideh-orange text-white' : 'bg-white text-pideh-ink hover:bg-pideh-yellow'
       }`}
     >
       {label}

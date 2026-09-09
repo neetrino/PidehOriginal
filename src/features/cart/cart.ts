@@ -1,32 +1,22 @@
-"use server";
+'use server';
 
-import { and, eq, inArray, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { and, eq, inArray, sql } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { getDb } from "@/db/client";
-import {
-  cartItemModifiers,
-  cartItems,
-  carts,
-  productModifiers,
-  products,
-} from "@/db/schema";
-import {
-  getGuestCartToken,
-  hashGuestToken,
-  peekGuestCartToken,
-} from "@/features/cart/guest-token";
-import { buildModifierSelectionKey } from "@/features/products/domain/modifier-selection";
-import { resolveSelectedModifiersForProduct } from "@/features/products/application/product-modifiers";
-import type { ProductModifierRow } from "@/features/products/types/modifiers";
-import { getCurrentUser } from "@/lib/auth/session";
-import { createId } from "@/lib/id";
+import { getDb } from '@/db/client';
+import { cartItemModifiers, cartItems, carts, productModifiers, products } from '@/db/schema';
+import { getGuestCartToken, hashGuestToken, peekGuestCartToken } from '@/features/cart/guest-token';
+import { buildModifierSelectionKey } from '@/features/products/domain/modifier-selection';
+import { resolveSelectedModifiersForProduct } from '@/features/products/application/product-modifiers';
+import type { ProductModifierRow } from '@/features/products/types/modifiers';
+import { getCurrentUser } from '@/lib/auth/session';
+import { createId } from '@/lib/id';
 
 type CartRow = typeof carts.$inferSelect;
 
 export type CartItemModifierView = {
   id: string;
-  kind: "ADDITION" | "EXCEPTION";
+  kind: 'ADDITION' | 'EXCEPTION';
   name: string;
   priceAmount: number;
 };
@@ -60,9 +50,10 @@ async function getCartOwnerForRead(): Promise<{
   return { guestTokenHash: hashGuestToken(token) };
 }
 
-async function findActiveCart(
-  owner: { userId?: string; guestTokenHash?: string },
-): Promise<CartRow | null> {
+async function findActiveCart(owner: {
+  userId?: string;
+  guestTokenHash?: string;
+}): Promise<CartRow | null> {
   const ownerCondition = owner.userId
     ? eq(carts.userId, owner.userId)
     : eq(carts.guestTokenHash, owner.guestTokenHash!);
@@ -70,7 +61,7 @@ async function findActiveCart(
   const [existing] = await getDb()
     .select()
     .from(carts)
-    .where(and(eq(carts.status, "ACTIVE"), ownerCondition))
+    .where(and(eq(carts.status, 'ACTIVE'), ownerCondition))
     .limit(1);
 
   return existing ?? null;
@@ -86,7 +77,7 @@ export async function getOrCreateCart(): Promise<CartRow> {
     .insert(carts)
     .values({ id: createId(), ...owner })
     .returning();
-  if (!created) throw new Error("Unable to create cart.");
+  if (!created) throw new Error('Unable to create cart.');
   return created;
 }
 
@@ -105,10 +96,7 @@ async function loadModifiersForCartItems(
       priceAmount: productModifiers.priceAmount,
     })
     .from(cartItemModifiers)
-    .innerJoin(
-      productModifiers,
-      eq(cartItemModifiers.modifierId, productModifiers.id),
-    )
+    .innerJoin(productModifiers, eq(cartItemModifiers.modifierId, productModifiers.id))
     .where(inArray(cartItemModifiers.cartItemId, itemIds));
 
   for (const row of rows) {
@@ -148,9 +136,7 @@ export async function getCartWithItems(): Promise<{
     .innerJoin(products, eq(cartItems.productId, products.id))
     .where(eq(cartItems.cartId, cart.id));
 
-  const modifiersByItem = await loadModifiersForCartItems(
-    rows.map((row) => row.item.id),
-  );
+  const modifiersByItem = await loadModifiersForCartItems(rows.map((row) => row.item.id));
 
   return {
     cart,
@@ -160,6 +146,17 @@ export async function getCartWithItems(): Promise<{
       modifiers: modifiersByItem.get(row.item.id) ?? [],
     })),
   };
+}
+
+async function sumCartQuantity(cartId: string): Promise<number> {
+  const [row] = await getDb()
+    .select({
+      total: sql<number>`coalesce(sum(${cartItems.quantity}), 0)::int`,
+    })
+    .from(cartItems)
+    .where(eq(cartItems.cartId, cartId));
+
+  return row?.total ?? 0;
 }
 
 /** Cheap badge count for the header — no cart creation, no line enrichment. */
@@ -174,54 +171,53 @@ export async function getCartItemCount(): Promise<number> {
     return 0;
   }
 
-  const [row] = await getDb()
-    .select({
-      total: sql<number>`coalesce(sum(${cartItems.quantity}), 0)::int`,
-    })
-    .from(cartItems)
-    .where(eq(cartItems.cartId, cart.id));
-
-  return row?.total ?? 0;
+  return sumCartQuantity(cart.id);
 }
 
 export type AddToCartModifiers = {
   modifierIds?: ReadonlyArray<string>;
 };
 
+/**
+ * Adds a product to the personal cart and returns the resulting badge count.
+ *
+ * Skips the layout revalidation on purpose: the caller updates the header badge
+ * from the returned count, which avoids re-rendering the whole storefront tree
+ * on every click.
+ */
 export async function addToCart(
   productId: string,
   quantity = 1,
   options: AddToCartModifiers = {},
-): Promise<void> {
+): Promise<number> {
   if (!Number.isInteger(quantity) || quantity < 1) {
-    throw new Error("Invalid quantity.");
+    throw new Error('Invalid quantity.');
   }
 
-  const cart = await getOrCreateCart();
-  const [product] = await getDb()
-    .select({
-      id: products.id,
-      stock: products.stockOnHand,
-      status: products.status,
-    })
-    .from(products)
-    .where(eq(products.id, productId))
-    .limit(1);
-  if (!product || product.status !== "ACTIVE" || product.stock < 1) {
-    throw new Error("Product unavailable.");
-  }
+  // Independent reads run together: every database round-trip is added latency
+  // between the click and the product landing in the cart.
+  const [cart, [product], resolved] = await Promise.all([
+    getOrCreateCart(),
+    getDb()
+      .select({
+        id: products.id,
+        stock: products.stockOnHand,
+        status: products.status,
+      })
+      .from(products)
+      .where(eq(products.id, productId))
+      .limit(1),
+    resolveSelectedModifiersForProduct(productId, options.modifierIds ?? []),
+  ]);
 
-  const resolved = await resolveSelectedModifiersForProduct(
-    productId,
-    options.modifierIds ?? [],
-  );
+  if (!product || product.status !== 'ACTIVE' || product.stock < 1) {
+    throw new Error('Product unavailable.');
+  }
   if (!resolved.ok) {
     throw new Error(resolved.error);
   }
 
-  const selectionKey = buildModifierSelectionKey(
-    resolved.modifiers.map((modifier) => modifier.id),
-  );
+  const selectionKey = buildModifierSelectionKey(resolved.modifiers.map((modifier) => modifier.id));
   const addQty = Math.min(quantity, product.stock);
 
   const [existing] = await getDb()
@@ -256,7 +252,9 @@ export async function addToCart(
     await insertCartItemModifiers(itemId, resolved.modifiers);
   }
 
-  await revalidateCartPaths();
+  const itemCount = await sumCartQuantity(cart.id);
+  await revalidateCartPaths({ layout: false });
+  return itemCount;
 }
 
 async function insertCartItemModifiers(
@@ -264,19 +262,18 @@ async function insertCartItemModifiers(
   modifiers: ReadonlyArray<ProductModifierRow>,
 ): Promise<void> {
   if (modifiers.length === 0) return;
-  await getDb().insert(cartItemModifiers).values(
-    modifiers.map((modifier) => ({
-      id: createId(),
-      cartItemId,
-      modifierId: modifier.id,
-    })),
-  );
+  await getDb()
+    .insert(cartItemModifiers)
+    .values(
+      modifiers.map((modifier) => ({
+        id: createId(),
+        cartItemId,
+        modifierId: modifier.id,
+      })),
+    );
 }
 
-export async function updateQuantity(
-  itemId: string,
-  quantity: number,
-): Promise<void> {
+export async function updateQuantity(itemId: string, quantity: number): Promise<void> {
   const cart = await getOrCreateCart();
   if (!Number.isInteger(quantity) || quantity < 1) {
     await removeItem(itemId);
@@ -297,9 +294,16 @@ export async function removeItem(itemId: string): Promise<void> {
   await revalidateCartPaths();
 }
 
+export type CartRevalidateScope = {
+  /** Re-renders every mounted storefront segment — skip it for add-to-cart. */
+  layout?: boolean;
+};
+
 /** Invalidates storefront cart views after durable cart mutations. */
-export async function revalidateCartPaths(): Promise<void> {
-  revalidatePath("/[locale]/cart", "page");
-  revalidatePath("/[locale]/checkout", "page");
-  revalidatePath("/", "layout");
+export async function revalidateCartPaths(scope: CartRevalidateScope = {}): Promise<void> {
+  revalidatePath('/[locale]/cart', 'page');
+  revalidatePath('/[locale]/checkout', 'page');
+  if (scope.layout !== false) {
+    revalidatePath('/', 'layout');
+  }
 }

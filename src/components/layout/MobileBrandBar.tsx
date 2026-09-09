@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
-import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
-import { AppLink } from "@/components/ui/AppLink";
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
-import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Currency } from "@/lib/money/currency";
+import { MobileNavDrawer } from '@/components/layout/MobileNavDrawer';
+import { AppLink } from '@/components/ui/AppLink';
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
+import type { Locale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Currency } from '@/lib/money/currency';
 
 type MobileBrandBarProps = {
   locale: Locale;
@@ -30,7 +30,7 @@ export function MobileBrandBar({
   phoneHref,
   phoneLabel,
   currency,
-  className = "",
+  className = '',
 }: MobileBrandBarProps) {
   const navItems = [
     { href: `/${locale}`, label: dictionary.nav.home },

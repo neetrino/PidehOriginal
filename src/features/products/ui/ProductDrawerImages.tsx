@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { X } from "lucide-react";
+import { useRef } from 'react';
+import { X } from 'lucide-react';
 
-import { ADMIN_CHECKBOX, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { ADMIN_CHECKBOX, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 export type ProductDraftImage = {
   key: string;
@@ -19,7 +19,7 @@ type ProductDrawerImagesProps = {
   images: ProductDraftImage[];
   disabled: boolean;
   onChange: (images: ProductDraftImage[]) => void;
-  copy: Dictionary["admin"]["products"]["images"];
+  copy: Dictionary['admin']['products']['images'];
 };
 
 export function ProductDrawerImages({
@@ -56,7 +56,7 @@ export function ProductDrawerImages({
     if (!fileList || fileList.length === 0) return;
     const additions: ProductDraftImage[] = [];
     for (const file of Array.from(fileList)) {
-      if (!file.type.startsWith("image/")) continue;
+      if (!file.type.startsWith('image/')) continue;
       additions.push({
         key: `new-${crypto.randomUUID()}`,
         previewUrl: URL.createObjectURL(file),
@@ -94,7 +94,7 @@ export function ProductDrawerImages({
           disabled={disabled}
           onChange={(event) => {
             handleFiles(event.target.files);
-            event.target.value = "";
+            event.target.value = '';
           }}
         />
       </div>
@@ -108,11 +108,7 @@ export function ProductDrawerImages({
               className="relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50"
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- blob preview */}
-              <img
-                src={image.previewUrl}
-                alt=""
-                className="aspect-square w-full object-cover"
-              />
+              <img src={image.previewUrl} alt="" className="aspect-square w-full object-cover" />
               <div className="flex items-center justify-between gap-2 px-2 py-2">
                 <label className="flex items-center gap-1.5 text-xs font-bold text-[#1e1e1e]">
                   <input

@@ -1,17 +1,15 @@
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 
 export type ProductPurchaseLabels = {
   quantity: string;
   decreaseQuantity: string;
   increaseQuantity: string;
   addToCart: string;
-  adding: string;
   outOfStock: string;
-  added: string;
   error: string;
   resetSelection: string;
 };
@@ -20,12 +18,10 @@ type ProductPurchaseControlsProps = {
   quantity: number;
   maxQty: number;
   disabled: boolean;
-  pending: boolean;
   onQuantityChange: (next: number) => void;
   onReset: () => void;
   onAdd: () => void;
   labels: ProductPurchaseLabels;
-  message: string | null;
   error: string | null;
 };
 
@@ -33,19 +29,13 @@ export function ProductPurchaseControls({
   quantity,
   maxQty,
   disabled,
-  pending,
   onQuantityChange,
   onReset,
   onAdd,
   labels,
-  message,
   error,
 }: ProductPurchaseControlsProps) {
-  const addLabel = disabled
-    ? labels.outOfStock
-    : pending
-      ? labels.adding
-      : labels.addToCart;
+  const addLabel = disabled ? labels.outOfStock : labels.addToCart;
 
   return (
     <div className="flex w-full flex-col gap-4 border-t border-[rgba(255,107,0,0.46)] pt-5">
@@ -53,14 +43,14 @@ export function ProductPurchaseControls({
         <QtyRow
           quantity={quantity}
           maxQty={maxQty}
-          disabled={disabled || pending}
+          disabled={disabled}
           labels={labels}
           onQuantityChange={onQuantityChange}
           onReset={onReset}
         />
         <button
           type="button"
-          disabled={disabled || pending}
+          disabled={disabled}
           onClick={onAdd}
           className="inline-flex h-12 w-full shrink-0 items-center justify-center gap-3 rounded-[66px] bg-[#ff6900] pr-2 pl-[18px] text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[283px]"
         >
@@ -75,11 +65,6 @@ export function ProductPurchaseControls({
         </button>
       </div>
 
-      {message ? (
-        <p className="text-sm text-green-700" role="status">
-          {message}
-        </p>
-      ) : null}
       {error ? (
         <p className="text-sm text-red-700" role="alert">
           {error}
@@ -154,13 +139,7 @@ function QtyRow({
         onClick={onReset}
         className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-[rgba(255,107,0,0.19)] transition hover:brightness-95 disabled:opacity-40"
       >
-        <Image
-          src={PIDEH_ASSETS.pdpTrash}
-          alt=""
-          width={28}
-          height={28}
-          className="size-7"
-        />
+        <Image src={PIDEH_ASSETS.pdpTrash} alt="" width={28} height={28} className="size-7" />
       </button>
     </div>
   );

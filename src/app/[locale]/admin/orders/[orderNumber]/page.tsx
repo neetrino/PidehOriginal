@@ -1,12 +1,9 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
-import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { AdminPageHeading } from "@/features/admin/ui/AdminPageHeading";
+import { Card } from '@/components/ui/Card';
+import { ADMIN_PAGE_SUBTITLE, ADMIN_SECTION_TITLE } from '@/features/admin/ui/admin-form-classes';
+import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -16,30 +13,28 @@ import {
   ADMIN_TABLE_TD,
   ADMIN_TABLE_TH,
   ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
+} from '@/features/admin/ui/admin-table-classes';
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
-import { getAdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import { getAdminOrderByNumber } from "@/features/orders/application/queries";
-import { formatYerevanDateTime } from "@/features/delivery/domain/delivery-schedule";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+} from '@/features/admin/ui/status-badge';
+import { getAdminOrderDetailView } from '@/features/orders/application/order-detail-view';
+import { getAdminOrderByNumber } from '@/features/orders/application/queries';
+import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 type AdminOrderDetailPageProps = {
   params: Promise<{ locale: string; orderNumber: string }>;
 };
 
 function formatMoney(amount: number, currency: string): string {
-  return `${amount.toLocaleString("en-US")} ${currency}`;
+  return `${amount.toLocaleString('en-US')} ${currency}`;
 }
 
-export default async function AdminOrderDetailPage({
-  params,
-}: AdminOrderDetailPageProps) {
+export default async function AdminOrderDetailPage({ params }: AdminOrderDetailPageProps) {
   const { locale, orderNumber } = await params;
   if (!isLocale(locale)) {
     notFound();
@@ -53,10 +48,7 @@ export default async function AdminOrderDetailPage({
     notFound();
   }
 
-  const view = await getAdminOrderDetailView(
-    decodeURIComponent(orderNumber),
-    locale,
-  );
+  const view = await getAdminOrderDetailView(decodeURIComponent(orderNumber), locale);
   const participants = view?.participants ?? null;
 
   const { order, items, events } = detail;
@@ -67,18 +59,15 @@ export default async function AdminOrderDetailPage({
 
   const deliveryLabel = order.deliveryLabelSnapshot
     ? d.deliveryWithLabel
-        .replace("{label}", order.deliveryLabelSnapshot)
-        .replace("{amount}", formatMoney(order.deliveryAmount, order.baseCurrency))
-    : d.delivery.replace("{amount}", formatMoney(order.deliveryAmount, order.baseCurrency));
+        .replace('{label}', order.deliveryLabelSnapshot)
+        .replace('{amount}', formatMoney(order.deliveryAmount, order.baseCurrency))
+    : d.delivery.replace('{amount}', formatMoney(order.deliveryAmount, order.baseCurrency));
 
   const couponLabel = order.promotionCodeSnapshot
     ? d.couponDiscountWithCode
-        .replace("{code}", order.promotionCodeSnapshot)
-        .replace("{amount}", formatMoney(order.discountAmount, order.baseCurrency))
-    : d.couponDiscount.replace(
-        "{amount}",
-        formatMoney(order.discountAmount, order.baseCurrency),
-      );
+        .replace('{code}', order.promotionCodeSnapshot)
+        .replace('{amount}', formatMoney(order.discountAmount, order.baseCurrency))
+    : d.couponDiscount.replace('{amount}', formatMoney(order.discountAmount, order.baseCurrency));
 
   return (
     <section>
@@ -94,20 +83,14 @@ export default async function AdminOrderDetailPage({
           </p>
           <AdminPageHeading title={order.orderNumber} />
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span
-              className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-            >
+            <span className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}>
               {order.status}
             </span>
-            <span
-              className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-            >
+            <span className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}>
               {order.paymentStatus}
             </span>
             {order.isArchived ? (
-              <span className={`${ADMIN_BADGE} bg-gray-100 text-gray-800`}>
-                {d.archivedBadge}
-              </span>
+              <span className={`${ADMIN_BADGE} bg-gray-100 text-gray-800`}>{d.archivedBadge}</span>
             ) : null}
           </div>
         </div>
@@ -121,13 +104,13 @@ export default async function AdminOrderDetailPage({
           <p className="text-sm text-gray-600">{order.contactPhone}</p>
           <p className="mt-3 text-sm text-gray-600">
             {address.line1}
-            {address.line2 ? `, ${address.line2}` : ""}
+            {address.line2 ? `, ${address.line2}` : ''}
             <br />
             {address.city}
-            {address.region ? `, ${address.region}` : ""}
+            {address.region ? `, ${address.region}` : ''}
             <br />
             {address.countryCode}
-            {address.postalCode ? ` ${address.postalCode}` : ""}
+            {address.postalCode ? ` ${address.postalCode}` : ''}
           </p>
           {address.floor ||
           address.intercomCode ||
@@ -143,9 +126,7 @@ export default async function AdminOrderDetailPage({
               {address.intercomCode ? (
                 <div className="flex gap-2">
                   <dt className="text-gray-500">{d.intercomCode}</dt>
-                  <dd className="font-medium text-gray-900">
-                    {address.intercomCode}
-                  </dd>
+                  <dd className="font-medium text-gray-900">{address.intercomCode}</dd>
                 </div>
               ) : null}
               {address.scheduledDeliveryDate &&
@@ -154,8 +135,7 @@ export default async function AdminOrderDetailPage({
                 <div className="flex gap-2">
                   <dt className="text-gray-500">{d.deliverySlot}</dt>
                   <dd className="font-medium text-gray-900">
-                    {address.scheduledDeliveryDate}{" "}
-                    {address.scheduledDeliveryStart}–
+                    {address.scheduledDeliveryDate} {address.scheduledDeliveryStart}–
                     {address.scheduledDeliveryEnd}
                   </dd>
                 </div>
@@ -183,17 +163,14 @@ export default async function AdminOrderDetailPage({
         <Card className="p-6">
           <h2 className={`mb-3 ${ADMIN_SECTION_TITLE}`}>{d.totals}</h2>
           <p className="text-sm text-gray-700">
-            {d.subtotal.replace(
-              "{amount}",
-              formatMoney(order.subtotalAmount, order.baseCurrency),
-            )}
+            {d.subtotal.replace('{amount}', formatMoney(order.subtotalAmount, order.baseCurrency))}
           </p>
           <p className="text-sm text-gray-700">{deliveryLabel}</p>
           <p className="text-sm text-gray-700">{couponLabel}</p>
           {order.bonusRedeemedAmount > 0 ? (
             <p className="text-sm text-green-700">
               {d.bonusRedeemed.replace(
-                "{amount}",
+                '{amount}',
                 formatMoney(order.bonusRedeemedAmount, order.baseCurrency),
               )}
             </p>
@@ -201,30 +178,24 @@ export default async function AdminOrderDetailPage({
           {order.giftCardAmount > 0 ? (
             <p className="text-sm text-green-700">
               {d.giftCard.replace(
-                "{amount}",
+                '{amount}',
                 formatMoney(order.giftCardAmount, order.baseCurrency),
               )}
             </p>
           ) : null}
           <p className="mt-2 text-sm font-semibold text-gray-900">
-            {d.total.replace(
-              "{amount}",
-              formatMoney(order.totalAmount, order.baseCurrency),
-            )}
+            {d.total.replace('{amount}', formatMoney(order.totalAmount, order.baseCurrency))}
           </p>
           {order.bonusEarnedAmount > 0 ? (
             <p className="mt-1 text-sm text-emerald-700">
               {d.bonusEarned.replace(
-                "{amount}",
+                '{amount}',
                 formatMoney(order.bonusEarnedAmount, order.baseCurrency),
               )}
             </p>
           ) : null}
           <p className="mt-2 text-sm text-gray-500">
-            {d.placedAt.replace(
-              "{datetime}",
-              formatYerevanDateTime(order.placedAt),
-            )}
+            {d.placedAt.replace('{datetime}', formatYerevanDateTime(order.placedAt))}
           </p>
         </Card>
       </div>
@@ -232,66 +203,47 @@ export default async function AdminOrderDetailPage({
       <Card className={`mb-6 ${ADMIN_TABLE_CARD}`}>
         <div className="border-b border-gray-200 px-4 py-3 sm:px-5">
           <h2 className={ADMIN_SECTION_TITLE}>
-            {participants && participants.length > 0
-              ? drawer.participants
-              : d.lineItems}
+            {participants && participants.length > 0 ? drawer.participants : d.lineItems}
           </h2>
         </div>
         {participants && participants.length > 0 ? (
           <div className="space-y-4 px-4 py-4 sm:px-5">
             {participants.map((participant) => (
-              <div
-                key={participant.id}
-                className="rounded-xl border border-gray-200 p-4"
-              >
+              <div key={participant.id} className="rounded-xl border border-gray-200 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <p className="text-sm font-bold tracking-wide text-emerald-800 uppercase">
                     {participant.displayName}
-                    {participant.role === "ORGANIZER" ? (
+                    {participant.role === 'ORGANIZER' ? (
                       <span className="ml-2 text-xs font-semibold normal-case text-gray-500">
                         ({drawer.organizer})
                       </span>
                     ) : null}
                   </p>
                   <p className="text-xs text-gray-600">
-                    {drawer.paymentMethod.replace(
-                      "{method}",
-                      participant.paymentMethod,
-                    )}
+                    {drawer.paymentMethod.replace('{method}', participant.paymentMethod)}
                   </p>
                 </div>
                 <p className="mt-2 text-xs text-gray-600">
-                  {drawer.subtotal}:{" "}
-                  {formatMoney(participant.subtotalAmount, order.baseCurrency)}
-                  {" · "}
-                  {drawer.delivery}:{" "}
-                  {formatMoney(
-                    participant.deliveryShareAmount,
-                    order.baseCurrency,
-                  )}
-                  {" · "}
-                  {drawer.grandTotal}:{" "}
-                  {formatMoney(participant.finalAmount, order.baseCurrency)}
+                  {drawer.subtotal}: {formatMoney(participant.subtotalAmount, order.baseCurrency)}
+                  {' · '}
+                  {drawer.delivery}:{' '}
+                  {formatMoney(participant.deliveryShareAmount, order.baseCurrency)}
+                  {' · '}
+                  {drawer.grandTotal}: {formatMoney(participant.finalAmount, order.baseCurrency)}
                   {participant.bonusEarnedAmount > 0
                     ? ` · ${drawer.bonusEarned}: +${formatMoney(participant.bonusEarnedAmount, order.baseCurrency)}`
-                    : ""}
+                    : ''}
                 </p>
                 <ul className="mt-3 space-y-2">
                   {participant.items.map((item) => (
-                    <li
-                      key={item.id}
-                      className="flex items-center justify-between gap-3 text-sm"
-                    >
+                    <li key={item.id} className="flex items-center justify-between gap-3 text-sm">
                       <span className="min-w-0 truncate text-gray-900">
                         {item.title}
                         {item.modifiers.length > 0
                           ? ` (${item.modifiers
-                              .map(
-                                (m) =>
-                                  `${m.kind === "ADDITION" ? "+" : "−"}${m.name}`,
-                              )
-                              .join(", ")})`
-                          : ""}{" "}
+                              .map((m) => `${m.kind === 'ADDITION' ? '+' : '−'}${m.name}`)
+                              .join(', ')})`
+                          : ''}{' '}
                         ×{item.quantity}
                       </span>
                       <span className="shrink-0 font-medium text-gray-900">
@@ -317,12 +269,8 @@ export default async function AdminOrderDetailPage({
                 {items.map((item) => (
                   <tr key={item.id} className={ADMIN_TABLE_ROW}>
                     <td className={ADMIN_TABLE_TD}>
-                      <p className="font-medium text-gray-900">
-                        {item.productTitleSnapshot}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {item.productSkuSnapshot}
-                      </p>
+                      <p className="font-medium text-gray-900">{item.productTitleSnapshot}</p>
+                      <p className="text-xs text-gray-500">{item.productSkuSnapshot}</p>
                     </td>
                     <td className={ADMIN_TABLE_TD}>×{item.quantity}</td>
                     <td className={ADMIN_TABLE_TD}>
@@ -340,34 +288,26 @@ export default async function AdminOrderDetailPage({
         <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>{d.history}</h2>
         <ol className="space-y-3">
           {events.map((event) => (
-            <li
-              key={event.id}
-              className="rounded-lg border border-gray-200 p-3 text-sm"
-            >
+            <li key={event.id} className="rounded-lg border border-gray-200 p-3 text-sm">
               <p className="font-medium text-gray-900">
                 {event.eventType}
                 {event.fromState || event.toState
-                  ? ` · ${event.fromState ?? "—"} → ${event.toState ?? "—"}`
+                  ? ` · ${event.fromState ?? '—'} → ${event.toState ?? '—'}`
                   : null}
               </p>
               <p className="text-gray-500">
-                {event.createdAt.toISOString().slice(0, 19).replace("T", " ")}{" "}
-                {copy.common.utc}
-                {event.isCustomerVisible
-                  ? ` · ${d.customerVisible}`
-                  : ` · ${d.internal}`}
+                {event.createdAt.toISOString().slice(0, 19).replace('T', ' ')} {copy.common.utc}
+                {event.isCustomerVisible ? ` · ${d.customerVisible}` : ` · ${d.internal}`}
               </p>
               {event.payload &&
-              typeof event.payload === "object" &&
-              "note" in event.payload &&
-              typeof event.payload.note === "string" ? (
+              typeof event.payload === 'object' &&
+              'note' in event.payload &&
+              typeof event.payload.note === 'string' ? (
                 <p className="mt-1 text-gray-700">{event.payload.note}</p>
               ) : null}
             </li>
           ))}
-          {events.length === 0 ? (
-            <li className="text-sm text-gray-600">{d.noEvents}</li>
-          ) : null}
+          {events.length === 0 ? <li className="text-sm text-gray-600">{d.noEvents}</li> : null}
         </ol>
       </Card>
     </section>

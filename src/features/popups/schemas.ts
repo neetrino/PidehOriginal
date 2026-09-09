@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const LINK_URL_PATTERN = /^(?:\/[A-Za-z0-9/_-]*)|(?:https?:\/\/.+)$/;
 
@@ -11,8 +11,8 @@ export const upsertPopupSchema = z.object({
     .max(500)
     .optional()
     .refine(
-      (value) => value == null || value === "" || LINK_URL_PATTERN.test(value),
-      "Link URL must be a site path or http(s) URL.",
+      (value) => value == null || value === '' || LINK_URL_PATTERN.test(value),
+      'Link URL must be a site path or http(s) URL.',
     ),
 });
 

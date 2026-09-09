@@ -1,13 +1,13 @@
-import type { PaymentAdapter } from "@/lib/payments/types";
+import type { PaymentAdapter } from '@/lib/payments/types';
 
 /** Cash on Delivery — P0 payment adapter. */
 export function createCodPaymentAdapter(): PaymentAdapter {
   return {
-    name: "cod",
+    name: 'cod',
     async createPayment() {
       return {
-        provider: "cod",
-        status: "pending",
+        provider: 'cod',
+        status: 'pending',
         providerReference: null,
       };
     },

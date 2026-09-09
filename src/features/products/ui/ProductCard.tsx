@@ -1,9 +1,9 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
-import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
-import type { Locale } from "@/lib/i18n/config";
+import { AppLink } from '@/components/ui/AppLink';
+import { AddToCartButton } from '@/features/cart/ui/AddToCartButton';
+import { WishlistButton } from '@/features/wishlist/ui/WishlistButton';
+import type { Locale } from '@/lib/i18n/config';
 
 type ProductCardProps = {
   href: string;
@@ -39,8 +39,7 @@ export function ProductCard({
   addToCartLabel,
 }: ProductCardProps) {
   const onSale = Boolean(compareAtFormatted);
-  const showWishlist =
-    locale != null && productId != null && wishlistLabel != null;
+  const showWishlist = locale != null && productId != null && wishlistLabel != null;
   const showAddToCart = productId != null && addToCartLabel != null;
 
   return (
@@ -48,7 +47,7 @@ export function ProductCard({
       <div className="relative aspect-square overflow-hidden bg-gray-100">
         <AppLink
           href={href}
-          prefetchPolicy={priority ? "intent" : "auto"}
+          prefetchPolicy={priority ? 'intent' : 'auto'}
           className="absolute inset-0 block"
         >
           {imageUrl ? (
@@ -107,7 +106,7 @@ export function ProductCard({
         <h3 className="mb-1 line-clamp-2 text-base font-medium text-gray-900">
           <AppLink
             href={href}
-            prefetchPolicy={priority ? "intent" : "auto"}
+            prefetchPolicy={priority ? 'intent' : 'auto'}
             className="hover:underline"
           >
             {title}
@@ -116,9 +115,7 @@ export function ProductCard({
         <div className="flex flex-wrap items-baseline gap-2">
           <p className="text-lg font-semibold text-gray-900">{priceFormatted}</p>
           {onSale ? (
-            <p className="text-sm text-gray-500 line-through">
-              {compareAtFormatted}
-            </p>
+            <p className="text-sm text-gray-500 line-through">{compareAtFormatted}</p>
           ) : null}
         </div>
       </div>

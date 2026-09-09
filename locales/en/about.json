@@ -15,10 +15,5 @@
     { "title": "Terrace", "alt": "Pideh outdoor terrace" },
     { "title": "Table", "alt": "Pide and spices on the table" }
   ],
-  "marquee": ["Pideh", "Yerevan", "Pide", "Fresh dough"],
-  "stats": [
-    { "value": 2, "suffix": "", "label": "branches" },
-    { "value": 12, "suffix": "", "label": "hours open" },
-    { "value": 7, "suffix": "", "label": "days a week" }
-  ]
+  "marquee": ["Pideh", "Yerevan", "Pide", "Fresh dough"]
 }

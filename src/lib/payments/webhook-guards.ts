@@ -20,33 +20,26 @@ export type WebhookGuardInput = {
 };
 
 export type WebhookGuardFailure =
-  | "REPLAY"
-  | "AMOUNT_MISMATCH"
-  | "CURRENCY_MISMATCH"
-  | "ORDER_MISMATCH";
+  'REPLAY' | 'AMOUNT_MISMATCH' | 'CURRENCY_MISMATCH' | 'ORDER_MISMATCH';
 
-export type WebhookGuardResult =
-  | { ok: true }
-  | { ok: false; reason: WebhookGuardFailure };
+export type WebhookGuardResult = { ok: true } | { ok: false; reason: WebhookGuardFailure };
 
 /** Validates order/amount/currency match and rejects replayed provider events. */
-export function assertWebhookPaymentMatch(
-  input: WebhookGuardInput,
-): WebhookGuardResult {
+export function assertWebhookPaymentMatch(input: WebhookGuardInput): WebhookGuardResult {
   if (input.seenProviderEventIds.has(input.providerEventId)) {
-    return { ok: false, reason: "REPLAY" };
+    return { ok: false, reason: 'REPLAY' };
   }
 
   if (input.eventOrderId !== input.expected.orderId) {
-    return { ok: false, reason: "ORDER_MISMATCH" };
+    return { ok: false, reason: 'ORDER_MISMATCH' };
   }
 
   if (input.eventCurrency.toUpperCase() !== input.expected.currency.toUpperCase()) {
-    return { ok: false, reason: "CURRENCY_MISMATCH" };
+    return { ok: false, reason: 'CURRENCY_MISMATCH' };
   }
 
   if (input.eventAmount !== input.expected.amount) {
-    return { ok: false, reason: "AMOUNT_MISMATCH" };
+    return { ok: false, reason: 'AMOUNT_MISMATCH' };
   }
 
   return { ok: true };

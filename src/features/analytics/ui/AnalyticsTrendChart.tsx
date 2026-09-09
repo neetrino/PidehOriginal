@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 import {
   Area,
   Bar,
@@ -12,13 +12,13 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from 'recharts';
 
-import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
-import { formatAnalyticsShortDate } from "@/features/analytics/domain/date-range";
-import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import { formatMoneyAmount } from "@/lib/money/format";
+import type { AnalyticsCsvRow } from '@/features/analytics/domain/csv';
+import { formatAnalyticsShortDate } from '@/features/analytics/domain/date-range';
+import type { Locale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import { formatMoneyAmount } from '@/lib/money/format';
 
 type ChartPoint = {
   date: string;
@@ -32,14 +32,10 @@ type AnalyticsTrendChartProps = {
   from: string;
   to: string;
   locale: Locale;
-  copy: Dictionary["admin"]["analytics"]["ordersByDay"];
+  copy: Dictionary['admin']['analytics']['ordersByDay'];
 };
 
-function buildSeries(
-  rows: AnalyticsCsvRow[],
-  from: string,
-  to: string,
-): ChartPoint[] {
+function buildSeries(rows: AnalyticsCsvRow[], from: string, to: string): ChartPoint[] {
   const byDate = new Map(rows.map((row) => [row.date, row]));
   const start = new Date(`${from}T00:00:00.000Z`);
   const end = new Date(`${to}T00:00:00.000Z`);
@@ -89,14 +85,12 @@ function TrendTooltip({
     return null;
   }
 
-  const orders = payload.find((item) => item.dataKey === "orderCount");
-  const revenue = payload.find((item) => item.dataKey === "revenueAmount");
+  const orders = payload.find((item) => item.dataKey === 'orderCount');
+  const revenue = payload.find((item) => item.dataKey === 'revenueAmount');
 
   return (
     <div className="rounded-2xl border-2 border-[#1e1e1e] bg-[#fff8e7] px-3 py-2.5 shadow-[4px_4px_0_#1e1e1e]">
-      <p className="text-xs font-extrabold tracking-wide text-[#1e1e1e]/50 uppercase">
-        {label}
-      </p>
+      <p className="text-xs font-extrabold tracking-wide text-[#1e1e1e]/50 uppercase">{label}</p>
       <div className="mt-2 space-y-1.5 text-sm font-bold text-[#1e1e1e]">
         <p className="flex items-center gap-2">
           <span className="size-2.5 rounded-sm bg-[#ffd54a]" aria-hidden />
@@ -104,8 +98,7 @@ function TrendTooltip({
         </p>
         <p className="flex items-center gap-2">
           <span className="size-2.5 rounded-full bg-[#ff6b00]" aria-hidden />
-          {revenueLegend}:{" "}
-          {formatMoneyAmount(Number(revenue?.value ?? 0), "AMD", locale)}
+          {revenueLegend}: {formatMoneyAmount(Number(revenue?.value ?? 0), 'AMD', locale)}
         </p>
       </div>
     </div>
@@ -122,13 +115,7 @@ function revenueTick(value: number): string {
   return String(Math.round(value));
 }
 
-export function AnalyticsTrendChart({
-  rows,
-  from,
-  to,
-  locale,
-  copy,
-}: AnalyticsTrendChartProps) {
+export function AnalyticsTrendChart({ rows, from, to, locale, copy }: AnalyticsTrendChartProps) {
   const data = useMemo(() => buildSeries(rows, from, to), [rows, from, to]);
   const [ready, setReady] = useState(false);
 
@@ -147,11 +134,7 @@ export function AnalyticsTrendChart({
   }
 
   return (
-    <div
-      className="h-[300px] w-full"
-      role="img"
-      aria-label={copy.chartAria}
-    >
+    <div className="h-[300px] w-full" role="img" aria-label={copy.chartAria}>
       <ResponsiveContainer width="100%" height="100%" debounce={50}>
         <ComposedChart
           data={data}
@@ -169,17 +152,13 @@ export function AnalyticsTrendChart({
             </linearGradient>
           </defs>
 
-          <CartesianGrid
-            strokeDasharray="3 8"
-            vertical={false}
-            stroke="rgba(30,30,30,0.1)"
-          />
+          <CartesianGrid strokeDasharray="3 8" vertical={false} stroke="rgba(30,30,30,0.1)" />
 
           <XAxis
             dataKey="label"
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "rgba(30,30,30,0.45)", fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: 'rgba(30,30,30,0.45)', fontSize: 11, fontWeight: 600 }}
             dy={8}
             minTickGap={16}
           />
@@ -191,7 +170,7 @@ export function AnalyticsTrendChart({
             tickLine={false}
             axisLine={false}
             width={36}
-            tick={{ fill: "rgba(30,30,30,0.4)", fontSize: 11 }}
+            tick={{ fill: 'rgba(30,30,30,0.4)', fontSize: 11 }}
           />
 
           <YAxis
@@ -201,11 +180,11 @@ export function AnalyticsTrendChart({
             axisLine={false}
             width={44}
             tickFormatter={revenueTick}
-            tick={{ fill: "#ff6b00", fontSize: 11, fontWeight: 600 }}
+            tick={{ fill: '#ff6b00', fontSize: 11, fontWeight: 600 }}
           />
 
           <Tooltip
-            cursor={{ fill: "rgba(255,213,74,0.12)" }}
+            cursor={{ fill: 'rgba(255,213,74,0.12)' }}
             content={
               <TrendTooltip
                 locale={locale}
@@ -254,14 +233,14 @@ export function AnalyticsTrendChart({
             strokeWidth={3}
             dot={{
               r: 5,
-              fill: "#ff6b00",
-              stroke: "#fff8e7",
+              fill: '#ff6b00',
+              stroke: '#fff8e7',
               strokeWidth: 2,
             }}
             activeDot={{
               r: 7,
-              fill: "#ff6b00",
-              stroke: "#1e1e1e",
+              fill: '#ff6b00',
+              stroke: '#1e1e1e',
               strokeWidth: 2,
             }}
             isAnimationActive={false}

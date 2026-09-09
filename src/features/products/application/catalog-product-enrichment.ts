@@ -1,13 +1,13 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, eq, inArray, or } from "drizzle-orm";
+import { and, asc, eq, inArray, or } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { mediaAssets, products } from "@/db/schema";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
-import type { CatalogProduct } from "@/features/products/types";
-import type { Locale } from "@/lib/i18n/config";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+import { getDb } from '@/db/client';
+import { mediaAssets, products } from '@/db/schema';
+import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
+import type { CatalogProduct } from '@/features/products/types';
+import type { Locale } from '@/lib/i18n/config';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 function toCatalogProduct(
   product: typeof products.$inferSelect,
@@ -15,7 +15,7 @@ function toCatalogProduct(
   imageUrl: string | null = null,
 ): Omit<
   CatalogProduct,
-  "priceAmount" | "compareAtAmount" | "discountPercent" | "listPriceAmount"
+  'priceAmount' | 'compareAtAmount' | 'discountPercent' | 'listPriceAmount'
 > | null {
   const translation = product.translations[locale] ?? product.translations.hy;
   if (!translation) {
@@ -31,9 +31,7 @@ function toCatalogProduct(
   };
 }
 
-async function loadPrimaryProductImages(
-  productIds: string[],
-): Promise<Map<string, string>> {
+async function loadPrimaryProductImages(productIds: string[]): Promise<Map<string, string>> {
   const map = new Map<string, string>();
   if (productIds.length === 0) {
     return map;
@@ -51,8 +49,8 @@ async function loadPrimaryProductImages(
     .where(
       and(
         inArray(mediaAssets.productId, productIds),
-        eq(mediaAssets.uploadStatus, "READY"),
-        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, "PRIMARY")),
+        eq(mediaAssets.uploadStatus, 'READY'),
+        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, 'PRIMARY')),
       ),
     )
     .orderBy(asc(mediaAssets.sortOrder));
@@ -86,11 +84,7 @@ export async function enrichCatalogProducts(
 
   return rows
     .map((product) => {
-      const base = toCatalogProduct(
-        product,
-        locale,
-        images.get(product.id) ?? null,
-      );
+      const base = toCatalogProduct(product, locale, images.get(product.id) ?? null);
       if (!base) return null;
 
       const resolved = prices.get(product.id);

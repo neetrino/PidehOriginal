@@ -1,11 +1,11 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, eq, inArray, or } from "drizzle-orm";
+import { and, asc, eq, inArray, or } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { mediaAssets } from "@/db/schema";
-import { resolveOrderItemImageObjectKey } from "@/features/orders/domain/order-item-image";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+import { getDb } from '@/db/client';
+import { mediaAssets } from '@/db/schema';
+import { resolveOrderItemImageObjectKey } from '@/features/orders/domain/order-item-image';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 /**
  * Loads READY primary image object keys keyed by product id.
@@ -29,8 +29,8 @@ export async function loadPrimaryProductImageObjectKeys(
     .where(
       and(
         inArray(mediaAssets.productId, uniqueIds),
-        eq(mediaAssets.uploadStatus, "READY"),
-        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, "PRIMARY")),
+        eq(mediaAssets.uploadStatus, 'READY'),
+        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, 'PRIMARY')),
       ),
     )
     .orderBy(asc(mediaAssets.sortOrder));

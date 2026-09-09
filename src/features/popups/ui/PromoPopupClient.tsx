@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import type { StorefrontPopup } from "@/features/popups/application/queries";
-import { PromoPopupModal } from "@/features/popups/ui/PromoPopupModal";
+import type { StorefrontPopup } from '@/features/popups/application/queries';
+import { PromoPopupModal } from '@/features/popups/ui/PromoPopupModal';
 
-const DISMISS_STORAGE_PREFIX = "ws_popup_dismissed:";
+const DISMISS_STORAGE_PREFIX = 'ws_popup_dismissed:';
 
 type PromoPopupClientProps = {
   popup: StorefrontPopup;
@@ -14,7 +14,7 @@ type PromoPopupClientProps = {
 
 function isDismissed(popupId: string): boolean {
   try {
-    return sessionStorage.getItem(`${DISMISS_STORAGE_PREFIX}${popupId}`) === "1";
+    return sessionStorage.getItem(`${DISMISS_STORAGE_PREFIX}${popupId}`) === '1';
   } catch {
     return false;
   }
@@ -22,17 +22,14 @@ function isDismissed(popupId: string): boolean {
 
 function markDismissed(popupId: string): void {
   try {
-    sessionStorage.setItem(`${DISMISS_STORAGE_PREFIX}${popupId}`, "1");
+    sessionStorage.setItem(`${DISMISS_STORAGE_PREFIX}${popupId}`, '1');
   } catch {
     // Ignore quota / private-mode failures; popup may reappear this session.
   }
 }
 
 /** Opens the active promo popup once per browser session. */
-export function PromoPopupClient({
-  popup,
-  closeLabel,
-}: PromoPopupClientProps) {
+export function PromoPopupClient({ popup, closeLabel }: PromoPopupClientProps) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

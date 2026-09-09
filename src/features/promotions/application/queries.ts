@@ -1,16 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, count, desc, eq, ilike, inArray, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, type SQL } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import {
-  categories,
-  products,
-  promotionUsers,
-  promotions,
-  users,
-} from "@/db/schema";
-import type { AdminPromotionsFilter } from "@/features/promotions/schemas/admin-promotions";
+import { getDb } from '@/db/client';
+import { categories, products, promotionUsers, promotions, users } from '@/db/schema';
+import type { AdminPromotionsFilter } from '@/features/promotions/schemas/admin-promotions';
 
 const PAGE_SIZE = 20;
 const USER_OPTIONS_LIMIT = 200;
@@ -40,9 +34,7 @@ export type CouponUserOption = {
 };
 
 /** Lists promotions for the admin coupons/discounts surface. */
-export async function listAdminPromotions(
-  filters: AdminPromotionsFilter,
-): Promise<{
+export async function listAdminPromotions(filters: AdminPromotionsFilter): Promise<{
   rows: AdminPromotionListItem[];
   total: number;
   pageSize: number;
@@ -53,9 +45,9 @@ export async function listAdminPromotions(
     conditions.push(eq(promotions.kind, filters.kind));
   }
 
-  if (filters.active === "true") {
+  if (filters.active === 'true') {
     conditions.push(eq(promotions.isActive, true));
-  } else if (filters.active === "false") {
+  } else if (filters.active === 'false') {
     conditions.push(eq(promotions.isActive, false));
   }
 
@@ -91,9 +83,7 @@ export async function listAdminPromotions(
     getDb().select({ value: count() }).from(promotions).where(where),
   ]);
 
-  const userIdsByPromotion = await listPromotionUserIds(
-    rows.map((row) => row.id),
-  );
+  const userIdsByPromotion = await listPromotionUserIds(rows.map((row) => row.id));
 
   return {
     rows: rows.map((row) => ({
@@ -107,19 +97,13 @@ export async function listAdminPromotions(
 
 /** Loads one promotion by id for the admin editor. */
 export async function getAdminPromotionById(id: string) {
-  const [row] = await getDb()
-    .select()
-    .from(promotions)
-    .where(eq(promotions.id, id))
-    .limit(1);
+  const [row] = await getDb().select().from(promotions).where(eq(promotions.id, id)).limit(1);
 
   return row ?? null;
 }
 
 /** Allowlisted user IDs for the given promotions (empty = unrestricted). */
-export async function listPromotionUserIds(
-  promotionIds: string[],
-): Promise<Map<string, string[]>> {
+export async function listPromotionUserIds(promotionIds: string[]): Promise<Map<string, string[]>> {
   const map = new Map<string, string[]>();
   if (promotionIds.length === 0) return map;
 
@@ -158,7 +142,7 @@ export async function listCouponUserOptions(
       lastName: users.lastName,
     })
     .from(users)
-    .where(eq(users.status, "ACTIVE"))
+    .where(eq(users.status, 'ACTIVE'))
     .orderBy(asc(users.firstName), asc(users.lastName), asc(users.email))
     .limit(USER_OPTIONS_LIMIT);
 
@@ -197,11 +181,7 @@ export async function listCouponUserOptions(
   return [...byId.values()].sort((a, b) => a.label.localeCompare(b.label));
 }
 
-function formatUserOptionLabel(
-  firstName: string,
-  lastName: string,
-  email: string,
-): string {
+function formatUserOptionLabel(firstName: string, lastName: string, email: string): string {
   const name = `${firstName} ${lastName}`.trim();
   return name.length > 0 ? `${name} (${email})` : email;
 }
@@ -218,9 +198,7 @@ export type UserAssignedCoupon = {
 };
 
 /** Coupons explicitly allowlisted for a user (empty allowlist = unrestricted, not listed). */
-export async function listCouponsAssignedToUser(
-  userId: string,
-): Promise<UserAssignedCoupon[]> {
+export async function listCouponsAssignedToUser(userId: string): Promise<UserAssignedCoupon[]> {
   const rows = await getDb()
     .select({
       id: promotions.id,
@@ -234,12 +212,7 @@ export async function listCouponsAssignedToUser(
     })
     .from(promotionUsers)
     .innerJoin(promotions, eq(promotionUsers.promotionId, promotions.id))
-    .where(
-      and(
-        eq(promotionUsers.userId, userId),
-        eq(promotions.kind, "COUPON"),
-      ),
-    )
+    .where(and(eq(promotionUsers.userId, userId), eq(promotions.kind, 'COUPON')))
     .orderBy(desc(promotions.createdAt));
 
   return rows.flatMap((row) => {
@@ -288,17 +261,11 @@ export async function listPromotionTargetOptions(): Promise<{
     products: productRows.map((product) => ({
       id: product.id,
       sku: product.sku,
-      title:
-        product.translations.en?.title ??
-        product.translations.hy?.title ??
-        product.sku,
+      title: product.translations.en?.title ?? product.translations.hy?.title ?? product.sku,
     })),
     categories: categoryRows.map((category) => ({
       id: category.id,
-      title:
-        category.translations.en?.title ??
-        category.translations.hy?.title ??
-        category.id,
+      title: category.translations.en?.title ?? category.translations.hy?.title ?? category.id,
     })),
   };
 }

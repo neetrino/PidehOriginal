@@ -152,7 +152,12 @@
     "en": {
       "name": "Combo «We're very hungry»",
       "description": "4 pepperoni pides + 4 classic cheese pides + fries + chicken popcorn",
-      "ingredients": ["4 pepperoni pides", "4 classic cheese pides", "French fries", "Chicken popcorn"]
+      "ingredients": [
+        "4 pepperoni pides",
+        "4 classic cheese pides",
+        "French fries",
+        "Chicken popcorn"
+      ]
     }
   },
   "Комбо «Я один»": {

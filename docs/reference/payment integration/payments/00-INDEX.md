@@ -17,34 +17,34 @@
 
 ### Карточные платежи (банки)
 
-| Документ | Провайдер | Тип | Особенности |
-|----------|-----------|-----|-------------|
-| [AMERIABANK-INTEGRATION.md](AMERIABANK-INTEGRATION.md) | Ameriabank vPOS 3.1 | Карта | Собственный API; AMD/USD/EUR/RUB; Cancel 72h + Refund |
-| [ARCA-INTEGRATION.md](ARCA-INTEGRATION.md) | Arca (IDBank, Inecobank, ACBA…) | Карта | Единый Arca API для нескольких банков; AMD/USD/EUR/RUB |
+| Документ                                               | Провайдер                       | Тип   | Особенности                                            |
+| ------------------------------------------------------ | ------------------------------- | ----- | ------------------------------------------------------ |
+| [AMERIABANK-INTEGRATION.md](AMERIABANK-INTEGRATION.md) | Ameriabank vPOS 3.1             | Карта | Собственный API; AMD/USD/EUR/RUB; Cancel 72h + Refund  |
+| [ARCA-INTEGRATION.md](ARCA-INTEGRATION.md)             | Arca (IDBank, Inecobank, ACBA…) | Карта | Единый Arca API для нескольких банков; AMD/USD/EUR/RUB |
 
 ### Электронные кошельки
 
-| Документ | Провайдер | Тип | Особенности |
-|----------|-----------|-----|-------------|
-| [IDRAM-INTEGRATION.md](IDRAM-INTEGRATION.md) | Idram | Кошелёк | Form POST; 2 server callback; checksum; только AMD |
-| [TELCELL-INTEGRATION.md](TELCELL-INTEGRATION.md) | Telcell Money | Кошелёк | GET redirect; server callback; checksum; только AMD |
-| [FASTSHIFT-INTEGRATION.md](FASTSHIFT-INTEGRATION.md) | FastShift | Кошелёк | Register order + GUID; Bearer token; только AMD |
+| Документ                                             | Провайдер     | Тип     | Особенности                                         |
+| ---------------------------------------------------- | ------------- | ------- | --------------------------------------------------- |
+| [IDRAM-INTEGRATION.md](IDRAM-INTEGRATION.md)         | Idram         | Кошелёк | Form POST; 2 server callback; checksum; только AMD  |
+| [TELCELL-INTEGRATION.md](TELCELL-INTEGRATION.md)     | Telcell Money | Кошелёк | GET redirect; server callback; checksum; только AMD |
+| [FASTSHIFT-INTEGRATION.md](FASTSHIFT-INTEGRATION.md) | FastShift     | Кошелёк | Register order + GUID; Bearer token; только AMD     |
 
 ### Фискальные чеки (post-payment)
 
-| Документ | Система | Описание |
-|----------|---------|----------|
+| Документ                                   | Система                   | Описание                                                                     |
+| ------------------------------------------ | ------------------------- | ---------------------------------------------------------------------------- |
 | [EHDM-INTEGRATION.md](EHDM-INTEGRATION.md) | ЭҺДМ (ecrm.taxservice.am) | Электронные фискальные чеки ПЕК; client certificate; auto-print после оплаты |
 
 ---
 
 ## Общие документы
 
-| Документ | Описание |
-|----------|----------|
-| [01-GENERAL-RULES.md](01-GENERAL-RULES.md) | URL-конвенция, payment status, cart clearing, ENV, безопасность, admin panel, checkout UI |
-| [02-NEW-METHOD-CHECKLIST.md](02-NEW-METHOD-CHECKLIST.md) | Пошаговый чеклист для добавления нового платёжного метода (12 пунктов) |
-| [03-TESTING-GUIDE.md](03-TESTING-GUIDE.md) | Cloudflare Tunnel (`dev.neetrino.com`), per-method test flow, что проверять, troubleshooting |
+| Документ                                                 | Описание                                                                                     |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [01-GENERAL-RULES.md](01-GENERAL-RULES.md)               | URL-конвенция, payment status, cart clearing, ENV, безопасность, admin panel, checkout UI    |
+| [02-NEW-METHOD-CHECKLIST.md](02-NEW-METHOD-CHECKLIST.md) | Пошаговый чеклист для добавления нового платёжного метода (12 пунктов)                       |
+| [03-TESTING-GUIDE.md](03-TESTING-GUIDE.md)               | Cloudflare Tunnel (`dev.neetrino.com`), per-method test flow, что проверять, troubleshooting |
 
 ---
 

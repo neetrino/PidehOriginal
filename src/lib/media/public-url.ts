@@ -1,6 +1,6 @@
-import "server-only";
+import 'server-only';
 
-import { getProviders } from "@/config/providers";
+import { getProviders } from '@/config/providers';
 
 /** Resolves a stored object key to a public CDN/base URL. */
 export function mediaPublicUrl(objectKey: string): string {

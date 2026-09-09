@@ -1,9 +1,9 @@
-import "server-only";
+import 'server-only';
 
-import { asc, desc, eq } from "drizzle-orm";
+import { asc, desc, eq } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { deliveryRules } from "@/db/schema";
+import { getDb } from '@/db/client';
+import { deliveryRules } from '@/db/schema';
 
 export type AdminDeliveryLocation = {
   id: string;
@@ -32,9 +32,7 @@ function locationLabel(country: string, city: string | null): string {
 }
 
 /** Lists all delivery locations for the admin table. */
-export async function listAdminDeliveryLocations(): Promise<
-  AdminDeliveryLocation[]
-> {
+export async function listAdminDeliveryLocations(): Promise<AdminDeliveryLocation[]> {
   const rows = await getDb()
     .select({
       id: deliveryRules.id,
@@ -51,7 +49,7 @@ export async function listAdminDeliveryLocations(): Promise<
   return rows.map((row) => ({
     id: row.id,
     country: row.country,
-    city: row.city?.trim() || "",
+    city: row.city?.trim() || '',
     priceAmount: row.priceAmount,
     freeThresholdAmount: row.freeThresholdAmount,
     priority: row.priority,
@@ -59,9 +57,7 @@ export async function listAdminDeliveryLocations(): Promise<
 }
 
 /** Active delivery locations shown in the checkout location dropdown. */
-export async function listCheckoutDeliveryOptions(): Promise<
-  CheckoutDeliveryOption[]
-> {
+export async function listCheckoutDeliveryOptions(): Promise<CheckoutDeliveryOption[]> {
   const rows = await getDb()
     .select({
       id: deliveryRules.id,
@@ -75,7 +71,7 @@ export async function listCheckoutDeliveryOptions(): Promise<
     .orderBy(desc(deliveryRules.priority), asc(deliveryRules.city));
 
   return rows.map((row) => {
-    const city = row.city?.trim() || "";
+    const city = row.city?.trim() || '';
     return {
       id: row.id,
       country: row.country,

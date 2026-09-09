@@ -3,9 +3,7 @@ export type AppError = {
   message: string;
 };
 
-export type Result<T> =
-  | { ok: true; value: T }
-  | { ok: false; error: AppError };
+export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
 
 export function ok<T>(value: T): Result<T> {
   return { ok: true, value };

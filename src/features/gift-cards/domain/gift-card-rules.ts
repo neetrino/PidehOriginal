@@ -3,7 +3,7 @@
  * Face value and balances are integer AMD. Cards are not cash-exchangeable.
  */
 
-export const GIFT_CARD_CODE_PREFIX = "PID";
+export const GIFT_CARD_CODE_PREFIX = 'PID';
 export const DEFAULT_GIFT_CARD_EXPIRY_DAYS = 365;
 export const DEFAULT_GIFT_CARD_PRESETS = [10_000, 20_000, 50_000] as const;
 export const DEFAULT_GIFT_CARD_MIN_AMOUNT = 1_000;
@@ -24,12 +24,7 @@ export const DEFAULT_GIFT_CARD_SETTINGS: GiftCardSettings = {
   defaultExpiryDays: DEFAULT_GIFT_CARD_EXPIRY_DAYS,
 };
 
-export type GiftCardStatus =
-  | "PENDING_PAYMENT"
-  | "ACTIVE"
-  | "USED"
-  | "EXPIRED"
-  | "DISABLED";
+export type GiftCardStatus = 'PENDING_PAYMENT' | 'ACTIVE' | 'USED' | 'EXPIRED' | 'DISABLED';
 
 export type GiftCardRedeemPreview = {
   giftCardId: string;
@@ -43,24 +38,14 @@ export type GiftCardRedeemPreview = {
 
 /** Normalize gift card codes for lookup (uppercase, strip spaces). */
 export function normalizeGiftCardCode(raw: string): string {
-  return raw.trim().toUpperCase().replace(/\s+/g, "");
+  return raw.trim().toUpperCase().replace(/\s+/g, '');
 }
 
-export function isValidGiftCardAmount(
-  amount: number,
-  settings: GiftCardSettings,
-): boolean {
-  return (
-    Number.isInteger(amount) &&
-    amount >= settings.minAmount &&
-    amount <= settings.maxAmount
-  );
+export function isValidGiftCardAmount(amount: number, settings: GiftCardSettings): boolean {
+  return Number.isInteger(amount) && amount >= settings.minAmount && amount <= settings.maxAmount;
 }
 
-export function resolveGiftCardExpiresAt(
-  now: Date,
-  expiryDays: number | null,
-): Date | null {
+export function resolveGiftCardExpiresAt(now: Date, expiryDays: number | null): Date | null {
   if (expiryDays == null || expiryDays <= 0) {
     return null;
   }
@@ -81,10 +66,7 @@ export function calculateGiftCardRedeemAmount(input: {
   return Math.min(balanceAmount, payableBeforeGiftCard);
 }
 
-export function nextGiftCardBalance(
-  currentBalance: number,
-  delta: number,
-): number {
+export function nextGiftCardBalance(currentBalance: number, delta: number): number {
   return Math.max(0, currentBalance + delta);
 }
 
@@ -93,16 +75,16 @@ export function resolveGiftCardStatusAfterBalance(
   currentStatus: GiftCardStatus,
 ): GiftCardStatus {
   if (
-    currentStatus === "DISABLED" ||
-    currentStatus === "EXPIRED" ||
-    currentStatus === "PENDING_PAYMENT"
+    currentStatus === 'DISABLED' ||
+    currentStatus === 'EXPIRED' ||
+    currentStatus === 'PENDING_PAYMENT'
   ) {
     return currentStatus;
   }
   if (balanceAmount <= 0) {
-    return "USED";
+    return 'USED';
   }
-  return "ACTIVE";
+  return 'ACTIVE';
 }
 
 export function isGiftCardRedeemable(input: {
@@ -112,7 +94,7 @@ export function isGiftCardRedeemable(input: {
   now?: Date;
 }): boolean {
   const now = input.now ?? new Date();
-  if (input.status !== "ACTIVE") {
+  if (input.status !== 'ACTIVE') {
     return false;
   }
   if (input.balanceAmount <= 0) {
@@ -135,10 +117,7 @@ export function giftCardLedgerTargetNet(input: {
   if (input.giftCardAmount <= 0) {
     return 0;
   }
-  if (
-    input.orderStatus === "CANCELLED" ||
-    input.orderStatus === "REFUNDED"
-  ) {
+  if (input.orderStatus === 'CANCELLED' || input.orderStatus === 'REFUNDED') {
     return 0;
   }
   return -input.giftCardAmount;
@@ -156,10 +135,7 @@ export function isGiftCardRecipientActor(input: {
   if (!input.actor) {
     return false;
   }
-  if (
-    input.recipientUserId != null &&
-    input.actor.id === input.recipientUserId
-  ) {
+  if (input.recipientUserId != null && input.actor.id === input.recipientUserId) {
     return true;
   }
   const actorEmail = input.actor.email.trim().toLowerCase();
@@ -168,21 +144,18 @@ export function isGiftCardRecipientActor(input: {
 }
 
 /** Profile gift-card filter buckets (mutually exclusive). */
-export type CustomerGiftCardBucket = "mine" | "usedByMe" | "boughtForOthers";
+export type CustomerGiftCardBucket = 'mine' | 'usedByMe' | 'boughtForOthers';
 
 function isGiftCardPurchaserActor(input: {
   actor: { id: string; email: string };
   purchaserUserId: string | null;
   purchaserEmail: string | null;
 }): boolean {
-  if (
-    input.purchaserUserId != null &&
-    input.actor.id === input.purchaserUserId
-  ) {
+  if (input.purchaserUserId != null && input.actor.id === input.purchaserUserId) {
     return true;
   }
   const actorEmail = input.actor.email.trim().toLowerCase();
-  const purchaserEmail = input.purchaserEmail?.trim().toLowerCase() ?? "";
+  const purchaserEmail = input.purchaserEmail?.trim().toLowerCase() ?? '';
   return actorEmail.length > 0 && actorEmail === purchaserEmail;
 }
 
@@ -213,17 +186,17 @@ export function resolveCustomerGiftCardBucket(input: {
   });
 
   if (isPurchaser && !isRecipient) {
-    return "boughtForOthers";
+    return 'boughtForOthers';
   }
 
   if (isRecipient) {
-    if (input.status === "USED" || input.balanceAmount <= 0) {
-      return "usedByMe";
+    if (input.status === 'USED' || input.balanceAmount <= 0) {
+      return 'usedByMe';
     }
-    return "mine";
+    return 'mine';
   }
 
-  return "boughtForOthers";
+  return 'boughtForOthers';
 }
 
 /** User-facing reason when a gift card cannot be applied at checkout. */
@@ -233,37 +206,34 @@ export function giftCardRedeemErrorMessage(input: {
   balanceAmount?: number;
   expiresAt?: Date | null;
   now?: Date;
-  recipientDenied?: "unauthenticated" | "mismatch";
+  recipientDenied?: 'unauthenticated' | 'mismatch';
 }): string {
-  if (input.recipientDenied === "unauthenticated") {
-    return "Sign in with the recipient account to use this gift card.";
+  if (input.recipientDenied === 'unauthenticated') {
+    return 'Sign in with the recipient account to use this gift card.';
   }
-  if (input.recipientDenied === "mismatch") {
-    return "This gift card can only be used by the recipient.";
+  if (input.recipientDenied === 'mismatch') {
+    return 'This gift card can only be used by the recipient.';
   }
   if (!input.found || input.status == null) {
-    return "Gift card code was not found.";
+    return 'Gift card code was not found.';
   }
   const now = input.now ?? new Date();
-  if (input.status === "PENDING_PAYMENT") {
-    return "Gift card is pending payment and cannot be used yet.";
+  if (input.status === 'PENDING_PAYMENT') {
+    return 'Gift card is pending payment and cannot be used yet.';
   }
-  if (input.status === "DISABLED") {
-    return "Gift card is disabled.";
+  if (input.status === 'DISABLED') {
+    return 'Gift card is disabled.';
   }
-  if (input.status === "EXPIRED") {
-    return "Gift card has expired.";
+  if (input.status === 'EXPIRED') {
+    return 'Gift card has expired.';
   }
-  if (
-    input.expiresAt != null &&
-    input.expiresAt.getTime() <= now.getTime()
-  ) {
-    return "Gift card has expired.";
+  if (input.expiresAt != null && input.expiresAt.getTime() <= now.getTime()) {
+    return 'Gift card has expired.';
   }
-  if (input.status === "USED" || (input.balanceAmount ?? 0) <= 0) {
-    return "Gift card has no remaining balance.";
+  if (input.status === 'USED' || (input.balanceAmount ?? 0) <= 0) {
+    return 'Gift card has no remaining balance.';
   }
-  return "Gift card is invalid, expired, or empty.";
+  return 'Gift card is invalid, expired, or empty.';
 }
 
 /**
@@ -275,10 +245,7 @@ export function bonusEligibleAfterGiftCard(input: {
   discountAmount: number;
   giftCardAmount: number;
 }): number {
-  const merchandise = Math.max(
-    0,
-    input.subtotalAmount - input.discountAmount,
-  );
+  const merchandise = Math.max(0, input.subtotalAmount - input.discountAmount);
   return Math.max(0, merchandise - Math.min(input.giftCardAmount, merchandise));
 }
 

@@ -1,21 +1,21 @@
-import "server-only";
+import 'server-only';
 
-import { STORE_PICKUP_LABEL } from "@/features/checkout/domain/shipping-methods";
+import { STORE_PICKUP_LABEL } from '@/features/checkout/domain/shipping-methods';
 import {
   loadOrderGroupParticipants,
   type AdminOrderParticipantView,
-} from "@/features/orders/application/order-group-participants";
+} from '@/features/orders/application/order-group-participants';
 import {
   loadPrimaryProductImageObjectKeys,
   resolveOrderItemImageUrl,
-} from "@/features/orders/application/order-item-images";
+} from '@/features/orders/application/order-item-images';
 import {
   getAdminOrderByNumber,
   type AdminOrderDetail,
-} from "@/features/orders/application/queries";
-import { getStoreIdentity } from "@/features/settings/application/queries";
-import type { Locale } from "@/lib/i18n/config";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+} from '@/features/orders/application/queries';
+import { getStoreIdentity } from '@/features/settings/application/queries';
+import type { Locale } from '@/lib/i18n/config';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 export type { AdminOrderParticipantView };
 
@@ -30,7 +30,7 @@ export type AdminOrderDetailItemView = {
   currency: string;
   modifiers: Array<{
     id: string;
-    kind: "ADDITION" | "EXCEPTION";
+    kind: 'ADDITION' | 'EXCEPTION';
     name: string;
     unitPriceAmount: number;
   }>;
@@ -70,9 +70,7 @@ export type AdminOrderDetailView = {
   items: AdminOrderDetailItemView[];
 };
 
-function formatAddressLine(
-  address: AdminOrderDetail["order"]["shippingAddress"],
-): string {
+function formatAddressLine(address: AdminOrderDetail['order']['shippingAddress']): string {
   const parts = [
     address.line1,
     address.line2,
@@ -82,19 +80,19 @@ function formatAddressLine(
     address.countryCode,
   ].filter((part): part is string => Boolean(part && part.trim()));
 
-  return parts.join(", ");
+  return parts.join(', ');
 }
 
 function paymentMethodLabel(method: string): string {
   const normalized = method.toUpperCase();
-  if (normalized === "COD" || normalized === "CASH") {
-    return "Cash";
+  if (normalized === 'COD' || normalized === 'CASH') {
+    return 'Cash';
   }
-  if (normalized === "IDRAM") {
-    return "Idram";
+  if (normalized === 'IDRAM') {
+    return 'Idram';
   }
-  if (normalized === "ARCA") {
-    return "ArCa";
+  if (normalized === 'ARCA') {
+    return 'ArCa';
   }
   return method;
 }
@@ -129,13 +127,9 @@ export function toAdminOrderDetailView(
     couponCode: order.promotionCodeSnapshot,
     isPickup,
     storeName,
-    shippingMethod: isPickup
-      ? "pickup"
-      : (order.deliveryLabelSnapshot ?? "delivery"),
+    shippingMethod: isPickup ? 'pickup' : (order.deliveryLabelSnapshot ?? 'delivery'),
     addressLine: formatAddressLine(order.shippingAddress),
-    addressHint: isPickup
-      ? "You can pick up your order at this store"
-      : null,
+    addressHint: isPickup ? 'You can pick up your order at this store' : null,
     floor: order.shippingAddress.floor?.trim() || null,
     intercomCode: order.shippingAddress.intercomCode?.trim() || null,
     scheduledDelivery:
@@ -143,20 +137,17 @@ export function toAdminOrderDetailView(
       order.shippingAddress.scheduledDeliveryStart &&
       order.shippingAddress.scheduledDeliveryEnd
         ? `${order.shippingAddress.scheduledDeliveryDate} ${order.shippingAddress.scheduledDeliveryStart}–${order.shippingAddress.scheduledDeliveryEnd}`
-        : order.deliveryEstimateSnapshot &&
-            /\d{4}-\d{2}-\d{2}/.test(order.deliveryEstimateSnapshot)
+        : order.deliveryEstimateSnapshot && /\d{4}-\d{2}-\d{2}/.test(order.deliveryEstimateSnapshot)
           ? order.deliveryEstimateSnapshot
           : null,
     cashChangeAmount:
-      typeof order.shippingAddress.cashChangeAmount === "number"
+      typeof order.shippingAddress.cashChangeAmount === 'number'
         ? order.shippingAddress.cashChangeAmount
         : null,
     cashChangeImageUrl: order.shippingAddress.cashChangeImageKey
       ? mediaPublicUrl(order.shippingAddress.cashChangeImageKey)
       : null,
-    paymentMethod: latestPayment
-      ? paymentMethodLabel(latestPayment.method)
-      : "—",
+    paymentMethod: latestPayment ? paymentMethodLabel(latestPayment.method) : '—',
     paymentAmount: latestPayment?.amount ?? order.totalAmount,
     participants,
     items: items.map((item) => ({

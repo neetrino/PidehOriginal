@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { isLocale, locales, type Locale } from "@/lib/i18n/config";
+import { isLocale, locales, type Locale } from '@/lib/i18n/config';
 
 type LocaleLayoutProps = {
   children: React.ReactNode;
@@ -11,10 +11,7 @@ export function generateStaticParams(): Array<{ locale: Locale }> {
   return locales.map((locale) => ({ locale }));
 }
 
-export default async function LocaleLayout({
-  children,
-  params,
-}: LocaleLayoutProps) {
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale: rawLocale } = await params;
 
   if (!isLocale(rawLocale)) {

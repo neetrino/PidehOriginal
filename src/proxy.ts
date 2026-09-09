@@ -1,11 +1,11 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-import { defaultLocale, isLocale } from "@/lib/i18n/config";
+import { defaultLocale, isLocale } from '@/lib/i18n/config';
 
 function nextWithPathname(request: NextRequest, pathname: string): NextResponse {
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-pathname", pathname);
+  requestHeaders.set('x-pathname', pathname);
   return NextResponse.next({
     request: { headers: requestHeaders },
   });
@@ -14,15 +14,11 @@ function nextWithPathname(request: NextRequest, pathname: string): NextResponse 
 export function proxy(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
 
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    pathname.includes(".")
-  ) {
+  if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname.includes('.')) {
     return nextWithPathname(request, pathname);
   }
 
-  const pathLocale = pathname.split("/")[1];
+  const pathLocale = pathname.split('/')[1];
 
   if (pathLocale && isLocale(pathLocale)) {
     return nextWithPathname(request, pathname);
@@ -30,12 +26,12 @@ export function proxy(request: NextRequest): NextResponse {
 
   const url = request.nextUrl.clone();
   url.pathname =
-    pathname === "/"
+    pathname === '/'
       ? `/${defaultLocale}`
-      : `/${defaultLocale}${pathname.startsWith("/") ? pathname : `/${pathname}`}`;
+      : `/${defaultLocale}${pathname.startsWith('/') ? pathname : `/${pathname}`}`;
   return NextResponse.redirect(url);
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

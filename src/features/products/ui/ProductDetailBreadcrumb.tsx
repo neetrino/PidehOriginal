@@ -1,7 +1,7 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import { AppLink } from "@/components/ui/AppLink";
-import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+import { AppLink } from '@/components/ui/AppLink';
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 
 type ProductDetailBreadcrumbProps = {
   catalogHref: string;

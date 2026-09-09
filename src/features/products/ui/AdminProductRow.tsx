@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { Copy, Pencil, Star, Trash2 } from "lucide-react";
+import { Copy, Pencil, Star, Trash2 } from 'lucide-react';
 
 import {
   ADMIN_TABLE_ROW,
   ADMIN_TABLE_TD,
   ADMIN_TABLE_TD_CHECK,
   ADMIN_TABLE_CHECKBOX,
-} from "@/features/admin/ui/admin-table-classes";
-import type { AdminProductListItem } from "@/features/products/application/list-admin-products";
-import { formatMoneyAmount } from "@/lib/money/format";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/admin/ui/admin-table-classes';
+import type { AdminProductListItem } from '@/features/products/application/list-admin-products';
+import { formatMoneyAmount } from '@/lib/money/format';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type RowCopy = {
-  table: Dictionary["admin"]["products"]["table"];
-  common: Pick<Dictionary["admin"]["common"], "na" | "none">;
+  table: Dictionary['admin']['products']['table'];
+  common: Pick<Dictionary['admin']['common'], 'na' | 'none'>;
 };
 
 type AdminProductRowProps = {
@@ -44,7 +44,7 @@ export function AdminProductRow({
   onVisibility,
   copy,
 }: AdminProductRowProps) {
-  const isActive = product.status === "ACTIVE";
+  const isActive = product.status === 'ACTIVE';
   const created = new Date(product.createdAt);
   const createdLabel = `${created.getDate()}/${created.getMonth() + 1}/${created.getFullYear()}`;
 
@@ -57,7 +57,7 @@ export function AdminProductRow({
           checked={selected}
           onChange={onToggle}
           disabled={disabled}
-          aria-label={copy.table.selectOneAria.replace("{title}", product.title)}
+          aria-label={copy.table.selectOneAria.replace('{title}', product.title)}
         />
       </td>
       <td className={ADMIN_TABLE_TD}>
@@ -65,11 +65,7 @@ export function AdminProductRow({
           <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded bg-gray-100">
             {product.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element -- admin thumb
-              <img
-                src={product.imageUrl}
-                alt=""
-                className="h-full w-full object-cover"
-              />
+              <img src={product.imageUrl} alt="" className="h-full w-full object-cover" />
             ) : (
               <span className="text-[10px] text-gray-400">{copy.common.na}</span>
             )}
@@ -82,27 +78,24 @@ export function AdminProductRow({
       </td>
       <td className={ADMIN_TABLE_TD}>
         <span className="text-gray-900">
-          {copy.table.stockPcs.replace("{count}", String(product.stockOnHand))}
+          {copy.table.stockPcs.replace('{count}', String(product.stockOnHand))}
         </span>
       </td>
       <td className={ADMIN_TABLE_TD}>
         <div className="flex flex-col">
           <span className="font-medium text-gray-900">
-            {formatMoneyAmount(product.priceAmount, "AMD", locale)}
+            {formatMoneyAmount(product.priceAmount, 'AMD', locale)}
           </span>
-          {product.compareAtAmount != null &&
-          product.compareAtAmount > product.priceAmount ? (
+          {product.compareAtAmount != null && product.compareAtAmount > product.priceAmount ? (
             <span className="text-xs text-gray-400 line-through">
-              {formatMoneyAmount(product.compareAtAmount, "AMD", locale)}
+              {formatMoneyAmount(product.compareAtAmount, 'AMD', locale)}
             </span>
           ) : null}
         </div>
       </td>
       <td className={ADMIN_TABLE_TD}>
         <span className="line-clamp-2 max-w-[160px] text-gray-700">
-          {product.categoryLabels.length > 0
-            ? product.categoryLabels.join(", ")
-            : copy.common.none}
+          {product.categoryLabels.length > 0 ? product.categoryLabels.join(', ') : copy.common.none}
         </span>
       </td>
       <td className={ADMIN_TABLE_TD}>
@@ -111,12 +104,10 @@ export function AdminProductRow({
           disabled={disabled}
           onClick={onFeatured}
           className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-amber-500"
-          aria-label={
-            product.isFeatured ? copy.table.unfeatureAria : copy.table.featureAria
-          }
+          aria-label={product.isFeatured ? copy.table.unfeatureAria : copy.table.featureAria}
         >
           <Star
-            className={`h-4 w-4 ${product.isFeatured ? "fill-amber-400 text-amber-400" : ""}`}
+            className={`h-4 w-4 ${product.isFeatured ? 'fill-amber-400 text-amber-400' : ''}`}
           />
         </button>
       </td>
@@ -126,7 +117,7 @@ export function AdminProductRow({
             type="button"
             onClick={onEdit}
             className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={copy.table.editAria.replace("{title}", product.title)}
+            aria-label={copy.table.editAria.replace('{title}', product.title)}
           >
             <Pencil className="h-4 w-4" />
           </button>
@@ -135,7 +126,7 @@ export function AdminProductRow({
             disabled={disabled}
             onClick={onDuplicate}
             className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={copy.table.duplicateAria.replace("{title}", product.title)}
+            aria-label={copy.table.duplicateAria.replace('{title}', product.title)}
           >
             <Copy className="h-4 w-4" />
           </button>
@@ -144,7 +135,7 @@ export function AdminProductRow({
             disabled={disabled}
             onClick={onDelete}
             className="rounded p-1.5 text-red-600 hover:bg-red-50"
-            aria-label={copy.table.deleteAria.replace("{title}", product.title)}
+            aria-label={copy.table.deleteAria.replace('{title}', product.title)}
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -155,13 +146,13 @@ export function AdminProductRow({
             disabled={disabled}
             onClick={onVisibility}
             className={`relative ml-1 h-5 w-9 rounded-full transition-colors ${
-              isActive ? "bg-green-500" : "bg-gray-300"
+              isActive ? 'bg-green-500' : 'bg-gray-300'
             }`}
             aria-label={isActive ? copy.table.deactivateAria : copy.table.activateAria}
           >
             <span
               className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
-                isActive ? "translate-x-4" : "translate-x-0"
+                isActive ? 'translate-x-4' : 'translate-x-0'
               }`}
             />
           </button>

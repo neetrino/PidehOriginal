@@ -1,38 +1,35 @@
-"use server";
+'use server';
 
-import { eq, inArray } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { eq, inArray } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
-import { auditLogs, promotionUsers, promotions, users } from "@/db/schema";
-import { withTransaction, type DbTransaction } from "@/db/transaction";
+import { auditLogs, promotionUsers, promotions, users } from '@/db/schema';
+import { withTransaction, type DbTransaction } from '@/db/transaction';
 import {
   normalizePromotionCode,
   promotionRuleErrorMessage,
   validatePromotionRules,
-} from "@/features/promotions/domain/promotion-rules";
+} from '@/features/promotions/domain/promotion-rules';
 import {
   togglePromotionSchema,
   upsertPromotionSchema,
   type TogglePromotionInput,
   type UpsertPromotionInput,
-} from "@/features/promotions/schemas/admin-promotions";
-import { requireAdmin } from "@/lib/auth/policies";
-import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
-import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { err, ok, type Result } from "@/lib/result";
+} from '@/features/promotions/schemas/admin-promotions';
+import { requireAdmin } from '@/lib/auth/policies';
+import { invalidateProductsCache } from '@/lib/cache/invalidate-public';
+import { createId } from '@/lib/id';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { err, ok, type Result } from '@/lib/result';
 
 function toRuleInput(data: UpsertPromotionInput) {
-  const code =
-    data.kind === "COUPON" && data.code
-      ? normalizePromotionCode(data.code)
-      : null;
+  const code = data.kind === 'COUPON' && data.code ? normalizePromotionCode(data.code) : null;
 
   return {
     kind: data.kind,
     code,
-    productId: data.kind === "AUTOMATIC" ? data.productId : null,
-    categoryId: data.kind === "AUTOMATIC" ? data.categoryId : null,
+    productId: data.kind === 'AUTOMATIC' ? data.productId : null,
+    categoryId: data.kind === 'AUTOMATIC' ? data.categoryId : null,
     discountType: data.discountType,
     discountValue: data.discountValue,
     maxDiscountAmount: data.maxDiscountAmount,
@@ -69,13 +66,11 @@ async function syncPromotionUsers(
       .where(inArray(users.id, uniqueIds));
 
     if (existingUsers.length !== uniqueIds.length) {
-      throw new Error("INVALID_USER_IDS");
+      throw new Error('INVALID_USER_IDS');
     }
   }
 
-  await tx
-    .delete(promotionUsers)
-    .where(eq(promotionUsers.promotionId, promotionId));
+  await tx.delete(promotionUsers).where(eq(promotionUsers.promotionId, promotionId));
 
   if (uniqueIds.length === 0) return;
 
@@ -94,12 +89,12 @@ export async function createPromotionAction(
   raw: UpsertPromotionInput,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = upsertPromotionSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid promotion payload.");
+    return err('VALIDATION_ERROR', 'Invalid promotion payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -134,15 +129,15 @@ export async function createPromotionAction(
         allowStacking: parsed.data.allowStacking,
       });
 
-      if (parsed.data.kind === "COUPON") {
+      if (parsed.data.kind === 'COUPON') {
         await syncPromotionUsers(tx, id, parsed.data.userIds);
       }
 
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "promotion.create",
-        targetType: "promotion",
+        action: 'promotion.create',
+        targetType: 'promotion',
         targetId: id,
         afterDiff: {
           kind: ruleInput.kind,
@@ -150,7 +145,7 @@ export async function createPromotionAction(
           discountType: parsed.data.discountType,
           discountValue: parsed.data.discountValue,
           isActive: parsed.data.isActive,
-          userIds: parsed.data.kind === "COUPON" ? parsed.data.userIds : [],
+          userIds: parsed.data.kind === 'COUPON' ? parsed.data.userIds : [],
         },
         correlationId,
         context: { createdAt: now.toISOString() },
@@ -160,14 +155,14 @@ export async function createPromotionAction(
     revalidatePromotionPaths(locale, id);
     return ok({ id });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "";
-    if (message === "INVALID_USER_IDS") {
-      return err("INVALID_USER_IDS", "One or more selected users are invalid.");
+    const message = error instanceof Error ? error.message : '';
+    if (message === 'INVALID_USER_IDS') {
+      return err('INVALID_USER_IDS', 'One or more selected users are invalid.');
     }
-    if (message.includes("promotions_code_uidx") || message.includes("unique")) {
-      return err("CODE_TAKEN", "That coupon code is already in use.");
+    if (message.includes('promotions_code_uidx') || message.includes('unique')) {
+      return err('CODE_TAKEN', 'That coupon code is already in use.');
     }
-    return err("PROMOTION_CREATE_FAILED", "Unable to create promotion.");
+    return err('PROMOTION_CREATE_FAILED', 'Unable to create promotion.');
   }
 }
 
@@ -178,12 +173,12 @@ export async function updatePromotionAction(
   raw: UpsertPromotionInput,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = upsertPromotionSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid promotion payload.");
+    return err('VALIDATION_ERROR', 'Invalid promotion payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -199,15 +194,15 @@ export async function updatePromotionAction(
         .select()
         .from(promotions)
         .where(eq(promotions.id, promotionId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
       if (existing.kind !== parsed.data.kind) {
-        throw new Error("KIND_LOCKED");
+        throw new Error('KIND_LOCKED');
       }
 
       const now = new Date();
@@ -234,15 +229,15 @@ export async function updatePromotionAction(
         })
         .where(eq(promotions.id, promotionId));
 
-      if (parsed.data.kind === "COUPON") {
+      if (parsed.data.kind === 'COUPON') {
         await syncPromotionUsers(tx, promotionId, parsed.data.userIds);
       }
 
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "promotion.update",
-        targetType: "promotion",
+        action: 'promotion.update',
+        targetType: 'promotion',
         targetId: promotionId,
         beforeDiff: {
           code: existing.code,
@@ -253,7 +248,7 @@ export async function updatePromotionAction(
           code: ruleInput.code,
           discountValue: parsed.data.discountValue,
           isActive: parsed.data.isActive,
-          userIds: parsed.data.kind === "COUPON" ? parsed.data.userIds : [],
+          userIds: parsed.data.kind === 'COUPON' ? parsed.data.userIds : [],
         },
         correlationId,
       });
@@ -262,21 +257,21 @@ export async function updatePromotionAction(
     revalidatePromotionPaths(locale, promotionId);
     return ok({ id: promotionId });
   } catch (error) {
-    const code = error instanceof Error ? error.message : "UNKNOWN";
-    if (code === "NOT_FOUND") {
-      return err("NOT_FOUND", "Promotion not found.");
+    const code = error instanceof Error ? error.message : 'UNKNOWN';
+    if (code === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Promotion not found.');
     }
-    if (code === "KIND_LOCKED") {
-      return err("KIND_LOCKED", "Promotion kind cannot be changed.");
+    if (code === 'KIND_LOCKED') {
+      return err('KIND_LOCKED', 'Promotion kind cannot be changed.');
     }
-    if (code === "INVALID_USER_IDS") {
-      return err("INVALID_USER_IDS", "One or more selected users are invalid.");
+    if (code === 'INVALID_USER_IDS') {
+      return err('INVALID_USER_IDS', 'One or more selected users are invalid.');
     }
-    const message = error instanceof Error ? error.message : "";
-    if (message.includes("promotions_code_uidx") || message.includes("unique")) {
-      return err("CODE_TAKEN", "That coupon code is already in use.");
+    const message = error instanceof Error ? error.message : '';
+    if (message.includes('promotions_code_uidx') || message.includes('unique')) {
+      return err('CODE_TAKEN', 'That coupon code is already in use.');
     }
-    return err("PROMOTION_UPDATE_FAILED", "Unable to update promotion.");
+    return err('PROMOTION_UPDATE_FAILED', 'Unable to update promotion.');
   }
 }
 
@@ -286,12 +281,12 @@ export async function togglePromotionAction(
   raw: TogglePromotionInput,
 ): Promise<Result<{ id: string; isActive: boolean }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const parsed = togglePromotionSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION_ERROR", "Invalid toggle payload.");
+    return err('VALIDATION_ERROR', 'Invalid toggle payload.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -302,11 +297,11 @@ export async function togglePromotionAction(
         .select()
         .from(promotions)
         .where(eq(promotions.id, parsed.data.promotionId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
       await tx
@@ -317,8 +312,8 @@ export async function togglePromotionAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "promotion.toggle",
-        targetType: "promotion",
+        action: 'promotion.toggle',
+        targetType: 'promotion',
         targetId: existing.id,
         beforeDiff: { isActive: existing.isActive },
         afterDiff: { isActive: parsed.data.isActive },
@@ -331,10 +326,10 @@ export async function togglePromotionAction(
     revalidatePromotionPaths(locale, result.id);
     return ok(result);
   } catch (error) {
-    if (error instanceof Error && error.message === "NOT_FOUND") {
-      return err("NOT_FOUND", "Promotion not found.");
+    if (error instanceof Error && error.message === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Promotion not found.');
     }
-    return err("PROMOTION_TOGGLE_FAILED", "Unable to toggle promotion.");
+    return err('PROMOTION_TOGGLE_FAILED', 'Unable to toggle promotion.');
   }
 }
 
@@ -344,7 +339,7 @@ export async function deletePromotionAction(
   promotionId: string,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -355,11 +350,11 @@ export async function deletePromotionAction(
         .select()
         .from(promotions)
         .where(eq(promotions.id, promotionId))
-        .for("update")
+        .for('update')
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
       await tx.delete(promotions).where(eq(promotions.id, promotionId));
@@ -367,8 +362,8 @@ export async function deletePromotionAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "promotion.delete",
-        targetType: "promotion",
+        action: 'promotion.delete',
+        targetType: 'promotion',
         targetId: promotionId,
         beforeDiff: {
           kind: existing.kind,
@@ -382,10 +377,10 @@ export async function deletePromotionAction(
     revalidatePromotionPaths(locale);
     return ok({ id: promotionId });
   } catch (error) {
-    if (error instanceof Error && error.message === "NOT_FOUND") {
-      return err("NOT_FOUND", "Promotion not found.");
+    if (error instanceof Error && error.message === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Promotion not found.');
     }
-    return err("PROMOTION_DELETE_FAILED", "Unable to delete promotion.");
+    return err('PROMOTION_DELETE_FAILED', 'Unable to delete promotion.');
   }
 }
 
@@ -395,7 +390,7 @@ export async function duplicatePromotionAction(
   promotionId: string,
 ): Promise<Result<{ id: string }>> {
   if (!isLocale(locale)) {
-    return err("INVALID_LOCALE", "Invalid locale.");
+    return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
   const actor = await requireAdmin(locale as Locale);
@@ -411,21 +406,19 @@ export async function duplicatePromotionAction(
         .limit(1);
 
       if (!existing) {
-        throw new Error("NOT_FOUND");
+        throw new Error('NOT_FOUND');
       }
 
-      if (existing.kind !== "COUPON" || !existing.code) {
-        throw new Error("NOT_COUPON");
+      if (existing.kind !== 'COUPON' || !existing.code) {
+        throw new Error('NOT_COUPON');
       }
 
       const suffix = createId().slice(0, 6).toUpperCase();
-      const nextCode = normalizePromotionCode(
-        `${existing.code}-COPY-${suffix}`.slice(0, 64),
-      );
+      const nextCode = normalizePromotionCode(`${existing.code}-COPY-${suffix}`.slice(0, 64));
 
       await tx.insert(promotions).values({
         id,
-        kind: "COUPON",
+        kind: 'COUPON',
         code: nextCode,
         productId: null,
         categoryId: null,
@@ -460,8 +453,8 @@ export async function duplicatePromotionAction(
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
-        action: "promotion.duplicate",
-        targetType: "promotion",
+        action: 'promotion.duplicate',
+        targetType: 'promotion',
         targetId: id,
         afterDiff: { sourceId: promotionId, code: nextCode },
         correlationId: createId(),
@@ -471,17 +464,17 @@ export async function duplicatePromotionAction(
     revalidatePromotionPaths(locale, id);
     return ok({ id });
   } catch (error) {
-    const code = error instanceof Error ? error.message : "UNKNOWN";
-    if (code === "NOT_FOUND") {
-      return err("NOT_FOUND", "Promotion not found.");
+    const code = error instanceof Error ? error.message : 'UNKNOWN';
+    if (code === 'NOT_FOUND') {
+      return err('NOT_FOUND', 'Promotion not found.');
     }
-    if (code === "NOT_COUPON") {
-      return err("NOT_COUPON", "Only coupons can be duplicated here.");
+    if (code === 'NOT_COUPON') {
+      return err('NOT_COUPON', 'Only coupons can be duplicated here.');
     }
-    const message = error instanceof Error ? error.message : "";
-    if (message.includes("promotions_code_uidx") || message.includes("unique")) {
-      return err("CODE_TAKEN", "That coupon code is already in use.");
+    const message = error instanceof Error ? error.message : '';
+    if (message.includes('promotions_code_uidx') || message.includes('unique')) {
+      return err('CODE_TAKEN', 'That coupon code is already in use.');
     }
-    return err("PROMOTION_DUPLICATE_FAILED", "Unable to duplicate promotion.");
+    return err('PROMOTION_DUPLICATE_FAILED', 'Unable to duplicate promotion.');
   }
 }

@@ -1,10 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { and, count, desc, eq, ilike, or, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, ilike, or, type SQL } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { contactMessages } from "@/db/schema";
-import type { AdminContactFilter } from "@/features/contact/schemas/contact";
+import { getDb } from '@/db/client';
+import { contactMessages } from '@/db/schema';
+import type { AdminContactFilter } from '@/features/contact/schemas/contact';
 
 const PAGE_SIZE = 20;
 
@@ -19,9 +19,7 @@ export type AdminContactListItem = {
 };
 
 /** Lists contact messages for the admin inbox. */
-export async function listAdminContactMessages(
-  filters: AdminContactFilter,
-): Promise<{
+export async function listAdminContactMessages(filters: AdminContactFilter): Promise<{
   rows: AdminContactListItem[];
   total: number;
   pageSize: number;

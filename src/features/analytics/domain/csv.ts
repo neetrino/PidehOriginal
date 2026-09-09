@@ -19,12 +19,7 @@ export function guardCsvCell(value: string): string {
 
 /** Builds a CSV export from daily analytics rows. */
 export function buildAnalyticsCsv(rows: AnalyticsCsvRow[]): string {
-  const header = [
-    "date",
-    "orderCount",
-    "revenueAmount",
-    "averageOrderValue",
-  ].join(",");
+  const header = ['date', 'orderCount', 'revenueAmount', 'averageOrderValue'].join(',');
 
   const body = rows.map((row) =>
     [
@@ -32,8 +27,8 @@ export function buildAnalyticsCsv(rows: AnalyticsCsvRow[]): string {
       String(row.orderCount),
       String(row.revenueAmount),
       String(row.averageOrderValue),
-    ].join(","),
+    ].join(','),
   );
 
-  return [header, ...body].join("\n");
+  return [header, ...body].join('\n');
 }

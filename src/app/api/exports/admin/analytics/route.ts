@@ -1,15 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-import {
-  buildAnalyticsCsv,
-  getAnalyticsSummary,
-} from "@/features/analytics/application/queries";
-import { analyticsDateRangeSchema } from "@/features/analytics/domain/date-range";
-import { getCurrentUser } from "@/lib/auth/session";
+import { buildAnalyticsCsv, getAnalyticsSummary } from '@/features/analytics/application/queries';
+import { analyticsDateRangeSchema } from '@/features/analytics/domain/date-range';
+import { getCurrentUser } from '@/lib/auth/session';
 
-function firstQueryParam(
-  value: string | string[] | undefined,
-): string | undefined {
+function firstQueryParam(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
     return value[0];
   }
@@ -19,19 +14,19 @@ function firstQueryParam(
 /** Admin-only analytics CSV export for a bounded date range. */
 export async function GET(request: Request): Promise<Response> {
   const user = await getCurrentUser();
-  if (!user || user.status !== "ACTIVE" || user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user || user.status !== 'ACTIVE' || user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const url = new URL(request.url);
   const parsed = analyticsDateRangeSchema.safeParse({
-    from: firstQueryParam(url.searchParams.get("from") ?? undefined),
-    to: firstQueryParam(url.searchParams.get("to") ?? undefined),
+    from: firstQueryParam(url.searchParams.get('from') ?? undefined),
+    to: firstQueryParam(url.searchParams.get('to') ?? undefined),
   });
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Invalid date range", details: parsed.error.flatten() },
+      { error: 'Invalid date range', details: parsed.error.flatten() },
       { status: 400 },
     );
   }
@@ -43,9 +38,9 @@ export async function GET(request: Request): Promise<Response> {
   return new Response(csv, {
     status: 200,
     headers: {
-      "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${filename}"`,
-      "Cache-Control": "no-store",
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Cache-Control': 'no-store',
     },
   });
 }

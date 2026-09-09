@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   useCallback,
@@ -8,17 +8,17 @@ import {
   type AnimationEvent,
   type ReactNode,
   type TransitionEvent,
-} from "react";
-import { createPortal } from "react-dom";
+} from 'react';
+import { createPortal } from 'react-dom';
 
-import { useProfileMobileSheetDrag } from "@/features/profile/ui/use-profile-mobile-sheet-drag";
+import { useProfileMobileSheetDrag } from '@/features/profile/ui/use-profile-mobile-sheet-drag';
 
 /** Must match `.animate-bottom-sheet-panel-*` duration in globals.css. */
 export const PROFILE_MOBILE_TAB_SHEET_MS = 300;
-const SHEET_EASING = "cubic-bezier(0.32, 0.72, 0, 1)";
+const SHEET_EASING = 'cubic-bezier(0.32, 0.72, 0, 1)';
 const SHEET_HEIGHT_VH = 72;
 
-type MotionPhase = "enter" | "idle" | "exit" | "exit-drag";
+type MotionPhase = 'enter' | 'idle' | 'exit' | 'exit-drag';
 
 type ProfileMobileTabSheetProps = {
   open: boolean;
@@ -42,11 +42,9 @@ export function ProfileMobileTabSheet({
 }: ProfileMobileTabSheetProps) {
   const [mounted, setMounted] = useState(false);
   const [rendered, setRendered] = useState(false);
-  const [phase, setPhase] = useState<MotionPhase>("enter");
+  const [phase, setPhase] = useState<MotionPhase>('enter');
   const [isDragging, setIsDragging] = useState(false);
-  const [dragBackdropOpacity, setDragBackdropOpacity] = useState<number | null>(
-    null,
-  );
+  const [dragBackdropOpacity, setDragBackdropOpacity] = useState<number | null>(null);
   const [displayChildren, setDisplayChildren] = useState(children);
   const [displayAriaLabel, setDisplayAriaLabel] = useState(ariaLabel);
 
@@ -62,29 +60,29 @@ export function ProfileMobileTabSheet({
     if (exitNotifiedRef.current) return;
     exitNotifiedRef.current = true;
     setRendered(false);
-    setPhase("enter");
+    setPhase('enter');
     setIsDragging(false);
     setDragBackdropOpacity(null);
     const panel = panelRef.current;
     if (panel) {
-      panel.style.transition = "";
-      panel.style.transform = "";
+      panel.style.transition = '';
+      panel.style.transform = '';
     }
     onExitedRef.current?.();
   }, []);
 
   const handleDismissFromDrag = useCallback((releaseOffsetY: number) => {
     setIsDragging(false);
-    setPhase("exit-drag");
+    setPhase('exit-drag');
     setDragBackdropOpacity(0);
 
     const panel = panelRef.current;
     if (panel) {
-      panel.style.transition = "none";
+      panel.style.transition = 'none';
       panel.style.transform = `translateY(${releaseOffsetY}px)`;
       void panel.getBoundingClientRect();
       panel.style.transition = `transform ${PROFILE_MOBILE_TAB_SHEET_MS}ms ${SHEET_EASING}`;
-      panel.style.transform = "translateY(100%)";
+      panel.style.transform = 'translateY(100%)';
     }
 
     onCloseRef.current();
@@ -98,27 +96,22 @@ export function ProfileMobileTabSheet({
 
   const handleOffsetChange = useCallback((offsetY: number) => {
     setIsDragging(offsetY > 0);
-    setDragBackdropOpacity(
-      offsetY > 0 ? Math.max(0, 1 - offsetY / 280) : null,
-    );
+    setDragBackdropOpacity(offsetY > 0 ? Math.max(0, 1 - offsetY / 280) : null);
   }, []);
 
-  const dragEnabled = rendered && open && phase === "idle";
-  const {
-    headerPointerHandlers,
-    scrollAreaPointerHandlers,
-    panelPointerHandlers,
-  } = useProfileMobileSheetDrag({
-    enabled: dragEnabled,
-    panelRef,
-    scrollAreaRef,
-    onDismiss: handleDismissFromDrag,
-    onSnapBack: handleSnapBack,
-    onOffsetChange: handleOffsetChange,
-  });
+  const dragEnabled = rendered && open && phase === 'idle';
+  const { headerPointerHandlers, scrollAreaPointerHandlers, panelPointerHandlers } =
+    useProfileMobileSheetDrag({
+      enabled: dragEnabled,
+      panelRef,
+      scrollAreaRef,
+      onDismiss: handleDismissFromDrag,
+      onSnapBack: handleSnapBack,
+      onOffsetChange: handleOffsetChange,
+    });
 
   const renderedRef = useRef(false);
-  const phaseRef = useRef<MotionPhase>("enter");
+  const phaseRef = useRef<MotionPhase>('enter');
   renderedRef.current = rendered;
   phaseRef.current = phase;
 
@@ -137,12 +130,12 @@ export function ProfileMobileTabSheet({
       exitNotifiedRef.current = false;
       setIsDragging(false);
       setDragBackdropOpacity(null);
-      setPhase("enter");
+      setPhase('enter');
       setRendered(true);
       const panel = panelRef.current;
       if (panel) {
-        panel.style.transition = "";
-        panel.style.transform = "";
+        panel.style.transition = '';
+        panel.style.transform = '';
       }
       return;
     }
@@ -150,14 +143,14 @@ export function ProfileMobileTabSheet({
     if (!renderedRef.current) return;
 
     // Swipe path already set `exit-drag` and started the transform.
-    if (phaseRef.current === "exit-drag") {
+    if (phaseRef.current === 'exit-drag') {
       const timer = window.setTimeout(() => {
         finishExit();
       }, PROFILE_MOBILE_TAB_SHEET_MS);
       return () => window.clearTimeout(timer);
     }
 
-    setPhase("exit");
+    setPhase('exit');
     const timer = window.setTimeout(() => {
       finishExit();
     }, PROFILE_MOBILE_TAB_SHEET_MS);
@@ -166,9 +159,9 @@ export function ProfileMobileTabSheet({
   }, [open, finishExit]);
 
   useEffect(() => {
-    if (!rendered || phase !== "enter") return;
+    if (!rendered || phase !== 'enter') return;
     const timer = window.setTimeout(() => {
-      setPhase((current) => (current === "enter" ? "idle" : current));
+      setPhase((current) => (current === 'enter' ? 'idle' : current));
     }, PROFILE_MOBILE_TAB_SHEET_MS + 40);
     return () => window.clearTimeout(timer);
   }, [rendered, phase]);
@@ -177,56 +170,52 @@ export function ProfileMobileTabSheet({
     if (!rendered) return;
 
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") onCloseRef.current();
+      if (event.key === 'Escape') onCloseRef.current();
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [rendered]);
 
-  function handlePanelAnimationEnd(
-    event: AnimationEvent<HTMLDivElement>,
-  ): void {
+  function handlePanelAnimationEnd(event: AnimationEvent<HTMLDivElement>): void {
     if (event.target !== event.currentTarget) return;
-    if (event.animationName.includes("bottom-sheet-panel-in")) {
-      setPhase("idle");
+    if (event.animationName.includes('bottom-sheet-panel-in')) {
+      setPhase('idle');
       return;
     }
-    if (event.animationName.includes("bottom-sheet-panel-out")) {
+    if (event.animationName.includes('bottom-sheet-panel-out')) {
       finishExit();
     }
   }
 
-  function handlePanelTransitionEnd(
-    event: TransitionEvent<HTMLDivElement>,
-  ): void {
+  function handlePanelTransitionEnd(event: TransitionEvent<HTMLDivElement>): void {
     if (event.target !== event.currentTarget) return;
-    if (event.propertyName !== "transform") return;
-    if (phase !== "exit-drag") return;
+    if (event.propertyName !== 'transform') return;
+    if (phase !== 'exit-drag') return;
     finishExit();
   }
 
   if (!mounted || !rendered) return null;
 
   const backdropClass =
-    phase === "enter"
-      ? "animate-sheet-backdrop-in"
-      : phase === "exit"
-        ? "animate-sheet-backdrop-out"
-        : "";
+    phase === 'enter'
+      ? 'animate-sheet-backdrop-in'
+      : phase === 'exit'
+        ? 'animate-sheet-backdrop-out'
+        : '';
 
   const panelClass =
-    phase === "enter"
-      ? "animate-bottom-sheet-panel-in"
-      : phase === "exit"
-        ? "animate-bottom-sheet-panel-out"
-        : "";
+    phase === 'enter'
+      ? 'animate-bottom-sheet-panel-in'
+      : phase === 'exit'
+        ? 'animate-bottom-sheet-panel-out'
+        : '';
 
   return createPortal(
     <div
@@ -242,7 +231,7 @@ export function ProfileMobileTabSheet({
         className={`absolute inset-0 rounded-none bg-black/35 backdrop-blur-[1px] ${backdropClass}`}
         style={
           dragBackdropOpacity === null
-            ? phase === "exit-drag"
+            ? phase === 'exit-drag'
               ? {
                   opacity: 0,
                   transition: `opacity ${PROFILE_MOBILE_TAB_SHEET_MS}ms ${SHEET_EASING}`,
@@ -251,7 +240,7 @@ export function ProfileMobileTabSheet({
             : {
                 opacity: dragBackdropOpacity,
                 transition: isDragging
-                  ? "none"
+                  ? 'none'
                   : `opacity ${PROFILE_MOBILE_TAB_SHEET_MS}ms ${SHEET_EASING}`,
               }
         }
@@ -262,8 +251,8 @@ export function ProfileMobileTabSheet({
         className={`relative z-[1] flex w-full flex-col overflow-hidden bg-white shadow-2xl ${panelClass}`}
         style={{
           height: `${SHEET_HEIGHT_VH}dvh`,
-          borderTopLeftRadius: "var(--radius)",
-          borderTopRightRadius: "var(--radius)",
+          borderTopLeftRadius: 'var(--radius)',
+          borderTopRightRadius: 'var(--radius)',
         }}
         onClick={(event) => event.stopPropagation()}
         onAnimationEnd={handlePanelAnimationEnd}
@@ -274,18 +263,12 @@ export function ProfileMobileTabSheet({
           className="flex h-12 shrink-0 cursor-grab touch-none select-none items-center justify-center active:cursor-grabbing"
           {...headerPointerHandlers}
         >
-          <div
-            className="rounded-full bg-gray-300"
-            style={{ height: 6, width: 56 }}
-            aria-hidden
-          />
+          <div className="rounded-full bg-gray-300" style={{ height: 6, width: 56 }} aria-hidden />
         </div>
         <div
           ref={scrollAreaRef}
           className={`profile-mobile-tab-sheet-scroll min-h-0 flex-1 overscroll-contain px-3 pt-1 ${
-            isDragging || phase === "exit-drag"
-              ? "touch-none overflow-hidden"
-              : "overflow-y-auto"
+            isDragging || phase === 'exit-drag' ? 'touch-none overflow-hidden' : 'overflow-y-auto'
           }`}
           {...scrollAreaPointerHandlers}
         >

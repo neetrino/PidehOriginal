@@ -3,6 +3,7 @@
 > Էլեկտրոնային ՀԴՄ = ԷՀԴՄ = E-HDM = electronic fiscal receipt. Ինտեգրացիա ՀՀ ՊԵԿ վեբ ծառայության հետ (ecrm.taxservice.am)՝ կտրոնների գրանցում/վերադարձ/պատճեն։
 
 **Աղբյուրներ.**
+
 - **Պաշտոնական.** `payment integration/| Official doc for the API integrationm/EHDM/uc_hhpek_electronic_HDM_integration_manual_11_2024_6734a3be6964d.html`
 
 ---
@@ -19,20 +20,20 @@
 
 ### Ինչը **գաղտնի** է (միայն ENV, ոչ git)
 
-| Փոփոխական | Նկարագրություն | Պահել |
-|------------|-----------------|-------|
-| `EHDM_KEY_PASSPHRASE` | Պարոլ `.key` ֆայլի համար | **Միայն .env** — երբեք կոդ/repo |
-| `.key` ֆայլի **բովանդակությունը** | Private key | Ֆայլը պահել **repo-ից դուրս** (տես ստորև) |
-| `.crt` ֆայլ | Client certificate | Կրիպտոգրաֆիական հավաստագիր — նույնպես **ոչ repo** (լավ պրակտիկա) |
+| Փոփոխական                         | Նկարագրություն           | Պահել                                                            |
+| --------------------------------- | ------------------------ | ---------------------------------------------------------------- |
+| `EHDM_KEY_PASSPHRASE`             | Պարոլ `.key` ֆայլի համար | **Միայն .env** — երբեք կոդ/repo                                  |
+| `.key` ֆայլի **բովանդակությունը** | Private key              | Ֆայլը պահել **repo-ից դուրս** (տես ստորև)                        |
+| `.crt` ֆայլ                       | Client certificate       | Կրիպտոգրաֆիական հավաստագիր — նույնպես **ոչ repo** (լավ պրակտիկա) |
 
 ### Որտեղ պահել .crt և .key
 
 - **Երբեք** չcommit անել `.crt`/`.key` repo-ում։
 - **Լոկալ.** Խորհուրդ — `Private/` թղթապանակ (արդեն **.gitignore**-ում է). ENV-ում `EHDM_CERT_PATH`, `EHDM_KEY_PATH`. **Կարևոր.** Next.js-ը աշխատում է `apps/web`-ից, այդ պատճառով `./Private/...` = `apps/web/Private/...`. Եթե `Private/`-ը **նախագծի արմատում** է — .env-ում օգտագործել **բացարձակ** ճանապարհ, օր. `/path/to/borboraqua.am/Private/00505298.crt`.
 - **Production (Vercel/Render/վերբ).** Սերվերում կամ secrets manager-ում պահել ֆայլերի **բովանդակությունը** (base64 կամ raw) և deploy ժամանակ գրել ֆայլ (tmp/secure dir), ապա `EHDM_CERT_PATH`/`EHDM_KEY_PATH` ցույց տալ այդ path-ին. Կամ օգտագործել platform-ի «secret file»/volume, եթե կա.
-- **Ամփոփում.**  
-  - **Սեկրետ.** passphrase → միայն ENV.  
-  - **.key / .crt.** ֆայլերը → repo-ից դուրս; path → ENV.  
+- **Ամփոփում.**
+  - **Սեկրետ.** passphrase → միայն ENV.
+  - **.key / .crt.** ֆայլերը → repo-ից դուրս; path → ENV.
   - **Private/** — հարմար է **լոկալ** զարգացման համար (gitignore); production-ում path-ը կլինի սերվերի path.
 
 ---
@@ -41,25 +42,25 @@
 
 Փոխանցել **Private/** և **ehdm-config.txt**-ից; **գաղտնի** արժեքները միայն `.env`-ում (ոչ git).
 
-| Փոփոխական | Նկարագրություն | Գաղտնի | Աղբյուր (Private) |
-|------------|-----------------|--------|-------------------|
-| `EHDM_API_URL` | API base URL | Ոչ | `https://ecrm.taxservice.am/taxsystem-rs-vcr/api/v1.0` |
-| `EHDM_CRN` | Գրանցման համար (CRN) | Ոչ* | CRN=52031720 |
-| `EHDM_TIN` | ՀՎՀՀ | Ոչ* | TIN=00505298 |
-| `EHDM_CERT_PATH` | Ճանապարհ դեպի `.crt` ֆայլ | — | path, օր. `./Private/00505298.crt` |
-| `EHDM_KEY_PATH` | Ճանապարհ դեպի `.key` ֆայլ | — | path, օր. `./Private/00505298.key` |
-| `EHDM_KEY_PASSPHRASE` | Պարոլ `.key`-ի համար | **Այո** | միայն .env |
-| `EHDM_INITIAL_SEQ` | Առաջին seq. **200** խորհուրդ՝ հին site-ից անցնելիս (որ չհամընկնի) | Ոչ | 200 |
-| `EHDM_DEFAULT_ADG_CODE` | ԱՏԳ կոդ (դեֆոլտ) | Ոչ | 2201 |
-| `EHDM_DEP` | **Հարկման տեսակ**. 1=ԱԱՀ-ով, 2=առանց ԱԱՀ, 3=շրջանառու, 7=միկրո | Ոչ | 1 |
-| `EHDM_VAT_PERCENT` | ԱԱՀ (%) — (օր. 16,67). Օպցիոնալ, ցուցադրության համար | Ոչ | 16.67 |
-| `EHDM_DEFAULT_UNIT` | Չափման միավոր (օր. Հատ) | Ոչ | Հատ |
-| `EHDM_CASHIER_ID` | Գանձապահի ID | Ոչ | 1 |
-| `EHDM_SHIPPING_ENABLED` | Առաքում առանձին տող (1/0) | Ոչ | 1 |
-| `EHDM_SHIPPING_ADG_CODE` | ԱՏԳ առաքման համար | Ոչ | 49.42 |
-| `EHDM_SHIPPING_GOOD_CODE` | Ապրանքի կոդ առաքման | Ոչ | 007 |
-| `EHDM_SHIPPING_DESCRIPTION` | Նկարագրություն առաքման | Ոչ | Առաքում |
-| `EHDM_SHIPPING_UNIT` | Միավոր առաքման | Ոչ | Հատ |
+| Փոփոխական                   | Նկարագրություն                                                    | Գաղտնի  | Աղբյուր (Private)                                      |
+| --------------------------- | ----------------------------------------------------------------- | ------- | ------------------------------------------------------ |
+| `EHDM_API_URL`              | API base URL                                                      | Ոչ      | `https://ecrm.taxservice.am/taxsystem-rs-vcr/api/v1.0` |
+| `EHDM_CRN`                  | Գրանցման համար (CRN)                                              | Ոչ*     | CRN=52031720                                           |
+| `EHDM_TIN`                  | ՀՎՀՀ                                                              | Ոչ*     | TIN=00505298                                           |
+| `EHDM_CERT_PATH`            | Ճանապարհ դեպի `.crt` ֆայլ                                         | —       | path, օր. `./Private/00505298.crt`                     |
+| `EHDM_KEY_PATH`             | Ճանապարհ դեպի `.key` ֆայլ                                         | —       | path, օր. `./Private/00505298.key`                     |
+| `EHDM_KEY_PASSPHRASE`       | Պարոլ `.key`-ի համար                                              | **Այո** | միայն .env                                             |
+| `EHDM_INITIAL_SEQ`          | Առաջին seq. **200** խորհուրդ՝ հին site-ից անցնելիս (որ չհամընկնի) | Ոչ      | 200                                                    |
+| `EHDM_DEFAULT_ADG_CODE`     | ԱՏԳ կոդ (դեֆոլտ)                                                  | Ոչ      | 2201                                                   |
+| `EHDM_DEP`                  | **Հարկման տեսակ**. 1=ԱԱՀ-ով, 2=առանց ԱԱՀ, 3=շրջանառու, 7=միկրո    | Ոչ      | 1                                                      |
+| `EHDM_VAT_PERCENT`          | ԱԱՀ (%) — (օր. 16,67). Օպցիոնալ, ցուցադրության համար              | Ոչ      | 16.67                                                  |
+| `EHDM_DEFAULT_UNIT`         | Չափման միավոր (օր. Հատ)                                           | Ոչ      | Հատ                                                    |
+| `EHDM_CASHIER_ID`           | Գանձապահի ID                                                      | Ոչ      | 1                                                      |
+| `EHDM_SHIPPING_ENABLED`     | Առաքում առանձին տող (1/0)                                         | Ոչ      | 1                                                      |
+| `EHDM_SHIPPING_ADG_CODE`    | ԱՏԳ առաքման համար                                                 | Ոչ      | 49.42                                                  |
+| `EHDM_SHIPPING_GOOD_CODE`   | Ապրանքի կոդ առաքման                                               | Ոչ      | 007                                                    |
+| `EHDM_SHIPPING_DESCRIPTION` | Նկարագրություն առաքման                                            | Ոչ      | Առաքում                                                |
+| `EHDM_SHIPPING_UNIT`        | Միավոր առաքման                                                    | Ոչ      | Հատ                                                    |
 
 \* CRN/TIN բիզնես-տվյալներ են; production-ում env-ում պահելը ընդունելի է (ոչ «խիստ» գաղտնիք, բայց չcommit անել արժեքները .env.example-ում)։
 
@@ -134,20 +135,20 @@
 
 ## 9. Ստուգում թեստից առաջ (по документации)
 
-| Էլեմենտ | Փաստաթուղթ | Մեր կոդ | Статус |
-|---------|----------------|----------|--------|
-| **URL** | `https://ecrm.taxservice.am/taxsystem-rs-vcr/api/v1.0` + `/print` | `config.apiUrl` + `/print` | ✓ |
-| **Auth** | Client cert (.crt) + key (.key) + passphrase | `https.Agent` cert/key/passphrase | ✓ |
-| **Content-Type** | application/json | application/json | ✓ |
-| **Body: mode** | 2 (ապրանքներով կտրոն) | MODE_SALE_WITH_ITEMS = 2 | ✓ |
-| **Body: crn, seq, cashierId** | string, int, int | config.crn, seq, config.cashierId | ✓ |
-| **Body: cardAmount / cashAmount** | Один заполнен, второй 0 в образце | Оба передаём (total и 0) | ✓ |
-| **Body: partialAmount, prePaymentAmount, partnerTin** | 0, 0, null в образце | 0, 0, null добавлены | ✓ |
-| **Body: items[]. dep, adgCode, goodCode, goodName, quantity, unit, price** | Ըստ փաստաթղթի | buildPrintBody — те же поля, goodCode=sku, goodName до 30 символов | ✓ |
-| **Seq** | Уникальный, +1 после каждого запроса | getNextSeqAndIncrement() в транзакции, откат при ошибке | ✓ |
-| **Response** | code === 0, result.receiptId, fiscal, qr | Проверяем code !== 0, сохраняем в ehdm_receipts | ✓ |
-| **Только AMD** | — | printReceiptForOrder проверяет order.currency === "AMD" | ✓ |
-| **Повтор** | Не печатать дважды на заказ | Проверка order.ehdmReceipt | ✓ |
+| Էլեմենտ                                                                    | Փաստաթուղթ                                                        | Մեր կոդ                                                            | Статус |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------ | ------ |
+| **URL**                                                                    | `https://ecrm.taxservice.am/taxsystem-rs-vcr/api/v1.0` + `/print` | `config.apiUrl` + `/print`                                         | ✓      |
+| **Auth**                                                                   | Client cert (.crt) + key (.key) + passphrase                      | `https.Agent` cert/key/passphrase                                  | ✓      |
+| **Content-Type**                                                           | application/json                                                  | application/json                                                   | ✓      |
+| **Body: mode**                                                             | 2 (ապրանքներով կտրոն)                                             | MODE_SALE_WITH_ITEMS = 2                                           | ✓      |
+| **Body: crn, seq, cashierId**                                              | string, int, int                                                  | config.crn, seq, config.cashierId                                  | ✓      |
+| **Body: cardAmount / cashAmount**                                          | Один заполнен, второй 0 в образце                                 | Оба передаём (total и 0)                                           | ✓      |
+| **Body: partialAmount, prePaymentAmount, partnerTin**                      | 0, 0, null в образце                                              | 0, 0, null добавлены                                               | ✓      |
+| **Body: items[]. dep, adgCode, goodCode, goodName, quantity, unit, price** | Ըստ փաստաթղթի                                                     | buildPrintBody — те же поля, goodCode=sku, goodName до 30 символов | ✓      |
+| **Seq**                                                                    | Уникальный, +1 после каждого запроса                              | getNextSeqAndIncrement() в транзакции, откат при ошибке            | ✓      |
+| **Response**                                                               | code === 0, result.receiptId, fiscal, qr                          | Проверяем code !== 0, сохраняем в ehdm_receipts                    | ✓      |
+| **Только AMD**                                                             | —                                                                 | printReceiptForOrder проверяет order.currency === "AMD"            | ✓      |
+| **Повтор**                                                                 | Не печатать дважды на заказ                                       | Проверка order.ehdmReceipt                                         | ✓      |
 
 Թեստից առաջ. ENV-ը լրացված, `Private/00505298.crt` և `.key` առկա (path-ը **բացարձակ**, եթե Private-ը repo արմատում է), ԲԴ-ում `ehdm_state` nextSeq ≥ 200 (կամ UPDATE).
 

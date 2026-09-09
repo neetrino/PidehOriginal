@@ -1,17 +1,15 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { DeleteAccountForm } from "@/features/profile/ui/DeleteAccountForm";
-import { requireUser } from "@/lib/auth/policies";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { DeleteAccountForm } from '@/features/profile/ui/DeleteAccountForm';
+import { requireUser } from '@/lib/auth/policies';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type DeleteAccountPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function DeleteAccountPage({
-  params,
-}: DeleteAccountPageProps) {
+export default async function DeleteAccountPage({ params }: DeleteAccountPageProps) {
   const { locale } = await params;
   if (!isLocale(locale)) {
     notFound();

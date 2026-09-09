@@ -1,17 +1,17 @@
-import { Star } from "lucide-react";
+import { Star } from 'lucide-react';
 
-import type { ReviewAggregate } from "@/features/reviews/domain/review-rules";
+import type { ReviewAggregate } from '@/features/reviews/domain/review-rules';
 
 const STAR_LEVELS = [5, 4, 3, 2, 1] as const;
 
 type RatingStarsProps = {
   average: number;
-  size?: "sm" | "md";
+  size?: 'sm' | 'md';
 };
 
-export function RatingStars({ average, size = "md" }: RatingStarsProps) {
+export function RatingStars({ average, size = 'md' }: RatingStarsProps) {
   const filled = Math.round(average);
-  const iconClass = size === "sm" ? "h-3.5 w-3.5" : "h-5 w-5";
+  const iconClass = size === 'sm' ? 'h-3.5 w-3.5' : 'h-5 w-5';
 
   return (
     <div className="flex items-center gap-1" aria-hidden>
@@ -21,9 +21,7 @@ export function RatingStars({ average, size = "md" }: RatingStarsProps) {
           <Star
             key={star}
             className={`${iconClass} ${
-              isFilled
-                ? "fill-amber-400 text-amber-400"
-                : "fill-gray-200 text-gray-200"
+              isFilled ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-200'
             }`}
           />
         );
@@ -48,10 +46,7 @@ export function RatingDistribution({ aggregate }: RatingDistributionProps) {
         return (
           <li key={level} className="flex items-center gap-2.5">
             <span className="w-3 text-sm text-gray-500">{level}</span>
-            <Star
-              className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400"
-              aria-hidden
-            />
+            <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400" aria-hidden />
             <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-gray-100">
               <div
                 className="h-full rounded-full bg-amber-400 transition-[width]"

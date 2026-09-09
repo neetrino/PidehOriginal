@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from 'react';
 
-import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
-import { CustomerOrdersTable } from "@/features/orders/ui/CustomerOrdersTable";
-import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
+import { getCustomerOrderDetailAction } from '@/features/orders/application/get-customer-order-detail';
+import { CustomerOrdersTable } from '@/features/orders/ui/CustomerOrdersTable';
+import { OrderDetailsDrawer } from '@/features/orders/ui/OrderDetailsDrawer';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type CustomerOrdersViewOrder = {
   id: string;
@@ -23,7 +23,7 @@ type CustomerOrdersViewOrder = {
 type CustomerOrdersViewProps = {
   locale: string;
   orders: CustomerOrdersViewOrder[];
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
   /** When set (e.g. from bonuses history), open this order on mount. */
   initialOrderNumber?: string;
 };
@@ -85,11 +85,7 @@ export function CustomerOrdersView({
 
   return (
     <>
-      <CustomerOrdersTable
-        orders={orders}
-        onOpenOrder={openOrder}
-        copy={copy}
-      />
+      <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} copy={copy} />
       <OrderDetailsDrawer
         open={drawerOpen}
         onClose={closeDrawer}

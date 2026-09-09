@@ -1,11 +1,11 @@
-import "server-only";
+import 'server-only';
 
-import { and, asc, eq, isNotNull, isNull, or } from "drizzle-orm";
+import { and, asc, eq, isNotNull, isNull, or } from 'drizzle-orm';
 
-import { getDb } from "@/db/client";
-import { categories, mediaAssets, type LocaleTranslation } from "@/db/schema";
-import type { Locale } from "@/lib/i18n/config";
-import { mediaPublicUrl } from "@/lib/media/public-url";
+import { getDb } from '@/db/client';
+import { categories, mediaAssets, type LocaleTranslation } from '@/db/schema';
+import type { Locale } from '@/lib/i18n/config';
+import { mediaPublicUrl } from '@/lib/media/public-url';
 
 export type AdminCategoryListItem = {
   id: string;
@@ -20,16 +20,14 @@ export type AdminCategoryListItem = {
 };
 
 function translationFor(
-  translations: (typeof categories.$inferSelect)["translations"],
+  translations: (typeof categories.$inferSelect)['translations'],
   locale: Locale,
 ): LocaleTranslation | null {
   return translations[locale] ?? translations.hy ?? translations.en ?? null;
 }
 
 /** Lists non-deleted categories for the admin categories table. */
-export async function listAdminCategories(
-  locale: Locale,
-): Promise<AdminCategoryListItem[]> {
+export async function listAdminCategories(locale: Locale): Promise<AdminCategoryListItem[]> {
   const rows = await getDb()
     .select()
     .from(categories)
@@ -54,11 +52,11 @@ export async function listAdminCategories(
       .where(
         and(
           isNotNull(mediaAssets.categoryId),
-          eq(mediaAssets.uploadStatus, "READY"),
+          eq(mediaAssets.uploadStatus, 'READY'),
           or(
             eq(mediaAssets.isPrimary, true),
-            eq(mediaAssets.role, "PRIMARY"),
-            eq(mediaAssets.role, "COVER"),
+            eq(mediaAssets.role, 'PRIMARY'),
+            eq(mediaAssets.role, 'COVER'),
           ),
         ),
       );
@@ -79,8 +77,8 @@ export async function listAdminCategories(
 
     return {
       id: row.id,
-      title: translation?.title ?? "Untitled",
-      slug: translation?.slug ?? "",
+      title: translation?.title ?? 'Untitled',
+      slug: translation?.slug ?? '',
       status: row.status,
       parentId: row.parentId,
       parentTitle,

@@ -1,4 +1,4 @@
-import { MOBILE_HOME_ASSETS } from "@/features/home/ui/mobile/mobile-assets";
+import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 
 type NavEllipse3469Props = {
   className?: string;
@@ -20,7 +20,7 @@ const DOCK_OFFSET_Y_PX = 6;
  *
  * @see https://www.figma.com/design/zyLVZFDhohLYxwuohIrPDN/Pideh-Dev?node-id=268-526
  */
-export function NavEllipse3469({ className = "" }: NavEllipse3469Props) {
+export function NavEllipse3469({ className = '' }: NavEllipse3469Props) {
   return (
     <div
       aria-hidden="true"

@@ -1,4 +1,4 @@
-export type ProductDiscountType = "PERCENTAGE" | "FIXED";
+export type ProductDiscountType = 'PERCENTAGE' | 'FIXED';
 
 export type ProductDiscountDraft = {
   type: ProductDiscountType;

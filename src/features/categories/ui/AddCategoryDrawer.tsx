@@ -1,25 +1,22 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import { SideSheet } from "@/components/ui/SideSheet";
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import { SideSheet } from '@/components/ui/SideSheet';
+import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import {
   createCategoryFromDrawerAction,
   updateCategoryFromDrawerAction,
-} from "@/features/categories/actions";
-import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
-import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/categories/actions';
+import { slugifyCategoryTitle } from '@/features/categories/domain/slugify';
+import type { AdminCategoryListItem } from '@/features/categories/application/list-admin-categories';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type DrawerCopy = {
-  drawer: Dictionary["admin"]["categories"]["drawer"];
-  common: Dictionary["admin"]["common"];
+  drawer: Dictionary['admin']['categories']['drawer'];
+  common: Dictionary['admin']['common'];
 };
 
 type AddCategoryDrawerProps = {
@@ -42,11 +39,11 @@ export function AddCategoryDrawer({
   const router = useRouter();
   const isEdit = category != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
+  const [title, setTitle] = useState('');
+  const [slug, setSlug] = useState('');
   const [slugTouched, setSlugTouched] = useState(false);
-  const [parentId, setParentId] = useState("");
-  const [status, setStatus] = useState<"ACTIVE" | "ARCHIVED">("ACTIVE");
+  const [parentId, setParentId] = useState('');
+  const [status, setStatus] = useState<'ACTIVE' | 'ARCHIVED'>('ACTIVE');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
@@ -60,18 +57,18 @@ export function AddCategoryDrawer({
       setTitle(category.title);
       setSlug(category.slug);
       setSlugTouched(true);
-      setParentId(category.parentId ?? "");
-      setStatus(category.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE");
+      setParentId(category.parentId ?? '');
+      setStatus(category.status === 'ARCHIVED' ? 'ARCHIVED' : 'ACTIVE');
       setImageFile(null);
       setImagePreview(category.imageUrl);
       setRemoveExistingImage(false);
       setError(null);
     } else {
-      setTitle("");
-      setSlug("");
+      setTitle('');
+      setSlug('');
       setSlugTouched(false);
-      setParentId("");
-      setStatus("ACTIVE");
+      setParentId('');
+      setStatus('ACTIVE');
       setImageFile(null);
       setImagePreview(null);
       setRemoveExistingImage(false);
@@ -79,7 +76,7 @@ export function AddCategoryDrawer({
     }
   }, [open, category]);
 
-  const displaySlug = slugTouched ? slug : slugifyCategoryTitle(title) || "---";
+  const displaySlug = slugTouched ? slug : slugifyCategoryTitle(title) || '---';
   const parentOptions = categories.filter((item) => item.id !== category?.id);
 
   return (
@@ -95,154 +92,143 @@ export function AddCategoryDrawer({
         </h2>
       </div>
 
-        <form
-          className="flex min-h-0 flex-1 flex-col"
-          onSubmit={(event) => {
-            event.preventDefault();
-            const nextSlug =
-              slugTouched && slug.trim()
-                ? slug.trim()
-                : slugifyCategoryTitle(title);
+      <form
+        className="flex min-h-0 flex-1 flex-col"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const nextSlug = slugTouched && slug.trim() ? slug.trim() : slugifyCategoryTitle(title);
 
-            const formData = new FormData();
-            formData.set("title", title.trim());
-            formData.set("slug", nextSlug);
-            formData.set("parentId", parentId);
-            formData.set("status", status);
-            if (imageFile) {
-              formData.set("image", imageFile);
+          const formData = new FormData();
+          formData.set('title', title.trim());
+          formData.set('slug', nextSlug);
+          formData.set('parentId', parentId);
+          formData.set('status', status);
+          if (imageFile) {
+            formData.set('image', imageFile);
+          }
+          if (removeExistingImage) {
+            formData.set('removeImage', '1');
+          }
+
+          startTransition(async () => {
+            setError(null);
+            const result =
+              isEdit && category
+                ? await updateCategoryFromDrawerAction(locale, category.id, formData)
+                : await createCategoryFromDrawerAction(locale, formData);
+
+            if (!result.ok) {
+              setError(result.error.message);
+              return;
             }
-            if (removeExistingImage) {
-              formData.set("removeImage", "1");
-            }
 
-            startTransition(async () => {
-              setError(null);
-              const result =
-                isEdit && category
-                  ? await updateCategoryFromDrawerAction(
-                      locale,
-                      category.id,
-                      formData,
-                    )
-                  : await createCategoryFromDrawerAction(locale, formData);
+            onClose();
+            router.refresh();
+          });
+        }}
+      >
+        <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
+          <label className="block">
+            <span className={ADMIN_LABEL}>
+              {copy.drawer.categoryTitle}{' '}
+              <span className="text-red-600">{copy.common.requiredMark}</span>
+            </span>
+            <input
+              required
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder={copy.drawer.categoryTitlePlaceholder}
+              className={ADMIN_INPUT}
+              disabled={isPending}
+            />
+          </label>
 
-              if (!result.ok) {
-                setError(result.error.message);
-                return;
-              }
+          <label className="block">
+            <span className={ADMIN_LABEL}>{copy.drawer.slug}</span>
+            <input
+              value={displaySlug === '---' ? '' : displaySlug}
+              onChange={(event) => {
+                setSlugTouched(true);
+                setSlug(event.target.value);
+              }}
+              placeholder={copy.drawer.slugPlaceholder}
+              className={ADMIN_INPUT}
+              disabled={isPending}
+            />
+            <span className="mt-1 block text-xs text-gray-500">{copy.drawer.slugHint}</span>
+          </label>
 
-              onClose();
-              router.refresh();
-            });
-          }}
-        >
-          <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-            <label className="block">
-              <span className={ADMIN_LABEL}>
-                {copy.drawer.categoryTitle}{" "}
-                <span className="text-red-600">{copy.common.requiredMark}</span>
-              </span>
-              <input
-                required
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                placeholder={copy.drawer.categoryTitlePlaceholder}
-                className={ADMIN_INPUT}
+          <div>
+            <span className={ADMIN_LABEL}>{copy.drawer.parentCategory}</span>
+            <SelectDropdown
+              ariaLabel={copy.drawer.parentCategoryAria}
+              value={parentId}
+              allLabel={copy.drawer.noneRootCategory}
+              options={parentOptions.map((item) => ({
+                label: item.title,
+                value: item.id,
+              }))}
+              disabled={isPending}
+              deferChange={false}
+              className="mt-1"
+              onValueChange={setParentId}
+            />
+          </div>
+
+          <div>
+            <span className={ADMIN_LABEL}>{copy.drawer.status}</span>
+            <SelectDropdown
+              ariaLabel={copy.drawer.statusAria}
+              value={status}
+              options={[
+                { label: copy.drawer.published, value: 'ACTIVE' },
+                { label: copy.drawer.archived, value: 'ARCHIVED' },
+              ]}
+              disabled={isPending}
+              deferChange={false}
+              className="mt-1"
+              onValueChange={(next) => setStatus(next as 'ACTIVE' | 'ARCHIVED')}
+            />
+          </div>
+
+          <div>
+            <span className={ADMIN_LABEL}>{copy.drawer.image}</span>
+            <div className="mt-1 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
                 disabled={isPending}
-              />
-            </label>
-
-            <label className="block">
-              <span className={ADMIN_LABEL}>{copy.drawer.slug}</span>
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
+              >
+                {imagePreview ? copy.drawer.changeImage : copy.drawer.uploadImage}
+              </button>
               <input
-                value={displaySlug === "---" ? "" : displaySlug}
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="hidden"
+                disabled={isPending}
                 onChange={(event) => {
-                  setSlugTouched(true);
-                  setSlug(event.target.value);
+                  const file = event.target.files?.[0] ?? null;
+                  event.target.value = '';
+                  setImagePreview((current) => {
+                    if (current?.startsWith('blob:')) {
+                      URL.revokeObjectURL(current);
+                    }
+                    return file ? URL.createObjectURL(file) : null;
+                  });
+                  setImageFile(file);
+                  setRemoveExistingImage(false);
                 }}
-                placeholder={copy.drawer.slugPlaceholder}
-                className={ADMIN_INPUT}
-                disabled={isPending}
               />
-              <span className="mt-1 block text-xs text-gray-500">
-                {copy.drawer.slugHint}
-              </span>
-            </label>
-
-            <div>
-              <span className={ADMIN_LABEL}>{copy.drawer.parentCategory}</span>
-              <SelectDropdown
-                ariaLabel={copy.drawer.parentCategoryAria}
-                value={parentId}
-                allLabel={copy.drawer.noneRootCategory}
-                options={parentOptions.map((item) => ({
-                  label: item.title,
-                  value: item.id,
-                }))}
-                disabled={isPending}
-                deferChange={false}
-                className="mt-1"
-                onValueChange={setParentId}
-              />
-            </div>
-
-            <div>
-              <span className={ADMIN_LABEL}>{copy.drawer.status}</span>
-              <SelectDropdown
-                ariaLabel={copy.drawer.statusAria}
-                value={status}
-                options={[
-                  { label: copy.drawer.published, value: "ACTIVE" },
-                  { label: copy.drawer.archived, value: "ARCHIVED" },
-                ]}
-                disabled={isPending}
-                deferChange={false}
-                className="mt-1"
-                onValueChange={(next) =>
-                  setStatus(next as "ACTIVE" | "ARCHIVED")
-                }
-              />
-            </div>
-
-            <div>
-              <span className={ADMIN_LABEL}>{copy.drawer.image}</span>
-              <div className="mt-1 flex flex-wrap items-center gap-3">
+              {imagePreview ? (
                 <button
                   type="button"
                   disabled={isPending}
-                  onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
-                >
-                  {imagePreview ? copy.drawer.changeImage : copy.drawer.uploadImage}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  className="hidden"
-                  disabled={isPending}
-                  onChange={(event) => {
-                    const file = event.target.files?.[0] ?? null;
-                    event.target.value = "";
-                    setImagePreview((current) => {
-                      if (current?.startsWith("blob:")) {
-                        URL.revokeObjectURL(current);
-                      }
-                      return file ? URL.createObjectURL(file) : null;
-                    });
-                    setImageFile(file);
-                    setRemoveExistingImage(false);
-                  }}
-                />
-                {imagePreview ? (
-                  <button
-                    type="button"
-                    disabled={isPending}
                   onClick={() => {
                     setImageFile(null);
                     setImagePreview((current) => {
-                      if (current?.startsWith("blob:")) {
+                      if (current?.startsWith('blob:')) {
                         URL.revokeObjectURL(current);
                       }
                       return null;
@@ -255,41 +241,41 @@ export function AddCategoryDrawer({
                 >
                   {copy.drawer.remove}
                 </button>
-                ) : null}
-              </div>
-              {imagePreview ? (
-                // Blob or remote preview URLs are not always next/image-safe.
-                // eslint-disable-next-line @next/next/no-img-element -- preview
-                <img
-                  src={imagePreview}
-                  alt=""
-                  className="mt-3 h-28 w-28 rounded-xl border border-gray-200 object-cover"
-                />
               ) : null}
             </div>
-
-            {error ? <p className="text-sm text-red-700">{error}</p> : null}
+            {imagePreview ? (
+              // Blob or remote preview URLs are not always next/image-safe.
+              // eslint-disable-next-line @next/next/no-img-element -- preview
+              <img
+                src={imagePreview}
+                alt=""
+                className="mt-3 h-28 w-28 rounded-xl border border-gray-200 object-cover"
+              />
+            ) : null}
           </div>
 
-          <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
-            <Button type="submit" disabled={isPending || !title.trim()}>
-              {isPending
-                ? isEdit
-                  ? copy.common.saving
-                  : copy.common.creating
-                : isEdit
-                  ? copy.common.save
-                  : copy.drawer.createCategory}
-            </Button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="whitespace-nowrap text-sm font-medium text-gray-600 hover:text-gray-900"
-            >
-              {copy.common.cancel}
-            </button>
-          </div>
-        </form>
+          {error ? <p className="text-sm text-red-700">{error}</p> : null}
+        </div>
+
+        <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
+          <Button type="submit" disabled={isPending || !title.trim()}>
+            {isPending
+              ? isEdit
+                ? copy.common.saving
+                : copy.common.creating
+              : isEdit
+                ? copy.common.save
+                : copy.drawer.createCategory}
+          </Button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="whitespace-nowrap text-sm font-medium text-gray-600 hover:text-gray-900"
+          >
+            {copy.common.cancel}
+          </button>
+        </div>
+      </form>
     </SideSheet>
   );
 }

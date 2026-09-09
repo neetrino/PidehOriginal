@@ -1,22 +1,20 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import {
-  ConfirmDialog,
-} from "@/components/ui/ConfirmDialog";
-import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
-import { archiveOrderAction } from "@/features/orders/application/archive-order";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { ADMIN_SECTION_TITLE } from '@/features/admin/ui/admin-form-classes';
+import { archiveOrderAction } from '@/features/orders/application/archive-order';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ArchiveOrderButtonProps = {
   locale: string;
   orderNumber: string;
   isArchived: boolean;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
 export function ArchiveOrderButton({
@@ -53,9 +51,7 @@ export function ArchiveOrderButton({
       <div className="flex flex-col gap-3">
         <h2 className={ADMIN_SECTION_TITLE}>{copy.orders.archive.title}</h2>
         <p className="text-sm text-gray-600">
-          {isArchived
-            ? copy.orders.archive.archivedHint
-            : copy.orders.archive.activeHint}
+          {isArchived ? copy.orders.archive.archivedHint : copy.orders.archive.activeHint}
         </p>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button
@@ -82,7 +78,7 @@ export function ArchiveOrderButton({
       <ConfirmDialog
         open={confirmOpen}
         title={copy.confirm.archiveTitle}
-        description={copy.confirm.archiveOrder.replace("{orderNumber}", orderNumber)}
+        description={copy.confirm.archiveOrder.replace('{orderNumber}', orderNumber)}
         confirmLabel={copy.confirm.archiveConfirmLabel}
         cancelLabel={copy.confirm.cancelLabel}
         isPending={isPending}

@@ -1,28 +1,22 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import {
-  ADMIN_LABEL,
-  ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import { updateUserRoleAction } from "@/features/users/application/update-user";
-import {
-  USER_ROLES,
-  type UserRole,
-} from "@/features/users/domain/user-lifecycle";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import { ADMIN_LABEL, ADMIN_SECTION_TITLE } from '@/features/admin/ui/admin-form-classes';
+import { updateUserRoleAction } from '@/features/users/application/update-user';
+import { USER_ROLES, type UserRole } from '@/features/users/domain/user-lifecycle';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type UpdateUserRoleFormProps = {
   locale: string;
   userId: string;
   currentRole: UserRole;
   disabled?: boolean;
-  copy: Dictionary["admin"];
+  copy: Dictionary['admin'];
 };
 
 export function UpdateUserRoleForm({
@@ -35,7 +29,7 @@ export function UpdateUserRoleForm({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const roleOptions = USER_ROLES.filter((role) => role !== currentRole);
-  const [role, setRole] = useState(roleOptions[0] ?? "");
+  const [role, setRole] = useState(roleOptions[0] ?? '');
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -61,7 +55,7 @@ export function UpdateUserRoleForm({
       >
         <h3 className={ADMIN_SECTION_TITLE}>{copy.users.roleForm.title}</h3>
         <p className="text-sm text-gray-700">
-          {copy.common.current.replace("{value}", currentRole)}
+          {copy.common.current.replace('{value}', currentRole)}
         </p>
         <div>
           <span className={ADMIN_LABEL}>{copy.users.roleForm.newRole}</span>

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const localeCopySchema = z.object({
   title: z.string().trim().min(1).max(120),
@@ -24,7 +24,7 @@ export type ToggleHeroSlideInput = z.infer<typeof toggleHeroSlideSchema>;
 
 export const reorderHeroSlideSchema = z.object({
   slideId: z.string().uuid(),
-  direction: z.enum(["up", "down"]),
+  direction: z.enum(['up', 'down']),
 });
 
 export type ReorderHeroSlideInput = z.infer<typeof reorderHeroSlideSchema>;
@@ -36,4 +36,3 @@ export const deleteHeroSlideSchema = z.object({
 export type DeleteHeroSlideInput = z.infer<typeof deleteHeroSlideSchema>;
 
 export { localeCopySchema };
-

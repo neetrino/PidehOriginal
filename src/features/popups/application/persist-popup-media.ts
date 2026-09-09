@@ -1,15 +1,12 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { getProviders } from "@/config/providers";
-import { getDb } from "@/db/client";
-import { mediaAssets } from "@/db/schema";
-import { createId } from "@/lib/id";
-import {
-  extensionForImageMime,
-  validateImageFile,
-} from "@/lib/media/image-file";
+import { getProviders } from '@/config/providers';
+import { getDb } from '@/db/client';
+import { mediaAssets } from '@/db/schema';
+import { createId } from '@/lib/id';
+import { extensionForImageMime, validateImageFile } from '@/lib/media/image-file';
 
 /** Saves a popup image via object storage. */
 export async function persistPopupImage(
@@ -26,15 +23,11 @@ export async function persistPopupImage(
   const existing = await db
     .select({ objectKey: mediaAssets.objectKey })
     .from(mediaAssets)
-    .where(
-      and(eq(mediaAssets.popupId, popupId), eq(mediaAssets.role, "POPUP")),
-    );
+    .where(and(eq(mediaAssets.popupId, popupId), eq(mediaAssets.role, 'POPUP')));
 
   await db
     .delete(mediaAssets)
-    .where(
-      and(eq(mediaAssets.popupId, popupId), eq(mediaAssets.role, "POPUP")),
-    );
+    .where(and(eq(mediaAssets.popupId, popupId), eq(mediaAssets.role, 'POPUP')));
   await Promise.all(existing.map((row) => storage.deleteObject(row.objectKey)));
 
   const id = createId();
@@ -50,8 +43,8 @@ export async function persistPopupImage(
     objectKey,
     mimeType: file.type,
     byteSize: file.size,
-    uploadStatus: "READY",
-    role: "POPUP",
+    uploadStatus: 'READY',
+    role: 'POPUP',
     sortOrder: 0,
     isPrimary: true,
     popupId,
@@ -67,14 +60,10 @@ export async function removePopupImage(popupId: string): Promise<void> {
   const existing = await db
     .select({ objectKey: mediaAssets.objectKey })
     .from(mediaAssets)
-    .where(
-      and(eq(mediaAssets.popupId, popupId), eq(mediaAssets.role, "POPUP")),
-    );
+    .where(and(eq(mediaAssets.popupId, popupId), eq(mediaAssets.role, 'POPUP')));
 
   await db
     .delete(mediaAssets)
-    .where(
-      and(eq(mediaAssets.popupId, popupId), eq(mediaAssets.role, "POPUP")),
-    );
+    .where(and(eq(mediaAssets.popupId, popupId), eq(mediaAssets.role, 'POPUP')));
   await Promise.all(existing.map((row) => storage.deleteObject(row.objectKey)));
 }

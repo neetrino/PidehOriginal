@@ -82,8 +82,8 @@ locales/
 ```ts
 interface ExchangeRateProvider {
   getRates(input: {
-    base: "AMD";
-    quotes: readonly ("USD" | "EUR" | "RUB")[];
+    base: 'AMD';
+    quotes: readonly ('USD' | 'EUR' | 'RUB')[];
   }): Promise<RateSnapshot>;
 }
 ```
@@ -102,14 +102,14 @@ interface ExchangeRateProvider {
 
 ## 6. SEO route/content requirements
 
-| Surface | Required metadata |
-|---|---|
-| Home | locale title/description, canonical, hreflang, OG |
-| Catalog | normalized filter canonical policy, optional noindex for low-value combinations |
-| Product | translated title/description, canonical locale slug, hreflang available translations, Product JSON-LD, OG image |
-| Blog list/post | canonical/hreflang, BlogPosting JSON-LD post-ի համար, OG |
-| Policies/About/Contact | canonical/hreflang և meaningful metadata |
-| Profile/Admin/Auth/Cart/Checkout | `noindex` where appropriate; sensitive routes sitemap-ում չկան |
+| Surface                          | Required metadata                                                                                               |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Home                             | locale title/description, canonical, hreflang, OG                                                               |
+| Catalog                          | normalized filter canonical policy, optional noindex for low-value combinations                                 |
+| Product                          | translated title/description, canonical locale slug, hreflang available translations, Product JSON-LD, OG image |
+| Blog list/post                   | canonical/hreflang, BlogPosting JSON-LD post-ի համար, OG                                                        |
+| Policies/About/Contact           | canonical/hreflang և meaningful metadata                                                                        |
+| Profile/Admin/Auth/Cart/Checkout | `noindex` where appropriate; sensitive routes sitemap-ում չկան                                                  |
 
 ### 6.1 Canonical և filter policy
 
@@ -163,11 +163,11 @@ interface ExchangeRateProvider {
 
 Target production 75th percentile՝
 
-| Metric | Target |
-|---|---:|
-| LCP | < 2.5 s |
-| CLS | < 0.1 |
-| INP | < 200 ms |
+| Metric |   Target |
+| ------ | -------: |
+| LCP    |  < 2.5 s |
+| CLS    |    < 0.1 |
+| INP    | < 200 ms |
 
 Implementation kickoff-ին լրացուցիչ budgets են սահմանվում՝ initial route JS per surface, hero/product media bytes, server query p95 և checkout command p95։ Exact budgets-ը չափվում են target hosting/region/device/network profiles-ով։
 

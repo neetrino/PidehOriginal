@@ -4,30 +4,24 @@ import {
   DEFAULT_CATALOG_PAGE_SIZE,
   DEFAULT_CATALOG_SORT,
   type CatalogFilters,
-} from "@/features/products/schemas/catalog-list";
+} from '@/features/products/schemas/catalog-list';
 
-function firstParam(
-  value: string | string[] | undefined,
-): string | undefined {
+function firstParam(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
     return value[0];
   }
   return value;
 }
 
-function parseOptionalFlag(
-  value: string | undefined,
-): true | undefined {
-  if (value === "true" || value === "1") {
+function parseOptionalFlag(value: string | undefined): true | undefined {
+  if (value === 'true' || value === '1') {
     return true;
   }
   return undefined;
 }
 
-function parseOptionalInt(
-  value: string | undefined,
-): number | undefined {
-  if (value == null || value.trim() === "") {
+function parseOptionalInt(value: string | undefined): number | undefined {
+  if (value == null || value.trim() === '') {
     return undefined;
   }
   const parsed = Number.parseInt(value, 10);
@@ -53,15 +47,12 @@ export function parseCatalogSearchParams(
   const parsed = catalogFiltersSchema.safeParse({
     q: firstParam(raw.q) || undefined,
     minPrice,
-    maxPrice:
-      minPrice != null && maxPrice != null && maxPrice < minPrice
-        ? undefined
-        : maxPrice,
+    maxPrice: minPrice != null && maxPrice != null && maxPrice < minPrice ? undefined : maxPrice,
     category: firstParam(raw.category)?.trim() || undefined,
     inStock: parseOptionalFlag(firstParam(raw.inStock)),
     onSale: parseOptionalFlag(firstParam(raw.onSale)),
     sort: firstParam(raw.sort) ?? DEFAULT_CATALOG_SORT,
-    page: firstParam(raw.page) ?? "1",
+    page: firstParam(raw.page) ?? '1',
     pageSize: firstParam(raw.pageSize) ?? String(DEFAULT_CATALOG_PAGE_SIZE),
   });
 
@@ -69,7 +60,7 @@ export function parseCatalogSearchParams(
     // Recover sort/pagination when only filter fields are invalid.
     const fallback = catalogFiltersSchema.safeParse({
       sort: firstParam(raw.sort) ?? DEFAULT_CATALOG_SORT,
-      page: firstParam(raw.page) ?? "1",
+      page: firstParam(raw.page) ?? '1',
       pageSize: firstParam(raw.pageSize) ?? String(DEFAULT_CATALOG_PAGE_SIZE),
     });
     return fallback.success ? fallback.data : EMPTY_FILTERS;
@@ -90,17 +81,17 @@ export function buildCatalogQueryString(
   const merged: CatalogFilters = { ...filters, ...overrides };
   const params = new URLSearchParams();
 
-  if (merged.q) params.set("q", merged.q);
-  if (merged.minPrice != null) params.set("minPrice", String(merged.minPrice));
-  if (merged.maxPrice != null) params.set("maxPrice", String(merged.maxPrice));
-  if (merged.category) params.set("category", merged.category);
-  if (merged.inStock) params.set("inStock", "true");
-  if (merged.onSale) params.set("onSale", "true");
-  if (merged.sort !== DEFAULT_CATALOG_SORT) params.set("sort", merged.sort);
+  if (merged.q) params.set('q', merged.q);
+  if (merged.minPrice != null) params.set('minPrice', String(merged.minPrice));
+  if (merged.maxPrice != null) params.set('maxPrice', String(merged.maxPrice));
+  if (merged.category) params.set('category', merged.category);
+  if (merged.inStock) params.set('inStock', 'true');
+  if (merged.onSale) params.set('onSale', 'true');
+  if (merged.sort !== DEFAULT_CATALOG_SORT) params.set('sort', merged.sort);
   if (merged.pageSize !== DEFAULT_CATALOG_PAGE_SIZE) {
-    params.set("pageSize", String(merged.pageSize));
+    params.set('pageSize', String(merged.pageSize));
   }
-  if (merged.page > 1) params.set("page", String(merged.page));
+  if (merged.page > 1) params.set('page', String(merged.page));
 
   return params.toString();
 }
@@ -109,11 +100,11 @@ export function buildCatalogQueryString(
 export function hasActiveCatalogFilters(filters: CatalogFilters): boolean {
   return Boolean(
     filters.q ||
-      filters.minPrice != null ||
-      filters.maxPrice != null ||
-      filters.category ||
-      filters.inStock ||
-      filters.onSale,
+    filters.minPrice != null ||
+    filters.maxPrice != null ||
+    filters.category ||
+    filters.inStock ||
+    filters.onSale,
   );
 }
 
@@ -123,9 +114,7 @@ export function catalogHref(
   overrides: Partial<CatalogFilters> = {},
 ): string {
   const query = buildCatalogQueryString(filters, overrides);
-  return query
-    ? `/${locale}/products?${query}`
-    : `/${locale}/products`;
+  return query ? `/${locale}/products?${query}` : `/${locale}/products`;
 }
 
 /** Clears only catalog filter params (keeps unrelated URL keys out by design). */

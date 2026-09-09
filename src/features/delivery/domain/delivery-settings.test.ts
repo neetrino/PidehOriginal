@@ -1,27 +1,27 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 
 import {
   DEFAULT_DELIVERY_SETTINGS,
   isDistanceDeliveryReady,
   parseDeliverySettings,
-} from "@/features/delivery/domain/delivery-settings";
+} from '@/features/delivery/domain/delivery-settings';
 
-describe("parseDeliverySettings", () => {
-  it("returns defaults for empty input", () => {
+describe('parseDeliverySettings', () => {
+  it('returns defaults for empty input', () => {
     expect(parseDeliverySettings(null)).toEqual(DEFAULT_DELIVERY_SETTINGS);
   });
 
-  it("parses a configured store origin", () => {
+  it('parses a configured store origin', () => {
     expect(
       parseDeliverySettings({
-        originAddress: "Tumanyan 40, Yerevan",
+        originAddress: 'Tumanyan 40, Yerevan',
         originLat: 40.18,
         originLng: 44.51,
         pricePerKmAmount: 1000,
         isActive: true,
       }),
     ).toEqual({
-      originAddress: "Tumanyan 40, Yerevan",
+      originAddress: 'Tumanyan 40, Yerevan',
       originLat: 40.18,
       originLng: 44.51,
       pricePerKmAmount: 1000,
@@ -32,20 +32,20 @@ describe("parseDeliverySettings", () => {
   });
 });
 
-describe("isDistanceDeliveryReady", () => {
-  it("requires active geocoded origin", () => {
+describe('isDistanceDeliveryReady', () => {
+  it('requires active geocoded origin', () => {
     expect(
       isDistanceDeliveryReady({
         ...DEFAULT_DELIVERY_SETTINGS,
         isActive: true,
-        originAddress: "Yerevan",
+        originAddress: 'Yerevan',
         pricePerKmAmount: 500,
       }),
     ).toBe(false);
 
     expect(
       isDistanceDeliveryReady({
-        originAddress: "Yerevan",
+        originAddress: 'Yerevan',
         originLat: 40.1,
         originLng: 44.5,
         pricePerKmAmount: 500,

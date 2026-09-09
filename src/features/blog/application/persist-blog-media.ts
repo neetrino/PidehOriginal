@@ -1,15 +1,12 @@
-import "server-only";
+import 'server-only';
 
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { getProviders } from "@/config/providers";
-import { getDb } from "@/db/client";
-import { mediaAssets } from "@/db/schema";
-import { createId } from "@/lib/id";
-import {
-  extensionForImageMime,
-  validateImageFile,
-} from "@/lib/media/image-file";
+import { getProviders } from '@/config/providers';
+import { getDb } from '@/db/client';
+import { mediaAssets } from '@/db/schema';
+import { createId } from '@/lib/id';
+import { extensionForImageMime, validateImageFile } from '@/lib/media/image-file';
 
 /** Saves a cover image for a blog post via object storage. */
 export async function persistBlogCoverImage(
@@ -26,21 +23,11 @@ export async function persistBlogCoverImage(
   const existing = await db
     .select({ objectKey: mediaAssets.objectKey })
     .from(mediaAssets)
-    .where(
-      and(
-        eq(mediaAssets.blogPostId, blogPostId),
-        eq(mediaAssets.role, "COVER"),
-      ),
-    );
+    .where(and(eq(mediaAssets.blogPostId, blogPostId), eq(mediaAssets.role, 'COVER')));
 
   await db
     .delete(mediaAssets)
-    .where(
-      and(
-        eq(mediaAssets.blogPostId, blogPostId),
-        eq(mediaAssets.role, "COVER"),
-      ),
-    );
+    .where(and(eq(mediaAssets.blogPostId, blogPostId), eq(mediaAssets.role, 'COVER')));
   await Promise.all(existing.map((row) => storage.deleteObject(row.objectKey)));
 
   const id = createId();
@@ -56,8 +43,8 @@ export async function persistBlogCoverImage(
     objectKey,
     mimeType: file.type,
     byteSize: file.size,
-    uploadStatus: "READY",
-    role: "COVER",
+    uploadStatus: 'READY',
+    role: 'COVER',
     sortOrder: 0,
     isPrimary: true,
     blogPostId,
@@ -73,20 +60,10 @@ export async function removeBlogCoverImage(blogPostId: string): Promise<void> {
   const existing = await db
     .select({ objectKey: mediaAssets.objectKey })
     .from(mediaAssets)
-    .where(
-      and(
-        eq(mediaAssets.blogPostId, blogPostId),
-        eq(mediaAssets.role, "COVER"),
-      ),
-    );
+    .where(and(eq(mediaAssets.blogPostId, blogPostId), eq(mediaAssets.role, 'COVER')));
 
   await db
     .delete(mediaAssets)
-    .where(
-      and(
-        eq(mediaAssets.blogPostId, blogPostId),
-        eq(mediaAssets.role, "COVER"),
-      ),
-    );
+    .where(and(eq(mediaAssets.blogPostId, blogPostId), eq(mediaAssets.role, 'COVER')));
   await Promise.all(existing.map((row) => storage.deleteObject(row.objectKey)));
 }

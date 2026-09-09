@@ -10,7 +10,7 @@ export type DayHours = {
 };
 
 export type DeliveryScheduleSettings = {
-  timezone: "Asia/Yerevan";
+  timezone: 'Asia/Yerevan';
   /** Length of each bookable slot in minutes. */
   slotMinutes: number;
   /** How many calendar days ahead (including today) customers may book. */
@@ -36,19 +36,19 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 const DEFAULT_DAY_OPEN: DayHours = {
   isOpen: true,
-  openTime: "10:00",
-  closeTime: "22:00",
+  openTime: '10:00',
+  closeTime: '22:00',
 };
 
 const DEFAULT_DAY_CLOSED: DayHours = {
   isOpen: false,
-  openTime: "10:00",
-  closeTime: "22:00",
+  openTime: '10:00',
+  closeTime: '22:00',
 };
 
 /** Default Mon–Sat 10:00–22:00, Sunday closed. */
 export const DEFAULT_DELIVERY_SCHEDULE: DeliveryScheduleSettings = {
-  timezone: "Asia/Yerevan",
+  timezone: 'Asia/Yerevan',
   slotMinutes: 60,
   maxDaysAhead: 7,
   weekly: {
@@ -64,13 +64,13 @@ export const DEFAULT_DELIVERY_SCHEDULE: DeliveryScheduleSettings = {
 };
 
 export const ISO_WEEKDAY_LABELS_EN: Record<IsoWeekday, string> = {
-  1: "Monday",
-  2: "Tuesday",
-  3: "Wednesday",
-  4: "Thursday",
-  5: "Friday",
-  6: "Saturday",
-  7: "Sunday",
+  1: 'Monday',
+  2: 'Tuesday',
+  3: 'Wednesday',
+  4: 'Thursday',
+  5: 'Friday',
+  6: 'Saturday',
+  7: 'Sunday',
 };
 
 export function isValidTimeHHmm(value: string): boolean {
@@ -82,7 +82,7 @@ function parseYmdParts(dateYmd: string): {
   month: number;
   day: number;
 } {
-  const [yearText, monthText, dayText] = dateYmd.split("-");
+  const [yearText, monthText, dayText] = dateYmd.split('-');
   return {
     year: Number(yearText),
     month: Number(monthText),
@@ -95,34 +95,32 @@ export function isValidDateYmd(value: string): boolean {
   const { year, month, day } = parseYmdParts(value);
   const date = new Date(Date.UTC(year, month - 1, day));
   return (
-    date.getUTCFullYear() === year &&
-    date.getUTCMonth() === month - 1 &&
-    date.getUTCDate() === day
+    date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
   );
 }
 
 export function timeToMinutes(value: string): number {
-  const [hoursText, minutesText] = value.split(":");
+  const [hoursText, minutesText] = value.split(':');
   return Number(hoursText) * 60 + Number(minutesText);
 }
 
 function minutesToTime(total: number): string {
   const hours = Math.floor(total / 60);
   const minutes = total % 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
 function parseDayHours(value: unknown, fallback: DayHours): DayHours {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return { ...fallback };
   }
   const record = value as Record<string, unknown>;
   const openTime =
-    typeof record.openTime === "string" && isValidTimeHHmm(record.openTime)
+    typeof record.openTime === 'string' && isValidTimeHHmm(record.openTime)
       ? record.openTime
       : fallback.openTime;
   const closeTime =
-    typeof record.closeTime === "string" && isValidTimeHHmm(record.closeTime)
+    typeof record.closeTime === 'string' && isValidTimeHHmm(record.closeTime)
       ? record.closeTime
       : fallback.closeTime;
   const openOk = timeToMinutes(closeTime) > timeToMinutes(openTime);
@@ -135,20 +133,20 @@ function parseDayHours(value: unknown, fallback: DayHours): DayHours {
 
 /** Parses schedule JSON; unknown/invalid parts fall back to defaults. */
 export function parseDeliverySchedule(value: unknown): DeliveryScheduleSettings {
-  if (!value || typeof value !== "object") {
+  if (!value || typeof value !== 'object') {
     return structuredClone(DEFAULT_DELIVERY_SCHEDULE);
   }
 
   const record = value as Record<string, unknown>;
   const slotMinutes =
-    typeof record.slotMinutes === "number" &&
+    typeof record.slotMinutes === 'number' &&
     Number.isInteger(record.slotMinutes) &&
     record.slotMinutes >= 15 &&
     record.slotMinutes <= 240
       ? record.slotMinutes
       : DEFAULT_DELIVERY_SCHEDULE.slotMinutes;
   const maxDaysAhead =
-    typeof record.maxDaysAhead === "number" &&
+    typeof record.maxDaysAhead === 'number' &&
     Number.isInteger(record.maxDaysAhead) &&
     record.maxDaysAhead >= 1 &&
     record.maxDaysAhead <= 60
@@ -156,7 +154,7 @@ export function parseDeliverySchedule(value: unknown): DeliveryScheduleSettings 
       : DEFAULT_DELIVERY_SCHEDULE.maxDaysAhead;
 
   const weeklySource =
-    record.weekly && typeof record.weekly === "object"
+    record.weekly && typeof record.weekly === 'object'
       ? (record.weekly as Record<string, unknown>)
       : {};
 
@@ -172,15 +170,14 @@ export function parseDeliverySchedule(value: unknown): DeliveryScheduleSettings 
     ? [
         ...new Set(
           record.closedDates.filter(
-            (entry): entry is string =>
-              typeof entry === "string" && isValidDateYmd(entry),
+            (entry): entry is string => typeof entry === 'string' && isValidDateYmd(entry),
           ),
         ),
       ].sort()
     : [];
 
   return {
-    timezone: "Asia/Yerevan",
+    timezone: 'Asia/Yerevan',
     slotMinutes,
     maxDaysAhead,
     weekly,
@@ -190,21 +187,21 @@ export function parseDeliverySchedule(value: unknown): DeliveryScheduleSettings 
 
 /** Formats a Date as `YYYY-MM-DD` in Asia/Yerevan. */
 export function formatYerevanDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Yerevan",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Yerevan',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
   }).format(date);
 }
 
 /** Formats a Date as `HH:mm` in Asia/Yerevan. */
 export function formatYerevanTime(date: Date): string {
-  return new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Yerevan",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Yerevan',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
   }).format(date);
 }
 
@@ -225,7 +222,7 @@ export function isoWeekdayFromYmd(dateYmd: string): IsoWeekday {
 function addDaysYmd(dateYmd: string, days: number): string {
   const { year, month, day } = parseYmdParts(dateYmd);
   const utc = new Date(Date.UTC(year, month - 1, day + days));
-  return `${utc.getUTCFullYear()}-${String(utc.getUTCMonth() + 1).padStart(2, "0")}-${String(utc.getUTCDate()).padStart(2, "0")}`;
+  return `${utc.getUTCFullYear()}-${String(utc.getUTCMonth() + 1).padStart(2, '0')}-${String(utc.getUTCDate()).padStart(2, '0')}`;
 }
 
 function yerevanDateTimeToUtc(dateYmd: string, timeHHmm: string): Date {
@@ -308,15 +305,11 @@ export function isDeliverySlotAvailable(
 ): boolean {
   const slots = buildSlotsForDate(schedule, selected.date, now);
   return slots.some(
-    (slot) =>
-      slot.startTime === selected.startTime &&
-      slot.endTime === selected.endTime,
+    (slot) => slot.startTime === selected.startTime && slot.endTime === selected.endTime,
   );
 }
 
 /** Human-readable snapshot for order storage / admin. */
-export function formatDeliverySlotSnapshot(
-  selected: SelectedDeliverySlot,
-): string {
+export function formatDeliverySlotSnapshot(selected: SelectedDeliverySlot): string {
   return `${selected.date} ${selected.startTime}–${selected.endTime}`;
 }

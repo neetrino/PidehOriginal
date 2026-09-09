@@ -7,7 +7,7 @@ export type PaymentIntent = {
 
 export type PaymentResult = {
   provider: string;
-  status: "pending" | "authorized" | "captured" | "failed";
+  status: 'pending' | 'authorized' | 'captured' | 'failed';
   providerReference: string | null;
 };
 
@@ -18,25 +18,27 @@ export type PaymentWebhookEvent = {
   orderId: string;
   amount: bigint;
   currency: string;
-  status: "authorized" | "captured" | "failed" | "refunded";
+  status: 'authorized' | 'captured' | 'failed' | 'refunded';
   /** ISO timestamp from provider when available. */
   occurredAt?: string;
   rawSafePayload?: Record<string, unknown>;
 };
 
-export type PaymentWebhookVerification = {
-  ok: true;
-  event: PaymentWebhookEvent;
-} | {
-  ok: false;
-  reason:
-    | "INVALID_SIGNATURE"
-    | "REPLAY"
-    | "AMOUNT_MISMATCH"
-    | "CURRENCY_MISMATCH"
-    | "ORDER_MISMATCH"
-    | "UNSUPPORTED";
-};
+export type PaymentWebhookVerification =
+  | {
+      ok: true;
+      event: PaymentWebhookEvent;
+    }
+  | {
+      ok: false;
+      reason:
+        | 'INVALID_SIGNATURE'
+        | 'REPLAY'
+        | 'AMOUNT_MISMATCH'
+        | 'CURRENCY_MISMATCH'
+        | 'ORDER_MISMATCH'
+        | 'UNSUPPORTED';
+    };
 
 /**
  * Payment provider boundary.
@@ -45,8 +47,5 @@ export type PaymentWebhookVerification = {
 export type PaymentAdapter = {
   readonly name: string;
   createPayment(intent: PaymentIntent): Promise<PaymentResult>;
-  verifyWebhook?(
-    headers: Headers,
-    rawBody: string,
-  ): Promise<PaymentWebhookVerification>;
+  verifyWebhook?(headers: Headers, rawBody: string): Promise<PaymentWebhookVerification>;
 };

@@ -1,12 +1,13 @@
 /** Shared pulse skeletons for storefront route `loading.tsx` boundaries. */
+import { PAGE_CONTAINER } from '@/components/layout/page-container';
 
-const pulse = "animate-pulse";
+const pulse = 'animate-pulse';
 
 type SkeletonProps = {
   className?: string;
 };
 
-function Block({ className = "" }: SkeletonProps) {
+function Block({ className = '' }: SkeletonProps) {
   return <div className={`rounded-md bg-gray-200 ${className}`} />;
 }
 
@@ -68,12 +69,8 @@ export function ShopCatalogSkeleton() {
 
 export function ProductDetailSkeleton() {
   return (
-    <div
-      className={`${pulse} px-3 pt-6 sm:px-6 lg:px-10`}
-      aria-busy="true"
-      aria-live="polite"
-    >
-      <div className="mx-auto grid w-full max-w-[1311px] gap-8 lg:grid-cols-2">
+    <div className={`${pulse} pt-6`} aria-busy="true" aria-live="polite">
+      <div className={`grid gap-8 lg:grid-cols-2 ${PAGE_CONTAINER}`}>
         <Block className="min-h-[280px] w-full rounded-[24px] bg-[#fff3e0] sm:min-h-[380px] lg:min-h-[500px]" />
         <div className="space-y-4 rounded-[30px] bg-[#fff8f0] p-6">
           <Block className="h-12 w-3/4 bg-[#ffd9b3]" />
@@ -116,11 +113,7 @@ export function BlogPostSkeleton() {
 
 export function CartCheckoutSkeleton() {
   return (
-    <div
-      className={`${pulse} flex max-w-2xl flex-col gap-4`}
-      aria-busy="true"
-      aria-live="polite"
-    >
+    <div className={`${pulse} flex max-w-2xl flex-col gap-4`} aria-busy="true" aria-live="polite">
       <Block className="h-9 w-40" />
       <Block className="h-20 w-full rounded-lg" />
       <Block className="h-20 w-full rounded-lg" />

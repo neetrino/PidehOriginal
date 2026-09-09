@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 type CheckoutOrderSummaryProps = {
   title: string;
@@ -132,7 +132,7 @@ export function CheckoutOrderSummary({
               value={couponDraft}
               onChange={(event) => onCouponDraftChange(event.target.value)}
               onKeyDown={(event) => {
-                if (event.key === "Enter") {
+                if (event.key === 'Enter') {
                   event.preventDefault();
                   onApplyCoupon();
                 }
@@ -169,7 +169,7 @@ export function CheckoutOrderSummary({
               value={giftCardDraft}
               onChange={(event) => onGiftCardDraftChange(event.target.value)}
               onKeyDown={(event) => {
-                if (event.key === "Enter") {
+                if (event.key === 'Enter') {
                   event.preventDefault();
                   onApplyGiftCard();
                 }
@@ -184,9 +184,7 @@ export function CheckoutOrderSummary({
               variant="secondary"
               size="md"
               className="h-11 shrink-0 rounded-lg px-4 text-sm"
-              disabled={
-                isSubmitting || isApplyingGiftCard || !giftCardDraft.trim()
-              }
+              disabled={isSubmitting || isApplyingGiftCard || !giftCardDraft.trim()}
               onClick={onApplyGiftCard}
             >
               {isApplyingGiftCard ? giftCardApplyingLabel : giftCardApplyLabel}
@@ -223,12 +221,10 @@ export function CheckoutOrderSummary({
           <div className="mb-6 rounded-xl border border-gray-200 p-4">
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-medium text-gray-900">
-                  {bonus.labels.title}
-                </p>
+                <p className="text-sm font-medium text-gray-900">{bonus.labels.title}</p>
                 <p className="mt-1 text-xs text-gray-500">
                   {bonus.labels.available.replace(
-                    "{amount}",
+                    '{amount}',
                     bonus.formatMoney(bonus.availableBalance),
                   )}
                 </p>
@@ -251,12 +247,10 @@ export function CheckoutOrderSummary({
                   min={0}
                   max={bonus.maxRedeem}
                   step={1}
-                  value={bonus.redeemAmount || ""}
+                  value={bonus.redeemAmount || ''}
                   onChange={(event) => {
                     const next = Number(event.target.value);
-                    bonus.onAmountChange(
-                      Number.isFinite(next) ? Math.max(0, Math.floor(next)) : 0,
-                    );
+                    bonus.onAmountChange(Number.isFinite(next) ? Math.max(0, Math.floor(next)) : 0);
                   }}
                   disabled={isSubmitting}
                   aria-label={bonus.labels.amount}
@@ -291,17 +285,13 @@ export function CheckoutOrderSummary({
           {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
             <div className="flex justify-between text-gray-600">
               <span>{bonus.labels.applied}</span>
-              <span className="text-emerald-700">
-                -{bonus.formatMoney(bonus.redeemAmount)}
-              </span>
+              <span className="text-emerald-700">-{bonus.formatMoney(bonus.redeemAmount)}</span>
             </div>
           ) : null}
           {giftCardPreview && giftCardPreview.redeemAmount > 0 ? (
             <div className="flex justify-between text-gray-600">
               <span>{giftCardAppliedLabel}</span>
-              <span className="text-emerald-700">
-                -{formatMoney(giftCardPreview.redeemAmount)}
-              </span>
+              <span className="text-emerald-700">-{formatMoney(giftCardPreview.redeemAmount)}</span>
             </div>
           ) : null}
           <div className="flex justify-between text-gray-600">
@@ -311,9 +301,7 @@ export function CheckoutOrderSummary({
           {participantsPrepaidFormatted && participantsPrepaidLabel ? (
             <div className="flex justify-between text-gray-600">
               <span>{participantsPrepaidLabel}</span>
-              <span className="text-emerald-700">
-                -{participantsPrepaidFormatted}
-              </span>
+              <span className="text-emerald-700">-{participantsPrepaidFormatted}</span>
             </div>
           ) : null}
           <div className="flex justify-between text-gray-600">

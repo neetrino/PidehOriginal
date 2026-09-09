@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { quoteDistanceDeliveryAction } from "@/features/delivery/application/quote-distance-delivery";
-import type { DeliveryDestinationPoint } from "@/features/delivery/schemas";
+import { quoteDistanceDeliveryAction } from '@/features/delivery/application/quote-distance-delivery';
+import type { DeliveryDestinationPoint } from '@/features/delivery/schemas';
 
 const ADDRESS_QUOTE_DEBOUNCE_MS = 600;
 
@@ -40,8 +40,7 @@ export function useDistanceDeliveryQuote(
       return;
     }
 
-    const point =
-      destLat != null && destLng != null ? { lat: destLat, lng: destLng } : null;
+    const point = destLat != null && destLng != null ? { lat: destLat, lng: destLng } : null;
 
     let cancelled = false;
     const timer = window.setTimeout(() => {

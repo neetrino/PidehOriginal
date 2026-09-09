@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { CONTACT_STATUSES } from "@/features/contact/domain/contact-rules";
+import { CONTACT_STATUSES } from '@/features/contact/domain/contact-rules';
 
 export const submitContactSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -26,6 +26,4 @@ export const updateContactStatusSchema = z.object({
   status: z.enum(CONTACT_STATUSES),
 });
 
-export type UpdateContactStatusInput = z.infer<
-  typeof updateContactStatusSchema
->;
+export type UpdateContactStatusInput = z.infer<typeof updateContactStatusSchema>;

@@ -1,13 +1,13 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const MAX_RANGE_DAYS = 366;
 
 export const ANALYTICS_PERIOD_PRESETS = [
-  "last_7_days",
-  "last_30_days",
-  "last_90_days",
-  "this_month",
-  "custom",
+  'last_7_days',
+  'last_30_days',
+  'last_90_days',
+  'this_month',
+  'custom',
 ] as const;
 
 export type AnalyticsPeriodPreset = (typeof ANALYTICS_PERIOD_PRESETS)[number];
@@ -20,15 +20,13 @@ export const analyticsDateRangeSchema = z
     to: z.string().date(),
   })
   .refine((value) => value.from <= value.to, {
-    message: "from must be on or before to",
+    message: 'from must be on or before to',
   })
   .refine(
     (value) => {
       const start = new Date(`${value.from}T00:00:00.000Z`);
       const end = new Date(`${value.to}T00:00:00.000Z`);
-      const days =
-        Math.floor((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) +
-        1;
+      const days = Math.floor((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1;
       return days <= MAX_RANGE_DAYS;
     },
     { message: `Date range must be at most ${MAX_RANGE_DAYS} days` },
@@ -37,11 +35,11 @@ export const analyticsDateRangeSchema = z
 export type AnalyticsDateRange = z.infer<typeof analyticsDateRangeSchema>;
 
 const PRESET_LABELS: Record<AnalyticsPeriodPreset, string> = {
-  last_7_days: "Last 7 Days",
-  last_30_days: "Last 30 Days",
-  last_90_days: "Last 90 Days",
-  this_month: "This Month",
-  custom: "Custom Range",
+  last_7_days: 'Last 7 Days',
+  last_30_days: 'Last 30 Days',
+  last_90_days: 'Last 90 Days',
+  this_month: 'This Month',
+  custom: 'Custom Range',
 };
 
 /** Human label for a period preset select option. */
@@ -51,9 +49,7 @@ export function analyticsPeriodLabel(preset: AnalyticsPeriodPreset): string {
 
 function utcToday(): Date {
   const now = new Date();
-  return new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-  );
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 }
 
 function toIsoDate(date: Date): string {
@@ -62,16 +58,16 @@ function toIsoDate(date: Date): string {
 
 /** Inclusive UTC date range for a named analytics period preset. */
 export function rangeForAnalyticsPeriod(
-  preset: Exclude<AnalyticsPeriodPreset, "custom">,
+  preset: Exclude<AnalyticsPeriodPreset, 'custom'>,
 ): AnalyticsDateRange {
   const toDate = utcToday();
   const fromDate = new Date(toDate);
 
-  if (preset === "last_7_days") {
+  if (preset === 'last_7_days') {
     fromDate.setUTCDate(fromDate.getUTCDate() - 6);
-  } else if (preset === "last_30_days") {
+  } else if (preset === 'last_30_days') {
     fromDate.setUTCDate(fromDate.getUTCDate() - 29);
-  } else if (preset === "last_90_days") {
+  } else if (preset === 'last_90_days') {
     fromDate.setUTCDate(fromDate.getUTCDate() - 89);
   } else {
     fromDate.setUTCDate(1);
@@ -82,53 +78,46 @@ export function rangeForAnalyticsPeriod(
 
 /** Default inclusive last-30-days range in UTC ISO dates. */
 export function defaultAnalyticsDateRange(): AnalyticsDateRange {
-  return rangeForAnalyticsPeriod("last_30_days");
+  return rangeForAnalyticsPeriod('last_30_days');
 }
 
 /** Detects which preset matches an inclusive from/to range. */
-export function matchAnalyticsPeriodPreset(
-  range: AnalyticsDateRange,
-): AnalyticsPeriodPreset {
-  for (const preset of [
-    "last_7_days",
-    "last_30_days",
-    "last_90_days",
-    "this_month",
-  ] as const) {
+export function matchAnalyticsPeriodPreset(range: AnalyticsDateRange): AnalyticsPeriodPreset {
+  for (const preset of ['last_7_days', 'last_30_days', 'last_90_days', 'this_month'] as const) {
     const expected = rangeForAnalyticsPeriod(preset);
     if (expected.from === range.from && expected.to === range.to) {
       return preset;
     }
   }
-  return "custom";
+  return 'custom';
 }
 
 /** Formats an ISO date for analytics headers (e.g. Jul 12, 2026). */
 export function formatAnalyticsDisplayDate(isoDate: string): string {
-  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
+  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
   });
 }
 
 /** Formats a short chart/list date (e.g. Jul 13). */
 export function formatAnalyticsShortDate(isoDate: string): string {
-  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
+  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
   });
 }
 
 /** Formats percent delta vs a previous numeric value. */
 export function formatPeriodDelta(current: number, previous: number): string {
   if (previous === 0) {
-    return current > 0 ? "+100%" : "—";
+    return current > 0 ? '+100%' : '—';
   }
   const pct = ((current - previous) / previous) * 100;
-  const sign = pct >= 0 ? "+" : "";
+  const sign = pct >= 0 ? '+' : '';
   return `${sign}${pct.toFixed(1)}%`;
 }
 
@@ -136,10 +125,7 @@ export function formatPeriodDelta(current: number, previous: number): string {
  * Percent change vs previous. Returns `null` when previous is 0 and current is 0,
  * or when comparison is intentionally unavailable.
  */
-export function percentChange(
-  current: number,
-  previous: number,
-): number | null {
+export function percentChange(current: number, previous: number): number | null {
   if (previous === 0) {
     return current > 0 ? 100 : null;
   }

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Users } from "lucide-react";
-import { useState } from "react";
+import { Users } from 'lucide-react';
+import { useState } from 'react';
 
-import { CreateGroupOrderModal } from "@/features/group-orders/ui/CreateGroupOrderModal";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
+import { CreateGroupOrderModal } from '@/features/group-orders/ui/CreateGroupOrderModal';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
 
 type GroupOrderHeaderButtonProps = {
   locale: Locale;
-  labels: Dictionary["groupOrder"];
+  labels: Dictionary['groupOrder'];
   defaultName?: string;
 };
 

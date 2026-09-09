@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 
-import { autocompleteAddressAction } from "@/features/delivery/application/autocomplete-address";
-import type { PlaceAutocompleteSuggestion } from "@/lib/maps/types";
+import { autocompleteAddressAction } from '@/features/delivery/application/autocomplete-address';
+import type { PlaceAutocompleteSuggestion } from '@/lib/maps/types';
 
 const DEBOUNCE_MS = 280;
 
@@ -17,7 +17,7 @@ type AddressAutocompleteProps = {
   disabled?: boolean;
   required?: boolean;
   className?: string;
-  languageCode?: "hy" | "en" | "ru";
+  languageCode?: 'hy' | 'en' | 'ru';
   autoComplete?: string;
 };
 
@@ -29,18 +29,16 @@ export function AddressAutocomplete({
   placeholder,
   disabled = false,
   required = false,
-  className = "",
-  languageCode = "hy",
-  autoComplete = "street-address",
+  className = '',
+  languageCode = 'hy',
+  autoComplete = 'street-address',
 }: AddressAutocompleteProps) {
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<number | null>(null);
   const requestIdRef = useRef(0);
   const [open, setOpen] = useState(false);
-  const [suggestions, setSuggestions] = useState<PlaceAutocompleteSuggestion[]>(
-    [],
-  );
+  const [suggestions, setSuggestions] = useState<PlaceAutocompleteSuggestion[]>([]);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [highlightIndex, setHighlightIndex] = useState(-1);
@@ -52,8 +50,8 @@ export function AddressAutocomplete({
         setHighlightIndex(-1);
       }
     }
-    document.addEventListener("mousedown", onPointerDown);
-    return () => document.removeEventListener("mousedown", onPointerDown);
+    document.addEventListener('mousedown', onPointerDown);
+    return () => document.removeEventListener('mousedown', onPointerDown);
   }, []);
 
   useEffect(() => {
@@ -125,21 +123,17 @@ export function AddressAutocomplete({
       return;
     }
 
-    if (event.key === "ArrowDown") {
+    if (event.key === 'ArrowDown') {
       event.preventDefault();
-      setHighlightIndex((current) =>
-        current < suggestions.length - 1 ? current + 1 : 0,
-      );
+      setHighlightIndex((current) => (current < suggestions.length - 1 ? current + 1 : 0));
       return;
     }
-    if (event.key === "ArrowUp") {
+    if (event.key === 'ArrowUp') {
       event.preventDefault();
-      setHighlightIndex((current) =>
-        current > 0 ? current - 1 : suggestions.length - 1,
-      );
+      setHighlightIndex((current) => (current > 0 ? current - 1 : suggestions.length - 1));
       return;
     }
-    if (event.key === "Enter" && highlightIndex >= 0) {
+    if (event.key === 'Enter' && highlightIndex >= 0) {
       event.preventDefault();
       const selected = suggestions[highlightIndex];
       if (selected) {
@@ -147,7 +141,7 @@ export function AddressAutocomplete({
       }
       return;
     }
-    if (event.key === "Escape") {
+    if (event.key === 'Escape') {
       setOpen(false);
       setHighlightIndex(-1);
     }
@@ -199,18 +193,14 @@ export function AddressAutocomplete({
                 <button
                   type="button"
                   className={`flex w-full flex-col items-start px-4 py-2.5 text-left text-sm ${
-                    active ? "bg-gray-100" : "hover:bg-gray-50"
+                    active ? 'bg-gray-100' : 'hover:bg-gray-50'
                   }`}
                   onMouseEnter={() => setHighlightIndex(index)}
                   onClick={() => selectSuggestion(suggestion)}
                 >
-                  <span className="font-medium text-gray-900">
-                    {suggestion.primaryText}
-                  </span>
+                  <span className="font-medium text-gray-900">{suggestion.primaryText}</span>
                   {suggestion.secondaryText ? (
-                    <span className="text-xs text-gray-500">
-                      {suggestion.secondaryText}
-                    </span>
+                    <span className="text-xs text-gray-500">{suggestion.secondaryText}</span>
                   ) : null}
                 </button>
               </li>

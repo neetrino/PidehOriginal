@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { SideSheet } from "@/components/ui/SideSheet";
-import { BuyGiftCardForm } from "@/features/gift-cards/ui/BuyGiftCardForm";
-import type { GiftCardSettings } from "@/features/gift-cards/domain/gift-card-rules";
-import type { Locale } from "@/lib/i18n/config";
+import { SideSheet } from '@/components/ui/SideSheet';
+import { BuyGiftCardForm } from '@/features/gift-cards/ui/BuyGiftCardForm';
+import type { GiftCardSettings } from '@/features/gift-cards/domain/gift-card-rules';
+import type { Locale } from '@/lib/i18n/config';
 
 type BuyGiftCardDrawerCopy = {
   title: string;

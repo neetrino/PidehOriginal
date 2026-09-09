@@ -1,14 +1,8 @@
-"use client";
+'use client';
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  type AnimationEvent,
-  type ReactNode,
-} from "react";
-import { createPortal } from "react-dom";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useEffect, useRef, useState, type AnimationEvent, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 /** Must match `.animate-side-sheet-panel-*` duration in globals.css. */
 export const SIDE_SHEET_ANIMATION_MS = 300;
@@ -22,13 +16,13 @@ type SideSheetProps = {
    * `admin` — half-page width, cream surface, orange close (Pideh admin).
    * `default` — compact storefront sheet.
    */
-  variant?: "default" | "admin";
+  variant?: 'default' | 'admin';
   /** Width classes applied to the docked panel. */
   panelClassName?: string;
-  side?: "left" | "right";
+  side?: 'left' | 'right';
   zIndexClassName?: string;
   /** External circle (default) or MaMarie-style edge tab. */
-  closeVariant?: "circle" | "edge-tab";
+  closeVariant?: 'circle' | 'edge-tab';
   /** Soften backdrop (cart-style). */
   backdropBlur?: boolean;
   /** Inner panel surface (default: white + side radius). */
@@ -46,11 +40,11 @@ export function SideSheet({
   onClose,
   ariaLabel,
   children,
-  variant = "default",
+  variant = 'default',
   panelClassName,
-  side = "right",
-  zIndexClassName = "z-50",
-  closeVariant = "circle",
+  side = 'right',
+  zIndexClassName = 'z-50',
+  closeVariant = 'circle',
   backdropBlur,
   panelInnerClassName,
   closeClassName,
@@ -62,15 +56,12 @@ export function SideSheet({
   const [displayAriaLabel, setDisplayAriaLabel] = useState(ariaLabel);
   const exitDoneRef = useRef(false);
 
-  const isAdmin = variant === "admin";
+  const isAdmin = variant === 'admin';
   const resolvedPanelClassName =
-    panelClassName ?? (isAdmin ? "w-full sm:w-1/2" : "w-full max-w-md");
+    panelClassName ?? (isAdmin ? 'w-full sm:w-1/2' : 'w-full max-w-md');
   const resolvedBackdropBlur = backdropBlur ?? isAdmin;
   const resolvedCloseClassName =
-    closeClassName ??
-    (isAdmin
-      ? "bg-[#ff6b00] hover:bg-[#e85f00]"
-      : "bg-gray-900 hover:bg-black");
+    closeClassName ?? (isAdmin ? 'bg-[#ff6b00] hover:bg-[#e85f00]' : 'bg-gray-900 hover:bg-black');
 
   useEffect(() => {
     setMounted(true);
@@ -104,16 +95,16 @@ export function SideSheet({
     if (!rendered) return;
 
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") onClose();
+      if (event.key === 'Escape') onClose();
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [rendered, onClose]);
 
@@ -124,45 +115,39 @@ export function SideSheet({
     setExiting(false);
   }
 
-  function handlePanelAnimationEnd(
-    event: AnimationEvent<HTMLDivElement>,
-  ): void {
+  function handlePanelAnimationEnd(event: AnimationEvent<HTMLDivElement>): void {
     if (event.target !== event.currentTarget) return;
-    if (!event.animationName.includes("side-sheet-panel-out")) return;
+    if (!event.animationName.includes('side-sheet-panel-out')) return;
     finishExit();
   }
 
   if (!mounted || !rendered) return null;
 
-  const isRight = side === "right";
-  const edgeClass = isRight ? "right-0" : "left-0";
-  const panelRadius = isRight
-    ? "rounded-l-[28px]"
-    : "rounded-r-[28px]";
+  const isRight = side === 'right';
+  const edgeClass = isRight ? 'right-0' : 'left-0';
+  const panelRadius = isRight ? 'rounded-l-[28px]' : 'rounded-r-[28px]';
   const panelEdgeBorder = isAdmin
     ? isRight
-      ? "border-l-2 border-[#1e1e1e]"
-      : "border-r-2 border-[#1e1e1e]"
-    : "";
-  const closePosition = isRight ? "right-full" : "left-full";
+      ? 'border-l-2 border-[#1e1e1e]'
+      : 'border-r-2 border-[#1e1e1e]'
+    : '';
+  const closePosition = isRight ? 'right-full' : 'left-full';
   const CloseChevron = isRight ? ChevronLeft : ChevronRight;
 
   const resolvedPanelInnerClassName =
     panelInnerClassName ??
     (isAdmin
       ? `bg-[#fff8e7] shadow-[8px_0_24px_rgba(30,30,30,0.12)] ${panelRadius} ${panelEdgeBorder}`
-      : `bg-white ${isRight ? "rounded-l-[var(--radius)]" : "rounded-r-[var(--radius)]"}`);
+      : `bg-white ${isRight ? 'rounded-l-[var(--radius)]' : 'rounded-r-[var(--radius)]'}`);
 
-  const backdropClass = exiting
-    ? "animate-sheet-backdrop-out"
-    : "animate-sheet-backdrop-in";
+  const backdropClass = exiting ? 'animate-sheet-backdrop-out' : 'animate-sheet-backdrop-in';
   const panelMotionClass = exiting
     ? isRight
-      ? "animate-side-sheet-panel-out-right"
-      : "animate-side-sheet-panel-out-left"
+      ? 'animate-side-sheet-panel-out-right'
+      : 'animate-side-sheet-panel-out-left'
     : isRight
-      ? "animate-side-sheet-panel-in-right"
-      : "animate-side-sheet-panel-in-left";
+      ? 'animate-side-sheet-panel-in-right'
+      : 'animate-side-sheet-panel-in-left';
 
   return createPortal(
     <div
@@ -174,7 +159,7 @@ export function SideSheet({
       <button
         type="button"
         className={`absolute inset-0 bg-black/40 ${
-          resolvedBackdropBlur ? "backdrop-blur-sm" : ""
+          resolvedBackdropBlur ? 'backdrop-blur-sm' : ''
         } ${backdropClass}`}
         aria-label="Close"
         onClick={onClose}
@@ -183,14 +168,12 @@ export function SideSheet({
         className={`fixed inset-y-0 ${edgeClass} z-[1] flex h-dvh max-h-dvh ${panelMotionClass} ${resolvedPanelClassName}`}
         onAnimationEnd={handlePanelAnimationEnd}
       >
-        {closeVariant === "edge-tab" ? (
+        {closeVariant === 'edge-tab' ? (
           <button
             type="button"
             onClick={onClose}
             className={`absolute top-1/2 ${closePosition} z-10 flex h-[38px] w-10 -translate-y-1/2 items-center justify-center bg-[#ff6b00] text-white transition-transform hover:scale-105 ${
-              isRight
-                ? "rounded-l-full rounded-r-none"
-                : "rounded-r-full rounded-l-none"
+              isRight ? 'rounded-l-full rounded-r-none' : 'rounded-r-full rounded-l-none'
             }`}
             aria-label="Close"
           >
@@ -201,9 +184,7 @@ export function SideSheet({
             type="button"
             onClick={onClose}
             className={`absolute top-5 ${closePosition} z-10 flex h-10 w-10 shrink-0 items-center justify-center text-white transition-colors ${
-              isRight
-                ? "rounded-l-full rounded-r-none"
-                : "rounded-r-full rounded-l-none"
+              isRight ? 'rounded-l-full rounded-r-none' : 'rounded-r-full rounded-l-none'
             } ${resolvedCloseClassName}`}
             aria-label="Close"
           >

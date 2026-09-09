@@ -1,21 +1,19 @@
-import "server-only";
+import 'server-only';
 
-import { getEnv } from "@/config/env";
-import { getStoreFxRates } from "@/features/settings/application/queries";
-import { createStubEmailAdapter } from "@/lib/email/stub-adapter";
-import type { EmailAdapter } from "@/lib/email/types";
-import { createStaticExchangeRateAdapter } from "@/lib/fx/static-adapter";
-import type { ExchangeRateAdapter } from "@/lib/fx/types";
-import { createCodPaymentAdapter } from "@/lib/payments/cod-adapter";
-import type { PaymentAdapter } from "@/lib/payments/types";
-import {
-  createR2ObjectStorageAdapter,
-} from "@/lib/r2/r2-adapter";
-import { isR2Configured } from "@/lib/r2/is-configured";
-import { createStubObjectStorageAdapter } from "@/lib/r2/stub-adapter";
-import type { ObjectStorageAdapter } from "@/lib/r2/types";
-import { createMemoryRedisAdapter } from "@/lib/redis/memory-adapter";
-import type { RedisAdapter } from "@/lib/redis/types";
+import { getEnv } from '@/config/env';
+import { getStoreFxRates } from '@/features/settings/application/queries';
+import { createStubEmailAdapter } from '@/lib/email/stub-adapter';
+import type { EmailAdapter } from '@/lib/email/types';
+import { createStaticExchangeRateAdapter } from '@/lib/fx/static-adapter';
+import type { ExchangeRateAdapter } from '@/lib/fx/types';
+import { createCodPaymentAdapter } from '@/lib/payments/cod-adapter';
+import type { PaymentAdapter } from '@/lib/payments/types';
+import { createR2ObjectStorageAdapter } from '@/lib/r2/r2-adapter';
+import { isR2Configured } from '@/lib/r2/is-configured';
+import { createStubObjectStorageAdapter } from '@/lib/r2/stub-adapter';
+import type { ObjectStorageAdapter } from '@/lib/r2/types';
+import { createMemoryRedisAdapter } from '@/lib/redis/memory-adapter';
+import type { RedisAdapter } from '@/lib/redis/types';
 
 export type AppProviders = {
   redis: RedisAdapter;
@@ -45,7 +43,7 @@ function createStorageAdapter(): ObjectStorageAdapter {
   }
 
   // Empty base → relative `/uploads/...` URLs for local stub files in `public/`.
-  return createStubObjectStorageAdapter(env.R2_PUBLIC_BASE_URL ?? "");
+  return createStubObjectStorageAdapter(env.R2_PUBLIC_BASE_URL ?? '');
 }
 
 /**

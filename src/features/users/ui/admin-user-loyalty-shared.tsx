@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
 
-import { ADMIN_CARD } from "@/features/admin/ui/admin-form-classes";
-import type { Locale } from "@/lib/i18n/config";
-import type { Currency } from "@/lib/money/currency";
+import { ADMIN_CARD } from '@/features/admin/ui/admin-form-classes';
+import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 export function AdminUserLoyaltySectionShell({
   title,
@@ -29,25 +29,22 @@ export function AdminUserLoyaltySectionShell({
   );
 }
 
-export function formatLoyaltyDateTime(
-  date: Date | string,
-  locale: Locale,
-): string {
+export function formatLoyaltyDateTime(date: Date | string, locale: Locale): string {
   const value = date instanceof Date ? date : new Date(date);
   return new Intl.DateTimeFormat(locale, {
-    timeZone: "Asia/Yerevan",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
+    timeZone: 'Asia/Yerevan',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
   }).format(value);
 }
 
 export function toLoyaltyCurrency(value: string): Currency {
-  if (value === "USD" || value === "RUB" || value === "AMD") {
+  if (value === 'USD' || value === 'RUB' || value === 'AMD') {
     return value;
   }
-  return "AMD";
+  return 'AMD';
 }

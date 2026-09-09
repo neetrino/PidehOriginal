@@ -4,12 +4,12 @@ export {
   type AnalyticsMetricBlock,
   type AnalyticsPeriodMetrics,
   type AnalyticsSummary,
-} from "@/features/analytics/application/queries";
+} from '@/features/analytics/application/queries';
 export {
   buildAnalyticsCsv,
   guardCsvCell,
   type AnalyticsCsvRow,
-} from "@/features/analytics/domain/csv";
+} from '@/features/analytics/domain/csv';
 export {
   ANALYTICS_PERIOD_PRESETS,
   analyticsDateRangeSchema,
@@ -23,4 +23,4 @@ export {
   rangeForAnalyticsPeriod,
   type AnalyticsDateRange,
   type AnalyticsPeriodPreset,
-} from "@/features/analytics/domain/date-range";
+} from '@/features/analytics/domain/date-range';

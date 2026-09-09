@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
-import { formatMoneyAmount } from "@/lib/money/format";
-import type { Locale } from "@/lib/i18n/config";
+import type { CashChangeDenominationView } from '@/features/delivery/domain/cash-change';
+import { formatMoneyAmount } from '@/lib/money/format';
+import type { Locale } from '@/lib/i18n/config';
 
 type CashChangePickerLabels = {
   title: string;
@@ -52,18 +52,14 @@ export function CashChangePicker({
               onClick={() => onChange(option.amount)}
               className={`flex flex-col items-center gap-2 rounded-2xl border px-3 py-3 text-center transition-colors ${
                 selected
-                  ? "border-gray-900 bg-gray-50 ring-1 ring-gray-900"
-                  : "border-gray-200 bg-white hover:border-gray-300"
+                  ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900'
+                  : 'border-gray-200 bg-white hover:border-gray-300'
               } disabled:cursor-not-allowed disabled:opacity-50`}
             >
               <span className="flex h-14 w-full items-center justify-center overflow-hidden rounded-lg bg-gray-50">
                 {option.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element -- CDN/local media URL
-                  <img
-                    src={option.imageUrl}
-                    alt=""
-                    className="h-full w-full object-contain"
-                  />
+                  <img src={option.imageUrl} alt="" className="h-full w-full object-contain" />
                 ) : (
                   <span className="text-lg font-semibold text-gray-700">
                     {Math.round(option.amount / 1000)}k
@@ -71,7 +67,7 @@ export function CashChangePicker({
                 )}
               </span>
               <span className="text-sm font-medium text-gray-900">
-                {formatMoneyAmount(option.amount, "AMD", locale)}
+                {formatMoneyAmount(option.amount, 'AMD', locale)}
               </span>
             </button>
           );

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
 function isProductsTreePath(pathname: string, locale: string): boolean {
   const productsPath = `/${locale}/admin/products`;

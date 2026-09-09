@@ -1,9 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 
-import { canViewerSeeCustomerOrder } from "@/features/orders/domain/customer-order-visibility";
+import { canViewerSeeCustomerOrder } from '@/features/orders/domain/customer-order-visibility';
 
-describe("canViewerSeeCustomerOrder", () => {
-  it("allows the order owner", () => {
+describe('canViewerSeeCustomerOrder', () => {
+  it('allows the order owner', () => {
     expect(
       canViewerSeeCustomerOrder({
         isOrderOwner: true,
@@ -12,7 +12,7 @@ describe("canViewerSeeCustomerOrder", () => {
     ).toBe(true);
   });
 
-  it("allows an active group-order participant who is not the checkout payer", () => {
+  it('allows an active group-order participant who is not the checkout payer', () => {
     expect(
       canViewerSeeCustomerOrder({
         isOrderOwner: false,
@@ -21,7 +21,7 @@ describe("canViewerSeeCustomerOrder", () => {
     ).toBe(true);
   });
 
-  it("denies unrelated users", () => {
+  it('denies unrelated users', () => {
     expect(
       canViewerSeeCustomerOrder({
         isOrderOwner: false,

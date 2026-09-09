@@ -1,7 +1,7 @@
-import { ProductReviewsSection } from "@/features/products/ui/ProductReviewsSection";
-import { getProductReviewsView } from "@/features/reviews/application/queries";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
+import { ProductReviewsSection } from '@/features/products/ui/ProductReviewsSection';
+import { getProductReviewsView } from '@/features/reviews/application/queries';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
 
 type ProductReviewsIslandProps = {
   locale: Locale;

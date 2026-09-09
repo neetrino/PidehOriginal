@@ -1,11 +1,11 @@
-import { PidehPillButton } from "@/components/brand/PidehPillButton";
-import { HomeProductCard } from "@/features/home/ui/HomeProductCard";
-import { getRelatedProducts } from "@/features/products/queries";
-import { getWishlistProductIds } from "@/features/wishlist/queries";
-import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import type { Locale } from "@/lib/i18n/config";
-import { createDisplayPriceFormatter } from "@/lib/money/display-price";
-import type { Currency } from "@/lib/money/currency";
+import { PidehPillButton } from '@/components/brand/PidehPillButton';
+import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
+import { getRelatedProducts } from '@/features/products/queries';
+import { getWishlistProductIds } from '@/features/wishlist/queries';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import { createDisplayPriceFormatter } from '@/lib/money/display-price';
+import type { Currency } from '@/lib/money/currency';
 
 type ProductRelatedSectionProps = {
   locale: Locale;
@@ -25,17 +25,11 @@ export async function ProductRelatedSection({
 }: ProductRelatedSectionProps) {
   const related = await getRelatedProducts(locale, productId);
   const menuButton = (
-    <PidehPillButton
-      href={`/${locale}/products`}
-      label={dictionary.home.viewAll}
-      tone="yellow"
-    />
+    <PidehPillButton href={`/${locale}/products`} label={dictionary.home.viewAll} tone="yellow" />
   );
 
   if (related.length === 0) {
-    return (
-      <section className="mt-16 flex justify-center md:mt-20">{menuButton}</section>
-    );
+    return <section className="mt-16 flex justify-center md:mt-20">{menuButton}</section>;
   }
 
   const [wishlistIds, formatPrice] = await Promise.all([
@@ -48,7 +42,7 @@ export async function ProductRelatedSection({
   return (
     <section className="mt-16 flex flex-col gap-8 md:mt-20">
       <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
-        <h2 className="min-w-0 font-display text-[clamp(2.5rem,8vw,5rem)] leading-[0.95] text-white">
+        <h2 className="min-w-0 font-display text-[clamp(2.3rem,7.7vw,4.8rem)] leading-[0.95] text-white">
           {labels.related}
         </h2>
         <div className="shrink-0">{menuButton}</div>
@@ -56,10 +50,7 @@ export async function ProductRelatedSection({
       <div className="grid w-full grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-4">
         {related.map((item) => {
           const price = formatPrice(item.priceAmount);
-          const compareAt =
-            item.compareAtAmount != null
-              ? formatPrice(item.compareAtAmount)
-              : null;
+          const compareAt = item.compareAtAmount != null ? formatPrice(item.compareAtAmount) : null;
 
           return (
             <HomeProductCard

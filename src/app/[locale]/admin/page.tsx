@@ -1,13 +1,13 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { AdminDashboard } from "@/features/admin/ui/AdminDashboard";
+import { AdminDashboard } from '@/features/admin/ui/AdminDashboard';
 import {
   defaultAnalyticsDateRange,
   formatPeriodDelta,
-} from "@/features/analytics/domain/date-range";
-import { getAdminDashboardMetrics } from "@/features/orders/application/queries";
-import { isLocale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+} from '@/features/analytics/domain/date-range';
+import { getAdminDashboardMetrics } from '@/features/orders/application/queries';
+import { isLocale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminPageProps = {
   params: Promise<{ locale: string }>;
@@ -24,7 +24,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
 
   const metrics = await getAdminDashboardMetrics(defaultAnalyticsDateRange());
   const revenueDelta = dash.revenueDeltaVsPrev.replace(
-    "{delta}",
+    '{delta}',
     formatPeriodDelta(metrics.revenueAmount, metrics.previousRevenueAmount),
   );
 
