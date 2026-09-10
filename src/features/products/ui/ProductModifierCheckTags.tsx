@@ -5,6 +5,8 @@ type ProductModifierCheckTagsProps = {
   selectedIds: readonly string[];
   disabled: boolean;
   groupLabel: string;
+  /** Chip surface. Default white works on the cream desktop card. */
+  chipClassName?: string;
   onToggle: (id: string) => void;
 };
 
@@ -13,6 +15,7 @@ export function ProductModifierCheckTags({
   selectedIds,
   disabled,
   groupLabel,
+  chipClassName = 'bg-white',
   onToggle,
 }: ProductModifierCheckTagsProps) {
   const selected = new Set(selectedIds);
@@ -29,7 +32,7 @@ export function ProductModifierCheckTags({
             aria-checked={isOn}
             disabled={disabled}
             onClick={() => onToggle(option.id)}
-            className="inline-flex items-center gap-2 rounded-[12px] bg-white px-3 py-2 text-base text-[#1e1e1e] transition hover:brightness-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            className={`inline-flex items-center gap-2 rounded-[12px] px-3 py-2 text-base text-[#1e1e1e] transition hover:brightness-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${chipClassName}`}
           >
             <span
               aria-hidden

@@ -325,7 +325,8 @@ body {
 
   /* Pages that ship their own in-page chrome opt out of the shared bar. */
   .storefront-shell:has(.pideh-home-mobile) .mobile-storefront-header,
-  .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header {
+  .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header,
+  .storefront-shell:has(.pideh-pdp-mobile) .mobile-storefront-header {
     display: none;
   }
 
@@ -357,6 +358,14 @@ body {
   }
 
   .storefront-shell:has(.pideh-shop-mobile) .storefront-footer {
+    display: none;
+  }
+
+  .storefront-shell:has(.pideh-pdp-mobile) .storefront-main {
+    padding-bottom: 0;
+  }
+
+  .storefront-shell:has(.pideh-pdp-mobile) .storefront-footer {
     display: none;
   }
 }
