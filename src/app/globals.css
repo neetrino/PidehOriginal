@@ -326,7 +326,8 @@ body {
   /* Pages that ship their own in-page chrome opt out of the shared bar. */
   .storefront-shell:has(.pideh-home-mobile) .mobile-storefront-header,
   .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header,
-  .storefront-shell:has(.pideh-pdp-mobile) .mobile-storefront-header {
+  .storefront-shell:has(.pideh-pdp-mobile) .mobile-storefront-header,
+  .storefront-shell:has(.pideh-login) .mobile-storefront-header {
     display: none;
   }
 
@@ -367,6 +368,25 @@ body {
 
   .storefront-shell:has(.pideh-pdp-mobile) .storefront-footer {
     display: none;
+  }
+
+  /* Auth: dock clearance lives on .pideh-login (see LoginScene). */
+  .storefront-shell:has(.pideh-login) {
+    height: auto;
+  }
+
+  .storefront-shell:has(.pideh-login) .storefront-main {
+    flex: none;
+    min-height: 100dvh;
+    padding-bottom: 0;
+  }
+
+  .storefront-shell:has(.pideh-login) .storefront-footer {
+    display: none;
+  }
+
+  .pideh-login {
+    padding-bottom: calc(var(--auth-nav-clearance, 16rem) + env(safe-area-inset-bottom, 0px));
   }
 }
 

@@ -20,7 +20,10 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
   const { auth } = dictionary;
 
   return (
-    <LoginScene title={auth.registerTitle}>
+    <LoginScene
+      title={auth.registerTitle}
+      mobileBackgroundSrc="/brand/pideh/register-food-bg-mobile.png"
+    >
       <RegisterForm locale={rawLocale} dictionary={auth} />
     </LoginScene>
   );

@@ -55,11 +55,11 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
         autoComplete="current-password"
         variant="brand"
       />
-      <div className="flex justify-end">
+      <div className="min-w-0 w-full">
         <AppLink
           href={`/${locale}/forgot-password`}
           prefetchPolicy="intent"
-          className="text-sm font-medium text-[#ff6b00] underline-offset-2 hover:underline"
+          className="block w-full text-end text-sm font-medium leading-snug text-pretty break-words text-[#ff6b00] underline-offset-2 hover:underline"
         >
           {dictionary.forgotPassword}
         </AppLink>
