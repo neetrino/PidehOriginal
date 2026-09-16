@@ -2,7 +2,7 @@
 
 **Database.** PostgreSQL (Neon)
 **ORM/migrations.** Drizzle ORM / Drizzle Kit
-**Կարգավիճակ.** Canonical 38-table schema migrated; idempotent seed available (`pnpm db:seed`)
+**Կարգավիճակ.** Canonical 38-table schema migrated; idempotent seed available (`pnpm db:seed`). Product catalog is imported separately (`pnpm db:import-pideh-catalog`) with R2 object keys.
 **Canonical table count.** 38
 **Վերջին թարմացում.** 2026-08-25
 
@@ -415,6 +415,6 @@ Actual indexes-ը validate են արվում representative data-ի `EXPLAIN (AN
 - [ ] Money/range/exactly-one-owner/target constraints tested են։
 - [ ] Concurrent checkout/promotion usage/stock/last-admin tests անցնում են։
 - [ ] Redis token TTL և atomic single-use tests անցնում են։
-- [x] Seed-ը idempotent է և ստեղծում է admin/customers/catalog/hero/delivery/promotions/blog (sample orders՝ հետագա)։
+- [x] Seed-ը idempotent է և ստեղծում է admin/customers/hero/delivery/promotions/blog։ Catalog-ը import է արվում `pnpm db:import-pideh-catalog`-ով, product նկարները՝ R2 `catalog/products/{slug}.webp` keys։
 - [x] Seed credentials-ը env-ից են; production default credential չկա։
 - [x] Production migration-ը application startup-ում auto-run չի արվում։
