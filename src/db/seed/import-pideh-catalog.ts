@@ -1,309 +1,272 @@
 /**
- * Imports the Pideh Armenia catalog from legacy seed JSON
- * (https://github.com/neetrino/pideh-armenia data/).
+ * Upserts the canonical Pideh Armenia catalog (5 categories, 34 products).
  */
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
+import { eq, sql } from "drizzle-orm";
+import { neon } from "@neondatabase/serverless";
+import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
 
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import * as schema from "@/db/schema";
+import { getSeedEnv } from "@/db/seed/env";
+import {
+  catalogProductObjectKey,
+  categoryTranslations,
+  loadPidehCatalog,
+  marketingBadge,
+  productTranslations,
+  skuFromSlug,
+  type CategorySeed,
+  type ProductSeed,
+} from "@/db/seed/pideh-catalog";
+import { headCatalogProductImage } from "@/db/seed/r2-catalog-images";
+import { createId } from "@/lib/id";
 
-import * as schema from '@/db/schema';
-import { getSeedEnv } from '@/db/seed/env';
-import { createId } from '@/lib/id';
+type SeedDb = NeonHttpDatabase<typeof schema>;
 
-const DATA_DIR = path.join(process.cwd(), 'src/db/seed');
-
-const CATEGORY_SLUG_BY_RU: Record<
-  string,
-  { slug: string; hy: string; en: string; sortOrder: number }
-> = {
-  Комбо: { slug: 'combo', hy: 'Կոմբո', en: 'Combo', sortOrder: 1 },
-  Пиде: { slug: 'pide', hy: 'Փիդե', en: 'Pide', sortOrder: 2 },
-  Снэк: { slug: 'snack', hy: 'Սնэք', en: 'Snacks', sortOrder: 3 },
-  Соусы: { slug: 'sauces', hy: 'Սոուսներ', en: 'Sauces', sortOrder: 4 },
-  Напитки: { slug: 'drinks', hy: 'Խմիչքներ', en: 'Drinks', sortOrder: 5 },
-};
-
-/** Featured / badge mapping from legacy pideh-armenia seed. */
-const PRODUCT_BADGE_BY_SLUG: Record<
-  string,
-  { badge: Partial<Record<'hy' | 'en' | 'ru', string>>; featured: boolean }
-> = {
-  '2-myasa-pide': {
-    badge: { hy: 'HIT', en: 'HIT', ru: 'HIT' },
-    featured: true,
-  },
-  'kombo-ya-odin': {
-    badge: { hy: 'HIT', en: 'HIT', ru: 'HIT' },
-    featured: true,
-  },
-  'pepperoni-pide': {
-    badge: { hy: 'HIT', en: 'HIT', ru: 'HIT' },
-    featured: true,
-  },
-  'pide-s-basturmoj': {
-    badge: { hy: 'Նոր', en: 'NEW', ru: 'NEW' },
-    featured: false,
-  },
-  'kombo-my-vdvoyom': {
-    badge: { hy: 'Նոր', en: 'NEW', ru: 'NEW' },
-    featured: false,
-  },
-  'classic-chees': {
-    badge: { hy: 'Դասական', en: 'CLASSIC', ru: 'CLASSIC' },
-    featured: false,
-  },
-  'ovoshchnoe-pide': {
-    badge: { hy: 'Դասական', en: 'CLASSIC', ru: 'CLASSIC' },
-    featured: false,
-  },
-  'pide-s-govyadinoj': {
-    badge: { hy: 'Banner', en: 'Banner', ru: 'Banner' },
-    featured: true,
-  },
-};
-
-type ProductSeed = {
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-  ingredients: string[];
-  isAvailable: boolean;
-};
-
-type TranslationSeed = {
-  name: string;
-  description: string;
-  ingredients: string[];
-};
-
-type TranslationsMap = Record<string, { hy: TranslationSeed; en: TranslationSeed }>;
-
-function productSlugFromImage(imagePath: string): string {
-  const file = path.basename(imagePath);
-  const withoutExt = file.replace(/\.(png|jpg|jpeg|webp)$/i, '');
-  return withoutExt.replace(/-Photoroom$/i, '');
+async function findProductIdBySlug(
+  db: SeedDb,
+  slug: string,
+): Promise<string | undefined> {
+  const [row] = await db
+    .select({ id: schema.products.id })
+    .from(schema.products)
+    .where(
+      sql`(
+        ${schema.products.translations}->'hy'->>'slug' = ${slug}
+        OR ${schema.products.translations}->'en'->>'slug' = ${slug}
+        OR ${schema.products.translations}->'ru'->>'slug' = ${slug}
+      )`,
+    )
+    .limit(1);
+  return row?.id;
 }
 
-function slugifyTitle(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[^\w\s-]/g, '')
-    .trim()
-    .replace(/[\s_]+/g, '-')
-    .replace(/-+/g, '-');
+async function findCategoryIdBySlug(
+  db: SeedDb,
+  slug: string,
+): Promise<string | undefined> {
+  const [row] = await db
+    .select({ id: schema.categories.id })
+    .from(schema.categories)
+    .where(
+      sql`(
+        ${schema.categories.translations}->'hy'->>'slug' = ${slug}
+        OR ${schema.categories.translations}->'en'->>'slug' = ${slug}
+        OR ${schema.categories.translations}->'ru'->>'slug' = ${slug}
+      )`,
+    )
+    .limit(1);
+  return row?.id;
 }
 
-function allocateUniqueSlug(baseSlug: string, enTitle: string, used: Set<string>): string {
-  if (!used.has(baseSlug)) {
-    used.add(baseSlug);
-    return baseSlug;
+async function upsertCategory(
+  db: SeedDb,
+  item: CategorySeed,
+): Promise<string> {
+  const existingId = await findCategoryIdBySlug(db, item.slug);
+  const id = existingId ?? createId();
+  const values = {
+    translations: categoryTranslations(item),
+    sortOrder: item.sortOrder,
+    status: item.isActive ? ("ACTIVE" as const) : ("ARCHIVED" as const),
+    deletedAt: null,
+    updatedAt: new Date(),
+  };
+
+  if (existingId) {
+    await db
+      .update(schema.categories)
+      .set(values)
+      .where(eq(schema.categories.id, existingId));
+    return existingId;
   }
 
-  const fromTitle = slugifyTitle(enTitle) || `${baseSlug}-item`;
-  let candidate = fromTitle;
-  let index = 2;
-  while (used.has(candidate)) {
-    candidate = `${fromTitle}-${index}`;
-    index += 1;
+  await db.insert(schema.categories).values({ id, ...values });
+  return id;
+}
+
+async function upsertProductRow(
+  db: SeedDb,
+  item: ProductSeed,
+): Promise<string> {
+  const existingId = await findProductIdBySlug(db, item.slug);
+  const id = existingId ?? createId();
+  const badge = marketingBadge(item.status);
+  const values = {
+    sku: skuFromSlug(item.slug),
+    translations: productTranslations(item),
+    priceAmount: item.price,
+    stockOnHand: item.isAvailable ? 100 : 0,
+    lowStockThreshold: 5,
+    status: item.isAvailable ? ("ACTIVE" as const) : ("ARCHIVED" as const),
+    isFeatured: badge?.featured ?? false,
+    badgeTranslations: badge?.badge ?? null,
+    badgeStyle: badge ? "solid" : null,
+    badgePosition: badge ? "top-left" : null,
+    deletedAt: null,
+    updatedAt: new Date(),
+  };
+
+  if (existingId) {
+    await db
+      .update(schema.products)
+      .set(values)
+      .where(eq(schema.products.id, existingId));
+    return existingId;
   }
-  used.add(candidate);
-  return candidate;
+
+  await db.insert(schema.products).values({ id, ...values });
+  return id;
 }
 
-function objectKeyFromPublicUrl(url: string): string {
-  const parsed = new URL(url);
-  return parsed.pathname.replace(/^\//, '');
+async function upsertProductCategory(
+  db: SeedDb,
+  productId: string,
+  categoryId: string,
+  sortOrder: number,
+): Promise<void> {
+  await db
+    .delete(schema.productCategories)
+    .where(eq(schema.productCategories.productId, productId));
+  await db.insert(schema.productCategories).values({
+    id: createId(),
+    productId,
+    categoryId,
+    isPrimary: true,
+    sortOrder,
+  });
 }
 
-/** Keeps the R2 path unique per product while still resolving on the CDN. */
-function uniqueObjectKey(baseKey: string, productId: string): string {
-  return `${baseKey}?p=${productId}`;
+async function upsertProductMedia(
+  db: SeedDb,
+  productId: string,
+  item: ProductSeed,
+): Promise<void> {
+  await db
+    .delete(schema.mediaAssets)
+    .where(eq(schema.mediaAssets.productId, productId));
+  const destKey = catalogProductObjectKey(item.slug);
+  const stored = await headCatalogProductImage(destKey);
+  await db.insert(schema.mediaAssets).values({
+    id: createId(),
+    objectKey: destKey,
+    mimeType: "image/webp",
+    byteSize: stored.byteSize,
+    uploadStatus: "READY",
+    role: "PRIMARY",
+    sortOrder: 0,
+    isPrimary: true,
+    productId,
+    altTranslations: {
+      hy: item.nameHy,
+      en: item.nameEn,
+      ru: item.nameRu,
+    },
+  });
 }
 
-function formatDescription(description: string, ingredients: string[]): string {
-  if (ingredients.length === 0) {
-    return description;
+async function upsertStoreIdentity(db: SeedDb): Promise<void> {
+  const value = {
+    version: 1,
+    name: "Pideh Armenia",
+    defaultLocale: "hy",
+    defaultCurrency: "AMD",
+  };
+  await db
+    .insert(schema.storeSettings)
+    .values({ key: "store.identity", value })
+    .onConflictDoUpdate({
+      target: schema.storeSettings.key,
+      set: { value, updatedAt: new Date() },
+    });
+}
+
+function printCatalogTable(
+  rows: Array<{
+    slug: string;
+    price: number;
+    categorySlug: string;
+    status: string;
+    objectKey: string;
+  }>,
+): void {
+  console.info(
+    [
+      "slug".padEnd(28),
+      "price".padStart(6),
+      "category".padEnd(8),
+      "status".padEnd(8),
+      "objectKey",
+    ].join("  "),
+  );
+  for (const row of rows) {
+    console.info(
+      [
+        row.slug.padEnd(28),
+        String(row.price).padStart(6),
+        row.categorySlug.padEnd(8),
+        row.status.padEnd(8),
+        row.objectKey,
+      ].join("  "),
+    );
   }
-  return `${description}\n\n${ingredients.join(', ')}`;
-}
-
-function loadJson<T>(fileName: string): T {
-  const fullPath = path.join(DATA_DIR, fileName);
-  return JSON.parse(readFileSync(fullPath, 'utf8')) as T;
 }
 
 async function importCatalog(): Promise<void> {
   const env = getSeedEnv();
+  const catalog = loadPidehCatalog();
   const db = drizzle(neon(env.DATABASE_URL), { schema });
 
-  const productsData = loadJson<ProductSeed[]>('buy-am-products.json');
-  const translations = loadJson<TranslationsMap>('product-translations.json');
-  const imageMap = loadJson<Record<string, string>>('image-map.json');
-
-  // Full catalog reset so re-runs are idempotent.
-  await db.delete(schema.mediaAssets);
-  await db.delete(schema.productCategories);
-  await db.delete(schema.products);
-  await db.delete(schema.categories);
-
   const categoryIdBySlug = new Map<string, string>();
-
-  for (const [ruName, meta] of Object.entries(CATEGORY_SLUG_BY_RU)) {
-    const id = createId();
-    await db.insert(schema.categories).values({
-      id,
-      translations: {
-        hy: {
-          title: meta.hy,
-          slug: meta.slug,
-          description: `${meta.hy} կատեգորիա`,
-        },
-        en: {
-          title: meta.en,
-          slug: meta.slug,
-          description: `${meta.en} category`,
-        },
-        ru: {
-          title: ruName,
-          slug: meta.slug,
-          description: `Категория ${ruName}`,
-        },
-      },
-      sortOrder: meta.sortOrder,
-      status: 'ACTIVE',
-    });
-    categoryIdBySlug.set(meta.slug, id);
+  for (const category of catalog.categories) {
+    const id = await upsertCategory(db, category);
+    categoryIdBySlug.set(category.slug, id);
   }
 
-  let imported = 0;
-  let skipped = 0;
-  const usedSlugs = new Set<string>();
+  const report: Array<{
+    slug: string;
+    price: number;
+    categorySlug: string;
+    status: string;
+    objectKey: string;
+  }> = [];
 
-  for (const item of productsData) {
-    const categoryMeta = CATEGORY_SLUG_BY_RU[item.category];
-    const categoryId = categoryMeta ? categoryIdBySlug.get(categoryMeta.slug) : undefined;
+  for (const [index, item] of catalog.products.entries()) {
+    const categoryId = categoryIdBySlug.get(item.categorySlug);
     if (!categoryId) {
-      console.warn(`Skip (no category): ${item.name}`);
-      skipped += 1;
-      continue;
+      throw new Error(`Missing category for slug ${item.categorySlug}`);
     }
-
-    const imageUrl = imageMap[item.image];
-    if (!imageUrl) {
-      console.warn(`Skip (no R2 mapping): ${item.name}`);
-      skipped += 1;
-      continue;
-    }
-
-    const localized = translations[item.name];
-    if (!localized) {
-      console.warn(`Skip (no hy/en map): ${item.name}`);
-      skipped += 1;
-      continue;
-    }
-
-    const imageSlug = productSlugFromImage(item.image);
-    const slug = allocateUniqueSlug(imageSlug, localized.en.name, usedSlugs);
-    const badge = PRODUCT_BADGE_BY_SLUG[imageSlug];
-    const productId = createId();
-    const sku = `PIDEH-${slug}`.toUpperCase().slice(0, 64);
-
-    await db.insert(schema.products).values({
-      id: productId,
-      sku,
-      translations: {
-        hy: {
-          title: localized.hy.name,
-          slug,
-          description: formatDescription(localized.hy.description, localized.hy.ingredients),
-        },
-        en: {
-          title: localized.en.name,
-          slug,
-          description: formatDescription(localized.en.description, localized.en.ingredients),
-        },
-        ru: {
-          title: item.name,
-          slug,
-          description: formatDescription(item.description, item.ingredients),
-        },
-      },
-      priceAmount: Math.round(item.price),
-      stockOnHand: item.isAvailable ? 100 : 0,
-      lowStockThreshold: 5,
-      status: item.isAvailable ? 'ACTIVE' : 'ARCHIVED',
-      isFeatured: badge?.featured ?? false,
-      badgeTranslations: badge?.badge,
-      badgeStyle: badge ? 'solid' : null,
-      badgePosition: badge ? 'top-left' : null,
+    const productId = await upsertProductRow(db, item);
+    await upsertProductCategory(db, productId, categoryId, index);
+    await upsertProductMedia(db, productId, item);
+    report.push({
+      slug: item.slug,
+      price: item.price,
+      categorySlug: item.categorySlug,
+      status: item.status,
+      objectKey: catalogProductObjectKey(item.slug),
     });
-
-    await db.insert(schema.productCategories).values({
-      id: createId(),
-      productId,
-      categoryId,
-      isPrimary: true,
-      sortOrder: imported,
-    });
-
-    const baseObjectKey = objectKeyFromPublicUrl(imageUrl);
-    const objectKey = uniqueObjectKey(baseObjectKey, productId);
-    await db.insert(schema.mediaAssets).values({
-      id: createId(),
-      objectKey,
-      mimeType: baseObjectKey.endsWith('.png') ? 'image/png' : 'image/webp',
-      byteSize: 0,
-      uploadStatus: 'READY',
-      role: 'PRIMARY',
-      sortOrder: 0,
-      isPrimary: true,
-      productId,
-      altTranslations: {
-        hy: localized.hy.name,
-        en: localized.en.name,
-        ru: item.name,
-      },
-    });
-
-    imported += 1;
   }
 
-  await db
-    .insert(schema.storeSettings)
-    .values({
-      key: 'store.identity',
-      value: {
-        version: 1,
-        name: 'Pideh Armenia',
-        defaultLocale: 'hy',
-        defaultCurrency: 'AMD',
-      },
-    })
-    .onConflictDoUpdate({
-      target: schema.storeSettings.key,
-      set: {
-        value: {
-          version: 1,
-          name: 'Pideh Armenia',
-          defaultLocale: 'hy',
-          defaultCurrency: 'AMD',
-        },
-        updatedAt: new Date(),
-      },
-    });
+  await upsertStoreIdentity(db);
 
+  const productCountRows = await db
+    .select({ productCount: sql<number>`count(*)::int` })
+    .from(schema.products);
+  const categoryCountRows = await db
+    .select({ categoryCount: sql<number>`count(*)::int` })
+    .from(schema.categories);
+  const productCount = productCountRows[0]?.productCount ?? 0;
+  const categoryCount = categoryCountRows[0]?.categoryCount ?? 0;
+
+  printCatalogTable(report);
   console.info(
     JSON.stringify({
-      level: 'info',
-      message: 'import-pideh-catalog.complete',
-      imported,
-      skipped,
-      categories: categoryIdBySlug.size,
+      level: "info",
+      message: "import-pideh-catalog.complete",
+      categories: catalog.categories.length,
+      products: catalog.products.length,
+      dbCategories: categoryCount,
+      dbProducts: productCount,
     }),
   );
 }
@@ -312,8 +275,8 @@ importCatalog().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(
     JSON.stringify({
-      level: 'error',
-      message: 'import-pideh-catalog.failed',
+      level: "error",
+      message: "import-pideh-catalog.failed",
       error: message,
     }),
   );

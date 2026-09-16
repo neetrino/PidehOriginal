@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useState, useTransition, type MouseEvent } from 'react';
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState, useTransition, type MouseEvent } from "react";
 
-import { PidehPillButton } from '@/components/brand/PidehPillButton';
-import { AppLink } from '@/components/ui/AppLink';
-import { beginCartBadgeAdd } from '@/features/cart/ui/cart-badge-count';
-import { addProductToActiveCart } from '@/features/group-orders/application/add-to-active';
-import { alertIfSpendLimitExceeded } from '@/features/group-orders/ui/alert-spend-limit-exceeded';
-import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
-import { WishlistButton } from '@/features/wishlist/ui/WishlistButton';
-import type { Locale } from '@/lib/i18n/config';
+import { PidehPillButton } from "@/components/brand/PidehPillButton";
+import { AppLink } from "@/components/ui/AppLink";
+import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
+import { alertIfSpendLimitExceeded } from "@/features/group-orders/ui/alert-spend-limit-exceeded";
+import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
+import type { Locale } from "@/lib/i18n/config";
 
 type HomeProductCardProps = {
   href: string;
@@ -40,40 +40,30 @@ type ProductCardPhotoProps = {
   priority: boolean;
 };
 
-/**
- * Figma Product photo (1:102 / 15:355 / hover 165:452) — 180px frame,
- * cropped leaf at 117.65°. Card hover scales + tilts this leaf (not the box).
- * The leaf sits at 0.92 of the Figma size so it stays inside the card padding.
- */
-function ProductCardPhoto({ href, title, imageUrl, priority }: ProductCardPhotoProps) {
+/** Catalog photos sit uncropped; hover tilt/scale is applied on `.pideh-product-photo-pose`. */
+function ProductCardPhoto({
+  href,
+  title,
+  imageUrl,
+  priority,
+}: ProductCardPhotoProps) {
   return (
-    <div className="pideh-product-photo-frame relative z-20 h-[180px] w-full shrink-0 overflow-visible rounded-[30px]">
+    <div className="pideh-product-photo-frame relative z-20 h-[180px] w-full shrink-0 overflow-visible">
       <AppLink
         href={href}
-        prefetchPolicy={priority ? 'intent' : 'auto'}
+        prefetchPolicy={priority ? "intent" : "auto"}
         className="absolute inset-0 z-20 block overflow-visible"
       >
         {imageUrl ? (
-          <span className="pointer-events-none absolute top-[-58px] left-[calc(50%-9px)] flex h-[305px] w-[383px] -translate-x-1/2 scale-[0.92] items-center justify-center">
-            <span className="pideh-product-photo-pose flex h-full w-full items-center justify-center">
-              <span className="relative h-[347px] w-[163px] flex-none overflow-hidden -scale-y-100 rotate-[117.65deg]">
-                <Image
-                  src={imageUrl}
-                  alt={title}
-                  width={800}
-                  height={800}
-                  sizes="383px"
-                  priority={priority}
-                  className="absolute max-w-none"
-                  style={{
-                    height: '116.23%',
-                    width: '196.94%',
-                    left: '-46.39%',
-                    top: '-5.81%',
-                  }}
-                />
-              </span>
-            </span>
+          <span className="pideh-product-photo-pose pointer-events-none absolute inset-1">
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
+              priority={priority}
+              className="object-contain drop-shadow-[0_10px_14px_rgba(31,20,8,0.12)]"
+            />
           </span>
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gray-50 text-sm text-gray-400">
@@ -103,8 +93,9 @@ export function HomeProductCard({
   outOfStockLabel,
   ratingLabel,
   prepTimeLabel,
-  className = '',
+  className = "",
 }: HomeProductCardProps) {
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [justAdded, setJustAdded] = useState(false);
 
@@ -115,31 +106,35 @@ export function HomeProductCard({
       return;
     }
 
-    setJustAdded(true);
-    const settleBadge = beginCartBadgeAdd();
     startTransition(async () => {
       try {
         const result = await addProductToActiveCart(productId, 1);
         if (!result.ok) {
-          settleBadge(null);
           alertIfSpendLimitExceeded(locale, result);
           setJustAdded(false);
           return;
         }
-        settleBadge(result.itemCount);
+        setJustAdded(true);
+        router.refresh();
         window.setTimeout(() => setJustAdded(false), 1500);
       } catch {
-        settleBadge(null);
         setJustAdded(false);
       }
     });
   }
 
   return (
-    <div className={`relative z-0 w-full max-w-full overflow-visible hover:z-50 ${className}`}>
+    <div
+      className={`group relative z-0 w-full max-w-full overflow-visible hover:z-50 ${className}`}
+    >
       <article className="flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
         <div className="relative z-30 w-full overflow-visible">
-          <ProductCardPhoto href={href} title={title} imageUrl={imageUrl} priority={priority} />
+          <ProductCardPhoto
+            href={href}
+            title={title}
+            imageUrl={imageUrl}
+            priority={priority}
+          />
           <WishlistButton
             locale={locale}
             productId={productId}
@@ -167,13 +162,13 @@ export function HomeProductCard({
         </h3>
 
         {description ? (
-          <p className="font-noto-armenian line-clamp-2 w-[213px] max-w-full text-sm leading-[1.25] text-[#6b6b6b]">
+          <p className="line-clamp-2 w-[213px] max-w-full text-sm leading-[1.25] text-[#6b6b6b]">
             {description}
           </p>
         ) : null}
 
         {prepTimeLabel ? (
-          <p className="font-noto-armenian w-full text-[13px] leading-[1.25] text-[#6b6b6b]">
+          <p className="w-full text-[13px] leading-[1.25] font-medium text-[#6b6b6b]">
             {prepTimeLabel}
           </p>
         ) : null}
@@ -183,7 +178,7 @@ export function HomeProductCard({
             {priceFormatted}
           </p>
           {compareAtFormatted ? (
-            <p className="font-noto-armenian text-sm text-[#6b6b6b] line-through">
+            <p className="text-sm text-[#6b6b6b] line-through">
               {compareAtFormatted}
             </p>
           ) : null}
@@ -195,10 +190,10 @@ export function HomeProductCard({
 
         <div className="mt-auto w-full">
           <PidehPillButton
-            label={justAdded ? '✓' : orderLabel}
+            label={justAdded ? "✓" : orderLabel}
             onClick={handleOrder}
             disabled={!inStock || pending}
-            className="w-full hover:scale-[1.02]"
+            className="w-full"
           />
         </div>
       </article>

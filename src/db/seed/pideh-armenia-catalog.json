@@ -1,0 +1,1069 @@
+{
+  "categories": [
+    {
+      "slug": "combo",
+      "nameHy": "Կոմբո",
+      "nameEn": "Combo",
+      "nameRu": "Комбо",
+      "descriptionRu": "Категория Комбо",
+      "isActive": true,
+      "sortOrder": 1
+    },
+    {
+      "slug": "pide",
+      "nameHy": "Փիդե",
+      "nameEn": "Pide",
+      "nameRu": "Пиде",
+      "descriptionRu": "Категория Пиде",
+      "isActive": true,
+      "sortOrder": 2
+    },
+    {
+      "slug": "snack",
+      "nameHy": "Սնэք",
+      "nameEn": "Snacks",
+      "nameRu": "Снэк",
+      "descriptionRu": "Категория Снэк",
+      "isActive": true,
+      "sortOrder": 3
+    },
+    {
+      "slug": "sauces",
+      "nameHy": "Սոուսներ",
+      "nameEn": "Sauces",
+      "nameRu": "Соусы",
+      "descriptionRu": "Категория Соусы",
+      "isActive": true,
+      "sortOrder": 4
+    },
+    {
+      "slug": "drinks",
+      "nameHy": "Խմիչքներ",
+      "nameEn": "Drinks",
+      "nameRu": "Напитки",
+      "descriptionRu": "Категория Напитки",
+      "isActive": true,
+      "sortOrder": 5
+    }
+  ],
+  "products": [
+    {
+      "slug": "2-myasa-pide",
+      "categorySlug": "pide",
+      "status": "HIT",
+      "price": 950,
+      "isAvailable": true,
+      "nameRu": "2 мяса пиде",
+      "descriptionRu": "Пиде с двумя видами мяса, зеленым перцем и помидорами черри",
+      "ingredientsRu": [
+        "Тесто",
+        "2 вида мяса",
+        "Зеленый перец",
+        "Помидоры черри",
+        "Сыр"
+      ],
+      "nameHy": "2 միսով փիդե",
+      "descriptionHy": "Փիդե երկու տեսակի մսով, կանաչ պղպեղով և կերազի լոլիկներով",
+      "ingredientsHy": [
+        "Խմոր",
+        "2 տեսակի միս",
+        "Կանաչ պղպեղ",
+        "Կերազի լոլիկ",
+        "Պանիր"
+      ],
+      "nameEn": "Two-meat pide",
+      "descriptionEn": "Pide with two types of meat, green pepper and cherry tomatoes",
+      "ingredientsEn": [
+        "Dough",
+        "Two types of meat",
+        "Green pepper",
+        "Cherry tomatoes",
+        "Cheese"
+      ]
+    },
+    {
+      "slug": "BBQ-sauce-Pideh",
+      "categorySlug": "sauces",
+      "status": "REGULAR",
+      "price": 300,
+      "isAvailable": true,
+      "nameRu": "Барбекю соус",
+      "descriptionRu": "Пикантный соус барбекю",
+      "ingredientsRu": [
+        "Томатная паста",
+        "Сахар",
+        "Уксус",
+        "Специи"
+      ],
+      "nameHy": "Բարբեկյու սոուս",
+      "descriptionHy": "Թթվահամ բարբեկյու սոուս",
+      "ingredientsHy": [
+        "Տոմատի մածուկ",
+        "Շաքար",
+        "Քացախ",
+        "Համեմունքներ"
+      ],
+      "nameEn": "BBQ sauce",
+      "descriptionEn": "Tangy barbecue sauce",
+      "ingredientsEn": [
+        "Tomato paste",
+        "Sugar",
+        "Vinegar",
+        "Spices"
+      ]
+    },
+    {
+      "slug": "Mustard-sauce-Pideh",
+      "categorySlug": "sauces",
+      "status": "REGULAR",
+      "price": 300,
+      "isAvailable": true,
+      "nameRu": "Горчица",
+      "descriptionRu": "Острая горчица",
+      "ingredientsRu": [
+        "Горчичные зерна",
+        "Уксус",
+        "Соль",
+        "Специи"
+      ],
+      "nameHy": "Մանանեխ",
+      "descriptionHy": "Կծու մանանեխ",
+      "ingredientsHy": [
+        "Մանանեխի հատիկներ",
+        "Քացախ",
+        "Աղ",
+        "Համեմունքներ"
+      ],
+      "nameEn": "Mustard",
+      "descriptionEn": "Spicy mustard",
+      "ingredientsEn": [
+        "Mustard seeds",
+        "Vinegar",
+        "Salt",
+        "Spices"
+      ]
+    },
+    {
+      "slug": "gribnoe-pide",
+      "categorySlug": "pide",
+      "status": "REGULAR",
+      "price": 750,
+      "isAvailable": true,
+      "nameRu": "Грибное пиде",
+      "descriptionRu": "Пиде с жареными грибами и зеленью",
+      "ingredientsRu": [
+        "Тесто",
+        "Жареные грибы",
+        "Зелень",
+        "Сыр"
+      ],
+      "nameHy": "Սունկով փիդե",
+      "descriptionHy": "Փիդե տապակած սնկով և կանաչեղենով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Տապակած սունկ",
+        "Կանաչեղեն",
+        "Պանիր"
+      ],
+      "nameEn": "Mushroom pide",
+      "descriptionEn": "Pide with sautéed mushrooms and herbs",
+      "ingredientsEn": [
+        "Dough",
+        "Sautéed mushrooms",
+        "Herbs",
+        "Cheese"
+      ]
+    },
+    {
+      "slug": "caucasus-cheese",
+      "categorySlug": "pide",
+      "status": "REGULAR",
+      "price": 750,
+      "isAvailable": true,
+      "nameRu": "Кавказский пиде",
+      "descriptionRu": "Пиде с белым сыром, зеленью и помидорами черри",
+      "ingredientsRu": [
+        "Тесто",
+        "Белый сыр",
+        "Зелень",
+        "Помидоры черри"
+      ],
+      "nameHy": "Կովկասյան փիդե",
+      "descriptionHy": "Փիդե սպիտակ պանրով, կանաչեղենով և չերի լոլիկով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Սպիտակ պանիր",
+        "Կանաչեղեն",
+        "Չերի լոլիկ"
+      ],
+      "nameEn": "Caucasian pide",
+      "descriptionEn": "Pide with white cheese, herbs and cherry tomatoes",
+      "ingredientsEn": [
+        "Dough",
+        "White cheese",
+        "Herbs",
+        "Cherry tomatoes"
+      ]
+    },
+    {
+      "slug": "kartofel-fri",
+      "categorySlug": "snack",
+      "status": "REGULAR",
+      "price": 500,
+      "isAvailable": true,
+      "nameRu": "Картофель фри",
+      "descriptionRu": "Хрустящий картофель фри",
+      "ingredientsRu": [
+        "Картофель",
+        "Масло",
+        "Соль"
+      ],
+      "nameHy": "Կարտոֆիլ ֆրի",
+      "descriptionHy": "Խրթխրթան կարտոֆիլ ֆրի",
+      "ingredientsHy": [
+        "Կարտոֆիլ",
+        "Յուղ",
+        "Աղ"
+      ],
+      "nameEn": "French fries",
+      "descriptionEn": "Crispy french fries",
+      "ingredientsEn": [
+        "Potatoes",
+        "Oil",
+        "Salt"
+      ]
+    },
+    {
+      "slug": "Ketchup-Pideh",
+      "categorySlug": "sauces",
+      "status": "REGULAR",
+      "price": 300,
+      "isAvailable": true,
+      "nameRu": "Кетчуп",
+      "descriptionRu": "Классический томатный кетчуп",
+      "ingredientsRu": [
+        "Томатная паста",
+        "Сахар",
+        "Уксус",
+        "Специи"
+      ],
+      "nameHy": "Կետչուպ",
+      "descriptionHy": "Դասական տոմատի կետչուպ",
+      "ingredientsHy": [
+        "Տոմատի մածուկ",
+        "Շաքար",
+        "Քացախ",
+        "Համեմունքներ"
+      ],
+      "nameEn": "Ketchup",
+      "descriptionEn": "Classic tomato ketchup",
+      "ingredientsEn": [
+        "Tomato paste",
+        "Sugar",
+        "Vinegar",
+        "Spices"
+      ]
+    },
+    {
+      "slug": "classic-chees",
+      "categorySlug": "pide",
+      "status": "CLASSIC",
+      "price": 700,
+      "isAvailable": true,
+      "nameRu": "Классическое сырное пиде",
+      "descriptionRu": "Традиционное пиде с расплавленным сыром и помидорами черри",
+      "ingredientsRu": [
+        "Тесто",
+        "Сыр",
+        "Помидоры черри"
+      ],
+      "nameHy": "Դասական պանրով փիդե",
+      "descriptionHy": "Ավանդական փիդե հալած պանրով և չերի լոլիկով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Պանիր",
+        "Չերի լոլիկ"
+      ],
+      "nameEn": "Classic cheese pide",
+      "descriptionEn": "Traditional pide with melted cheese and cherry tomatoes",
+      "ingredientsEn": [
+        "Dough",
+        "Cheese",
+        "Cherry tomatoes"
+      ]
+    },
+    {
+      "slug": "cola-sprite-fanta",
+      "categorySlug": "drinks",
+      "status": "REGULAR",
+      "price": 500,
+      "isAvailable": true,
+      "nameRu": "Кока-Кола",
+      "descriptionRu": "Газированный напиток Кока-Кола",
+      "ingredientsRu": [
+        "Вода",
+        "Сахар",
+        "Кофеин"
+      ],
+      "nameHy": "Կոկա-Կոլա",
+      "descriptionHy": "Գազավորված Կոկա-Կոլա ըմպելիք",
+      "ingredientsHy": [
+        "Ջուր",
+        "Շաքար",
+        "Կոֆեին"
+      ],
+      "nameEn": "Coca-Cola",
+      "descriptionEn": "Coca-Cola carbonated drink",
+      "ingredientsEn": [
+        "Water",
+        "Sugar",
+        "Caffeine"
+      ]
+    },
+    {
+      "slug": "Cocktail-sauce-Pideh",
+      "categorySlug": "sauces",
+      "status": "REGULAR",
+      "price": 300,
+      "isAvailable": true,
+      "nameRu": "Коктейль соус",
+      "descriptionRu": "Классический коктейльный соус",
+      "ingredientsRu": [
+        "Майонез",
+        "Кетчуп",
+        "Коньяк",
+        "Специи"
+      ],
+      "nameHy": "Կոկտեյլ սոուս",
+      "descriptionHy": "Դասական կոկտեյլ սոուս",
+      "ingredientsHy": [
+        "Մայոնեզ",
+        "Կետչուպ",
+        "Կոնյակ",
+        "Համեմունքներ"
+      ],
+      "nameEn": "Cocktail sauce",
+      "descriptionEn": "Classic cocktail sauce",
+      "ingredientsEn": [
+        "Mayonnaise",
+        "Ketchup",
+        "Cognac",
+        "Spices"
+      ]
+    },
+    {
+      "slug": "kombo-my-vdvoyom",
+      "categorySlug": "combo",
+      "status": "NEW",
+      "price": 2900,
+      "isAvailable": true,
+      "nameRu": "Комбо «Мы вдвоем»",
+      "descriptionRu": "2 пиде (пепперони + 2 мяса) + 2 напитка Tan",
+      "ingredientsRu": [
+        "Пиде пепперони",
+        "Пиде 2 мяса",
+        "2 напитка Tan"
+      ],
+      "nameHy": "Կոմբո «Մենք երկուսով»",
+      "descriptionHy": "2 փիդե (պեպպերոնի + 2 մսով) + 2 թան",
+      "ingredientsHy": [
+        "Պեպպերոնի փիդե",
+        "2 մսով փիդե",
+        "2 թան"
+      ],
+      "nameEn": "Combo «Just the two of us»",
+      "descriptionEn": "2 pides (pepperoni + two-meat) + 2 Tan drinks",
+      "ingredientsEn": [
+        "Pepperoni pide",
+        "Two-meat pide",
+        "2 Tan drinks"
+      ]
+    },
+    {
+      "slug": "kombo-my-golodny",
+      "categorySlug": "combo",
+      "status": "REGULAR",
+      "price": 4900,
+      "isAvailable": true,
+      "nameRu": "Комбо «Мы голодны»",
+      "descriptionRu": "2 пиде с бастурмой + 2 куриные легкие пиде + картофель фри + кока-кола",
+      "ingredientsRu": [
+        "2 пиде с бастурмой",
+        "2 куриные легкие пиде",
+        "Картофель фри",
+        "Кока-кола"
+      ],
+      "nameHy": "Կոմբո «Մենք քաղցած ենք»",
+      "descriptionHy": "2 բաստուրմայով փիդե + 2 թեթև հավով փիդե + կարտոֆիլ ֆրի + Կոկա-Կոլա",
+      "ingredientsHy": [
+        "2 բաստուրմայով փիդե",
+        "2 թեթև հավով փիդե",
+        "Կարտոֆիլ ֆրի",
+        "Կոկա-Կոլա"
+      ],
+      "nameEn": "Combo «We're hungry»",
+      "descriptionEn": "2 basturma pides + 2 light chicken pides + fries + Coca-Cola",
+      "ingredientsEn": [
+        "2 basturma pides",
+        "2 light chicken pides",
+        "French fries",
+        "Coca-Cola"
+      ]
+    },
+    {
+      "slug": "kombo-my-ochen-golodny",
+      "categorySlug": "combo",
+      "status": "REGULAR",
+      "price": 7900,
+      "isAvailable": true,
+      "nameRu": "Комбо «Мы очень голодны»",
+      "descriptionRu": "4 пиде пепперони + 4 классических сырных пиде + картофель фри + куриный попкорн",
+      "ingredientsRu": [
+        "4 пиде пепперони",
+        "4 классических сырных пиде",
+        "Картофель фри",
+        "Куриный попкорн"
+      ],
+      "nameHy": "Կոմբո «Մենք շատ քաղցած ենք»",
+      "descriptionHy": "4 պեպպերոնի փիդե + 4 դասական պանրով փիդե + կարտոֆիլ ֆրի + հավի պոպկորն",
+      "ingredientsHy": [
+        "4 պեպպերոնի փիդե",
+        "4 դասական պանրով փիդե",
+        "Կարտոֆիլ ֆրի",
+        "Հավի պոպկորն"
+      ],
+      "nameEn": "Combo «We're very hungry»",
+      "descriptionEn": "4 pepperoni pides + 4 classic cheese pides + fries + chicken popcorn",
+      "ingredientsEn": [
+        "4 pepperoni pides",
+        "4 classic cheese pides",
+        "French fries",
+        "Chicken popcorn"
+      ]
+    },
+    {
+      "slug": "kombo-ya-odin",
+      "categorySlug": "combo",
+      "status": "HIT",
+      "price": 1700,
+      "isAvailable": true,
+      "nameRu": "Комбо «Я один»",
+      "descriptionRu": "Пиде с беконом + картофель фри + напиток Tan",
+      "ingredientsRu": [
+        "Пиде с беконом",
+        "Картофель фри",
+        "Напиток Tan"
+      ],
+      "nameHy": "Կոմբո «Ես մենակ եմ»",
+      "descriptionHy": "Բեկոնով փիդե + կարտոֆիլ ֆրի + թան",
+      "ingredientsHy": [
+        "Բեկոնով փիդե",
+        "Կարտոֆիլ ֆրի",
+        "Թան"
+      ],
+      "nameEn": "Combo «Solo»",
+      "descriptionEn": "Bacon pide + fries + Tan drink",
+      "ingredientsEn": [
+        "Bacon pide",
+        "French fries",
+        "Tan drink"
+      ]
+    },
+    {
+      "slug": "kurinye-legkie-pide",
+      "categorySlug": "pide",
+      "status": "REGULAR",
+      "price": 800,
+      "isAvailable": true,
+      "nameRu": "Куриные легкие пиде",
+      "descriptionRu": "Пиде с курицей, сладким перцем и помидорами черри",
+      "ingredientsRu": [
+        "Тесто",
+        "Курица",
+        "Сладкий перец",
+        "Помидоры черри",
+        "Сыр"
+      ],
+      "nameHy": "Թեթև հավով փիդե",
+      "descriptionHy": "Փիդե հավով, քաղցր պղպեղով և չերի լոլիկով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Հավ",
+        "Քաղցր պղպեղ",
+        "Չերի լոլիկ",
+        "Պանիր"
+      ],
+      "nameEn": "Light chicken pide",
+      "descriptionEn": "Pide with chicken, sweet pepper and cherry tomatoes",
+      "ingredientsEn": [
+        "Dough",
+        "Chicken",
+        "Sweet pepper",
+        "Cherry tomatoes",
+        "Cheese"
+      ]
+    },
+    {
+      "slug": "kurinyy-popkorn",
+      "categorySlug": "snack",
+      "status": "REGULAR",
+      "price": 600,
+      "isAvailable": true,
+      "nameRu": "Куриный попкорн",
+      "descriptionRu": "Хрустящие кусочки курицы в панировке",
+      "ingredientsRu": [
+        "Курица",
+        "Панировка",
+        "Специи"
+      ],
+      "nameHy": "Հավի պոպկորն",
+      "descriptionHy": "Խրթխրթան հավի կտորներ պանրապատմամբ",
+      "ingredientsHy": [
+        "Հավ",
+        "Պանրապատում",
+        "Համեմունքներ"
+      ],
+      "nameEn": "Chicken popcorn",
+      "descriptionEn": "Crispy breaded chicken bites",
+      "ingredientsEn": [
+        "Chicken",
+        "Breading",
+        "Spices"
+      ]
+    },
+    {
+      "slug": "Mayonnaise-Pideh",
+      "categorySlug": "sauces",
+      "status": "REGULAR",
+      "price": 300,
+      "isAvailable": true,
+      "nameRu": "Майонез",
+      "descriptionRu": "Классический майонез",
+      "ingredientsRu": [
+        "Яичный желток",
+        "Масло",
+        "Уксус",
+        "Горчица"
+      ],
+      "nameHy": "Մայոնեզ",
+      "descriptionHy": "Դասական մայոնեզ",
+      "ingredientsHy": [
+        "Ձվի դեղնուց",
+        "Յուղ",
+        "Քացախ",
+        "Մանանեխ"
+      ],
+      "nameEn": "Mayonnaise",
+      "descriptionEn": "Classic mayonnaise",
+      "ingredientsEn": [
+        "Egg yolk",
+        "Oil",
+        "Vinegar",
+        "Mustard"
+      ]
+    },
+    {
+      "slug": "jur0000",
+      "categorySlug": "drinks",
+      "status": "REGULAR",
+      "price": 300,
+      "isAvailable": true,
+      "nameRu": "Минеральная вода",
+      "descriptionRu": "Бутилированная минеральная вода",
+      "ingredientsRu": [
+        "Минеральная вода"
+      ],
+      "nameHy": "Հանքային ջուր",
+      "descriptionHy": "Շշալցված հանքային ջուր",
+      "ingredientsHy": [
+        "Հանքային ջուր"
+      ],
+      "nameEn": "Mineral water",
+      "descriptionEn": "Bottled mineral water",
+      "ingredientsEn": [
+        "Mineral water"
+      ]
+    },
+    {
+      "slug": "ovoshchnoe-pide",
+      "categorySlug": "pide",
+      "status": "CLASSIC",
+      "price": 800,
+      "isAvailable": true,
+      "nameRu": "Овощное пиде",
+      "descriptionRu": "Пиде с грибами, зеленым луком и помидорами черри",
+      "ingredientsRu": [
+        "Тесто",
+        "Грибы",
+        "Зеленый лук",
+        "Помидоры черри",
+        "Сыр"
+      ],
+      "nameHy": "Բանջարեղենային փիդե",
+      "descriptionHy": "Փիդե սնկով, կանաչ սոխով և չերի լոլիկով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Սունկ",
+        "Կանաչ սոխ",
+        "Չերի լոլիկ",
+        "Պանիր"
+      ],
+      "nameEn": "Vegetable pide",
+      "descriptionEn": "Pide with mushrooms, green onion and cherry tomatoes",
+      "ingredientsEn": [
+        "Dough",
+        "Mushrooms",
+        "Green onion",
+        "Cherry tomatoes",
+        "Cheese"
+      ]
+    },
+    {
+      "slug": "pepperoni-pide",
+      "categorySlug": "pide",
+      "status": "HIT",
+      "price": 950,
+      "isAvailable": true,
+      "nameRu": "Пепперони пиде",
+      "descriptionRu": "Пиде с пепперони, сыром и зеленым перцем",
+      "ingredientsRu": [
+        "Тесто",
+        "Пепперони",
+        "Сыр",
+        "Зеленый перец"
+      ],
+      "nameHy": "Պեպպերոնի փիդե",
+      "descriptionHy": "Փիդե պեպպերոնիով, պանրով և կանաչ պղպեղով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Պեպպերոնի",
+        "Պանիր",
+        "Կանաչ պղպեղ"
+      ],
+      "nameEn": "Pepperoni pide",
+      "descriptionEn": "Pide with pepperoni, cheese and green pepper",
+      "ingredientsEn": [
+        "Dough",
+        "Pepperoni",
+        "Cheese",
+        "Green pepper"
+      ]
+    },
+    {
+      "slug": "pide-blue-pear",
+      "categorySlug": "pide",
+      "status": "REGULAR",
+      "price": 700,
+      "isAvailable": true,
+      "nameRu": "Пиде Blue Pear",
+      "descriptionRu": "Пиде с грушами и легким соусом",
+      "ingredientsRu": [
+        "Тесто",
+        "Груши",
+        "Легкий соус",
+        "Сыр"
+      ],
+      "nameHy": "Բլու Փեր փիդե",
+      "descriptionHy": "Փիդե տանձով և թեթև սոուսով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Տանձ",
+        "Թեթև սոուս",
+        "Պանիր"
+      ],
+      "nameEn": "Blue Pear pide",
+      "descriptionEn": "Pide with pears and light sauce",
+      "ingredientsEn": [
+        "Dough",
+        "Pears",
+        "Light sauce",
+        "Cheese"
+      ]
+    },
+    {
+      "slug": "pide-s-basturmoj",
+      "categorySlug": "pide",
+      "status": "NEW",
+      "price": 950,
+      "isAvailable": true,
+      "nameRu": "Пиде с бастурмой",
+      "descriptionRu": "Пиде с бастурмой, сыром и зеленым перцем",
+      "ingredientsRu": [
+        "Тесто",
+        "Бастурма",
+        "Сыр",
+        "Зеленый перец"
+      ],
+      "nameHy": "Բաստուրմայով փիդե",
+      "descriptionHy": "Փիդե բաստուրմայով, պանրով և կանաչ պղպեղով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Բաստուրմա",
+        "Պանիր",
+        "Կանաչ պղպեղ"
+      ],
+      "nameEn": "Basturma pide",
+      "descriptionEn": "Pide with basturma, cheese and green pepper",
+      "ingredientsEn": [
+        "Dough",
+        "Basturma",
+        "Cheese",
+        "Green pepper"
+      ]
+    },
+    {
+      "slug": "pide-s-bekonom",
+      "categorySlug": "pide",
+      "status": "REGULAR",
+      "price": 950,
+      "isAvailable": true,
+      "nameRu": "Пиде с беконом",
+      "descriptionRu": "Пиде с хрустящим беконом, сыром и маринованными огурцами",
+      "ingredientsRu": [
+        "Тесто",
+        "Бекон",
+        "Сыр",
+        "Маринованные огурцы"
+      ],
+      "nameHy": "Բեկոնով փիդե",
+      "descriptionHy": "Փիդե խրթխրթան բեկոնով, պանրով և մարինացված վարունգով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Բեկոն",
+        "Պանիր",
+        "Մարինացված վարունգ"
+      ],
+      "nameEn": "Bacon pide",
+      "descriptionEn": "Pide with crispy bacon, cheese and pickled cucumbers",
+      "ingredientsEn": [
+        "Dough",
+        "Bacon",
+        "Cheese",
+        "Pickled cucumbers"
+      ]
+    },
+    {
+      "slug": "pide-s-govyadinoj",
+      "categorySlug": "pide",
+      "status": "BANNER",
+      "price": 950,
+      "isAvailable": true,
+      "nameRu": "Пиде с говядиной",
+      "descriptionRu": "Пиде с фаршем из говядины, зеленью и помидорами черри",
+      "ingredientsRu": [
+        "Тесто",
+        "Говяжий фарш",
+        "Зелень",
+        "Помидоры черри",
+        "Сыр"
+      ],
+      "nameHy": "Տավարի ֆարշով փիդե",
+      "descriptionHy": "Փիդե տավարի ֆարշով, կանաչեղենով և չերի լոլիկով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Տավարի ֆարշ",
+        "Կանաչեղեն",
+        "Չերի լոլիկ",
+        "Պանիր"
+      ],
+      "nameEn": "Beef pide",
+      "descriptionEn": "Pide with ground beef, herbs and cherry tomatoes",
+      "ingredientsEn": [
+        "Dough",
+        "Ground beef",
+        "Herbs",
+        "Cherry tomatoes",
+        "Cheese"
+      ]
+    },
+    {
+      "slug": "pide-s-phali",
+      "categorySlug": "pide",
+      "status": "REGULAR",
+      "price": 700,
+      "isAvailable": true,
+      "nameRu": "Пиде с пхали",
+      "descriptionRu": "Пиде с грузинской овощной пастой пхали и кинзой",
+      "ingredientsRu": [
+        "Тесто",
+        "Пхали",
+        "Кинза",
+        "Сыр"
+      ],
+      "nameHy": "Փխալիով փիդե",
+      "descriptionHy": "Փիդե վրացական բանջարեղենային փխալի մածուկով և կիլանտրոյով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Փխալի",
+        "Կիլանտրո",
+        "Պանիր"
+      ],
+      "nameEn": "Phali pide",
+      "descriptionEn": "Pide with Georgian vegetable paste phali and cilantro",
+      "ingredientsEn": [
+        "Dough",
+        "Phali",
+        "Cilantro",
+        "Cheese"
+      ]
+    },
+    {
+      "slug": "pide-hot-dog",
+      "categorySlug": "pide",
+      "status": "REGULAR",
+      "price": 700,
+      "isAvailable": true,
+      "nameRu": "Пиде Хот Дог",
+      "descriptionRu": "Пиде с сосисками, сыром и маринованными огурцами",
+      "ingredientsRu": [
+        "Тесто",
+        "Сосиски",
+        "Сыр",
+        "Маринованные огурцы"
+      ],
+      "nameHy": "Հոթ դոգ փիդե",
+      "descriptionHy": "Փիդե սոսիսով, պանրով և մարինացված վարունգով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Սոսիս",
+        "Պանիր",
+        "Մարինացված վարունգ"
+      ],
+      "nameEn": "Hot Dog pide",
+      "descriptionEn": "Pide with sausages, cheese and pickled cucumbers",
+      "ingredientsEn": [
+        "Dough",
+        "Sausages",
+        "Cheese",
+        "Pickled cucumbers"
+      ]
+    },
+    {
+      "slug": "sladkiy-pide",
+      "categorySlug": "pide",
+      "status": "REGULAR",
+      "price": 750,
+      "isAvailable": true,
+      "nameRu": "Сладкий пиде",
+      "descriptionRu": "Десертное пиде с шоколадными конфетами и сладким соусом",
+      "ingredientsRu": [
+        "Тесто",
+        "Шоколадные конфеты",
+        "Сладкий соус"
+      ],
+      "nameHy": "Քաղցր փիդե",
+      "descriptionHy": "Աղանդերային փիդե շոկոլադե կոնֆետներով և քաղցր սոուսով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Շոկոլադե կոնֆետներ",
+        "Քաղցր սոուս"
+      ],
+      "nameEn": "Sweet pide",
+      "descriptionEn": "Dessert pide with chocolate candies and sweet sauce",
+      "ingredientsEn": [
+        "Dough",
+        "Chocolate candies",
+        "Sweet sauce"
+      ]
+    },
+    {
+      "slug": "juice",
+      "categorySlug": "drinks",
+      "status": "REGULAR",
+      "price": 600,
+      "isAvailable": true,
+      "nameRu": "Сок (ассорти)",
+      "descriptionRu": "Сок в ассортименте",
+      "ingredientsRu": [
+        "Фруктовый сок"
+      ],
+      "nameHy": "Հյութ (ասորտի)",
+      "descriptionHy": "Տարբեր տեսակի հյութ",
+      "ingredientsHy": [
+        "Մրգային հյութ"
+      ],
+      "nameEn": "Juice (assorted)",
+      "descriptionEn": "Assorted juice",
+      "ingredientsEn": [
+        "Fruit juice"
+      ]
+    },
+    {
+      "slug": "sprite",
+      "categorySlug": "drinks",
+      "status": "REGULAR",
+      "price": 500,
+      "isAvailable": true,
+      "nameRu": "Спрайт",
+      "descriptionRu": "Газированный напиток Спрайт",
+      "ingredientsRu": [
+        "Вода",
+        "Сахар",
+        "Лимонный сок"
+      ],
+      "nameHy": "Սփրայթ",
+      "descriptionHy": "Գազավորված Սփրայթ ըմպելիք",
+      "ingredientsHy": [
+        "Ջուր",
+        "Շաքար",
+        "Կիտրոնի հյութ"
+      ],
+      "nameEn": "Sprite",
+      "descriptionEn": "Sprite carbonated drink",
+      "ingredientsEn": [
+        "Water",
+        "Sugar",
+        "Lemon juice"
+      ]
+    },
+    {
+      "slug": "cheese-sauce",
+      "categorySlug": "sauces",
+      "status": "REGULAR",
+      "price": 300,
+      "isAvailable": true,
+      "nameRu": "Сырный соус",
+      "descriptionRu": "Сливочный сырный соус",
+      "ingredientsRu": [
+        "Сыр",
+        "Сливки",
+        "Масло",
+        "Специи"
+      ],
+      "nameHy": "Պանրային սոուս",
+      "descriptionHy": "Սերուցքային պանրային սոուս",
+      "ingredientsHy": [
+        "Պանիր",
+        "Սերուցք",
+        "Կարագ",
+        "Համեմունքներ"
+      ],
+      "nameEn": "Cheese sauce",
+      "descriptionEn": "Creamy cheese sauce",
+      "ingredientsEn": [
+        "Cheese",
+        "Cream",
+        "Butter",
+        "Spices"
+      ]
+    },
+    {
+      "slug": "tan",
+      "categorySlug": "drinks",
+      "status": "REGULAR",
+      "price": 400,
+      "isAvailable": true,
+      "nameRu": "Тан",
+      "descriptionRu": "Традиционный армянский напиток Тан",
+      "ingredientsRu": [
+        "Мацони",
+        "Вода",
+        "Соль"
+      ],
+      "nameHy": "Թան",
+      "descriptionHy": "Ավանդական հայկական թան",
+      "ingredientsHy": [
+        "Մածուն",
+        "Ջուր",
+        "Աղ"
+      ],
+      "nameEn": "Tan",
+      "descriptionEn": "Traditional Armenian Tan drink",
+      "ingredientsEn": [
+        "Matsoni",
+        "Water",
+        "Salt"
+      ]
+    },
+    {
+      "slug": "fanta",
+      "categorySlug": "drinks",
+      "status": "REGULAR",
+      "price": 500,
+      "isAvailable": true,
+      "nameRu": "Фанта",
+      "descriptionRu": "Газированный напиток Фанта",
+      "ingredientsRu": [
+        "Вода",
+        "Сахар",
+        "Апельсиновый сок"
+      ],
+      "nameHy": "Ֆանտա",
+      "descriptionHy": "Գազավորված Ֆանտա ըմպելիք",
+      "ingredientsHy": [
+        "Ջուր",
+        "Շաքար",
+        "Նարնջի հյութ"
+      ],
+      "nameEn": "Fanta",
+      "descriptionEn": "Fanta carbonated drink",
+      "ingredientsEn": [
+        "Water",
+        "Sugar",
+        "Orange juice"
+      ]
+    },
+    {
+      "slug": "Garlic-sauce-Pideh",
+      "categorySlug": "sauces",
+      "status": "REGULAR",
+      "price": 300,
+      "isAvailable": true,
+      "nameRu": "Чесночный соус",
+      "descriptionRu": "Ароматный чесночный соус с зеленью",
+      "ingredientsRu": [
+        "Чеснок",
+        "Майонез",
+        "Зелень",
+        "Лимонный сок"
+      ],
+      "nameHy": "Սխտորային սոուս",
+      "descriptionHy": "Բուրավետ սխտորային սոուս կանաչեղենով",
+      "ingredientsHy": [
+        "Սխտոր",
+        "Մայոնեզ",
+        "Կանաչեղեն",
+        "Կիտրոնի հյութ"
+      ],
+      "nameEn": "Garlic sauce",
+      "descriptionEn": "Aromatic garlic sauce with herbs",
+      "ingredientsEn": [
+        "Garlic",
+        "Mayonnaise",
+        "Herbs",
+        "Lemon juice"
+      ]
+    },
+    {
+      "slug": "shpinat",
+      "categorySlug": "pide",
+      "status": "REGULAR",
+      "price": 900,
+      "isAvailable": true,
+      "nameRu": "Шпинат пиде",
+      "descriptionRu": "Пиде со шпинатом, сыром и помидорами черри",
+      "ingredientsRu": [
+        "Тесто",
+        "Шпинат",
+        "Сыр",
+        "Помидоры черри"
+      ],
+      "nameHy": "Սպանախով փիդե",
+      "descriptionHy": "Փիդե սպանախով, պանրով և չերի լոլիկով",
+      "ingredientsHy": [
+        "Խմոր",
+        "Սպանախ",
+        "Պանիր",
+        "Չերի լոլիկ"
+      ],
+      "nameEn": "Spinach pide",
+      "descriptionEn": "Pide with spinach, cheese and cherry tomatoes",
+      "ingredientsEn": [
+        "Dough",
+        "Spinach",
+        "Cheese",
+        "Cherry tomatoes"
+      ]
+    }
+  ]
+}
