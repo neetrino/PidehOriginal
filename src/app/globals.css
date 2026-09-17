@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 :root {
   --background: #f9fafb;
@@ -34,12 +34,10 @@
   --color-pideh-slate: var(--pideh-slate);
   --color-pideh-muted: var(--pideh-muted);
   --color-pideh-cream: var(--pideh-cream);
-  --font-sans:
-    var(--font-montserrat-arm), var(--font-montserrat), var(--font-noto-armenian), ui-sans-serif,
-    sans-serif;
-  --font-display:
-    var(--font-pricehigh), var(--font-noto-armenian), var(--font-montserrat), ui-sans-serif,
-    sans-serif;
+  --font-sans: var(--font-montserrat-arm), var(--font-montserrat),
+    var(--font-noto-armenian), ui-sans-serif, sans-serif;
+  --font-display: var(--font-pricehigh), var(--font-noto-armenian), var(--font-montserrat),
+    ui-sans-serif, sans-serif;
   --font-mono: var(--font-geist-mono);
   --radius-sm: 15px;
   --radius-md: 15px;
@@ -53,15 +51,13 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family:
-    var(--font-montserrat-arm), var(--font-montserrat), var(--font-noto-armenian), ui-sans-serif,
-    sans-serif;
+  font-family: var(--font-montserrat-arm), var(--font-montserrat),
+    var(--font-noto-armenian), ui-sans-serif, sans-serif;
 }
 
 .font-display {
-  font-family:
-    var(--font-pricehigh), var(--font-noto-armenian), var(--font-montserrat), ui-sans-serif,
-    sans-serif;
+  font-family: var(--font-pricehigh), var(--font-noto-armenian),
+    var(--font-montserrat), ui-sans-serif, sans-serif;
   font-weight: 900;
   letter-spacing: 0;
   line-height: 0.73;
@@ -69,23 +65,14 @@ body {
 
 /** Figma “Montserrat arm” Black — feature labels (266:455–266:458). */
 .font-montserrat-arm {
-  font-family:
-    var(--font-montserrat-arm), var(--font-noto-armenian), var(--font-montserrat), ui-sans-serif,
-    sans-serif;
+  font-family: var(--font-montserrat-arm), var(--font-noto-armenian),
+    var(--font-montserrat), ui-sans-serif, sans-serif;
 }
 
-/** Latin-first stack for copy that must use the Google Montserrat letterforms. */
-.font-montserrat {
-  font-family: var(--font-montserrat), var(--font-noto-armenian), ui-sans-serif, sans-serif;
-}
-
-/**
- * Lighter Armenian face for secondary copy (descriptions, placeholders, hints)
- * and soft UI labels. Montserrat arm ships only 400/700, and its 400 reads too
- * heavy for muted text.
- */
+/** Soft rounded Armenian UI labels (language switcher short code). */
 .font-noto-armenian {
-  font-family: var(--font-noto-armenian), var(--font-montserrat-arm), ui-sans-serif, sans-serif;
+  font-family: var(--font-noto-armenian), var(--font-montserrat-arm),
+    ui-sans-serif, sans-serif;
 }
 
 /* Hero entrance + pide float (approximates Figma Kling video 51:133) */
@@ -181,16 +168,22 @@ body {
   animation: pideh-pill-gleam 1.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
-/* Product photo hover — Figma Product (165:452): image scales + tilts, card stays put.
-   Scoped to the photo frame so the wishlist and order buttons keep their own hover. */
+/* Product photo hover — image tilts, grows, and clearly leaves the card */
 .pideh-product-photo-pose {
-  transform-origin: 42% 48%;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: 50% 90%;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
-.pideh-product-photo-frame:hover .pideh-product-photo-pose {
-  transform: translate(3%, -5%) scale(1.28) rotate(8deg);
+.group:hover .pideh-product-photo-pose {
+  transform: translate(8%, -42%) scale(1.78) rotate(14deg);
+  filter: drop-shadow(0 32px 28px rgba(31, 20, 8, 0.34));
+}
+
+.group:hover .pideh-product-photo-frame {
+  z-index: 60;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -203,10 +196,12 @@ body {
 
   .pideh-product-photo-pose {
     transition: none;
+    filter: none;
   }
 
-  .pideh-product-photo-frame:hover .pideh-product-photo-pose {
+  .group:hover .pideh-product-photo-pose {
     transform: none;
+    filter: none;
   }
 
   .pideh-hero-media {
@@ -222,23 +217,6 @@ body {
  */
 .mix-blend-figma-linear-burn {
   mix-blend-mode: color-burn;
-}
-
-/** Admin form checkboxes — custom checkmark (no native blue). */
-.admin-checkbox {
-  appearance: none;
-  -webkit-appearance: none;
-  print-color-adjust: exact;
-  color-adjust: exact;
-}
-
-.admin-checkbox:checked {
-  border-color: #ff6b00;
-  background-color: #ff6b00;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.2 8.2 6.6 11.5 12.8 4.5' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 0.78rem 0.78rem;
 }
 
 /* Full-bleed Pideh homepage shell (Figma 1:76) */
@@ -345,20 +323,12 @@ body {
     padding-bottom: 0;
   }
 
-  .storefront-shell:has(.pideh-home-mobile) .storefront-footer {
+  /* Figma mobile home (259:369) uses in-page chrome instead of site header. */
+  .storefront-shell:has(.pideh-home-mobile) .site-header {
     display: none;
   }
 
-  /* Figma mobile menu (366:464): orange page with its own chrome + copyright. */
-  .storefront-shell:has(.pideh-shop-mobile) {
-    background: var(--pideh-orange);
-  }
-
-  .storefront-shell:has(.pideh-shop-mobile) .storefront-main {
-    padding-bottom: 0;
-  }
-
-  .storefront-shell:has(.pideh-shop-mobile) .storefront-footer {
+  .storefront-shell:has(.pideh-home-mobile) .storefront-footer {
     display: none;
   }
 
@@ -394,22 +364,22 @@ body {
   a[href],
   button:not(:disabled),
   summary,
-  [role='button']:not([aria-disabled='true']),
+  [role="button"]:not([aria-disabled="true"]),
   label[for],
   select:not(:disabled),
-  input[type='button']:not(:disabled),
-  input[type='submit']:not(:disabled),
-  input[type='reset']:not(:disabled),
-  input[type='checkbox']:not(:disabled),
-  input[type='radio']:not(:disabled),
-  input[type='file']:not(:disabled) {
+  input[type="button"]:not(:disabled),
+  input[type="submit"]:not(:disabled),
+  input[type="reset"]:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  input[type="file"]:not(:disabled) {
     cursor: pointer;
   }
 
   button:disabled,
   select:disabled,
   input:disabled,
-  [aria-disabled='true'] {
+  [aria-disabled="true"] {
     cursor: not-allowed;
   }
 }
@@ -460,15 +430,18 @@ body {
 }
 
 .animate-confirm-dialog-backdrop-out {
-  animation: 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards confirm-dialog-backdrop-out;
+  animation: 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards
+    confirm-dialog-backdrop-out;
 }
 
 .animate-confirm-dialog-panel-in {
-  animation: 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards confirm-dialog-panel-in;
+  animation: 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards
+    confirm-dialog-panel-in;
 }
 
 .animate-confirm-dialog-panel-out {
-  animation: 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards confirm-dialog-panel-out;
+  animation: 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards
+    confirm-dialog-panel-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -575,7 +548,8 @@ body {
 }
 
 .animate-side-sheet-panel-out-right {
-  animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both side-sheet-panel-out-right;
+  animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both
+    side-sheet-panel-out-right;
 }
 
 .animate-side-sheet-panel-in-left {
@@ -661,8 +635,14 @@ body {
    * Form sheets: flush outer cards + compact horizontal inset.
    * Dashboard + orders (`.profile-sheet-keep-frame`) keep their own padding/frames.
    */
-  .profile-mobile-tab-sheet-scroll > div > *:not(.profile-sheet-keep-frame) > .rounded-2xl,
-  .profile-mobile-tab-sheet-scroll > div > *:not(.profile-sheet-keep-frame) > .rounded-lg {
+  .profile-mobile-tab-sheet-scroll
+    > div
+    > *:not(.profile-sheet-keep-frame)
+    > .rounded-2xl,
+  .profile-mobile-tab-sheet-scroll
+    > div
+    > *:not(.profile-sheet-keep-frame)
+    > .rounded-lg {
     border-width: 0;
     box-shadow: none;
     padding-left: 0.75rem;
@@ -712,7 +692,19 @@ body {
 
 .admin-sidebar-ticket-veil {
   background-image:
-    repeating-linear-gradient(-22deg, transparent 0 13px, rgb(255 213 74 / 0.07) 13px 14px),
-    radial-gradient(130% 70% at 0% 100%, rgb(255 107 0 / 0.42), transparent 58%),
-    radial-gradient(90% 45% at 110% -10%, rgb(255 213 74 / 0.22), transparent 52%);
+    repeating-linear-gradient(
+      -22deg,
+      transparent 0 13px,
+      rgb(255 213 74 / 0.07) 13px 14px
+    ),
+    radial-gradient(
+      130% 70% at 0% 100%,
+      rgb(255 107 0 / 0.42),
+      transparent 58%
+    ),
+    radial-gradient(
+      90% 45% at 110% -10%,
+      rgb(255 213 74 / 0.22),
+      transparent 52%
+    );
 }
