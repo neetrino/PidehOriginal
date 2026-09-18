@@ -3,9 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { SideSheet } from '@/components/ui/SideSheet';
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -35,6 +33,11 @@ import type {
   AdminGroupOrderListItem,
   GroupOrderDetailView,
 } from '@/features/group-orders/application/queries';
+import { AdminGroupOrderSessionSheet } from '@/features/group-orders/ui/AdminGroupOrderSessionSheet';
+import {
+  AdminOrderDetailsDrawerBind,
+  useAdminOrderDetailsDrawer,
+} from '@/features/orders/ui/useAdminOrderDetailsDrawer';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
 import { formatMoneyAmount } from '@/lib/money/format';
@@ -45,18 +48,26 @@ type AdminGroupOrdersViewProps = {
   currency: Currency;
   rows: AdminGroupOrderListItem[];
   copy: Dictionary['admin']['groupOrders'];
+  adminCopy: Dictionary['admin'];
 };
 
 function shortId(id: string): string {
   return id.replace(/-/g, '').slice(0, 8).toUpperCase();
 }
 
-export function AdminGroupOrdersView({ locale, currency, rows, copy }: AdminGroupOrdersViewProps) {
+export function AdminGroupOrdersView({
+  locale,
+  currency,
+  rows,
+  copy,
+  adminCopy,
+}: AdminGroupOrdersViewProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [detail, setDetail] = useState<GroupOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const checkoutDrawer = useAdminOrderDetailsDrawer(locale);
 
   const allIds = rows.map((row) => row.id);
   const allSelected = allIds.length > 0 && allIds.every((id) => selected.has(id));
@@ -77,10 +88,17 @@ export function AdminGroupOrdersView({ locale, currency, rows, copy }: AdminGrou
     setSelected(allSelected ? new Set() : new Set(allIds));
   }
 
-  function openDetail(id: string): void {
+  function openRow(row: AdminGroupOrderListItem): void {
     setError(null);
+    if (row.orderNumber) {
+      setDetail(null);
+      checkoutDrawer.openOrder(row.orderNumber);
+      return;
+    }
+
+    checkoutDrawer.closeDrawer();
     startTransition(async () => {
-      const view = await getAdminGroupOrderDetailAction(id, locale, currency);
+      const view = await getAdminGroupOrderDetailAction(row.id, locale, currency);
       setDetail(view);
     });
   }
@@ -102,7 +120,6 @@ export function AdminGroupOrdersView({ locale, currency, rows, copy }: AdminGrou
   }
 
   const t = copy.table;
-  const d = copy.drawer;
 
   return (
     <>
@@ -138,7 +155,7 @@ export function AdminGroupOrdersView({ locale, currency, rows, copy }: AdminGrou
                   <tr
                     key={row.id}
                     className={`${ADMIN_TABLE_ROW} cursor-pointer`}
-                    onClick={() => openDetail(row.id)}
+                    onClick={() => openRow(row)}
                   >
                     <td
                       className={ADMIN_TABLE_TD_CHECK}
@@ -187,138 +204,27 @@ export function AdminGroupOrdersView({ locale, currency, rows, copy }: AdminGrou
         ) : null}
       </Card>
 
-      <SideSheet
-        open={detail != null}
+      <AdminGroupOrderSessionSheet
+        detail={detail}
+        error={error}
+        copy={copy.drawer}
         onClose={() => setDetail(null)}
-        ariaLabel={d.ariaLabel}
-        variant="admin"
-      >
-        {detail ? (
-          <div className="flex h-full flex-col">
-            <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
-              <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
-                {d.title}
-              </h2>
-              <p className="mt-1 font-mono text-xs text-[#1e1e1e]/50">{detail.id}</p>
-              <p className="mt-1 text-sm text-[#1e1e1e]/65">
-                {detail.status} · {detail.paymentMode}
-              </p>
-            </div>
-
-            <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5 text-sm">
-              <div>
-                <p className="font-medium text-gray-900">
-                  {d.organizer} {detail.organizerDisplayName}
-                </p>
-                <p className="mt-1 break-all text-xs text-gray-500">
-                  {d.invite} {detail.invitePath}
-                </p>
-                <p className="mt-1 text-gray-600">
-                  {d.deliveryTotal
-                    .replace('{delivery}', detail.deliveryFormatted)
-                    .replace('{total}', detail.grandTotalFormatted)}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="mb-2 font-semibold text-gray-900">{d.participants}</h3>
-                <ul className="space-y-3">
-                  {detail.participants.map((p) => (
-                    <li key={p.id} className="rounded-xl border border-gray-200 p-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <p className="font-medium">{p.displayName}</p>
-                          <p className="text-xs text-gray-500">
-                            {d.subtotalDeliveryFinal
-                              .replace('{subtotal}', p.subtotalFormatted)
-                              .replace('{delivery}', p.deliveryShareFormatted)
-                              .replace('{final}', p.finalAmountFormatted)}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {d.payment.replace('{status}', p.paymentStatus)}
-                          </p>
-                          <ul className="mt-2 space-y-1 text-xs text-gray-600">
-                            {p.items.map((item) => (
-                              <li key={item.id}>
-                                {item.title} × {item.quantity} — {item.lineTotalFormatted}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        {p.paymentStatus !== 'PAID' &&
-                        p.paymentStatus !== 'MARKED_RECEIVED' &&
-                        p.finalAmount > 0 ? (
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="secondary"
-                            onClick={() =>
-                              run(async () =>
-                                adminMarkParticipantPaidAction(
-                                  {
-                                    groupOrderId: detail.id,
-                                    participantId: p.id,
-                                  },
-                                  locale,
-                                ),
-                              )
-                            }
-                          >
-                            {d.markPaid}
-                          </Button>
-                        ) : null}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="mb-2 font-semibold text-gray-900">{d.activity}</h3>
-                <ul className="space-y-1 text-xs text-gray-500">
-                  {detail.events.map((event) => (
-                    <li key={event.id}>
-                      {new Date(event.createdAt).toLocaleString()} — {event.eventType}
-                      {event.fromState || event.toState
-                        ? ` (${event.fromState ?? '—'} → ${event.toState ?? '—'})`
-                        : ''}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {error ? (
-                <p className="text-sm text-red-600" role="alert">
-                  {error}
-                </p>
-              ) : null}
-            </div>
-
-            <div className="flex flex-wrap gap-2 border-t border-gray-100 px-6 py-4">
-              <Button
-                type="button"
-                size="sm"
-                variant="secondary"
-                onClick={() =>
-                  run(async () => adminCloseJoinsAction({ groupOrderId: detail.id }, locale))
-                }
-              >
-                {d.closeJoins}
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="danger"
-                onClick={() =>
-                  run(async () => adminCancelGroupOrderAction({ groupOrderId: detail.id }, locale))
-                }
-              >
-                {d.cancel}
-              </Button>
-            </div>
-          </div>
-        ) : null}
-      </SideSheet>
+        onMarkPaid={(participantId) =>
+          run(async () =>
+            adminMarkParticipantPaidAction(
+              { groupOrderId: detail?.id ?? '', participantId },
+              locale,
+            ),
+          )
+        }
+        onCloseJoins={() =>
+          run(async () => adminCloseJoinsAction({ groupOrderId: detail?.id ?? '' }, locale))
+        }
+        onCancel={() =>
+          run(async () => adminCancelGroupOrderAction({ groupOrderId: detail?.id ?? '' }, locale))
+        }
+      />
+      <AdminOrderDetailsDrawerBind state={checkoutDrawer} copy={adminCopy} />
     </>
   );
 }

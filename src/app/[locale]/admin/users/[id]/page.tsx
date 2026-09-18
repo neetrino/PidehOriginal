@@ -147,6 +147,7 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
         giftCards={giftCards}
         coupons={coupons}
         recentOrders={recentOrders}
+        adminCopy={t}
         copy={{
           bonusesTitle: d.bonusesTitle,
           availableBalance: d.availableBalance,

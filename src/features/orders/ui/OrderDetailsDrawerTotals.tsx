@@ -5,10 +5,16 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary';
 type OrderDetailsDrawerTotalsProps = {
   detail: AdminOrderDetailView;
   copy: Dictionary['admin'];
+  variant?: 'full' | 'group';
 };
 
-export function OrderDetailsDrawerTotals({ detail, copy }: OrderDetailsDrawerTotalsProps) {
+export function OrderDetailsDrawerTotals({
+  detail,
+  copy,
+  variant = 'full',
+}: OrderDetailsDrawerTotalsProps) {
   const d = copy.orders.drawer;
+  const isGroup = variant === 'group';
 
   const shippingLabel = detail.isPickup
     ? d.freeStorePickup
@@ -29,7 +35,7 @@ export function OrderDetailsDrawerTotals({ detail, copy }: OrderDetailsDrawerTot
       : formatOrderDrawerMoney(0, detail.baseCurrency);
 
   return (
-    <div className="rounded-2xl border border-gray-200 px-5 py-4">
+    <div className={isGroup ? 'px-1 py-2' : 'rounded-2xl border border-gray-200 px-5 py-4'}>
       <div className="space-y-3 text-sm">
         <div className="flex items-center justify-between gap-4">
           <span className="text-gray-600">{d.subtotal}</span>
@@ -39,22 +45,24 @@ export function OrderDetailsDrawerTotals({ detail, copy }: OrderDetailsDrawerTot
         </div>
 
         <div className="flex items-center justify-between gap-4">
-          <span className="text-gray-600">{deliveryRowLabel}</span>
+          <span className="text-gray-600">{isGroup ? d.delivery : deliveryRowLabel}</span>
           <span className="font-medium text-gray-900">{shippingLabel}</span>
         </div>
 
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-gray-600">{couponRowLabel}</span>
-          <span
-            className={`font-medium ${
-              detail.discountAmount > 0 ? 'text-green-700' : 'text-gray-900'
-            }`}
-          >
-            {discountLabel}
-          </span>
-        </div>
+        {isGroup ? null : (
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-gray-600">{couponRowLabel}</span>
+            <span
+              className={`font-medium ${
+                detail.discountAmount > 0 ? 'text-green-700' : 'text-gray-900'
+              }`}
+            >
+              {discountLabel}
+            </span>
+          </div>
+        )}
 
-        {detail.bonusRedeemedAmount > 0 ? (
+        {!isGroup && detail.bonusRedeemedAmount > 0 ? (
           <div className="flex items-center justify-between gap-4">
             <span className="text-gray-600">{d.bonusRedeemed}</span>
             <span className="font-medium text-green-700">
@@ -63,11 +71,20 @@ export function OrderDetailsDrawerTotals({ detail, copy }: OrderDetailsDrawerTot
           </div>
         ) : null}
 
-        {detail.giftCardAmount > 0 ? (
+        {!isGroup && detail.giftCardAmount > 0 ? (
           <div className="flex items-center justify-between gap-4">
             <span className="text-gray-600">{d.giftCard}</span>
             <span className="font-medium text-green-700">
               −{formatOrderDrawerMoney(detail.giftCardAmount, detail.baseCurrency)}
+            </span>
+          </div>
+        ) : null}
+
+        {isGroup ? (
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-gray-600">{d.receivedBonus}</span>
+            <span className="font-medium text-emerald-700">
+              +{formatOrderDrawerMoney(detail.bonusEarnedAmount, detail.baseCurrency)}
             </span>
           </div>
         ) : null}
@@ -79,7 +96,7 @@ export function OrderDetailsDrawerTotals({ detail, copy }: OrderDetailsDrawerTot
           </span>
         </div>
 
-        {detail.bonusEarnedAmount > 0 ? (
+        {!isGroup && detail.bonusEarnedAmount > 0 ? (
           <div className="flex items-center justify-between gap-4">
             <span className="text-gray-600">{d.bonusEarned}</span>
             <span className="font-medium text-emerald-700">

@@ -163,6 +163,7 @@ export function AdminUserDetailsDrawer({
               giftCards={detail.giftCards}
               coupons={detail.coupons}
               recentOrders={detail.recentOrders}
+              adminCopy={copy}
               copy={{
                 bonusesTitle: d.bonusesTitle,
                 availableBalance: d.availableBalance,

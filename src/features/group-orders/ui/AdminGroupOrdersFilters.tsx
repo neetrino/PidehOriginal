@@ -60,6 +60,7 @@ export function AdminGroupOrdersFilters({
     <>
       <Card className="overflow-visible">
         <form ref={formRef} method="get" className="flex flex-nowrap items-center gap-3 p-4">
+          <input type="hidden" name="kind" value="group" />
           <SelectDropdown
             name="status"
             ariaLabel={f.statusAria}

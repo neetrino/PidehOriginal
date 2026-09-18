@@ -58,6 +58,7 @@ import { getCurrentUser } from '@/lib/auth/session';
 function revalidateGroupOrder(inviteToken: string): void {
   revalidatePath(`/[locale]/group-orders/${inviteToken}`, 'page');
   revalidatePath('/[locale]/admin/group-orders', 'page');
+  revalidatePath('/[locale]/admin/orders', 'page');
   revalidatePath('/', 'layout');
 }
 

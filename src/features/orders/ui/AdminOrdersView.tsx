@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-
-import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
-import { getAdminOrderDetailAction } from '@/features/orders/application/get-order-detail';
 import { BulkChangeOrderStatusForm } from '@/features/orders/ui/BulkChangeOrderStatusForm';
-import { OrderDetailsDrawer } from '@/features/orders/ui/OrderDetailsDrawer';
+import {
+  AdminOrderDetailsDrawerBind,
+  useAdminOrderDetailsDrawer,
+} from '@/features/orders/ui/useAdminOrderDetailsDrawer';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminOrdersViewOrder = {
@@ -30,49 +29,17 @@ type AdminOrdersViewProps = {
 };
 
 export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-
-  function openOrder(orderNumber: string): void {
-    setDrawerOpen(true);
-    setDetail(null);
-    setError(null);
-
-    startTransition(async () => {
-      const result = await getAdminOrderDetailAction(locale, orderNumber);
-      if (!result.ok) {
-        setError(result.error.message);
-        setDetail(null);
-        return;
-      }
-      setDetail(result.value);
-    });
-  }
-
-  function closeDrawer(): void {
-    setDrawerOpen(false);
-    setDetail(null);
-    setError(null);
-  }
+  const drawer = useAdminOrderDetailsDrawer(locale);
 
   return (
     <>
       <BulkChangeOrderStatusForm
         locale={locale}
         orders={orders}
-        onOpenOrder={openOrder}
+        onOpenOrder={drawer.openOrder}
         copy={copy}
       />
-      <OrderDetailsDrawer
-        open={drawerOpen}
-        onClose={closeDrawer}
-        detail={detail}
-        error={error}
-        isLoading={isPending}
-        copy={copy}
-      />
+      <AdminOrderDetailsDrawerBind state={drawer} copy={copy} />
     </>
   );
 }

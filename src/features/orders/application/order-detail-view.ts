@@ -13,6 +13,7 @@ import {
   getAdminOrderByNumber,
   type AdminOrderDetail,
 } from '@/features/orders/application/queries';
+import { formatScheduledDeliveryCaption } from '@/features/orders/domain/scheduled-delivery';
 import { getStoreIdentity } from '@/features/settings/application/queries';
 import type { Locale } from '@/lib/i18n/config';
 import { mediaPublicUrl } from '@/lib/media/public-url';
@@ -133,13 +134,14 @@ export function toAdminOrderDetailView(
     floor: order.shippingAddress.floor?.trim() || null,
     intercomCode: order.shippingAddress.intercomCode?.trim() || null,
     scheduledDelivery:
-      order.shippingAddress.scheduledDeliveryDate &&
-      order.shippingAddress.scheduledDeliveryStart &&
-      order.shippingAddress.scheduledDeliveryEnd
-        ? `${order.shippingAddress.scheduledDeliveryDate} ${order.shippingAddress.scheduledDeliveryStart}–${order.shippingAddress.scheduledDeliveryEnd}`
-        : order.deliveryEstimateSnapshot && /\d{4}-\d{2}-\d{2}/.test(order.deliveryEstimateSnapshot)
-          ? order.deliveryEstimateSnapshot
-          : null,
+      formatScheduledDeliveryCaption(
+        order.shippingAddress.scheduledDeliveryDate,
+        order.shippingAddress.scheduledDeliveryStart,
+        order.shippingAddress.scheduledDeliveryEnd,
+      ) ??
+      (order.deliveryEstimateSnapshot && /\d{4}-\d{2}-\d{2}/.test(order.deliveryEstimateSnapshot)
+        ? order.deliveryEstimateSnapshot
+        : null),
     cashChangeAmount:
       typeof order.shippingAddress.cashChangeAmount === 'number'
         ? order.shippingAddress.cashChangeAmount

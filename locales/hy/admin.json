@@ -134,6 +134,12 @@
       "paymentPending": "Սպասման մեջ",
       "paymentFailed": "Չհաջողված"
     },
+    "kindSwitcher": {
+      "aria": "Պատվերի տեսակ",
+      "all": "Բոլորը",
+      "individual": "Անհատական",
+      "group": "Խմբային"
+    },
     "bulk": {
       "deleteSelected": "Ջնջել ընտրվածները",
       "selectAtLeastOne": "Ընտրեք առնվազն մեկ պատվեր։",
@@ -159,7 +165,7 @@
       "changePaymentAria": "Փոխել վճարման կարգավիճակը"
     },
     "statusLabels": {
-      "pending": "Սպասման մեջ",
+      "pending": "Սպասող",
       "processing": "Ընթացքի մեջ",
       "completed": "Կատարված",
       "cancelled": "Չեղարկված",
@@ -185,6 +191,7 @@
       "floor": "Հարկ՝",
       "intercomCode": "Դոմոֆոնի կոդ՝",
       "deliverySlot": "Առաքման ժամային միջակայք՝",
+      "deliverySlotCaption": "Առաքում · {slot}",
       "cashChange": "Մանր՝",
       "paymentSection": "Վճարում",
       "method": "Եղանակ՝",
@@ -207,6 +214,9 @@
       "couponDiscountWithCode": "Կուպոնի զեղչ ({code})",
       "bonusRedeemed": "Օգտագործված բոնուսներ",
       "bonusEarned": "Կուտակված բոնուսներ",
+      "receivedBonus": "Ստացված բոնուս",
+      "bonusColumn": "Բոնուս",
+      "emptyParticipantItems": "Այս մասնակցի համար ապրանքներ չկան։",
       "giftCard": "Gift card",
       "grandTotal": "Ընդամենը"
     },
