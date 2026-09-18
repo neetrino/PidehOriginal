@@ -85,7 +85,14 @@ export function HomeProductCard({
     <div
       className={`group relative z-0 w-full max-w-full overflow-visible hover:z-50 ${className}`}
     >
-      <article className="pideh-product-card flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
+      <article className="pideh-product-card relative flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
+        <AppLink
+          href={href}
+          prefetchPolicy={priority ? "intent" : "auto"}
+          aria-hidden="true"
+          tabIndex={-1}
+          className="absolute inset-0 z-[1] rounded-[26px]"
+        />
         <div className="relative z-30 w-full overflow-visible">
           <ProductCardPhoto
             href={href}
@@ -113,7 +120,7 @@ export function HomeProductCard({
           </p>
         ) : null}
 
-        <h3 className="line-clamp-2 min-h-[31px] w-full text-[20px] leading-[1.25] font-extrabold text-[#1e1e1e]">
+        <h3 className="relative z-[2] line-clamp-2 min-h-[31px] w-full text-[20px] leading-[1.25] font-extrabold text-[#1e1e1e]">
           <AppLink href={href} prefetchPolicy="auto">
             {title}
           </AppLink>
@@ -146,7 +153,7 @@ export function HomeProductCard({
           <p className="text-sm font-semibold text-red-600">{outOfStockLabel}</p>
         ) : null}
 
-        <div className="mt-auto w-full">
+        <div className="relative z-10 mt-auto w-full">
           <PidehPillButton
             label={justAdded ? "✓" : orderLabel}
             onClick={handleOrder}

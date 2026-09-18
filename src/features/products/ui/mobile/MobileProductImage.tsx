@@ -2,15 +2,13 @@ import Image from 'next/image';
 import type { RefObject } from 'react';
 
 /**
- * Figma 268:594 — Image (Ադանա Փիդե) on the 440-wide PDP.
- * Oversized frame so the cutout can bleed past the canvas; centered in the hero.
- * Counter-clockwise lean matches the Figma image frame on the mobile PDP.
+ * Figma 268:594 — product photo on the 440-wide PDP.
+ * Shown upright and contained so catalog cutouts stay readable.
  *
  * @see https://www.figma.com/design/zyLVZFDhohLYxwuohIrPDN/Pideh-Dev?node-id=268-594
  */
 const FRAME_WIDTH_PX = 632;
 const FRAME_HEIGHT_PX = 686;
-const IMAGE_ROTATE_DEG = -18;
 
 type MobileProductImageProps = {
   src: string;
@@ -29,19 +27,14 @@ export function MobileProductImage({ src, alt, imageRef }: MobileProductImagePro
         height: FRAME_HEIGHT_PX,
       }}
     >
-      <span
-        className="absolute inset-0 origin-center"
-        style={{ transform: `rotate(${IMAGE_ROTATE_DEG}deg)` }}
-      >
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          sizes={`${FRAME_WIDTH_PX}px`}
-          priority
-          className="max-w-none object-contain"
-        />
-      </span>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={`${FRAME_WIDTH_PX}px`}
+        priority
+        className="max-w-none object-contain"
+      />
     </div>
   );
 }

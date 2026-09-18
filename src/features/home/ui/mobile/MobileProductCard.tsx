@@ -83,7 +83,14 @@ export function MobileProductCard({
       data-node-id="260:512"
       className="relative box-border flex h-[340px] w-[200px] flex-col gap-2 overflow-visible rounded-[26px] bg-white pt-[27px] pr-4 pb-4 pl-3.5 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]"
     >
-      <div data-node-id="260:513" className="relative mx-auto h-[123px] w-[193px] shrink-0">
+      <AppLink
+        href={href}
+        prefetchPolicy={priority ? 'intent' : 'auto'}
+        aria-hidden="true"
+        tabIndex={-1}
+        className="absolute inset-0 z-[1] rounded-[26px]"
+      />
+      <div data-node-id="260:513" className="relative z-20 mx-auto h-[123px] w-[193px] shrink-0">
         <AppLink
           href={href}
           prefetchPolicy={priority ? 'intent' : 'auto'}
@@ -139,7 +146,7 @@ export function MobileProductCard({
         data-node-id="260:519"
         className="font-montserrat-arm h-[19px] w-full shrink-0 overflow-hidden text-base leading-[1.25] font-extrabold text-[#1e1e1e]"
       >
-        <AppLink href={href} prefetchPolicy="auto" className="block truncate hover:underline">
+        <AppLink href={href} prefetchPolicy="auto" className="relative z-[2] block truncate">
           {title}
         </AppLink>
       </div>
@@ -174,7 +181,7 @@ export function MobileProductCard({
           aria-label={addLabel}
           disabled={!inStock || pending}
           onClick={handleAdd}
-          className="box-border flex h-[56px] w-[59px] shrink-0 -translate-y-3 items-center justify-center overflow-hidden rounded-[42px] border-0 bg-[#ff6b00] p-0 transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+          className="relative z-10 box-border flex h-[56px] w-[59px] shrink-0 -translate-y-3 items-center justify-center overflow-hidden rounded-[42px] border-0 bg-[#ff6b00] p-0 transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:pointer-events-none disabled:opacity-50"
         >
           {justAdded ? (
             <span className="text-lg font-bold text-white" aria-hidden>
