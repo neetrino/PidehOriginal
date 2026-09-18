@@ -145,7 +145,7 @@ export function AdminDashboard({
           </div>
           <StaggerGroup className="space-y-3">
             {topProducts.map((product, index) => (
-              <StaggerItem key={product.productId} variants={fadeUp}>
+              <StaggerItem key={`${product.productId}:${index}`} variants={fadeUp}>
                 <div className="flex items-center gap-4 rounded-2xl border border-[#1e1e1e]/10 bg-[#fff8e7] p-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ff6b00] text-xs font-bold text-white">
                     {index + 1}

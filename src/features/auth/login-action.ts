@@ -6,23 +6,12 @@ import { redirect } from 'next/navigation';
 import { getDb } from '@/db/client';
 import { users } from '@/db/schema';
 import { loginSchema } from '@/features/auth/schemas';
+import { resolvePostLoginPath } from '@/features/auth/post-login-path';
 import { createSession } from '@/lib/auth/session';
 import { verifyPassword } from '@/lib/auth/password';
 import { defaultLocale, isLocale, type Locale } from '@/lib/i18n/config';
 
 export type AuthActionState = { error?: string };
-
-function resolveSafeNextPath(locale: Locale, raw: FormDataEntryValue | null): string {
-  if (typeof raw !== 'string' || !raw.startsWith('/') || raw.startsWith('//')) {
-    return `/${locale}/profile`;
-  }
-
-  if (!raw.startsWith(`/${locale}/`)) {
-    return `/${locale}/profile`;
-  }
-
-  return raw;
-}
 
 export async function loginAction(
   localeInput: string,
@@ -54,5 +43,11 @@ export async function loginAction(
     .set({ lastLoginAt: new Date(), updatedAt: new Date() })
     .where(eq(users.id, user.id));
   await createSession(user.id);
-  redirect(resolveSafeNextPath(locale, formData.get('next')));
+  redirect(
+    resolvePostLoginPath({
+      locale,
+      role: user.role,
+      next: formData.get('next'),
+    }),
+  );
 }
