@@ -4,6 +4,12 @@ import { useEffect, useRef, useState, type AnimationEvent, type ReactNode } from
 import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
+import {
+  isTopOpenSideSheet,
+  registerOpenSideSheet,
+  unregisterOpenSideSheet,
+} from '@/components/ui/side-sheet-stack';
+
 /** Must match `.animate-side-sheet-panel-*` duration in globals.css. */
 export const SIDE_SHEET_ANIMATION_MS = 300;
 
@@ -94,15 +100,19 @@ export function SideSheet({
   useEffect(() => {
     if (!rendered) return;
 
+    const sheetId = registerOpenSideSheet();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === 'Escape') onClose();
+      if (event.key !== 'Escape') return;
+      if (!isTopOpenSideSheet(sheetId)) return;
+      onClose();
     }
 
     document.addEventListener('keydown', handleKeyDown);
     return () => {
+      unregisterOpenSideSheet(sheetId);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleKeyDown);
     };

@@ -1,20 +1,17 @@
 import Link from 'next/link';
-import { ClipboardList, Coins, Gift, TicketPercent } from 'lucide-react';
+import { Coins, Gift, TicketPercent } from 'lucide-react';
 
-import {
-  ADMIN_BADGE,
-  orderStatusBadgeClass,
-  paymentStatusBadgeClass,
-} from '@/features/admin/ui/status-badge';
+import { ADMIN_BADGE } from '@/features/admin/ui/status-badge';
 import type { BonusTransactionView, CustomerBonusSummary } from '@/features/bonuses';
 import type { CustomerGiftCardListItem } from '@/features/gift-cards';
 import type { UserAssignedCoupon } from '@/features/promotions';
 import {
   AdminUserLoyaltySectionShell,
   formatLoyaltyDateTime,
-  toLoyaltyCurrency,
 } from '@/features/users/ui/admin-user-loyalty-shared';
+import { AdminUserRecentOrders } from '@/features/users/ui/AdminUserRecentOrders';
 import type { Locale } from '@/lib/i18n/config';
+import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import { formatMoneyAmount } from '@/lib/money/format';
 
 type LoyaltyCopy = {
@@ -58,6 +55,7 @@ type AdminUserLoyaltySectionsProps = {
   coupons: UserAssignedCoupon[];
   recentOrders: RecentOrder[];
   copy: LoyaltyCopy;
+  adminCopy: Dictionary['admin'];
 };
 
 function formatCouponValue(coupon: UserAssignedCoupon, copy: LoyaltyCopy, locale: Locale): string {
@@ -112,6 +110,7 @@ export function AdminUserLoyaltySections({
   coupons,
   recentOrders,
   copy,
+  adminCopy,
 }: AdminUserLoyaltySectionsProps) {
   const stats = [
     { label: copy.availableBalance, value: bonuses.availableBalance },
@@ -213,43 +212,13 @@ export function AdminUserLoyaltySections({
         )}
       </AdminUserLoyaltySectionShell>
 
-      <AdminUserLoyaltySectionShell title={copy.recentOrders} icon={ClipboardList}>
-        {recentOrders.length === 0 ? (
-          <p className="text-sm text-[#1e1e1e]/50">{copy.noOrders}</p>
-        ) : (
-          <ul className="space-y-2">
-            {recentOrders.map((order) => (
-              <li key={order.id}>
-                <Link
-                  href={`/${locale}/admin/orders/${order.orderNumber}`}
-                  className="block rounded-[18px] border border-[#1e1e1e]/10 p-3 transition-colors hover:bg-[#fff8e7]/60"
-                >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <strong className="text-sm text-[#1e1e1e]">{order.orderNumber}</strong>
-                    <span className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}>
-                      {order.status}
-                    </span>
-                    <span
-                      className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-                    >
-                      {order.paymentStatus}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-sm text-[#1e1e1e]/65">
-                    {formatMoneyAmount(
-                      order.totalAmount,
-                      toLoyaltyCurrency(order.baseCurrency),
-                      locale,
-                    )}
-                    {' · '}
-                    {formatLoyaltyDateTime(order.placedAt, locale)}
-                  </p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </AdminUserLoyaltySectionShell>
+      <AdminUserRecentOrders
+        locale={locale}
+        orders={recentOrders}
+        title={copy.recentOrders}
+        emptyLabel={copy.noOrders}
+        copy={adminCopy}
+      />
     </div>
   );
 }

@@ -134,6 +134,12 @@
       "paymentPending": "В ожидании",
       "paymentFailed": "Неуспешно"
     },
+    "kindSwitcher": {
+      "aria": "Тип заказа",
+      "all": "Все",
+      "individual": "Индивидуальные",
+      "group": "Групповые"
+    },
     "bulk": {
       "deleteSelected": "Удалить выбранные",
       "selectAtLeastOne": "Выберите хотя бы один заказ.",
@@ -185,6 +191,7 @@
       "floor": "Этаж:",
       "intercomCode": "Код домофона:",
       "deliverySlot": "Интервал доставки:",
+      "deliverySlotCaption": "Доставка · {slot}",
       "cashChange": "Сдача с:",
       "paymentSection": "Оплата",
       "method": "Способ:",
@@ -207,6 +214,9 @@
       "couponDiscountWithCode": "Скидка по купону ({code})",
       "bonusRedeemed": "Использованные бонусы",
       "bonusEarned": "Начисленные бонусы",
+      "receivedBonus": "Полученный бонус",
+      "bonusColumn": "Бонус",
+      "emptyParticipantItems": "У этого участника нет товаров.",
       "giftCard": "Подарочная карта",
       "grandTotal": "Итого"
     },

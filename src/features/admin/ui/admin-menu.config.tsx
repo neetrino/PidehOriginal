@@ -15,7 +15,6 @@ import {
   Tags,
   TicketPercent,
   UserRound,
-  Users,
   UtensilsCrossed,
 } from 'lucide-react';
 
@@ -53,12 +52,6 @@ export function getAdminMenuItems(
       label: nav.orders,
       href: `${base}/orders`,
       icon: navIcon(ClipboardList),
-    },
-    {
-      id: 'group-orders',
-      label: nav.groupOrders,
-      href: `${base}/group-orders`,
-      icon: navIcon(Users),
     },
     {
       id: 'products',

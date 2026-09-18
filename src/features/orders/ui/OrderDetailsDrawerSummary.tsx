@@ -15,10 +15,36 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary';
 type OrderDetailsDrawerSummaryProps = {
   detail: AdminOrderDetailView;
   copy: Dictionary['admin'];
+  variant?: 'full' | 'customer';
 };
 
-export function OrderDetailsDrawerSummary({ detail, copy }: OrderDetailsDrawerSummaryProps) {
+export function OrderDetailsDrawerSummary({
+  detail,
+  copy,
+  variant = 'full',
+}: OrderDetailsDrawerSummaryProps) {
   const d = copy.orders.drawer;
+  const customer = (
+    <section className={variant === 'customer' ? 'rounded-2xl border border-gray-200 px-5 py-4' : undefined}>
+      <h3
+        className={`mb-4 text-base font-semibold text-gray-900 ${
+          variant === 'customer' ? 'uppercase tracking-wide' : ''
+        }`}
+      >
+        {d.customer}
+      </h3>
+      <dl className="space-y-3 text-sm">
+        <DetailRow label={d.name} value={detail.contactName} />
+        <DetailRow label={d.phoneNumber} value={detail.contactPhone} />
+        <DetailRow label={d.email} value={detail.contactEmail} />
+      </dl>
+    </section>
+  );
+
+  if (variant === 'customer') {
+    return customer;
+  }
+
   return (
     <div className="rounded-2xl border border-gray-200 px-5 py-4">
       <div className="grid gap-8 md:grid-cols-2">
@@ -48,15 +74,7 @@ export function OrderDetailsDrawerSummary({ detail, copy }: OrderDetailsDrawerSu
             />
           </dl>
         </section>
-
-        <section>
-          <h3 className="mb-4 text-base font-semibold text-gray-900">{d.customer}</h3>
-          <dl className="space-y-3 text-sm">
-            <DetailRow label={d.name} value={detail.contactName} />
-            <DetailRow label={d.phoneNumber} value={detail.contactPhone} />
-            <DetailRow label={d.email} value={detail.contactEmail} />
-          </dl>
-        </section>
+        {customer}
       </div>
     </div>
   );

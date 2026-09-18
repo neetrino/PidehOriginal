@@ -1,6 +1,19 @@
 import 'server-only';
 
-import { and, count, desc, eq, gte, ilike, inArray, lte, or, sql, type SQL } from 'drizzle-orm';
+import {
+  and,
+  count,
+  desc,
+  eq,
+  gte,
+  ilike,
+  inArray,
+  isNull,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from 'drizzle-orm';
 
 import { getDb } from '@/db/client';
 import {
@@ -63,6 +76,10 @@ function buildOrderFilters(filters: AdminOrdersFilter): SQL | undefined {
     conditions.push(eq(orders.isArchived, false));
   } else if (filters.archived === 'archived') {
     conditions.push(eq(orders.isArchived, true));
+  }
+
+  if (filters.kind === 'individual') {
+    conditions.push(isNull(orders.groupOrderId));
   }
 
   if (filters.status) {

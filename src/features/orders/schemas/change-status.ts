@@ -18,6 +18,7 @@ export const adminOrdersFilterSchema = z.object({
   dateFrom: z.string().date().optional(),
   dateTo: z.string().date().optional(),
   q: z.string().trim().max(100).optional(),
+  kind: z.enum(['all', 'individual', 'group']).optional(),
   page: z.coerce.number().int().min(1).max(500).default(1),
 });
 
