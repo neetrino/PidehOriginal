@@ -1,6 +1,10 @@
 import type { Transition, Variants } from 'motion/react';
 
-export const VIEWPORT_ONCE = { once: true, amount: 0.25 } as const;
+/**
+ * Any intersecting pixel is enough. `amount: 0.25` never fires on tall
+ * catalog grids (24 cards), so product cards stay at `opacity: 0`.
+ */
+export const VIEWPORT_ONCE = { once: true, amount: "some" } as const;
 
 export const springSoft: Transition = {
   type: 'spring',

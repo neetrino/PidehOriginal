@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 
+import { AdminBrandLogo } from '@/features/admin/ui/AdminBrandLogo';
 import { useAdminSidebarCollapse } from '@/features/admin/ui/AdminSidebarCollapseContext';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
@@ -16,29 +17,32 @@ export function AdminSidebarBrand({ locale, shell }: AdminSidebarBrandProps) {
   return (
     <div
       className={`relative z-10 flex shrink-0 border-b border-white/15 bg-black/20 pb-3 pt-2 backdrop-blur-md ${
-        collapsed ? 'flex-col items-center gap-2 px-1' : 'items-center gap-1 px-2'
+        collapsed ? 'flex-col items-center gap-2 px-1' : 'items-center justify-center px-2'
       }`}
     >
       {collapsed ? (
         <Link
           href={`/${locale}`}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-[#ff6b00] text-sm font-bold text-white hover:bg-[#e85f00]"
+          className="flex h-9 w-10 items-center justify-center rounded-lg hover:bg-white/10"
           title={shell.brandHomeTitle}
         >
-          {shell.brandInitial}
+          <AdminBrandLogo alt={shell.brandName} size="collapsed" />
         </Link>
       ) : (
         <Link
           href={`/${locale}`}
-          className="min-w-0 flex-1 rounded-full px-2 py-2 text-sm font-extrabold tracking-wide text-white uppercase hover:bg-white/10"
+          className="flex items-center justify-center rounded-lg px-2 py-1 hover:bg-white/10"
+          title={shell.brandHomeTitle}
         >
-          {shell.brandName}
+          <AdminBrandLogo alt={shell.brandName} size="sidebar" />
         </Link>
       )}
       <button
         type="button"
         onClick={toggleCollapsed}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/20 text-white/80 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/20 text-white/80 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white ${
+          collapsed ? '' : 'absolute right-2 top-1/2 -translate-y-1/2'
+        }`}
         aria-expanded={!collapsed}
         aria-label={collapsed ? shell.expandSidebar : shell.collapseSidebar}
         title={collapsed ? shell.expandSidebar : shell.collapseSidebar}

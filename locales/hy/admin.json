@@ -18,9 +18,8 @@
     "settings": "Կարգավորումներ"
   },
   "shell": {
-    "brandName": "White Shop",
-    "brandHomeTitle": "White Shop-ի գլխավոր էջ",
-    "brandInitial": "W",
+    "brandName": "Pideh",
+    "brandHomeTitle": "Pideh-ի գլխավոր էջ",
     "menu": "Մենյու",
     "adminMenuAria": "Ադմինիստրատորի մենյու",
     "expandSidebar": "Բացել կողային վահանակը",

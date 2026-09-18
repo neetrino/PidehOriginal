@@ -10,6 +10,7 @@ import {
   isAdminTabActive,
   type AdminMenuItem,
 } from '@/features/admin/ui/admin-menu.config';
+import { AdminBrandLogo } from '@/features/admin/ui/AdminBrandLogo';
 import { AdminSidebarBackdrop } from '@/features/admin/ui/AdminSidebarBackdrop';
 import { useAdminProductsSubnavExpanded } from '@/features/admin/ui/useAdminProductsSubnavExpanded';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -71,13 +72,14 @@ export function AdminMenuDrawer({ locale, pathname, shell, nav }: AdminMenuDrawe
       >
         <AdminSidebarBackdrop />
         <div id="admin-menu-drawer-panel" className="relative z-10 flex min-h-0 flex-1 flex-col">
-          <div className="border-b border-white/10 px-4 py-4">
+          <div className="flex justify-center border-b border-white/10 px-4 py-4">
             <Link
               href={`/${locale}`}
-              className="text-sm font-extrabold tracking-wide text-white uppercase"
+              className="inline-flex items-center justify-center"
+              title={shell.brandHomeTitle}
               onClick={() => setOpen(false)}
             >
-              {shell.brandName}
+              <AdminBrandLogo alt={shell.brandName} size="sidebar" />
             </Link>
           </div>
 

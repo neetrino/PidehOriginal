@@ -69,8 +69,25 @@ export function ShopCatalogSkeleton() {
 
 export function ProductDetailSkeleton() {
   return (
-    <div className={`${pulse} pt-6`} aria-busy="true" aria-live="polite">
-      <div className={`grid gap-8 lg:grid-cols-2 ${PAGE_CONTAINER}`}>
+    <div className={`${pulse}`} aria-busy="true" aria-live="polite">
+      <div className="relative mx-auto w-full max-w-[440px] overflow-hidden md:hidden">
+        <Block className="h-[576px] w-full rounded-none bg-white/15" />
+        <div className="relative -mt-8 space-y-4 rounded-t-[30px] bg-white px-[22px] pt-7 pb-24">
+          <div className="flex items-start justify-between gap-4">
+            <Block className="h-12 w-2/3 bg-[#ffd9b3]" />
+            <Block className="size-11 shrink-0 rounded-full bg-[#ffd9b3]" />
+          </div>
+          <Block className="h-20 w-full bg-[#ffd9b3]" />
+          <Block className="h-[155px] w-full rounded-[16px] bg-[#ffd9b3]" />
+          <div className="flex items-center justify-between gap-3">
+            <Block className="h-9 w-28 bg-[#ffd9b3]" />
+            <Block className="h-12 w-44 rounded-full bg-[#ffd9b3]" />
+          </div>
+          <Block className="h-14 w-full rounded-[66px] bg-[#ff6900]/40" />
+        </div>
+      </div>
+
+      <div className={`hidden gap-8 pt-6 md:grid lg:grid-cols-2 ${PAGE_CONTAINER}`}>
         <Block className="min-h-[280px] w-full rounded-[24px] bg-[#fff3e0] sm:min-h-[380px] lg:min-h-[500px]" />
         <div className="space-y-4 rounded-[30px] bg-[#fff8f0] p-6">
           <Block className="h-12 w-3/4 bg-[#ffd9b3]" />

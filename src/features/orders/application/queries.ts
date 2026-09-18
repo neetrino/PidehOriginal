@@ -390,7 +390,7 @@ export async function getAdminDashboardMetrics(input: {
     previousRevenueAmount: previousRevenueRow?.value ?? 0,
     recentOrders,
     topProducts: topProductRows.map((row) => ({
-      productId: row.productId ?? 'unknown',
+      productId: row.productId ?? `snapshot:${row.title}`,
       title: row.title,
       quantity: row.quantity,
     })),

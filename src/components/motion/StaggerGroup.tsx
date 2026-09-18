@@ -5,12 +5,20 @@ import type { CSSProperties, ReactNode } from 'react';
 
 import { VIEWPORT_ONCE } from '@/components/motion/presets';
 
+type StaggerPlay = 'inView' | 'mount';
+
 type StaggerGroupProps = {
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
   stagger?: number;
   delayChildren?: number;
+  /**
+   * `inView` waits until the group intersects the viewport.
+   * `mount` plays on mount — required when the group remounts already on screen
+   * (catalog category/sort changes with `scroll={false}`).
+   */
+  play?: StaggerPlay;
 };
 
 type StaggerItemProps = {
@@ -21,7 +29,7 @@ type StaggerItemProps = {
 };
 
 /**
- * Parent for viewport-triggered staggered children.
+ * Parent for staggered children. Plays on viewport entry or immediately on mount.
  */
 export function StaggerGroup({
   children,
@@ -29,6 +37,7 @@ export function StaggerGroup({
   style,
   stagger = 0.07,
   delayChildren = 0.05,
+  play = 'inView',
 }: StaggerGroupProps) {
   const reduceMotion = useReducedMotion();
 
@@ -45,8 +54,9 @@ export function StaggerGroup({
       className={className}
       style={style}
       initial="hidden"
-      whileInView="show"
-      viewport={VIEWPORT_ONCE}
+      animate={play === 'mount' ? 'show' : undefined}
+      whileInView={play === 'inView' ? 'show' : undefined}
+      viewport={play === 'inView' ? VIEWPORT_ONCE : undefined}
       variants={{
         hidden: {},
         show: {
