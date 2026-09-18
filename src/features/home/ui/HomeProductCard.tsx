@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type MouseEvent } from "react";
 
@@ -9,6 +8,7 @@ import { AppLink } from "@/components/ui/AppLink";
 import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
 import { alertIfSpendLimitExceeded } from "@/features/group-orders/ui/alert-spend-limit-exceeded";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+import { ProductCardPhoto } from "@/features/home/ui/ProductCardPhoto";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -32,48 +32,6 @@ type HomeProductCardProps = {
   prepTimeLabel?: string;
   className?: string;
 };
-
-type ProductCardPhotoProps = {
-  href: string;
-  title: string;
-  imageUrl: string | null;
-  priority: boolean;
-};
-
-/** Catalog photos sit uncropped; hover tilt/scale is applied on `.pideh-product-photo-pose`. */
-function ProductCardPhoto({
-  href,
-  title,
-  imageUrl,
-  priority,
-}: ProductCardPhotoProps) {
-  return (
-    <div className="pideh-product-photo-frame relative z-20 h-[180px] w-full shrink-0 overflow-visible">
-      <AppLink
-        href={href}
-        prefetchPolicy={priority ? "intent" : "auto"}
-        className="absolute inset-0 z-20 block overflow-visible"
-      >
-        {imageUrl ? (
-          <span className="pideh-product-photo-pose pointer-events-none absolute inset-1">
-            <Image
-              src={imageUrl}
-              alt={title}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
-              priority={priority}
-              className="object-contain drop-shadow-[0_10px_14px_rgba(31,20,8,0.12)]"
-            />
-          </span>
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gray-50 text-sm text-gray-400">
-            —
-          </div>
-        )}
-      </AppLink>
-    </div>
-  );
-}
 
 export function HomeProductCard({
   href,
@@ -127,7 +85,7 @@ export function HomeProductCard({
     <div
       className={`group relative z-0 w-full max-w-full overflow-visible hover:z-50 ${className}`}
     >
-      <article className="flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
+      <article className="pideh-product-card flex h-full w-full flex-col items-start gap-[11px] overflow-visible rounded-[26px] bg-white px-4 pt-[27px] pb-4 shadow-[0px_12px_14px_rgba(31,20,8,0.11)]">
         <div className="relative z-30 w-full overflow-visible">
           <ProductCardPhoto
             href={href}
@@ -156,7 +114,7 @@ export function HomeProductCard({
         ) : null}
 
         <h3 className="line-clamp-2 min-h-[31px] w-full text-[20px] leading-[1.25] font-extrabold text-[#1e1e1e]">
-          <AppLink href={href} prefetchPolicy="auto" className="hover:underline">
+          <AppLink href={href} prefetchPolicy="auto">
             {title}
           </AppLink>
         </h3>

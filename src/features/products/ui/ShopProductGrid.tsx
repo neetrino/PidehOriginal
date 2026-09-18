@@ -64,6 +64,8 @@ export function ShopProductGrid({
   return (
     <>
       <StaggerGroup
+        key={products.map((item) => item.product.id).join()}
+        play="mount"
         className="grid grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-4"
         stagger={0.08}
         delayChildren={0.04}
