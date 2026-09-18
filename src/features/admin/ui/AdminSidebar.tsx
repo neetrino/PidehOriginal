@@ -8,6 +8,7 @@ import {
   isAdminTabActive,
   type AdminMenuItem,
 } from '@/features/admin/ui/admin-menu.config';
+import { AdminBrandLogo } from '@/features/admin/ui/AdminBrandLogo';
 import { AdminMenuDrawer } from '@/features/admin/ui/AdminMenuDrawer';
 import { AdminSidebarBackdrop } from '@/features/admin/ui/AdminSidebarBackdrop';
 import { AdminSidebarBrand } from '@/features/admin/ui/AdminSidebarBrand';
@@ -54,11 +55,8 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
     <>
       <div className={ADMIN_SIDEBAR_MOBILE_DRAWER_WRAP}>
         <div className="flex items-center justify-between gap-3">
-          <Link
-            href={`/${locale}`}
-            className="min-w-0 shrink text-sm font-extrabold tracking-wide text-[#1e1e1e] uppercase"
-          >
-            {shell.brandName}
+          <Link href={`/${locale}`} className="min-w-0 shrink" title={shell.brandHomeTitle}>
+            <AdminBrandLogo alt={shell.brandName} size="mobile" />
           </Link>
           <AdminMenuDrawer locale={locale} pathname={pathname} shell={shell} nav={nav} />
         </div>

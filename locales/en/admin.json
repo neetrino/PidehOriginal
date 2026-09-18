@@ -18,9 +18,8 @@
     "settings": "Settings"
   },
   "shell": {
-    "brandName": "White Shop",
-    "brandHomeTitle": "White Shop home",
-    "brandInitial": "W",
+    "brandName": "Pideh",
+    "brandHomeTitle": "Pideh home",
     "menu": "Menu",
     "adminMenuAria": "Admin menu",
     "expandSidebar": "Expand sidebar",
