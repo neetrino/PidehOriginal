@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 
 import { AppLink } from '@/components/ui/AppLink';
+import { PRODUCT_PHOTO_SIZES } from '@/features/home/ui/product-image-motion';
 import { useProductImageMotion } from '@/features/home/ui/use-product-image-motion';
 
 type ProductCardPhotoProps = {
@@ -41,22 +42,20 @@ export function ProductCardPhoto({
         className="absolute inset-0 z-20 block overflow-visible"
       >
         {imageUrl ? (
-          <>
-            <span aria-hidden className="pideh-product-photo-glow" />
-            <motion.span
-              className="pideh-product-photo-pose pointer-events-none absolute inset-1 z-[1]"
-              style={motionHandlers.poseStyle}
-            >
-              <Image
-                src={imageUrl}
-                alt={title}
-                fill
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
-                priority={priority}
-                className="object-contain"
-              />
-            </motion.span>
-          </>
+          <motion.span
+            className="pideh-product-photo-pose pointer-events-none absolute inset-1 z-[1]"
+            style={motionHandlers.poseStyle}
+          >
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              sizes={PRODUCT_PHOTO_SIZES}
+              quality={90}
+              priority={priority}
+              className="object-contain"
+            />
+          </motion.span>
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gray-50 text-sm text-gray-400">
             —

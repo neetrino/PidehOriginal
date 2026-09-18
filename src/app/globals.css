@@ -168,39 +168,17 @@ body {
   animation: pideh-pill-gleam 1.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
-/* Product photo — idle rest; lift + magnet live on motion values. */
+/* Product photo — lift + magnet live on motion values. Avoid filter here. */
 .pideh-product-photo-pose {
   transform-origin: 50% 80%;
-  filter: drop-shadow(0 8px 10px rgba(31, 20, 8, 0.08));
-  transition: filter 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .pideh-product-photo-frame[data-lifted='true'] .pideh-product-photo-pose {
   will-change: transform;
-  filter: drop-shadow(0 16px 18px rgba(31, 20, 8, 0.12));
 }
 
 .pideh-product-photo-frame[data-lifted='true'] {
   z-index: 60;
-}
-
-.pideh-product-photo-glow {
-  pointer-events: none;
-  position: absolute;
-  inset: 18% 12% 10%;
-  z-index: 0;
-  border-radius: 9999px;
-  background: radial-gradient(circle, rgb(255 107 0 / 0.95), transparent 68%);
-  opacity: 0;
-  transform: scale(0.8);
-  transition:
-    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.pideh-product-photo-frame[data-lifted='true'] .pideh-product-photo-glow {
-  opacity: 0.11;
-  transform: scale(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -212,21 +190,11 @@ body {
   }
 
   .pideh-product-photo-pose {
-    transition: filter 0.25s ease;
-  }
-
-  .pideh-product-photo-glow {
-    transition: opacity 0.25s ease;
-    transform: none;
+    transform-origin: 50% 80%;
   }
 
   .pideh-product-photo-frame[data-lifted='true'] .pideh-product-photo-pose {
     will-change: auto;
-  }
-
-  .pideh-product-photo-frame[data-lifted='true'] .pideh-product-photo-glow {
-    opacity: 0.06;
-    transform: none;
   }
 
   .pideh-hero-media {

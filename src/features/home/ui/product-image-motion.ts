@@ -1,14 +1,19 @@
 /** Fine pointers only — touch must not run the magnetic lift. */
 export const FINE_POINTER_QUERY = '(hover: hover) and (pointer: fine)';
 
-export const HOVER_LIFT_Y = -12;
-export const HOVER_SCALE = 1.24;
+export const HOVER_LIFT_Y = -22;
+export const HOVER_SCALE = 1.68;
 export const HOVER_ROTATE_Z = -0.7;
 export const MAGNET_X_PX = 5;
 export const MAGNET_Y_PX = 3;
 export const MAGNET_ROTATE_Z_DEG = 1.5;
 export const MAGNET_TILT_DEG = 2;
 export const TOUCH_PRESS_SCALE = 0.98;
+
+const PHOTO_LAYOUT_WIDTH_PX = 280;
+
+/** Srcset width covers hover scale so the bitmap is not upsampled. */
+export const PRODUCT_PHOTO_SIZES = `(max-width: 640px) ${Math.round(50 * HOVER_SCALE)}vw, (max-width: 1024px) ${Math.round(33 * HOVER_SCALE)}vw, ${Math.round(PHOTO_LAYOUT_WIDTH_PX * HOVER_SCALE)}px`;
 
 /** Overshoots slightly, then settles — not a linear zoom. */
 export const ENTER_SPRING = {
