@@ -168,13 +168,10 @@ body {
   animation: pideh-pill-gleam 1.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
-/* Product photo — lift + magnet live on motion values. Avoid filter here. */
+/* Product photo — lift + magnet live on motion values. Avoid filter here.
+   Do not use will-change: it snapshots the rest-sized layer, then hover scale muddies it. */
 .pideh-product-photo-pose {
   transform-origin: 50% 80%;
-}
-
-.pideh-product-photo-frame[data-lifted='true'] .pideh-product-photo-pose {
-  will-change: transform;
 }
 
 .pideh-product-photo-frame[data-lifted='true'] {
@@ -191,10 +188,6 @@ body {
 
   .pideh-product-photo-pose {
     transform-origin: 50% 80%;
-  }
-
-  .pideh-product-photo-frame[data-lifted='true'] .pideh-product-photo-pose {
-    will-change: auto;
   }
 
   .pideh-hero-media {

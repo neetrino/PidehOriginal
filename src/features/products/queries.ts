@@ -104,7 +104,7 @@ async function loadFeaturedProducts(locale: Locale): Promise<CatalogProduct[]> {
 }
 
 export async function getFeaturedProducts(locale: Locale): Promise<CatalogProduct[]> {
-  return unstable_cache(async () => loadFeaturedProducts(locale), ['featured-products', locale], {
+  return unstable_cache(async () => loadFeaturedProducts(locale), ['featured-products-v4', locale], {
     tags: [CACHE_TAGS.products],
     revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
   })();
@@ -329,7 +329,7 @@ export const getProductDetailBySlug = cache(
   async (locale: Locale, slug: string): Promise<ProductDetail | null> => {
     return unstable_cache(
       async () => loadProductDetailBySlug(locale, slug),
-      ['product-detail-v2', locale, slug],
+      ['product-detail-v4', locale, slug],
       {
         tags: [CACHE_TAGS.productDetail, CACHE_TAGS.productSlug(locale, slug)],
         revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

@@ -11,9 +11,36 @@ export const MAGNET_TILT_DEG = 2;
 export const TOUCH_PRESS_SCALE = 0.98;
 
 const PHOTO_LAYOUT_WIDTH_PX = 280;
+const PHOTO_LIFT_ORIGIN_X = 50;
+const PHOTO_LIFT_ORIGIN_Y = 80;
 
 /** Srcset width covers hover scale so the bitmap is not upsampled. */
 export const PRODUCT_PHOTO_SIZES = `(max-width: 640px) ${Math.round(50 * HOVER_SCALE)}vw, (max-width: 1024px) ${Math.round(33 * HOVER_SCALE)}vw, ${Math.round(PHOTO_LAYOUT_WIDTH_PX * HOVER_SCALE)}px`;
+
+export type ProductPhotoBitmapLayerStyle = {
+  left: string;
+  top: string;
+  width: string;
+  height: string;
+  transform: string;
+  transformOrigin: string;
+};
+
+/**
+ * Layout box is already hover-sized; a static inverse scale keeps rest size
+ * unchanged so CSS hover scale does not upsample a smaller compositor texture.
+ */
+export function productPhotoBitmapLayerStyle(): ProductPhotoBitmapLayerStyle {
+  const inverse = 1 / HOVER_SCALE;
+  return {
+    left: `${PHOTO_LIFT_ORIGIN_X}%`,
+    top: `${PHOTO_LIFT_ORIGIN_Y}%`,
+    width: `${HOVER_SCALE * 100}%`,
+    height: `${HOVER_SCALE * 100}%`,
+    transform: `translate3d(-${PHOTO_LIFT_ORIGIN_X}%, -${PHOTO_LIFT_ORIGIN_Y}%, 0.1px) scale(${inverse})`,
+    transformOrigin: `${PHOTO_LIFT_ORIGIN_X}% ${PHOTO_LIFT_ORIGIN_Y}%`,
+  };
+}
 
 /** Overshoots slightly, then settles — not a linear zoom. */
 export const ENTER_SPRING = {

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { clampUnit, magnetFromPointer } from '@/features/home/ui/product-image-motion';
+import {
+  clampUnit,
+  HOVER_SCALE,
+  magnetFromPointer,
+  productPhotoBitmapLayerStyle,
+} from '@/features/home/ui/product-image-motion';
 
 describe('magnetFromPointer', () => {
   it('stays still at the image center', () => {
@@ -34,5 +39,14 @@ describe('magnetFromPointer', () => {
     expect(clampUnit(2)).toBe(1);
     expect(clampUnit(-4)).toBe(-1);
     expect(magnetFromPointer(8, -9).x).toBe(5);
+  });
+});
+
+describe('productPhotoBitmapLayerStyle', () => {
+  it('lays out a hover-sized bitmap that rests at the card photo size', () => {
+    const style = productPhotoBitmapLayerStyle();
+    expect(style.width).toBe(`${HOVER_SCALE * 100}%`);
+    expect(style.height).toBe(`${HOVER_SCALE * 100}%`);
+    expect(style.transform).toContain(`scale(${1 / HOVER_SCALE})`);
   });
 });

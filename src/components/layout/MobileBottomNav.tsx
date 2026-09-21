@@ -45,7 +45,7 @@ function NavBadge({ count }: { count: number }) {
   }
 
   return (
-    <span className="absolute -top-1 -right-1 z-10 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#101828] px-1 text-[9px] font-semibold text-[#ffd54a]">
+    <span className="absolute -top-1 -right-1 z-10 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ff6b00] px-1 text-[9px] font-semibold text-white">
       {count > 99 ? '99+' : count}
     </span>
   );
