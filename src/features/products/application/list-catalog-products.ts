@@ -215,7 +215,7 @@ export async function listCatalogProducts(
   displayCurrency: Currency,
 ): Promise<CatalogListResult> {
   const cacheKey = [
-    'catalog-products-page',
+    'catalog-products-page-v4',
     locale,
     displayCurrency,
     filters.q ?? '',

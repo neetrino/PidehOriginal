@@ -90,22 +90,22 @@ export function MobileProductCard({
         tabIndex={-1}
         className="absolute inset-0 z-[1] rounded-[26px]"
       />
-      <div data-node-id="260:513" className="relative z-20 mx-auto h-[123px] w-[193px] shrink-0">
+      <div data-node-id="260:513" className="relative z-20 mx-auto h-[120px] w-[164px] shrink-0">
         <AppLink
           href={href}
           prefetchPolicy={priority ? 'intent' : 'auto'}
           className="absolute inset-0 block"
         >
           {imageUrl ? (
-            <span className="pointer-events-none absolute top-[-20px] left-1/2 h-[170px] w-[213px] -translate-x-1/2">
+            <span className="pointer-events-none absolute inset-0">
               <Image
                 src={imageUrl}
                 alt={title}
-                width={214}
-                height={170}
-                sizes="200px"
+                width={164}
+                height={120}
+                sizes="164px"
                 priority={priority}
-                className="size-full object-contain"
+                className="size-full object-contain object-center"
               />
             </span>
           ) : (
@@ -124,7 +124,7 @@ export function MobileProductCard({
           emptyIconSrc={MOBILE_HOME_ASSETS.heartOutline}
           emptyIconWidth={34}
           emptyIconHeight={34}
-          className="absolute -top-3 right-5 z-20 size-[34px] bg-transparent text-[#ff6b00] shadow-none"
+          className="absolute top-0 right-0 z-20 size-[34px] bg-transparent text-[#ff6b00] shadow-none"
         />
       </div>
 

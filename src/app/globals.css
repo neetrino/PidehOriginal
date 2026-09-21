@@ -98,25 +98,25 @@ body {
   }
 }
 
-/* Asset is vertical; Figma hero shows horizontal boat — base -90deg (CCW). */
+/* Figma 436:582 hero pide is already horizontal — do not rotate. */
 @keyframes pideh-hero-media-in {
   from {
     opacity: 0;
-    transform: translateY(18px) scale(0.92) rotate(-90deg);
+    transform: translateY(18px) scale(0.92);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1) rotate(-90deg);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes pideh-hero-media-float {
   0%,
   100% {
-    transform: translateY(0) rotate(-88.8deg);
+    transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px) rotate(-91.2deg);
+    transform: translateY(-10px);
   }
 }
 
@@ -149,6 +149,24 @@ body {
   animation: pideh-hero-cta-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
 }
 
+/* Soften the hard line where the lowered hero video meets the page orange. */
+.pideh-hero-video-fade {
+  mask-image: linear-gradient(to bottom, transparent, #000 3.5rem);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 3.5rem);
+}
+
+.pideh-hero-video-seam {
+  background: linear-gradient(
+    to bottom,
+    var(--pideh-hero-video-bg, #fc8521) 0%,
+    transparent 100%
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  mask-image: linear-gradient(to bottom, #000 15%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 15%, transparent 100%);
+}
+
 /* Button 7 gleam sweep (Figma Rectangle 2 on Button 7 / 154:1491) */
 @keyframes pideh-pill-gleam {
   0%,
@@ -168,13 +186,10 @@ body {
   animation: pideh-pill-gleam 1.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
-/* Product photo — lift + magnet live on motion values. Avoid filter here. */
+/* Product photo — lift + magnet live on motion values. Avoid filter here.
+   Do not use will-change: it snapshots the rest-sized layer, then hover scale muddies it. */
 .pideh-product-photo-pose {
   transform-origin: 50% 80%;
-}
-
-.pideh-product-photo-frame[data-lifted='true'] .pideh-product-photo-pose {
-  will-change: transform;
 }
 
 .pideh-product-photo-frame[data-lifted='true'] {
@@ -193,13 +208,8 @@ body {
     transform-origin: 50% 80%;
   }
 
-  .pideh-product-photo-frame[data-lifted='true'] .pideh-product-photo-pose {
-    will-change: auto;
-  }
-
   .pideh-hero-media {
     animation: none;
-    transform: rotate(-90deg);
   }
 }
 
@@ -214,7 +224,7 @@ body {
 
 /* Full-bleed Pideh homepage shell (Figma 1:76) */
 .storefront-shell:has(.pideh-home) {
-  background: var(--pideh-orange);
+  background: var(--pideh-hero-video-bg, #fc8521);
 }
 
 .storefront-shell:has(.pideh-about) {

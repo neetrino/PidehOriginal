@@ -51,6 +51,56 @@ export type OrbitSlotPose = {
   zIndex: number;
 };
 
+export const ORBIT_SLOT_IDS = [
+  'main',
+  'topCenter',
+  'topRight',
+  'bottomRight',
+  'bottomCenter',
+] as const;
+
+export type OrbitSlotId = (typeof ORBIT_SLOT_IDS)[number];
+
+export type OrbitProductVisual = {
+  rotateDeg: number;
+  /** Extra shift as % of the image box (positive = right / down). */
+  offsetXPct: number;
+  offsetYPct: number;
+  scale: number;
+};
+
+/**
+ * Rest-pose polish for catalog cutouts. Polar AABBs stay on the Figma ring;
+ * these values only nudge the unclipped image.
+ *
+ * rotateDeg: CSS extra rotate on ~45° source boats (47 ≈ horizontal).
+ */
+export const ORBIT_PRODUCT_VISUAL: Record<OrbitSlotId, OrbitProductVisual> = {
+  main: { rotateDeg: 47, offsetXPct: 8, offsetYPct: -4, scale: 0.92 },
+  topCenter: { rotateDeg: 84, offsetXPct: -6, offsetYPct: -6, scale: 0.9 },
+  topRight: { rotateDeg: -40, offsetXPct: 4, offsetYPct: -4, scale: 0.95 },
+  bottomRight: { rotateDeg: -37, offsetXPct: 4, offsetYPct: 6, scale: 0.95 },
+  bottomCenter: { rotateDeg: 168, offsetXPct: 2, offsetYPct: -12, scale: 1.08 },
+};
+
+export const ORBIT_PRODUCT_ROTATE_DEG = [
+  ORBIT_PRODUCT_VISUAL.main.rotateDeg,
+  ORBIT_PRODUCT_VISUAL.topCenter.rotateDeg,
+  ORBIT_PRODUCT_VISUAL.topRight.rotateDeg,
+  ORBIT_PRODUCT_VISUAL.bottomRight.rotateDeg,
+  ORBIT_PRODUCT_VISUAL.bottomCenter.rotateDeg,
+] as const;
+
+export function orbitProductVisual(poseIndex: number): OrbitProductVisual {
+  const slotId = ORBIT_SLOT_IDS[poseIndex] ?? 'main';
+  return ORBIT_PRODUCT_VISUAL[slotId];
+}
+
+/** Square image width as % of the pose AABB width (`max(w,h)` so both orientations fit). */
+export function orbitProductSpanWidthPct(pose: Pick<OrbitSlotPose, 'w' | 'h'>): string {
+  return `${(Math.max(pose.w, pose.h) / pose.w) * 100}%`;
+}
+
 function createPose(
   x: number,
   y: number,

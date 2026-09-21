@@ -12,7 +12,9 @@ export const PIDEH_ASSETS = {
   ctaDotD: '/brand/pideh/cta-dot-d.svg',
   ctaDotE: '/brand/pideh/cta-dot-e.svg',
   ctaDotF: '/brand/pideh/cta-dot-f.svg',
-  /** Optional Figma Kling export (51:133). Missing file → CSS float fallback. */
+  /** Figma desktop hero pide video still (436:582). */
+  heroPide: '/brand/pideh/hero-pide.png',
+  /** Optional Figma Kling export. Missing file → static hero pide. */
   heroVideoMp4: '/brand/pideh/hero-pide.mp4',
   heroVideoWebm: '/brand/pideh/hero-pide.webm',
   categoryPide: pidehRasterUrl('category-pide'),

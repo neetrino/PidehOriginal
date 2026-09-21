@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from 'motion/react';
 
 type HomeHeroTitleProps = {
-  line1: string;
+  line1?: string;
   line2: string;
   className?: string;
 };
@@ -44,21 +44,23 @@ function HeroTitleLine({
 }
 
 /**
- * Figma Component 1 (51:179) — Pricehigh Black, 215px / leading ~0.73–0.85.
- * Uses `display: contents` so line z-indexes interleave with the pide media sibling.
+ * Hero pide wordmark. `line1` is the old White Shop line and stays off
+ * unless explicitly passed.
  */
 export function HomeHeroTitle({ line1, line2, className = '' }: HomeHeroTitleProps) {
   return (
-    <h1 className={`font-display contents text-center whitespace-nowrap ${className}`}>
-      <HeroTitleLine
-        text={line1}
-        className="pideh-hero-title-line1 relative z-[1] text-white"
-        delay={0.05}
-      />
+    <h1 className={`font-display text-center whitespace-nowrap ${className}`}>
+      {line1 ? (
+        <HeroTitleLine
+          text={line1}
+          className="pideh-hero-title-line1 relative z-[1] text-white"
+          delay={0.05}
+        />
+      ) : null}
       <HeroTitleLine
         text={line2}
-        className="pideh-hero-title-line2 relative z-[30] -mt-[0.12em] text-[#ffd64d]"
-        delay={0.14}
+        className="pideh-hero-title-line2 relative z-[30] text-[#ffd64d]"
+        delay={line1 ? 0.14 : 0.05}
       />
     </h1>
   );

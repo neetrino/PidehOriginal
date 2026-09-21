@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
 import { listActiveHeroSlides } from '@/features/hero/application/queries';
+import { listOrbitPideImageUrls } from '@/features/home/application/list-orbit-pide-images';
 import { HomeCategories } from '@/features/home/ui/HomeCategories';
 import { HomeCtaBanner } from '@/features/home/ui/HomeCtaBanner';
 import { HomeFeaturedProducts } from '@/features/home/ui/HomeFeaturedProducts';
@@ -55,13 +56,15 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const [heroSlides, categories, featuredProducts, currency, user] = await Promise.all([
-    listActiveHeroSlides(locale),
-    listStorefrontCategories(locale),
-    getFeaturedProducts(locale),
-    getSelectedCurrency(),
-    getCurrentUser(),
-  ]);
+  const [heroSlides, categories, featuredProducts, orbitImageUrls, currency, user] =
+    await Promise.all([
+      listActiveHeroSlides(locale),
+      listStorefrontCategories(locale),
+      getFeaturedProducts(locale),
+      listOrbitPideImageUrls(),
+      getSelectedCurrency(),
+      getCurrentUser(),
+    ]);
 
   const productIds = featuredProducts.map((product) => product.id);
   const [wishlistIds, formatPrice] = await Promise.all([
@@ -82,6 +85,7 @@ export default async function HomePage({ params }: HomePageProps) {
     id: category.id,
     title: category.title,
     href: `/${locale}/products?category=${encodeURIComponent(category.slug)}`,
+    slug: category.slug,
     imageUrl: category.imageUrl,
     productCount: category.productCount,
   }));
@@ -101,7 +105,6 @@ export default async function HomePage({ params }: HomePageProps) {
       <div className="hidden md:block">
         <HomeHero
           slides={heroSlides}
-          fallbackTitle={dictionary.home.heroTitleLine1}
           fallbackTitleAccent={dictionary.home.heroTitleLine2}
           fallbackCtaLabel={dictionary.home.viewAllMenu}
           fallbackCtaHref={`/${locale}/products`}
@@ -114,6 +117,7 @@ export default async function HomePage({ params }: HomePageProps) {
           typesLabel={dictionary.home.categoryTypes}
           demoCategoryTitle={dictionary.home.categoryDemoTitle}
           categories={categoryCards}
+          orbitImageUrls={orbitImageUrls}
         />
 
         <HomeFeaturedProducts

@@ -11,6 +11,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { AppLink } from '@/components/ui/AppLink';
 import { MobileCategoryLayer } from '@/features/home/ui/mobile/MobileCategoryLayer';
+import type { OrbitSwipeHandlers } from '@/features/home/ui/mobile/use-orbit-swipe';
 import {
   getOrbitNodeStyle,
   mobileArcAngleDelta,
@@ -51,6 +52,7 @@ type RiderProps = {
   poseIndex: number;
   isCenter: boolean;
   reduceMotion: boolean | null;
+  swipeHandlers?: OrbitSwipeHandlers;
 };
 
 function applyRiderPosition(element: HTMLDivElement, left: number, top: number): void {
@@ -71,6 +73,7 @@ function OrbitRider({
   poseIndex,
   isCenter,
   reduceMotion,
+  swipeHandlers,
 }: RiderProps) {
   const nodeRef = useRef<HTMLDivElement>(null);
   const settledPoseIndexRef = useRef(poseIndex);
@@ -184,7 +187,8 @@ function OrbitRider({
         prefetchPolicy="intent"
         aria-current={isCenter ? 'true' : undefined}
         data-node-id={nodeId}
-        className="pointer-events-auto absolute inset-0 flex items-center justify-center"
+        className="pointer-events-auto absolute inset-0 flex items-center justify-center touch-pan-y"
+        {...swipeHandlers}
       >
         <MobileCategoryLayer
           src={src}
@@ -204,13 +208,19 @@ type MobileCategoryOrbitProps = {
   spin: number;
   productsHref: string;
   categories: readonly OrbitCategoryItem[];
+  swipeHandlers?: OrbitSwipeHandlers;
 };
 
 /**
  * Category icons at Figma rest poses; arrow spin rides the drip ellipse.
  * Edge wrap travels through the clipped (invisible) upper arc.
  */
-export function MobileCategoryOrbit({ spin, productsHref, categories }: MobileCategoryOrbitProps) {
+export function MobileCategoryOrbit({
+  spin,
+  productsHref,
+  categories,
+  swipeHandlers,
+}: MobileCategoryOrbitProps) {
   const reduceMotion = useReducedMotion();
 
   const riders = useMemo(() => {
@@ -245,6 +255,7 @@ export function MobileCategoryOrbit({ spin, productsHref, categories }: MobileCa
           poseIndex={rider.poseIndex}
           isCenter={rider.isCenter}
           reduceMotion={reduceMotion}
+          swipeHandlers={swipeHandlers}
         />
       ))}
     </div>

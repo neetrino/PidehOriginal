@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PidehPillButton } from '@/components/brand/PidehPillButton';
 import { PAGE_CONTAINER, pageColumnRow } from '@/components/layout/page-container';
@@ -31,17 +31,12 @@ type HomeCategoriesProps = {
   typesLabel: string;
   demoCategoryTitle: string;
   categories: readonly CategoryItem[];
+  /** Distinct pide cutouts for the ring. */
+  orbitImageUrls?: readonly string[];
 };
 
 /** Figma Categories frame (1:373) — 1448 × 850. */
 const DEMO_PRODUCT_COUNT = 4;
-
-const PIDE_CROP = {
-  height: '116.23%',
-  width: '196.94%',
-  left: '-46.39%',
-  top: '-5.81%',
-} as const;
 
 export function HomeCategories({
   title,
@@ -50,11 +45,14 @@ export function HomeCategories({
   typesLabel,
   demoCategoryTitle,
   categories,
+  orbitImageUrls = [],
 }: HomeCategoriesProps) {
   const [spin, setSpin] = useState(0);
   const [orbitBusy, setOrbitBusy] = useState(false);
   const orbitUnlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const orbitBusyRef = useRef(false);
   const reduceMotion = useReducedMotion();
+  orbitBusyRef.current = orbitBusy;
 
   const displayCategories = useMemo((): readonly CategoryItem[] => {
     if (categories.length > 0) {
@@ -66,50 +64,53 @@ export function HomeCategories({
         id: 'demo-cheese',
         title: demoCategoryTitle,
         href: viewAllHref,
-        imageUrl: PIDEH_ASSETS.foodPide,
+        imageUrl: orbitImageUrls[0] ?? PIDEH_ASSETS.foodPide,
         productCount: DEMO_PRODUCT_COUNT,
       },
       {
         id: 'demo-orbit-2',
         title: demoCategoryTitle,
         href: viewAllHref,
-        imageUrl: PIDEH_ASSETS.categoryPide,
+        imageUrl: orbitImageUrls[1] ?? PIDEH_ASSETS.categoryPide,
         productCount: DEMO_PRODUCT_COUNT,
       },
       {
         id: 'demo-orbit-3',
         title: demoCategoryTitle,
         href: viewAllHref,
-        imageUrl: PIDEH_ASSETS.foodPide,
+        imageUrl: orbitImageUrls[2] ?? PIDEH_ASSETS.foodPide,
         productCount: DEMO_PRODUCT_COUNT,
       },
       {
         id: 'demo-orbit-4',
         title: demoCategoryTitle,
         href: viewAllHref,
-        imageUrl: PIDEH_ASSETS.categoryPide,
+        imageUrl: orbitImageUrls[3] ?? PIDEH_ASSETS.categoryPide,
         productCount: DEMO_PRODUCT_COUNT,
       },
       {
         id: 'demo-orbit-5',
         title: demoCategoryTitle,
         href: viewAllHref,
-        imageUrl: PIDEH_ASSETS.foodPide,
+        imageUrl: orbitImageUrls[4] ?? PIDEH_ASSETS.ctaPide,
         productCount: DEMO_PRODUCT_COUNT,
       },
     ];
-  }, [categories, demoCategoryTitle, viewAllHref]);
+  }, [categories, demoCategoryTitle, orbitImageUrls, viewAllHref]);
 
   const activeIndex = featuredOrbitCategoryIndex(spin, displayCategories.length);
   const active = displayCategories[activeIndex] ?? displayCategories[0] ?? null;
 
   const orbitItems = useMemo(
     () =>
-      displayCategories.map((category) => ({
+      displayCategories.map((category, index) => ({
         id: category.id,
-        imageUrl: category.imageUrl ?? PIDEH_ASSETS.foodPide,
+        imageUrl:
+          orbitImageUrls[index] ??
+          category.imageUrl ??
+          PIDEH_ASSETS.foodPide,
       })),
-    [displayCategories],
+    [displayCategories, orbitImageUrls],
   );
 
   useEffect(() => {
@@ -120,10 +121,11 @@ export function HomeCategories({
     };
   }, []);
 
-  function go(delta: number): void {
-    if (orbitBusy) {
+  const go = useCallback((delta: number) => {
+    if (orbitBusyRef.current) {
       return;
     }
+    orbitBusyRef.current = true;
     setOrbitBusy(true);
     setSpin((current) => current + delta);
     if (orbitUnlockTimerRef.current) {
@@ -131,17 +133,18 @@ export function HomeCategories({
     }
     orbitUnlockTimerRef.current = setTimeout(
       () => {
+        orbitBusyRef.current = false;
         setOrbitBusy(false);
         orbitUnlockTimerRef.current = null;
       },
       reduceMotion ? 0 : ORBIT_MOVE_MS,
     );
-  }
+  }, [reduceMotion]);
 
   return (
-    <section className="relative z-[5] overflow-x-clip bg-pideh-orange pt-24 pb-8 md:pt-36 md:pb-16">
-      {/* Orange base continues from hero; yellow drip sits on top so valleys show orange. */}
-      <div className="absolute inset-x-0 top-0 z-0 w-full">
+    <section className="relative z-[5] -mt-24 overflow-x-clip bg-transparent pt-24 pb-8 md:-mt-32 md:pt-36 md:pb-16">
+      {/* Wave sits over the hero video; drip valleys show the video underneath. */}
+      <div className="absolute inset-x-0 top-0 z-[1] w-full">
         <HomeYellowWave />
       </div>
       <div
@@ -215,7 +218,6 @@ export function HomeCategories({
         <HomeCategoriesOrbit
           items={orbitItems}
           spin={spin}
-          crop={PIDE_CROP}
           arcStyle={categoryFigmaBox(978.27, 108.24, 691.104, 691.104)}
         />
 
@@ -229,7 +231,7 @@ export function HomeCategories({
             onClick={() => go(-1)}
             disabled={orbitBusy}
             aria-label="Previous category"
-            className="size-[51px] shrink-0 overflow-hidden rounded-full transition hover:brightness-110 active:scale-95 disabled:pointer-events-none"
+            className="size-[51px] shrink-0 cursor-pointer overflow-hidden rounded-full transition hover:brightness-110 active:scale-95 disabled:pointer-events-none"
           >
             {/* SVG brand asset — next/image not required */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -247,7 +249,7 @@ export function HomeCategories({
             onClick={() => go(1)}
             disabled={orbitBusy}
             aria-label="Next category"
-            className="size-[51px] shrink-0 overflow-hidden rounded-full transition hover:brightness-110 active:scale-95 disabled:pointer-events-none"
+            className="size-[51px] shrink-0 cursor-pointer overflow-hidden rounded-full transition hover:brightness-110 active:scale-95 disabled:pointer-events-none"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

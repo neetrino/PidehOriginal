@@ -17,7 +17,7 @@ type ShopCategoryOption = {
 export type ShopCategoryChipsTone = 'onCream' | 'onOrange';
 
 const BASE_CHIP =
-  'inline-flex h-14 shrink-0 items-center gap-2 rounded-[40px] pr-5 pl-4 text-base font-semibold whitespace-nowrap transition duration-200';
+  'inline-flex h-14 shrink-0 items-center gap-2 rounded-[40px] pr-5 pl-4 font-montserrat-arm text-base font-semibold whitespace-nowrap transition duration-200';
 
 /**
  * Every chip flattens its glyph to the chip's own label colour, so icon and
