@@ -162,7 +162,7 @@ export function MobileHome({
         branches={branches}
       />
 
-      <MobileCopyright text={copyright} />
+      <MobileCopyright className="mt-10" text={copyright} />
     </div>
   );
 }

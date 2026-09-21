@@ -14,7 +14,7 @@ const ALL_ICON: ShopCategoryIcon = {
 
 const ICONS = {
   combo: { src: PIDEH_ASSETS.shopCatCombo, width: 48, height: 44 },
-  pide: { src: PIDEH_ASSETS.shopCatPide, width: 66, height: 34 },
+  pide: { src: PIDEH_ASSETS.shopCatPide, width: 48, height: 25 },
   snack: { src: PIDEH_ASSETS.shopCatSnack, width: 41, height: 38 },
   sauces: { src: PIDEH_ASSETS.shopCatSauces, width: 41, height: 33 },
   drinks: { src: PIDEH_ASSETS.shopCatDrinks, width: 26, height: 45 },

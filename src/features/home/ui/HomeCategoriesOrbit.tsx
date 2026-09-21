@@ -12,6 +12,8 @@ import {
   ORBIT_SLOT_POSES,
   SLOT_COUNT,
   orbitArcAngleDelta,
+  orbitProductSpanWidthPct,
+  orbitProductVisual,
   type OrbitSlotPose,
 } from '@/features/home/ui/category-orbit-slots';
 
@@ -24,7 +26,6 @@ type HomeCategoriesOrbitProps = {
   items: readonly OrbitItem[];
   /** Discrete orbit steps from arrow clicks (grows forever). */
   spin: number;
-  crop: CSSProperties;
   arcStyle: CSSProperties;
 };
 
@@ -40,19 +41,20 @@ function poseSize(pose: OrbitSlotPose): number {
   return Math.sqrt(pose.w * pose.h);
 }
 
+const ORBIT_ROTATE_TRANSITION = `transform ${ORBIT_MOVE.duration}s cubic-bezier(0.22, 1, 0.36, 1)`;
+
 type OrbitPideProps = {
   src: string;
   pose: OrbitSlotPose;
   poseIndex: number;
-  crop: CSSProperties;
   reduceMotion: boolean | null;
 };
 
 /**
- * Glides along the white ring with uniform scale. Settled pose is authoritative —
- * mid-flight interrupts snap to the intended end so tilts never desync.
+ * Glides along the white ring with uniform scale. Catalog cutouts stay
+ * unclipped; rotation is applied on the image, not a masking wrapper.
  */
-function OrbitPide({ src, pose, poseIndex, crop, reduceMotion }: OrbitPideProps) {
+function OrbitPide({ src, pose, poseIndex, reduceMotion }: OrbitPideProps) {
   const settledPoseIndexRef = useRef(poseIndex);
   const angle = useMotionValue(pose.angleDeg);
   const radius = useMotionValue(pose.radius);
@@ -136,9 +138,11 @@ function OrbitPide({ src, pose, poseIndex, crop, reduceMotion }: OrbitPideProps)
     return `${(y / CATEGORY_FRAME.h) * 100}%`;
   });
 
+  const visual = orbitProductVisual(poseIndex);
+
   return (
     <motion.div
-      className="absolute flex items-center justify-center will-change-transform [backface-visibility:hidden]"
+      className="absolute overflow-visible will-change-transform [backface-visibility:hidden]"
       style={{
         left,
         top,
@@ -150,21 +154,27 @@ function OrbitPide({ src, pose, poseIndex, crop, reduceMotion }: OrbitPideProps)
       }}
     >
       <div
-        className={`relative flex-none overflow-hidden ${pose.innerClassName}`}
+        className="pointer-events-none absolute top-1/2 left-1/2 overflow-visible"
         style={{
-          width: pose.innerWidth,
-          height: pose.innerHeight,
+          width: orbitProductSpanWidthPct(pose),
+          transform: `translate(calc(-50% + ${visual.offsetXPct}%), calc(-50% + ${visual.offsetYPct}%)) scale(${visual.scale})`,
+          transition: reduceMotion ? 'none' : ORBIT_ROTATE_TRANSITION,
         }}
       >
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="origin-center"
+          style={{
+            transform: `rotate(${visual.rotateDeg}deg)`,
+            transition: reduceMotion ? 'none' : ORBIT_ROTATE_TRANSITION,
+          }}
+        >
           <Image
             src={src}
             alt=""
             width={800}
             height={800}
-            sizes="(max-width: 768px) 55vw, 520px"
-            className="absolute max-w-none"
-            style={crop}
+            sizes="(max-width: 1024px) 70vw, 760px"
+            className="h-auto w-full object-contain"
           />
         </div>
       </div>
@@ -183,7 +193,7 @@ function wrapIndex(value: number, size: number): number {
  * Pides travel around the ring on an arc path. Uniform scale grows/shrinks
  * during the move; each rider keeps a stable key across spins.
  */
-export function HomeCategoriesOrbit({ items, spin, crop, arcStyle }: HomeCategoriesOrbitProps) {
+export function HomeCategoriesOrbit({ items, spin, arcStyle }: HomeCategoriesOrbitProps) {
   const reduceMotion = useReducedMotion();
   const count = items.length;
 
@@ -219,7 +229,7 @@ export function HomeCategoriesOrbit({ items, spin, crop, arcStyle }: HomeCategor
   }, [count, items, spin]);
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-10 isolate">
+    <div className="pointer-events-none absolute inset-0 z-10 overflow-visible isolate">
       <div className="absolute z-0" style={arcStyle}>
         <HomeCategoryArc />
       </div>
@@ -230,7 +240,6 @@ export function HomeCategoriesOrbit({ items, spin, crop, arcStyle }: HomeCategor
           src={rider.src}
           pose={rider.pose}
           poseIndex={rider.poseIndex}
-          crop={crop}
           reduceMotion={reduceMotion}
         />
       ))}

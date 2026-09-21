@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
 import { AppLink } from '@/components/ui/AppLink';
 import {
@@ -13,6 +13,7 @@ import {
   type OrbitCategoryItem,
 } from '@/features/home/ui/mobile/MobileCategoryOrbit';
 import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
+import { useOrbitSwipe } from '@/features/home/ui/mobile/use-orbit-swipe';
 import { catalogHref } from '@/features/products/application/catalog-search-params';
 import type { Locale } from '@/lib/i18n/config';
 
@@ -58,6 +59,17 @@ function buildOrbitCategories(
   });
 }
 
+function activeCategoryLabelClass(label: string): string {
+  const length = label.trim().length;
+  if (length > 8) {
+    return 'text-[10px] leading-[11px] tracking-[-0.04em]';
+  }
+  if (length > 5) {
+    return 'text-[11px] leading-[13px] tracking-[-0.03em]';
+  }
+  return 'text-[14px] leading-4';
+}
+
 /**
  * Search + circular category orbit + arrows + featured title/CTA (Figma 259:369).
  * Must sit inside MobileFrame440 (440px design space).
@@ -82,11 +94,32 @@ export function MobileHomeHero({
   const [spin, setSpin] = useState(0);
   const [orbitBusy, setOrbitBusy] = useState(false);
   const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const orbitBusyRef = useRef(false);
+  orbitBusyRef.current = orbitBusy;
 
   const orbitCategories = useMemo(
     () => buildOrbitCategories(categories, arcTitles, pideLabel, productsHref),
     [arcTitles, categories, pideLabel, productsHref],
   );
+
+  const step = useCallback((delta: number) => {
+    if (orbitBusyRef.current) {
+      return;
+    }
+    orbitBusyRef.current = true;
+    setOrbitBusy(true);
+    setSpin((current) => current + delta);
+    if (unlockTimerRef.current) {
+      clearTimeout(unlockTimerRef.current);
+    }
+    unlockTimerRef.current = setTimeout(() => {
+      orbitBusyRef.current = false;
+      setOrbitBusy(false);
+      unlockTimerRef.current = null;
+    }, MOBILE_ORBIT_MOVE_MS);
+  }, []);
+
+  const { handlers: orbitSwipeHandlers } = useOrbitSwipe(step);
 
   useEffect(() => {
     return () => {
@@ -97,21 +130,6 @@ export function MobileHomeHero({
   }, []);
 
   const activeLabel = mobileActiveCategoryTitle(spin, orbitCategories);
-
-  function step(delta: number): void {
-    if (orbitBusy) {
-      return;
-    }
-    setOrbitBusy(true);
-    setSpin((current) => current + delta);
-    if (unlockTimerRef.current) {
-      clearTimeout(unlockTimerRef.current);
-    }
-    unlockTimerRef.current = setTimeout(() => {
-      setOrbitBusy(false);
-      unlockTimerRef.current = null;
-    }, MOBILE_ORBIT_MOVE_MS);
-  }
 
   function handleSearchSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -132,7 +150,7 @@ export function MobileHomeHero({
       <form
         role="search"
         onSubmit={handleSearchSubmit}
-        className="absolute top-[150px] left-1/2 z-30 h-14 w-[286px] -translate-x-1/2 overflow-hidden rounded-[40px] bg-white"
+        className="absolute top-[150px] left-1/2 z-40 h-14 w-[286px] -translate-x-1/2 overflow-hidden rounded-[40px] bg-white"
         onClick={() => searchInputRef.current?.focus()}
       >
         <label htmlFor="mobile-home-search" className="sr-only">
@@ -166,12 +184,26 @@ export function MobileHomeHero({
         data-node-id="260:466"
         className="pointer-events-none absolute top-[271px] left-[calc(50%-45px)] z-20 size-[90px] overflow-hidden rounded-full bg-[#ffd54a]"
       >
-        <p className="absolute inset-x-1 bottom-2 z-40 truncate text-center text-[15px] leading-4 font-medium text-[#ff6b00]">
+        <p
+          className={`absolute inset-x-2 bottom-[7px] z-40 overflow-hidden text-center font-medium text-ellipsis whitespace-nowrap text-[#ff6b00] ${activeCategoryLabelClass(activeLabel)}`}
+        >
           {activeLabel}
         </p>
       </div>
 
-      <MobileCategoryOrbit spin={spin} productsHref={productsHref} categories={orbitCategories} />
+      {/* Drag/swipe anywhere below search (arrows and view-all stay on top). */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-[168px] z-[28] h-[420px] touch-pan-y"
+        {...orbitSwipeHandlers}
+      />
+
+      <MobileCategoryOrbit
+        spin={spin}
+        productsHref={productsHref}
+        categories={orbitCategories}
+        swipeHandlers={orbitSwipeHandlers}
+      />
 
       {/* Arrows — 260:379 */}
       <div className="absolute top-[384px] left-1/2 z-40 flex h-[47px] w-[108px] -translate-x-1/2 items-center gap-1.5">
@@ -218,7 +250,7 @@ export function MobileHomeHero({
         href={viewAllHref}
         prefetchPolicy="intent"
         aria-label={viewAllLabel}
-        className="absolute top-[505px] left-[358px] z-20 flex items-center gap-1 overflow-hidden rounded-[42px] bg-[#ffd54a] px-6 py-4"
+        className="absolute top-[505px] left-[358px] z-40 flex items-center gap-1 overflow-hidden rounded-[42px] bg-[#ffd54a] px-6 py-4"
       >
         <Image
           src={MOBILE_HOME_ASSETS.viewAllArrow}

@@ -109,7 +109,7 @@ async function loadStorefrontCategories(locale: Locale): Promise<StorefrontCateg
 export async function listStorefrontCategories(locale: Locale): Promise<StorefrontCategoryCard[]> {
   return unstable_cache(
     async () => loadStorefrontCategories(locale),
-    ['storefront-categories', locale],
+    ['storefront-categories-v2', locale],
     {
       // Products tag included: the card shows how many products each category has.
       tags: [CACHE_TAGS.categories, CACHE_TAGS.products],
