@@ -31,13 +31,6 @@ type HomeCategoriesOrbitProps = {
 
 export { ORBIT_MOVE_MS };
 
-function wrapIndex(value: number, size: number): number {
-  if (size <= 0) {
-    return 0;
-  }
-  return ((value % size) + size) % size;
-}
-
 /**
  * Mounted riders ease from slot to slot along the white ring.
  * Crossing the right-side gap keeps the rider moving and morphs its photo.
@@ -85,12 +78,4 @@ export function HomeCategoriesOrbit({ items, spin, arcStyle }: HomeCategoriesOrb
       ))}
     </div>
   );
-}
-
-/** Category shown in the featured (slot 0) pose for the current spin. */
-export function featuredOrbitCategoryIndex(spin: number, categoryCount: number): number {
-  if (categoryCount <= 0) {
-    return 0;
-  }
-  return wrapIndex(spin, categoryCount);
 }

@@ -52,7 +52,7 @@ export function HomeFeatures({ titleLine1, titleLine2, items }: HomeFeaturesProp
       <div className="px-4 py-12 md:hidden">
         <RevealOnView variants={titleSweep}>
           <h2 className="font-display mb-8 text-[clamp(2.5rem,12vw,4.5rem)] leading-[0.78] text-white">
-            <span className="block">{titleLine1}</span>
+            <span className="block whitespace-nowrap">{titleLine1}</span>
             <span className="block">{titleLine2}</span>
           </h2>
         </RevealOnView>
@@ -79,15 +79,15 @@ export function HomeFeatures({ titleLine1, titleLine2, items }: HomeFeaturesProp
         <div className="absolute inset-x-0 z-30" style={pageColumnRow(42, 218, FRAME.h)}>
           <div className={PAGE_CONTAINER}>
             <RevealOnView
-              className="font-display max-w-[812px] text-white"
+              className="font-display max-w-full text-white"
               style={{
-                fontSize: 'clamp(3.5rem, 9.72vw, 140px)',
+                fontSize: 'clamp(3.5rem, 8.2vw, 118px)',
                 lineHeight: 0.78,
               }}
               variants={titleSweep}
             >
               <h2>
-                <span className="block">{titleLine1}</span>
+                <span className="block whitespace-nowrap">{titleLine1}</span>
                 <span className="block">{titleLine2}</span>
               </h2>
             </RevealOnView>

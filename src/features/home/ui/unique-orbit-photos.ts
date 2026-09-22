@@ -15,3 +15,24 @@ export function uniqueOrbitPhotos(urls: readonly (string | null | undefined)[]):
 
   return unique;
 }
+
+export type OrbitPhotoItem = {
+  imageUrl: string;
+  title: string;
+};
+
+/** Unique orbit cutouts, first title wins for a repeated file. */
+export function uniqueOrbitItems(items: readonly OrbitPhotoItem[]): OrbitPhotoItem[] {
+  const seen = new Set<string>();
+  const unique: OrbitPhotoItem[] = [];
+
+  for (const item of items) {
+    if (!item.imageUrl || seen.has(item.imageUrl)) {
+      continue;
+    }
+    seen.add(item.imageUrl);
+    unique.push(item);
+  }
+
+  return unique;
+}

@@ -8,47 +8,29 @@ import { PAGE_CONTAINER, pageColumnRow } from '@/components/layout/page-containe
 import { RevealOnView } from '@/components/motion/RevealOnView';
 import { pillPop, titleSweep } from '@/components/motion/presets';
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
-import {
-  featuredOrbitCategoryIndex,
-  HomeCategoriesOrbit,
-  ORBIT_MOVE_MS,
-} from '@/features/home/ui/HomeCategoriesOrbit';
+import { HomeCategoriesOrbit, ORBIT_MOVE_MS } from '@/features/home/ui/HomeCategoriesOrbit';
 import { HomeYellowWave } from '@/features/home/ui/HomeYellowWave';
 import { OrbitNavButton } from '@/features/home/ui/OrbitNavButton';
 import { CATEGORY_FRAME, categoryFigmaBox } from '@/features/home/ui/category-orbit-slots';
+import { featuredOrbitPoolIndex } from '@/features/home/ui/orbit-conveyor';
 import { ORBIT_MOVE_EASE } from '@/features/home/ui/orbit-motion';
-import { uniqueOrbitPhotos } from '@/features/home/ui/unique-orbit-photos';
-
-type CategoryItem = {
-  id: string;
-  title: string;
-  href: string;
-  imageUrl: string | null;
-  productCount?: number;
-};
+import { uniqueOrbitItems, type OrbitPhotoItem } from '@/features/home/ui/unique-orbit-photos';
 
 type HomeCategoriesProps = {
   title: string;
   viewAllLabel: string;
   viewAllHref: string;
-  typesLabel: string;
-  demoCategoryTitle: string;
-  categories: readonly CategoryItem[];
-  /** Distinct pide cutouts for the ring. */
-  orbitImageUrls?: readonly string[];
+  demoProductTitle: string;
+  /** Distinct pide cutouts for the ring, with catalog names. */
+  orbitPhotos?: readonly OrbitPhotoItem[];
 };
-
-/** Figma Categories frame (1:373) — 1448 × 850. */
-const DEMO_PRODUCT_COUNT = 4;
 
 export function HomeCategories({
   title,
   viewAllLabel,
   viewAllHref,
-  typesLabel,
-  demoCategoryTitle,
-  categories,
-  orbitImageUrls = [],
+  demoProductTitle,
+  orbitPhotos = [],
 }: HomeCategoriesProps) {
   const [spin, setSpin] = useState(0);
   const [orbitBusy, setOrbitBusy] = useState(false);
@@ -57,65 +39,27 @@ export function HomeCategories({
   const reduceMotion = useReducedMotion();
   orbitBusyRef.current = orbitBusy;
 
-  const displayCategories = useMemo((): readonly CategoryItem[] => {
-    if (categories.length > 0) {
-      return categories;
+  const orbitItems = useMemo(() => {
+    const photos = uniqueOrbitItems(orbitPhotos);
+    if (photos.length > 0) {
+      return photos.map((photo, index) => ({
+        id: `orbit-photo-${index}`,
+        imageUrl: photo.imageUrl,
+        title: photo.title,
+      }));
     }
 
     return [
       {
-        id: 'demo-cheese',
-        title: demoCategoryTitle,
-        href: viewAllHref,
-        imageUrl: orbitImageUrls[0] ?? PIDEH_ASSETS.foodPide,
-        productCount: DEMO_PRODUCT_COUNT,
-      },
-      {
-        id: 'demo-orbit-2',
-        title: demoCategoryTitle,
-        href: viewAllHref,
-        imageUrl: orbitImageUrls[1] ?? PIDEH_ASSETS.categoryPide,
-        productCount: DEMO_PRODUCT_COUNT,
-      },
-      {
-        id: 'demo-orbit-3',
-        title: demoCategoryTitle,
-        href: viewAllHref,
-        imageUrl: orbitImageUrls[2] ?? PIDEH_ASSETS.foodPide,
-        productCount: DEMO_PRODUCT_COUNT,
-      },
-      {
-        id: 'demo-orbit-4',
-        title: demoCategoryTitle,
-        href: viewAllHref,
-        imageUrl: orbitImageUrls[3] ?? PIDEH_ASSETS.categoryPide,
-        productCount: DEMO_PRODUCT_COUNT,
-      },
-      {
-        id: 'demo-orbit-5',
-        title: demoCategoryTitle,
-        href: viewAllHref,
-        imageUrl: orbitImageUrls[4] ?? PIDEH_ASSETS.ctaPide,
-        productCount: DEMO_PRODUCT_COUNT,
+        id: 'demo-orbit-1',
+        imageUrl: PIDEH_ASSETS.foodPide,
+        title: demoProductTitle,
       },
     ];
-  }, [categories, demoCategoryTitle, orbitImageUrls, viewAllHref]);
+  }, [demoProductTitle, orbitPhotos]);
 
-  const activeIndex = featuredOrbitCategoryIndex(spin, displayCategories.length);
-  const active = displayCategories[activeIndex] ?? displayCategories[0] ?? null;
-
-  const orbitItems = useMemo(() => {
-    const urls = uniqueOrbitPhotos([
-      ...orbitImageUrls,
-      ...displayCategories.map((category) => category.imageUrl),
-      PIDEH_ASSETS.foodPide,
-    ]);
-
-    return urls.map((imageUrl, index) => ({
-      id: `orbit-photo-${index}`,
-      imageUrl,
-    }));
-  }, [displayCategories, orbitImageUrls]);
+  const activeIndex = featuredOrbitPoolIndex(spin, orbitItems.length);
+  const active = orbitItems[activeIndex] ?? orbitItems[0] ?? null;
 
   useEffect(() => {
     return () => {
@@ -125,25 +69,28 @@ export function HomeCategories({
     };
   }, []);
 
-  const go = useCallback((delta: number) => {
-    if (orbitBusyRef.current) {
-      return;
-    }
-    orbitBusyRef.current = true;
-    setOrbitBusy(true);
-    setSpin((current) => current + delta);
-    if (orbitUnlockTimerRef.current) {
-      clearTimeout(orbitUnlockTimerRef.current);
-    }
-    orbitUnlockTimerRef.current = setTimeout(
-      () => {
-        orbitBusyRef.current = false;
-        setOrbitBusy(false);
-        orbitUnlockTimerRef.current = null;
-      },
-      reduceMotion ? 0 : ORBIT_MOVE_MS,
-    );
-  }, [reduceMotion]);
+  const go = useCallback(
+    (delta: number) => {
+      if (orbitBusyRef.current) {
+        return;
+      }
+      orbitBusyRef.current = true;
+      setOrbitBusy(true);
+      setSpin((current) => current + delta);
+      if (orbitUnlockTimerRef.current) {
+        clearTimeout(orbitUnlockTimerRef.current);
+      }
+      orbitUnlockTimerRef.current = setTimeout(
+        () => {
+          orbitBusyRef.current = false;
+          setOrbitBusy(false);
+          orbitUnlockTimerRef.current = null;
+        },
+        reduceMotion ? 0 : ORBIT_MOVE_MS,
+      );
+    },
+    [reduceMotion],
+  );
 
   return (
     <section className="relative z-[5] -mt-24 overflow-x-clip bg-transparent pt-24 pb-8 md:-mt-32 md:pt-36 md:pb-16">
@@ -176,51 +123,46 @@ export function HomeCategories({
           </div>
         </div>
 
-        <div className="absolute inset-x-0 z-20" style={pageColumnRow(452, 56, CATEGORY_FRAME.h)}>
+        <div
+          className="absolute inset-x-0 z-20"
+          style={{ top: `${(452 / CATEGORY_FRAME.h) * 100}%` }}
+        >
           <div className={PAGE_CONTAINER}>
-            <RevealOnView className="h-14 w-[213px]" variants={pillPop} delay={0.12}>
-              <PidehPillButton
-                href={viewAllHref}
-                label={viewAllLabel}
-                tone="orange"
-                className="h-full w-full px-6 py-4"
-              />
-            </RevealOnView>
+            <div className="flex items-start gap-[clamp(1rem,2.2vw,2rem)]">
+              <RevealOnView className="h-14 w-[213px] shrink-0" variants={pillPop} delay={0.12}>
+                <PidehPillButton
+                  href={viewAllHref}
+                  label={viewAllLabel}
+                  tone="orange"
+                  className="h-full w-full px-6 py-4"
+                />
+              </RevealOnView>
+              {active ? (
+                <div className="relative min-h-14 min-w-0 max-w-[26rem] flex-1">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.p
+                      key={active.id}
+                      className="font-display flex min-h-14 items-center text-balance break-words text-[#1e1e1e]"
+                      style={{
+                        fontSize: 'clamp(1.75rem, 3.73vw, 3.375rem)',
+                        lineHeight: 1,
+                      }}
+                      initial={reduceMotion ? false : { opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={reduceMotion ? undefined : { opacity: 0 }}
+                      transition={{
+                        duration: reduceMotion ? 0.15 : 0.4,
+                        ease: ORBIT_MOVE_EASE,
+                      }}
+                    >
+                      {active.title}
+                    </motion.p>
+                  </AnimatePresence>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
-
-        {active ? (
-          <div className="absolute z-20" style={categoryFigmaBox(380, 438, 320, 68)}>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={active.id}
-                className="absolute inset-0 flex items-baseline gap-[clamp(0.5rem,1.1vw,1rem)] whitespace-nowrap"
-                initial={reduceMotion ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={reduceMotion ? undefined : { opacity: 0 }}
-                transition={{
-                  duration: reduceMotion ? 0.15 : 0.4,
-                  ease: ORBIT_MOVE_EASE,
-                }}
-              >
-                <p
-                  className="font-display text-[#1e1e1e]"
-                  style={{
-                    fontSize: 'clamp(1.75rem, 3.73vw, 3.375rem)',
-                    lineHeight: 1.25,
-                  }}
-                >
-                  {active.title}
-                </p>
-                {active.productCount != null ? (
-                  <p className="text-[clamp(0.875rem,1.24vw,1.125rem)] leading-[1.25] font-medium text-[#1e1e1e]/60">
-                    {typesLabel.replace('{count}', String(active.productCount))}
-                  </p>
-                ) : null}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        ) : null}
 
         <HomeCategoriesOrbit
           items={orbitItems}
@@ -237,14 +179,14 @@ export function HomeCategories({
             disabled={orbitBusy}
             reduceMotion={reduceMotion}
             src={PIDEH_ASSETS.arrowLeft}
-            label="Previous category"
+            label="Previous product"
             onClick={() => go(1)}
           />
           <OrbitNavButton
             disabled={orbitBusy}
             reduceMotion={reduceMotion}
             src={PIDEH_ASSETS.arrowRight}
-            label="Next category"
+            label="Next product"
             onClick={() => go(-1)}
           />
         </div>

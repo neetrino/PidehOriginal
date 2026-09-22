@@ -18,39 +18,56 @@ export const ORBIT_PIDE_SLUGS = [
 export type OrbitPideImageRow = {
   slug: string;
   url: string;
+  title?: string;
 };
+
+export type OrbitPidePhoto = {
+  url: string;
+  title: string;
+};
+
+function photoTitle(row: OrbitPideImageRow): string {
+  const title = row.title?.trim();
+  return title && title.length > 0 ? title : row.slug;
+}
 
 /**
  * Prefers the named pide varieties, then appends every other unique pide
  * photo so the ring can cycle the full catalog.
  */
-export function resolveOrbitPideImageUrls(rows: readonly OrbitPideImageRow[]): string[] {
-  const bySlug = new Map<string, string>();
+export function resolveOrbitPidePhotos(rows: readonly OrbitPideImageRow[]): OrbitPidePhoto[] {
+  const bySlug = new Map<string, OrbitPideImageRow>();
   for (const row of rows) {
     if (!bySlug.has(row.slug)) {
-      bySlug.set(row.slug, row.url);
+      bySlug.set(row.slug, row);
     }
   }
 
   const used = new Set<string>();
-  const urls: string[] = [];
+  const photos: OrbitPidePhoto[] = [];
+
+  const pushUnique = (row: OrbitPideImageRow): void => {
+    if (used.has(row.url)) {
+      return;
+    }
+    photos.push({ url: row.url, title: photoTitle(row) });
+    used.add(row.url);
+  };
 
   for (const slug of ORBIT_PIDE_SLUGS) {
-    const url = bySlug.get(slug);
-    if (!url || used.has(url)) {
-      continue;
+    const row = bySlug.get(slug);
+    if (row) {
+      pushUnique(row);
     }
-    urls.push(url);
-    used.add(url);
   }
 
   for (const row of rows) {
-    if (used.has(row.url)) {
-      continue;
-    }
-    urls.push(row.url);
-    used.add(row.url);
+    pushUnique(row);
   }
 
-  return urls;
+  return photos;
+}
+
+export function resolveOrbitPideImageUrls(rows: readonly OrbitPideImageRow[]): string[] {
+  return resolveOrbitPidePhotos(rows).map((photo) => photo.url);
 }

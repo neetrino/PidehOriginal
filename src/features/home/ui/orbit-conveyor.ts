@@ -96,3 +96,9 @@ export function assignOrbitPoolSlots(spin: number, count: number): number[] {
   }
   return slots;
 }
+
+/** Catalog photo sitting in the featured (main) pose after `spin` steps. */
+export function featuredOrbitPoolIndex(spin: number, count: number): number {
+  const poolIndex = assignOrbitPoolSlots(spin, count)[0];
+  return poolIndex != null && poolIndex >= 0 ? poolIndex : 0;
+}

@@ -4,6 +4,7 @@ import { SLOT_COUNT } from '@/features/home/ui/category-orbit-slots';
 import {
   assignOrbitPoolSlots,
   assignOrbitRiders,
+  featuredOrbitPoolIndex,
   ORBIT_GAP_SLOTS,
 } from '@/features/home/ui/orbit-conveyor';
 
@@ -39,5 +40,12 @@ describe('assignOrbitPoolSlots', () => {
 
   it('does not fill extra slots when there are fewer photos than seats', () => {
     expect(assignOrbitPoolSlots(0, 3)).toEqual([0, 1, 2, -1, -1]);
+  });
+});
+
+describe('featuredOrbitPoolIndex', () => {
+  it('returns the catalog photo in the main pose', () => {
+    expect(featuredOrbitPoolIndex(0, 8)).toBe(0);
+    expect(featuredOrbitPoolIndex(1, 8)).toBe(4);
   });
 });

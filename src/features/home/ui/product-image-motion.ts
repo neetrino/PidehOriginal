@@ -2,7 +2,7 @@
 export const FINE_POINTER_QUERY = '(hover: hover) and (pointer: fine)';
 
 export const HOVER_LIFT_Y = -22;
-export const HOVER_SCALE = 1.68;
+export const HOVER_SCALE = 1.42;
 export const HOVER_ROTATE_Z = -0.7;
 export const MAGNET_X_PX = 5;
 export const MAGNET_Y_PX = 3;
