@@ -59,7 +59,7 @@ export function MobileCatalog({
         categories={categories}
         allLabel={catalog.allChip}
         tone="onOrange"
-        className="overflow-x-auto px-6 pt-6 pb-1"
+        className="shop-chips-scroll px-6 pt-6 pb-1"
       />
 
       {sections.length === 0 ? (

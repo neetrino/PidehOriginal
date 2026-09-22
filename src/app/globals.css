@@ -326,6 +326,30 @@ body {
     padding-bottom: 0;
   }
 
+  /* Mobile shop: orange page to the dock — no yellow footer strip under the nav. */
+  .storefront-shell:has(.pideh-shop-mobile) {
+    background: #ff6b00;
+  }
+
+  .storefront-shell:has(.pideh-shop-mobile) .storefront-main {
+    padding-bottom: 0;
+  }
+
+  .storefront-shell:has(.pideh-shop-mobile) .storefront-footer {
+    display: none;
+  }
+
+  .pideh-shop-mobile .shop-chips-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .pideh-shop-mobile .shop-chips-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Figma mobile home (259:369) uses in-page chrome instead of site header. */
   .storefront-shell:has(.pideh-home-mobile) .site-header {
     display: none;
