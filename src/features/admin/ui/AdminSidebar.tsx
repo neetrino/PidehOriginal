@@ -72,7 +72,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
               }
 
               const isActive = isAdminTabActive(tab.href, pathname, locale);
-              const rowClasses = `flex w-full items-center rounded-full text-sm font-bold transition-all ${
+              const rowClasses = `flex w-full shrink-0 items-center rounded-full text-sm font-bold transition-all ${
                 collapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'
               } ${tab.isSubCategory && !collapsed ? 'pl-12' : ''} ${
                 isActive
@@ -84,7 +84,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                 return (
                   <div
                     key={tab.id}
-                    className={`flex w-full min-w-0 overflow-hidden rounded-full ${
+                    className={`flex w-full min-w-0 shrink-0 overflow-hidden rounded-full ${
                       isActive
                         ? 'bg-[#ff6b00] text-white shadow-[0_8px_24px_rgba(255,107,0,0.45)]'
                         : 'bg-transparent'

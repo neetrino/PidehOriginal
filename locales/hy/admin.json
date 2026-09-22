@@ -331,7 +331,13 @@
       "allProducts": "Բոլոր ապրանքները",
       "inStock": "Առկա է",
       "outOfStock": "Առկա չէ",
-      "lowStock": "Քիչ է մնացել"
+      "lowStock": "Քիչ է մնացել",
+      "filterByStatus": "Զտել ըստ կարգավիճակի",
+      "filterByStatusAria": "Զտել ըստ կարգավիճակի",
+      "allStatuses": "Բոլոր կարգավիճակները",
+      "statusActive": "Ակտիվ",
+      "statusDraft": "Սևագիր",
+      "statusLowRemaining": "Քիչ է մնացել"
     },
     "table": {
       "deleteSelected": "Ջնջել ընտրվածները",
