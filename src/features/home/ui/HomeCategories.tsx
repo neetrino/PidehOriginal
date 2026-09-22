@@ -14,7 +14,9 @@ import {
   ORBIT_MOVE_MS,
 } from '@/features/home/ui/HomeCategoriesOrbit';
 import { HomeYellowWave } from '@/features/home/ui/HomeYellowWave';
+import { OrbitNavButton } from '@/features/home/ui/OrbitNavButton';
 import { CATEGORY_FRAME, categoryFigmaBox } from '@/features/home/ui/category-orbit-slots';
+import { ORBIT_MOVE_EASE } from '@/features/home/ui/orbit-motion';
 
 type CategoryItem = {
   id: string;
@@ -190,11 +192,14 @@ export function HomeCategories({
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={active.id}
-                className="flex items-baseline gap-[clamp(0.5rem,1.1vw,1rem)] whitespace-nowrap"
-                initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduceMotion ? undefined : { opacity: 0, y: -10 }}
-                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-0 flex items-baseline gap-[clamp(0.5rem,1.1vw,1rem)] whitespace-nowrap"
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0 }}
+                transition={{
+                  duration: reduceMotion ? 0.15 : 0.4,
+                  ease: ORBIT_MOVE_EASE,
+                }}
               >
                 <p
                   className="font-display text-[#1e1e1e]"
@@ -226,41 +231,20 @@ export function HomeCategories({
           className="absolute z-40 flex items-center gap-[6px]"
           style={categoryFigmaBox(1296.57, 440, 108, 51)}
         >
-          <button
-            type="button"
+          <OrbitNavButton
+            disabled={orbitBusy}
+            reduceMotion={reduceMotion}
+            src={PIDEH_ASSETS.arrowLeft}
+            label="Previous category"
             onClick={() => go(-1)}
+          />
+          <OrbitNavButton
             disabled={orbitBusy}
-            aria-label="Previous category"
-            className="size-[51px] shrink-0 cursor-pointer overflow-hidden rounded-full transition hover:brightness-110 active:scale-95 disabled:pointer-events-none"
-          >
-            {/* SVG brand asset — next/image not required */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={PIDEH_ASSETS.arrowLeft}
-              alt=""
-              width={51}
-              height={51}
-              className="size-full"
-              draggable={false}
-            />
-          </button>
-          <button
-            type="button"
+            reduceMotion={reduceMotion}
+            src={PIDEH_ASSETS.arrowRight}
+            label="Next category"
             onClick={() => go(1)}
-            disabled={orbitBusy}
-            aria-label="Next category"
-            className="size-[51px] shrink-0 cursor-pointer overflow-hidden rounded-full transition hover:brightness-110 active:scale-95 disabled:pointer-events-none"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={PIDEH_ASSETS.arrowRight}
-              alt=""
-              width={51}
-              height={51}
-              className="size-full"
-              draggable={false}
-            />
-          </button>
+          />
         </div>
       </div>
     </section>

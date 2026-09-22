@@ -96,9 +96,14 @@ export function orbitProductVisual(poseIndex: number): OrbitProductVisual {
   return ORBIT_PRODUCT_VISUAL[slotId];
 }
 
+/** Long side of the slot AABB — used as a stable square so travel never flips landscape/portrait. */
+export function orbitSlotSpan(pose: Pick<OrbitSlotPose, 'w' | 'h'>): number {
+  return Math.max(pose.w, pose.h);
+}
+
 /** Square image width as % of the pose AABB width (`max(w,h)` so both orientations fit). */
 export function orbitProductSpanWidthPct(pose: Pick<OrbitSlotPose, 'w' | 'h'>): string {
-  return `${(Math.max(pose.w, pose.h) / pose.w) * 100}%`;
+  return `${(orbitSlotSpan(pose) / pose.w) * 100}%`;
 }
 
 function createPose(
@@ -148,7 +153,7 @@ export const ORBIT_SLOT_POSES: readonly OrbitSlotPose[] = [
   createPose(1041.4, 586.96, 263.173, 258.582, 'rotate-[-133.6deg]', '44.87%', '97.05%', 5),
 ];
 
-function shortestAngleDelta(fromDeg: number, toDeg: number): number {
+export function shortestAngleDelta(fromDeg: number, toDeg: number): number {
   let delta = toDeg - fromDeg;
   while (delta > 180) {
     delta -= 360;
@@ -157,6 +162,11 @@ function shortestAngleDelta(fromDeg: number, toDeg: number): number {
     delta += 360;
   }
   return delta;
+}
+
+/** `toDeg` rewritten so Motion interpolates the short arc, never a 180°+ spin. */
+export function nearestEquivalentAngle(fromDeg: number, toDeg: number): number {
+  return fromDeg + shortestAngleDelta(fromDeg, toDeg);
 }
 
 /**
