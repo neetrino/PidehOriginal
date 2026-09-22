@@ -249,6 +249,20 @@ body {
   background: #ff6b00;
 }
 
+.storefront-shell img {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.pideh-categories-orbit,
+.pideh-categories-orbit img {
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .storefront-shell:has(.pideh-home) .storefront-main,
 .storefront-shell:has(.pideh-about) .storefront-main,
 .storefront-shell:has(.pideh-login) .storefront-main,

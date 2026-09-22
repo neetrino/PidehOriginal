@@ -51,7 +51,7 @@ async function loadOrbitPideImageRows(): Promise<OrbitPideImageRow[]> {
 export async function listOrbitPideImageUrls(): Promise<string[]> {
   return unstable_cache(
     async () => resolveOrbitPideImageUrls(await loadOrbitPideImageRows()),
-    ['orbit-pide-images-v3'],
+    ['orbit-pide-images-v4'],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

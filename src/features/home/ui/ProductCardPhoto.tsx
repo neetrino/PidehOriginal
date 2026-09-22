@@ -60,7 +60,8 @@ export function ProductCardPhoto({
                 sizes={PRODUCT_PHOTO_SIZES}
                 quality={90}
                 priority={priority}
-                className="object-contain"
+                draggable={false}
+                className="object-contain select-none"
               />
             </span>
           </motion.span>

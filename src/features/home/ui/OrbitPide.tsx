@@ -29,6 +29,22 @@ function asNumber(value: unknown): number {
   return typeof value === 'number' ? value : Number(value ?? 0);
 }
 
+function OrbitPideImage({ src }: { src: string }) {
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={800}
+      height={800}
+      sizes="(max-width: 1024px) 70vw, 760px"
+      draggable={false}
+      onDragStart={(event) => event.preventDefault()}
+      onContextMenu={(event) => event.preventDefault()}
+      className="pointer-events-none h-auto w-full object-contain select-none"
+    />
+  );
+}
+
 export function OrbitPide({ src, pose, poseIndex, reduceMotion }: OrbitPideProps) {
   const span = orbitSlotSpan(pose);
   const restVisual = orbitProductVisual(poseIndex);
@@ -120,7 +136,7 @@ export function OrbitPide({ src, pose, poseIndex, reduceMotion }: OrbitPideProps
     <motion.div className="absolute inset-0" style={{ zIndex }}>
       <motion.div className="absolute inset-0" style={{ x, y }}>
         <motion.div
-          className="absolute top-0 left-0 overflow-visible will-change-transform"
+          className="pointer-events-none absolute top-0 left-0 overflow-visible"
           style={{
             width: `${(span / CATEGORY_FRAME.w) * 100}%`,
             height: `${(span / CATEGORY_FRAME.h) * 100}%`,
@@ -138,14 +154,7 @@ export function OrbitPide({ src, pose, poseIndex, reduceMotion }: OrbitPideProps
               rotate: visualRotate,
             }}
           >
-            <Image
-              src={src}
-              alt=""
-              width={800}
-              height={800}
-              sizes="(max-width: 1024px) 70vw, 760px"
-              className="h-auto w-full object-contain"
-            />
+            <OrbitPideImage key={src} src={src} />
           </motion.div>
         </motion.div>
       </motion.div>

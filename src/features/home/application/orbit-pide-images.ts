@@ -21,8 +21,8 @@ export type OrbitPideImageRow = {
 };
 
 /**
- * Prefers the named pide varieties, then fills remaining slots with other
- * unique pide photos so the ring never repeats one image.
+ * Prefers the named pide varieties, then appends every other unique pide
+ * photo so the ring can cycle the full catalog.
  */
 export function resolveOrbitPideImageUrls(rows: readonly OrbitPideImageRow[]): string[] {
   const bySlug = new Map<string, string>();
@@ -45,9 +45,6 @@ export function resolveOrbitPideImageUrls(rows: readonly OrbitPideImageRow[]): s
   }
 
   for (const row of rows) {
-    if (urls.length >= ORBIT_PIDE_SLUGS.length) {
-      break;
-    }
     if (used.has(row.url)) {
       continue;
     }

@@ -17,6 +17,7 @@ import { HomeYellowWave } from '@/features/home/ui/HomeYellowWave';
 import { OrbitNavButton } from '@/features/home/ui/OrbitNavButton';
 import { CATEGORY_FRAME, categoryFigmaBox } from '@/features/home/ui/category-orbit-slots';
 import { ORBIT_MOVE_EASE } from '@/features/home/ui/orbit-motion';
+import { uniqueOrbitPhotos } from '@/features/home/ui/unique-orbit-photos';
 
 type CategoryItem = {
   id: string;
@@ -103,17 +104,18 @@ export function HomeCategories({
   const activeIndex = featuredOrbitCategoryIndex(spin, displayCategories.length);
   const active = displayCategories[activeIndex] ?? displayCategories[0] ?? null;
 
-  const orbitItems = useMemo(
-    () =>
-      displayCategories.map((category, index) => ({
-        id: category.id,
-        imageUrl:
-          orbitImageUrls[index] ??
-          category.imageUrl ??
-          PIDEH_ASSETS.foodPide,
-      })),
-    [displayCategories, orbitImageUrls],
-  );
+  const orbitItems = useMemo(() => {
+    const urls = uniqueOrbitPhotos([
+      ...orbitImageUrls,
+      ...displayCategories.map((category) => category.imageUrl),
+      PIDEH_ASSETS.foodPide,
+    ]);
+
+    return urls.map((imageUrl, index) => ({
+      id: `orbit-photo-${index}`,
+      imageUrl,
+    }));
+  }, [displayCategories, orbitImageUrls]);
 
   useEffect(() => {
     return () => {
@@ -236,14 +238,14 @@ export function HomeCategories({
             reduceMotion={reduceMotion}
             src={PIDEH_ASSETS.arrowLeft}
             label="Previous category"
-            onClick={() => go(-1)}
+            onClick={() => go(1)}
           />
           <OrbitNavButton
             disabled={orbitBusy}
             reduceMotion={reduceMotion}
             src={PIDEH_ASSETS.arrowRight}
             label="Next category"
-            onClick={() => go(1)}
+            onClick={() => go(-1)}
           />
         </div>
       </div>

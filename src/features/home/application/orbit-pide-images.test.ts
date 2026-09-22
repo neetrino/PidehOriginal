@@ -15,6 +15,20 @@ describe('resolveOrbitPideImageUrls', () => {
     );
   });
 
+  it('keeps leftover unique photos after the preferred five', () => {
+    expect(
+      resolveOrbitPideImageUrls([
+        { slug: 'pepperoni-pide', url: 'https://cdn/pepperoni.webp' },
+        { slug: 'extra-pide', url: 'https://cdn/extra.webp' },
+        { slug: 'shpinat', url: 'https://cdn/spinach.webp' },
+      ]),
+    ).toEqual([
+      'https://cdn/pepperoni.webp',
+      'https://cdn/spinach.webp',
+      'https://cdn/extra.webp',
+    ]);
+  });
+
   it('fills missing preferred slugs from other unique photos', () => {
     expect(
       resolveOrbitPideImageUrls([
