@@ -69,6 +69,7 @@ export function HomeHero({
     >
       <HomeHeroMedia
         imageSrc={PIDEH_ASSETS.heroPide}
+        posterSrc={PIDEH_ASSETS.heroVideoPoster}
         videoSrc={reduceMotion ? null : PIDEH_ASSETS.heroVideoMp4}
         onBackdropColor={setBackdrop}
       />

@@ -14,6 +14,8 @@ export const PIDEH_ASSETS = {
   ctaDotF: '/brand/pideh/cta-dot-f.svg',
   /** Figma desktop hero pide video still (436:582). */
   heroPide: '/brand/pideh/hero-pide.png',
+  /** Compact JPEG still for video poster / reduced-motion fallback. */
+  heroVideoPoster: '/brand/pideh/hero-pide-poster.jpg',
   /** Optional Figma Kling export. Missing file → static hero pide. */
   heroVideoMp4: '/brand/pideh/hero-pide.mp4',
   heroVideoWebm: '/brand/pideh/hero-pide.webm',

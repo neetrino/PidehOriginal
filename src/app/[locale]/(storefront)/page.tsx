@@ -7,6 +7,7 @@ import { HomeCategories } from '@/features/home/ui/HomeCategories';
 import { HomeCtaBanner } from '@/features/home/ui/HomeCtaBanner';
 import { HomeFeaturedProducts } from '@/features/home/ui/HomeFeaturedProducts';
 import { HOME_FEATURE_VISUALS, HomeFeatures } from '@/features/home/ui/HomeFeatures';
+import { HeroVideoPreload } from '@/features/home/ui/HeroVideoPreload';
 import { HomeHero } from '@/features/home/ui/HomeHero';
 import { HomeReviews } from '@/features/home/ui/HomeReviews';
 import { MobileHome } from '@/features/home/ui/mobile/MobileHome';
@@ -92,6 +93,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <div className="pideh-home">
+      <HeroVideoPreload />
       <MobileHome
         locale={locale}
         dictionary={dictionary}

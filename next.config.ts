@@ -88,10 +88,23 @@ const nextConfig: NextConfig = {
     qualities: [75, 90],
   },
   async headers() {
+    const heroMediaCache = {
+      key: 'Cache-Control',
+      value: 'public, max-age=31536000, immutable',
+    };
+
     return [
       {
         source: '/:path*',
         headers: securityHeaders,
+      },
+      {
+        source: '/brand/pideh/hero-pide.mp4',
+        headers: [heroMediaCache],
+      },
+      {
+        source: '/brand/pideh/hero-pide-poster.jpg',
+        headers: [heroMediaCache],
       },
     ];
   },
