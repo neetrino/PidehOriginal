@@ -1,7 +1,7 @@
 import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
 import { cardShelf } from '@/components/motion/presets';
-import { AppLink } from '@/components/ui/AppLink';
 import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
+import { ShopPagination } from '@/features/products/ui/ShopPagination';
 import type { CatalogProduct } from '@/features/products/types';
 import type { Locale } from '@/lib/i18n/config';
 
@@ -111,57 +111,5 @@ export function ShopProductGrid({
         />
       ) : null}
     </>
-  );
-}
-
-type ShopPaginationProps = {
-  paginationLabel: string;
-  previousPage: string;
-  nextPage: string;
-  pageStatus: string;
-  page: number;
-  totalPages: number;
-  pageHref: (page: number) => string;
-};
-
-function ShopPagination({
-  paginationLabel,
-  previousPage,
-  nextPage,
-  pageStatus,
-  page,
-  totalPages,
-  pageHref,
-}: ShopPaginationProps) {
-  const status = pageStatus.replace('{page}', String(page)).replace('{total}', String(totalPages));
-
-  return (
-    <nav aria-label={paginationLabel} className="mt-10 flex items-center justify-center gap-4">
-      {page > 1 ? (
-        <AppLink
-          href={pageHref(page - 1)}
-          prefetchPolicy="intent"
-          scroll={false}
-          className="rounded-[30px] bg-white px-4 py-2 text-sm font-bold text-[#ff6b00] shadow-[0px_8px_14px_rgba(31,20,8,0.08)] transition duration-200 hover:scale-[1.04] hover:brightness-105"
-        >
-          {previousPage}
-        </AppLink>
-      ) : (
-        <span className="rounded-[30px] px-4 py-2 text-sm text-[#ff6b00]/40">{previousPage}</span>
-      )}
-      <span className="text-sm font-medium text-[#1e1e1e]">{status}</span>
-      {page < totalPages ? (
-        <AppLink
-          href={pageHref(page + 1)}
-          prefetchPolicy="intent"
-          scroll={false}
-          className="rounded-[30px] bg-[#ff6b00] px-4 py-2 text-sm font-bold text-white transition duration-200 hover:scale-[1.04] hover:brightness-105"
-        >
-          {nextPage}
-        </AppLink>
-      ) : (
-        <span className="rounded-[30px] px-4 py-2 text-sm text-[#ff6b00]/40">{nextPage}</span>
-      )}
-    </nav>
   );
 }

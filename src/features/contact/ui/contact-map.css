@@ -8,6 +8,25 @@
   background: var(--pideh-cream);
   font-family: inherit;
   z-index: 0;
+  overflow: hidden;
+  overscroll-behavior: auto;
+  touch-action: pan-y;
+  cursor: pointer;
+}
+
+.contact-map-shell .leaflet-container.is-zoom-enabled {
+  overscroll-behavior: contain;
+  touch-action: none;
+  cursor: grab;
+  box-shadow: inset 0 0 0 3px var(--pideh-yellow);
+}
+
+.contact-map-shell .leaflet-tile {
+  visibility: visible !important;
+}
+
+.contact-map-shell .leaflet-zoom-anim .leaflet-tile-container {
+  will-change: transform;
 }
 
 .contact-map-shell .leaflet-control-attribution {

@@ -47,6 +47,8 @@ export default async function ContactPage({ params }: ContactPageProps) {
         secondaryLabel={contact.storeAddressSecondary}
         zoomInLabel={contact.mapZoomIn}
         zoomOutLabel={contact.mapZoomOut}
+        zoomEnableLabel={contact.mapZoomEnable}
+        zoomDisableLabel={contact.mapZoomDisable}
       />
     </div>
   );

@@ -30,5 +30,7 @@
   "hoursSaturday": "Saturday: 11:00 - 15:00",
   "mapTitle": "Store location",
   "mapZoomIn": "Zoom in",
-  "mapZoomOut": "Zoom out"
+  "mapZoomOut": "Zoom out",
+  "mapZoomEnable": "Click the map to zoom",
+  "mapZoomDisable": "Press Esc or click to lock zoom"
 }
