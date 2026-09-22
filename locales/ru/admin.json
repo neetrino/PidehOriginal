@@ -321,7 +321,12 @@
       "allProducts": "Все товары",
       "inStock": "В наличии",
       "outOfStock": "Нет в наличии",
-      "lowStock": "Мало на складе"
+      "lowStock": "Мало на складе",
+      "filterByStatus": "Фильтр по статусу",
+      "filterByStatusAria": "Фильтр по статусу",
+      "allStatuses": "Все статусы",
+      "statusActive": "Включён",
+      "statusInactive": "Выключен"
     },
     "table": {
       "deleteSelected": "Удалить выбранные",

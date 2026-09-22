@@ -9,6 +9,7 @@ import type {
   AdminProductListItem,
 } from '@/features/products/application/list-admin-products';
 import type { ProductModifierOption } from '@/features/products/types/modifiers';
+import { AdminProductsFilters } from '@/features/products/ui/AdminProductsFilters';
 import { AdminProductsTable } from '@/features/products/ui/AdminProductsTable';
 import { ProductDrawer } from '@/features/products/ui/ProductDrawer';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -33,6 +34,16 @@ type AdminProductsViewProps = {
   categories: AdminCategoryOption[];
   modifierLibrary: ProductModifierOption[];
   copy: ViewCopy;
+  filters: {
+    total: number;
+    q?: string;
+    sku?: string;
+    categoryId?: string;
+    stock: 'all' | 'in_stock' | 'out_of_stock' | 'low_stock';
+    status: 'all' | 'active' | 'inactive';
+    sort: string;
+    dir: string;
+  };
 };
 
 export function AdminProductsView({
@@ -42,6 +53,7 @@ export function AdminProductsView({
   categories,
   modifierLibrary,
   copy,
+  filters,
 }: AdminProductsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<AdminProductListItem | null>(null);
@@ -63,10 +75,24 @@ export function AdminProductsView({
 
   return (
     <>
-      <button type="button" onClick={openCreate} className={`${ADMIN_PRIMARY_BTN} mb-4 w-full`}>
-        <Plus className="h-4 w-4" aria-hidden />
-        {copy.products.addNewProduct}
-      </button>
+      <AdminProductsFilters
+        total={filters.total}
+        q={filters.q}
+        sku={filters.sku}
+        categoryId={filters.categoryId}
+        stock={filters.stock}
+        status={filters.status}
+        categories={categories}
+        sort={filters.sort}
+        dir={filters.dir}
+        copy={copy.products.filters}
+        action={
+          <button type="button" onClick={openCreate} className={`${ADMIN_PRIMARY_BTN} h-11 w-full`}>
+            <Plus className="h-4 w-4" aria-hidden />
+            {copy.products.addNewProduct}
+          </button>
+        }
+      />
 
       <AdminProductsTable
         locale={locale}

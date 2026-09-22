@@ -11,6 +11,7 @@ import {
   inArray,
   isNull,
   lte,
+  ne,
   or,
   sql,
   type SQL,
@@ -99,6 +100,12 @@ function buildWhere(filters: AdminProductsFilter, locale: Locale): SQL | undefin
     conditions.push(
       and(gt(products.stockOnHand, 0), lte(products.stockOnHand, products.lowStockThreshold))!,
     );
+  }
+
+  if (filters.status === 'active') {
+    conditions.push(eq(products.status, 'ACTIVE'));
+  } else if (filters.status === 'inactive') {
+    conditions.push(ne(products.status, 'ACTIVE'));
   }
 
   if (filters.categoryId) {

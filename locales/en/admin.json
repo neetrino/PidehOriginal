@@ -321,7 +321,12 @@
       "allProducts": "All Products",
       "inStock": "In stock",
       "outOfStock": "Out of stock",
-      "lowStock": "Low stock"
+      "lowStock": "Low stock",
+      "filterByStatus": "Filter by status",
+      "filterByStatusAria": "Filter by status",
+      "allStatuses": "All statuses",
+      "statusActive": "Enabled",
+      "statusInactive": "Disabled"
     },
     "table": {
       "deleteSelected": "Delete Selected",
