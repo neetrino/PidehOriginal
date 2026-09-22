@@ -52,11 +52,11 @@ export function HomeFeaturedProducts({
   products,
 }: HomeFeaturedProductsProps) {
   return (
-    <section className="relative z-10 overflow-visible bg-transparent">
+    <section className="relative z-10 overflow-x-clip bg-[#ff6b00]">
       {/*
-        Shell is orange on home. In wave valleys the SVG is transparent above the
-        crest, so shell showed as a flat orange shelf. Yellow underlay matches
-        categories and hides that shelf — wave path itself is untouched.
+        Wave fill is #FF6B00. The drip path is inset on the lower left, so a
+        transparent section leaked the lighter home shell as a gutter triangle.
+        Yellow underlay still covers crest valleys so categories yellow shows.
       */}
       <div
         aria-hidden="true"
