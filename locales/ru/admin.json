@@ -331,7 +331,13 @@
       "allProducts": "Все товары",
       "inStock": "В наличии",
       "outOfStock": "Нет в наличии",
-      "lowStock": "Мало на складе"
+      "lowStock": "Мало на складе",
+      "filterByStatus": "Фильтр по статусу",
+      "filterByStatusAria": "Фильтр по статусу",
+      "allStatuses": "Все статусы",
+      "statusActive": "Активные",
+      "statusDraft": "Черновик",
+      "statusLowRemaining": "Мало осталось"
     },
     "table": {
       "deleteSelected": "Удалить выбранные",

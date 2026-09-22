@@ -17,6 +17,7 @@ type AdminProductsFiltersProps = {
   sku?: string;
   categoryId?: string;
   stock: 'all' | 'in_stock' | 'out_of_stock' | 'low_stock';
+  status: 'all' | 'active' | 'draft' | 'low_remaining';
   categories: AdminCategoryOption[];
   sort: string;
   dir: string;
@@ -29,6 +30,7 @@ export function AdminProductsFilters({
   sku,
   categoryId,
   stock,
+  status,
   categories,
   sort,
   dir,
@@ -37,6 +39,7 @@ export function AdminProductsFilters({
   const formRef = useRef<HTMLFormElement>(null);
   const [categoryValue, setCategoryValue] = useState(categoryId ?? '');
   const [stockValue, setStockValue] = useState(stock);
+  const [statusValue, setStatusValue] = useState(status);
 
   const categoryOptions = categories.map((category) => ({
     label: category.title,
@@ -50,6 +53,13 @@ export function AdminProductsFilters({
     { label: copy.lowStock, value: 'low_stock' as const },
   ];
 
+  const statusOptions = [
+    { label: copy.allStatuses, value: 'all' as const },
+    { label: copy.statusActive, value: 'active' as const },
+    { label: copy.statusDraft, value: 'draft' as const },
+    { label: copy.statusLowRemaining, value: 'low_remaining' as const },
+  ];
+
   function applyCategory(next: string): void {
     flushSync(() => setCategoryValue(next));
     formRef.current?.requestSubmit();
@@ -57,6 +67,11 @@ export function AdminProductsFilters({
 
   function applyStock(next: string): void {
     flushSync(() => setStockValue(next as AdminProductsFiltersProps['stock']));
+    formRef.current?.requestSubmit();
+  }
+
+  function applyStatus(next: string): void {
+    flushSync(() => setStatusValue(next as AdminProductsFiltersProps['status']));
     formRef.current?.requestSubmit();
   }
 
@@ -109,6 +124,17 @@ export function AdminProductsFilters({
             options={stockOptions}
             className="mt-1"
             onValueChange={applyStock}
+          />
+        </div>
+        <div>
+          <span className={ADMIN_LABEL}>{copy.filterByStatus}</span>
+          <SelectDropdown
+            name="status"
+            ariaLabel={copy.filterByStatusAria}
+            value={statusValue}
+            options={statusOptions}
+            className="mt-1"
+            onValueChange={applyStatus}
           />
         </div>
       </form>
