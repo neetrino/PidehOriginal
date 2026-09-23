@@ -198,11 +198,11 @@ export function AddressMapPicker({
                 onClick={closePicker}
               />
               <div
-                className={`relative z-[1] flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
+                className={`relative z-[1] flex max-h-[min(90dvh,calc(100dvh-2rem))] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
                 onAnimationEnd={handlePanelAnimationEnd}
               >
                 <MapPickerHeader labels={labels} onClose={closePicker} resolving={resolving} />
-                <div className="relative min-h-[320px] flex-1 bg-gray-100 sm:min-h-[420px]">
+                <div className="relative min-h-[min(40dvh,320px)] flex-1 bg-gray-100 sm:min-h-[420px]">
                   <div ref={mapElementRef} className="absolute inset-0" />
                   {loading ? (
                     <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-gray-600">

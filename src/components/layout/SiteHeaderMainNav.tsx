@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 
 import { AccountControls } from '@/components/layout/AccountControls';
 import { LocaleCurrencySwitcher } from '@/components/layout/LocaleCurrencySwitcher';
-import { MobileNavDrawer } from '@/components/layout/MobileNavDrawer';
 import { PAGE_CONTAINER } from '@/components/layout/page-container';
 import { AppLink } from '@/components/ui/AppLink';
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
@@ -89,10 +88,14 @@ export function SiteHeaderMainNav({
   return (
     <header className="relative z-40 pt-3 md:pt-3.5">
       <div className={PAGE_CONTAINER}>
-        <div className="flex h-16 w-full items-center justify-between gap-3 rounded-[90px] bg-white px-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:px-6 md:h-20 md:px-8">
+        <div
+          data-header-pill
+          className="flex h-16 w-full items-center justify-between gap-3 rounded-[90px] bg-white px-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:px-6 md:h-20 md:px-8"
+        >
           <AppLink
             href={`/${locale}`}
             prefetchPolicy="intent"
+            data-header-logo
             className="relative h-12 w-[56px] shrink-0 md:h-16 md:w-[75px]"
             aria-label={dictionary.brand}
           >
@@ -130,7 +133,7 @@ export function SiteHeaderMainNav({
             })}
           </nav>
 
-          <div className="flex items-center gap-2 md:gap-3.5">
+          <div data-header-actions className="flex items-center gap-2 md:gap-3.5">
             <GroupOrderHeaderButton
               locale={locale}
               labels={dictionary.groupOrder}
@@ -186,17 +189,6 @@ export function SiteHeaderMainNav({
                   </AppLink>
                 </>
               )}
-            </div>
-
-            <div className="flex items-center gap-2 md:hidden">
-              <HeaderSearch locale={locale} currency={currency} labels={searchLabels} />
-              <LocaleCurrencySwitcher
-                locale={locale}
-                currency={currency}
-                currencyLabel={dictionary.header.currency}
-                languageLabel={dictionary.header.language}
-              />
-              <MobileNavDrawer locale={locale} dictionary={dictionary} navItems={navItems} />
             </div>
           </div>
         </div>

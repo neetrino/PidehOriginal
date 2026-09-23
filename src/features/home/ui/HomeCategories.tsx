@@ -93,7 +93,10 @@ export function HomeCategories({
   );
 
   return (
-    <section className="relative z-[5] -mt-24 overflow-x-clip bg-transparent pt-24 pb-8 md:-mt-32 md:pt-36 md:pb-16">
+    <section
+      data-home-categories
+      className="relative z-[5] overflow-x-clip bg-transparent pb-8 lg:pb-16"
+    >
       {/* Wave sits over the hero video; drip valleys show the video underneath. */}
       <div className="absolute inset-x-0 top-0 z-[1] w-full">
         <HomeYellowWave />
@@ -129,7 +132,7 @@ export function HomeCategories({
         >
           <div className={PAGE_CONTAINER}>
             <div className="flex items-start gap-[clamp(1rem,2.2vw,2rem)]">
-              <RevealOnView className="h-14 w-[213px] shrink-0" variants={pillPop} delay={0.12}>
+              <RevealOnView className="h-14 w-full max-w-[213px] min-w-0 shrink" variants={pillPop} delay={0.12}>
                 <PidehPillButton
                   href={viewAllHref}
                   label={viewAllLabel}

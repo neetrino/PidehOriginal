@@ -116,7 +116,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
           </RevealOnView>
         ) : (
           <StaggerGroup
-            className="grid grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-4"
+            className="grid grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             stagger={0.08}
             delayChildren={0.04}
           >

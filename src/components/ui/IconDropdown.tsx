@@ -119,7 +119,7 @@ export function IconDropdown({
       </button>
 
       <div
-        className={`absolute right-0 z-[220] grid w-max transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${placementOpen} ${placementGap} ${
+        className={`absolute right-0 z-[220] grid w-max max-w-[min(100vw-2rem,20rem)] min-w-0 transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${placementOpen} ${placementGap} ${
           open
             ? 'translate-y-0 grid-rows-[1fr] opacity-100'
             : `pointer-events-none grid-rows-[0fr] opacity-0 ${placementClosedTransform}`

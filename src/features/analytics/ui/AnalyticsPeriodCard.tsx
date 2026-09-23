@@ -107,11 +107,11 @@ export function AnalyticsPeriodCard({
 
           {selectedPreset === 'custom' ? (
             <form onSubmit={onCustomSubmit} className="mt-3 flex flex-wrap items-end gap-3">
-              <label className="min-w-[140px] flex-1">
+              <label className="min-w-0 w-full flex-1 sm:min-w-[140px]">
                 <span className={ADMIN_LABEL}>{copy.analytics.period.from}</span>
                 <input name="from" type="date" defaultValue={from} className={ADMIN_INPUT} />
               </label>
-              <label className="min-w-[140px] flex-1">
+              <label className="min-w-0 w-full flex-1 sm:min-w-[140px]">
                 <span className={ADMIN_LABEL}>{copy.analytics.period.to}</span>
                 <input name="to" type="date" defaultValue={to} className={ADMIN_INPUT} />
               </label>

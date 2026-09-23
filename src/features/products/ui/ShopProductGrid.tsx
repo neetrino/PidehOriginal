@@ -66,7 +66,7 @@ export function ShopProductGrid({
       <StaggerGroup
         key={products.map((item) => item.product.id).join()}
         play="mount"
-        className="grid grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-4"
+        className="grid grid-cols-2 items-stretch justify-items-stretch gap-[13px] overflow-visible lg:grid-cols-3 xl:grid-cols-4"
         stagger={0.08}
         delayChildren={0.04}
       >
@@ -74,7 +74,7 @@ export function ShopProductGrid({
           <StaggerItem
             key={item.product.id}
             variants={cardShelf}
-            className="relative z-0 w-full min-w-0 overflow-visible hover:z-50"
+            className="relative z-0 h-full w-full min-w-0 overflow-visible hover:z-50"
           >
             <HomeProductCard
               href={`/${locale}/products/${item.product.translation.slug}`}

@@ -107,8 +107,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </Link>
       </p>
 
-      <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold tracking-tight">{post.copy.title}</h1>
+      <header className="flex min-w-0 flex-col gap-2">
+        <h1 className="text-[clamp(1.75rem,5vw,2.25rem)] font-semibold tracking-tight break-words">
+          {post.copy.title}
+        </h1>
         {post.publishedAt ? (
           <time dateTime={post.publishedAt} className="text-sm text-[var(--muted)]">
             {post.publishedAt.slice(0, 10)}
@@ -120,7 +122,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </header>
 
       {post.coverUrl ? (
-        <div className="relative h-[28rem] w-full overflow-hidden">
+        <div className="relative aspect-[16/9] max-h-[28rem] w-full overflow-hidden rounded-[24px]">
           <Image src={post.coverUrl} alt="" fill sizes="100vw" className="object-cover" priority />
         </div>
       ) : null}

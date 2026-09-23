@@ -47,7 +47,7 @@ export async function ProductRelatedSection({
         </h2>
         <div className="shrink-0">{menuButton}</div>
       </div>
-      <div className="grid w-full grid-cols-1 justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid w-full grid-cols-1 items-stretch justify-items-stretch gap-[13px] overflow-visible sm:grid-cols-2 lg:grid-cols-4">
         {related.map((item) => {
           const price = formatPrice(item.priceAmount);
           const compareAt = item.compareAtAmount != null ? formatPrice(item.compareAtAmount) : null;

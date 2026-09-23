@@ -13,6 +13,7 @@ type ContactInfoProps = {
 type ChannelLine = {
   text: string;
   href?: string;
+  size?: 'sm';
 };
 
 type Channel = {
@@ -48,20 +49,23 @@ function ChannelRow({ channel }: { channel: Channel }) {
         )}
       </h3>
       <div className="font-noto-armenian mt-2 space-y-1 text-base leading-snug text-[#1e1e1e]/75">
-        {channel.lines.map((line) =>
-          line.href ? (
+        {channel.lines.map((line) => {
+          const sizeClass = line.size === 'sm' ? 'text-[13px] leading-[15px]' : '';
+          return line.href ? (
             <a
               key={line.text}
               href={line.href}
               {...targetProps(line.href)}
-              className={`block w-fit text-[#1e1e1e] ${LINK_CLASS}`}
+              className={`block w-fit text-[#1e1e1e] ${LINK_CLASS} ${sizeClass}`}
             >
               {line.text}
             </a>
           ) : (
-            <p key={line.text}>{line.text}</p>
-          ),
-        )}
+            <p key={line.text} className={sizeClass}>
+              {line.text}
+            </p>
+          );
+        })}
       </div>
     </div>
   );
@@ -107,7 +111,7 @@ export function ContactInfo({ copy }: ContactInfoProps) {
       index: '04',
       icon: Clock3,
       title: copy.hoursTitle,
-      lines: [{ text: copy.hoursWeekdays }],
+      lines: [{ text: copy.hoursWeekdays }, { text: copy.hoursPickup, size: 'sm' }],
     },
   ];
 

@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation';
 
+import { STOREFRONT_DESKTOP_ONLY } from '@/components/layout/page-container';
+
 import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
 import { listActiveHeroSlides } from '@/features/hero/application/queries';
 import { listOrbitPidePhotos } from '@/features/home/application/list-orbit-pide-images';
@@ -104,7 +106,7 @@ export default async function HomePage({ params }: HomePageProps) {
         prepTimeLabel={dictionary.product.prepTime}
       />
 
-      <div className="hidden md:block">
+      <div className={STOREFRONT_DESKTOP_ONLY}>
         <HomeHero
           slides={heroSlides}
           fallbackTitleAccent={dictionary.home.heroTitleLine2}

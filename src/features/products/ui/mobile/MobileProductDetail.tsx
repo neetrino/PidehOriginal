@@ -4,6 +4,10 @@ import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
+import {
+  MOBILE_STOREFRONT_COLUMN,
+  MOBILE_STOREFRONT_SHELL,
+} from '@/components/layout/page-container';
 import { flyToCart } from '@/features/cart/ui/fly-to-cart';
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 import type { ProductGalleryImage, ProductModifierChoice } from '@/features/products/types';
@@ -107,7 +111,8 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
   const heroImage = images[0] ?? null;
 
   return (
-    <div className="pideh-pdp-mobile relative mx-auto w-full max-w-[440px] overflow-x-clip bg-[#ff6b00] md:hidden">
+    <div className={`${MOBILE_STOREFRONT_SHELL} pideh-pdp-mobile overflow-x-clip bg-[#ff6b00]`}>
+      <div className={MOBILE_STOREFRONT_COLUMN}>
       <MobileProductHero
         title={title}
         image={heroImage}
@@ -221,6 +226,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
           onToggleException={(id) => state.setExceptionIds((cur) => toggleModifierId(cur, id))}
         />
       </MobileProductSheet>
+      </div>
     </div>
   );
 }

@@ -61,7 +61,7 @@ export function AdminProductRow({
         />
       </td>
       <td className={ADMIN_TABLE_TD}>
-        <div className="flex min-w-[200px] items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded bg-gray-100">
             {product.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element -- admin thumb

@@ -58,7 +58,7 @@ export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
         fallback={
           <header className="relative z-10 pt-3 md:pt-3.5">
             <div className={PAGE_CONTAINER}>
-              <div className="flex h-16 w-full items-center justify-between rounded-[90px] bg-white px-6 shadow-[0_8px_30px_rgba(0,0,0,0.08)] md:h-20">
+              <div className="flex h-16 w-full items-center justify-between rounded-[90px] bg-white px-4 shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:px-6 md:h-20 md:px-8">
                 <span className="text-lg font-semibold tracking-tight text-gray-900">
                   {dictionary.brand}
                 </span>

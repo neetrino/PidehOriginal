@@ -58,7 +58,10 @@ export function SideSheet({
 
   const isAdmin = variant === 'admin';
   const resolvedPanelClassName =
-    panelClassName ?? (isAdmin ? 'w-full sm:w-1/2' : 'w-full max-w-md');
+    panelClassName ??
+    (isAdmin
+      ? 'w-[min(100%,calc(100%-2.75rem))] sm:w-1/2'
+      : 'w-[min(100%,28rem)] max-w-[calc(100%-2.75rem)]');
   const resolvedBackdropBlur = backdropBlur ?? isAdmin;
   const resolvedCloseClassName =
     closeClassName ?? (isAdmin ? 'bg-[#ff6b00] hover:bg-[#e85f00]' : 'bg-gray-900 hover:bg-black');

@@ -27,17 +27,20 @@ export default async function CartPage({ params }: CartPageProps) {
   }, 0);
 
   return (
-    <section className="flex max-w-2xl flex-col gap-4">
-      <h1 className="text-3xl font-semibold">Cart</h1>
+    <section className="flex w-full max-w-2xl min-w-0 flex-col gap-4">
+      <h1 className="text-[clamp(1.75rem,5vw,1.875rem)] font-semibold">Cart</h1>
       {items.map(({ item, product, modifiers }) => {
         const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
         const unit = cartLineUnitAmount(base, modifiers);
         const additions = modifiers.filter((row) => row.kind === 'ADDITION');
         const exceptions = modifiers.filter((row) => row.kind === 'EXCEPTION');
         return (
-          <div className="flex items-center justify-between border p-3" key={item.id}>
-            <div>
-              <p>{product.translations[locale]?.title ?? product.sku}</p>
+          <div
+            className="flex min-w-0 flex-col gap-3 border p-3 sm:flex-row sm:items-center sm:justify-between"
+            key={item.id}
+          >
+            <div className="min-w-0">
+              <p className="break-words">{product.translations[locale]?.title ?? product.sku}</p>
               {additions.length > 0 ? (
                 <p className="text-xs text-gray-600">
                   + {additions.map((row) => row.name).join(', ')}
@@ -52,7 +55,7 @@ export default async function CartPage({ params }: CartPageProps) {
                 {unit} AMD × {item.quantity}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <form
                 action={async () => {
                   'use server';
@@ -86,7 +89,7 @@ export default async function CartPage({ params }: CartPageProps) {
         <AppLink
           href={`/${locale}/checkout`}
           prefetchPolicy="intent"
-          className="bg-[var(--accent)] px-4 py-2 text-center text-[var(--accent-foreground)]"
+          className="min-h-11 bg-[var(--accent)] px-4 py-2 text-center text-[var(--accent-foreground)]"
         >
           Checkout
         </AppLink>

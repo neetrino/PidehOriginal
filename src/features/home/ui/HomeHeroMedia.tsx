@@ -33,9 +33,8 @@ function useIsDesktopMd(): boolean {
 }
 
 /**
- * Full-bleed hero video (Figma 436:582). Width-driven `h-auto` shows the
- * whole frame — no contain letterbox (black side gap) and no cover crop.
- * Mounted only on desktop so mobile never downloads the loop.
+ * Full-bleed hero video (Figma 436:582). Width-driven `h-auto` is in-flow so
+ * the section height follows the frame — no contain letterbox, no cover crop.
  */
 export function HomeHeroMedia({
   imageSrc,
@@ -62,10 +61,10 @@ export function HomeHeroMedia({
   };
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-0">
-      {isDesktop ? (
-        <div className="absolute inset-x-0 top-0 pt-52 md:pt-60">
-          {showVideo ? (
+    <div className="pointer-events-none relative z-0" data-home-hero-media-root>
+      <div className="relative w-full pt-52 md:pt-60" data-home-hero-media>
+        {isDesktop ? (
+          showVideo ? (
             <video
               className="pideh-hero-video-fade block h-auto w-full max-w-none bg-transparent"
               autoPlay
@@ -92,9 +91,14 @@ export function HomeHeroMedia({
               sizes="100vw"
               className="pideh-hero-video-fade block h-auto w-full max-w-none"
             />
-          )}
-        </div>
-      ) : null}
+          )
+        ) : (
+          <div
+            className="w-full"
+            style={{ aspectRatio: `${HERO_VIDEO_WIDTH} / ${HERO_VIDEO_HEIGHT}` }}
+          />
+        )}
+      </div>
       <div
         className="pideh-hero-video-seam absolute inset-x-0 top-52 z-[1] h-12 md:top-60 md:h-14"
         aria-hidden

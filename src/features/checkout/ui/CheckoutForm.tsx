@@ -445,8 +445,8 @@ export function CheckoutForm({
   }
 
   return (
-    <div className="py-12">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
+    <div className="min-w-0 py-8 sm:py-12">
+      <h1 className="mb-8 text-[clamp(1.75rem,5vw,1.875rem)] font-bold text-gray-900">{labels.title}</h1>
 
       <CheckoutProductsInOrder
         products={orderProducts}

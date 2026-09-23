@@ -120,7 +120,7 @@ function CreateGroupOrderDialog({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.98 }}
         transition={{ duration: 0.32, ease: PANEL_EASE }}
-        className="relative z-[1] flex max-h-[92vh] w-full max-w-[440px] flex-col overflow-hidden rounded-t-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-[8px_8px_0_#1e1e1e] sm:rounded-[28px]"
+        className="relative z-[1] flex max-h-[min(92dvh,calc(100dvh-1rem))] w-full max-w-[min(440px,calc(100%-1.5rem))] flex-col overflow-hidden rounded-t-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-[8px_8px_0_#1e1e1e] sm:rounded-[28px]"
       >
         <div className="relative border-b-2 border-pideh-ink/10 bg-pideh-yellow/35 px-6 pt-5 pb-4">
           <CloseButton label={labels.close} onClose={onClose} />

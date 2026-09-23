@@ -22,8 +22,8 @@ export default async function ContactPage({ params }: ContactPageProps) {
   const { contact } = dictionary;
 
   return (
-    <div className={`-my-10 bg-[#fff8e7] ${PAGE_BLEED}`}>
-      <section className={`relative overflow-hidden py-16 lg:py-20 ${PAGE_CONTAINER}`}>
+    <div className={`-my-10 min-w-0 overflow-x-clip bg-[#fff8e7] ${PAGE_BLEED}`}>
+      <section className={`relative min-w-0 overflow-x-clip py-12 sm:py-16 lg:py-20 ${PAGE_CONTAINER}`}>
         <h1 className="sr-only">{contact.title}</h1>
         <div className="relative grid grid-cols-1 items-start gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
           <ContactInfo copy={contact} />

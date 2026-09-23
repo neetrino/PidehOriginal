@@ -1,5 +1,7 @@
-/** Tailwind `md` — desktop home hero is hidden below this. */
-export const HERO_DESKTOP_MEDIA = '(min-width: 768px)';
+import { STOREFRONT_DESKTOP_MEDIA } from '@/components/layout/page-container';
+
+/** Matches storefront desktop chrome (landscape tablet + wide desktop). */
+export const HERO_DESKTOP_MEDIA = STOREFRONT_DESKTOP_MEDIA;
 
 /**
  * Start fetching the hero loop only where it actually plays: desktop, and

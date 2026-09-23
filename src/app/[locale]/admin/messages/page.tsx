@@ -84,7 +84,7 @@ export default async function AdminMessagesPage({ params, searchParams }: AdminM
 
       <Card className="mb-6 p-4">
         <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="min-w-[180px] flex-1">
+          <label className="min-w-0 w-full flex-1 sm:min-w-[180px]">
             <span className={ADMIN_LABEL}>{t.search}</span>
             <input
               name="q"
@@ -93,7 +93,7 @@ export default async function AdminMessagesPage({ params, searchParams }: AdminM
               className={ADMIN_INPUT}
             />
           </label>
-          <label className="min-w-[140px]">
+          <label className="min-w-0 w-full sm:w-auto sm:min-w-[140px]">
             <span className={ADMIN_LABEL}>{t.status}</span>
             <select name="status" defaultValue={filters.status ?? ''} className={ADMIN_SELECT}>
               <option value="">{t.all}</option>

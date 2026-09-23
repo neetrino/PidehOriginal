@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { NAV_DOCK_HEIGHT_PX, NavEllipse3469 } from '@/components/layout/NavEllipse3469';
 import { AppLink } from '@/components/ui/AppLink';
 import { CartDrawer } from '@/features/cart/ui/CartDrawer';
+import { MobileFrame440 } from '@/features/home/ui/mobile/MobileFrame440';
 import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 import { useWishlistBadgeCount } from '@/features/wishlist/ui/wishlist-badge-count';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -111,13 +112,12 @@ export function MobileBottomNav({
     <nav
       aria-label={dictionary.nav.navigation}
       data-node-id="268:525"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center overflow-visible md:hidden"
+      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-50 overflow-visible md:hidden"
     >
-      <div
-        className="pointer-events-auto relative w-full max-w-[440px] overflow-visible pb-[max(0.2rem,env(safe-area-inset-bottom))]"
-        style={{ height: NAV_DOCK_HEIGHT_PX }}
-      >
-        <NavEllipse3469 />
+      <div className="pointer-events-auto w-full overflow-visible pb-[max(0.2rem,env(safe-area-inset-bottom))]">
+        <MobileFrame440 height={NAV_DOCK_HEIGHT_PX} className="overflow-visible">
+          <div className="relative h-full w-full overflow-visible">
+            <NavEllipse3469 />
 
         {/*
           Icon row sits in the orange band (below the curve lip).
@@ -207,6 +207,8 @@ export function MobileBottomNav({
             </IconHit>
           </div>
         </div>
+          </div>
+        </MobileFrame440>
       </div>
     </nav>
   );

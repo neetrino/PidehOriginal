@@ -51,7 +51,7 @@ export function PromoPopupModal({
 
   const image = (
     // eslint-disable-next-line @next/next/no-img-element -- promo CMS image URL
-    <img src={imageUrl} alt={title} className="max-h-[min(92vh,56rem)] w-full object-contain" />
+    <img src={imageUrl} alt={title} className="max-h-[min(92dvh,56rem)] w-full object-contain" />
   );
 
   return createPortal(
@@ -67,7 +67,7 @@ export function PromoPopupModal({
         aria-label={closeLabel}
         onClick={onClose}
       />
-      <div className="relative z-[1] w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="relative z-[1] max-h-[min(92dvh,calc(100dvh-1.5rem))] w-full max-w-5xl overflow-y-auto overflow-x-hidden rounded-2xl bg-white shadow-2xl">
         <button
           type="button"
           onClick={onClose}

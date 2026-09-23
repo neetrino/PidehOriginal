@@ -23,7 +23,7 @@ export function AboutHero({ copy }: AboutHeroProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[100svh] overflow-hidden pt-[100px] md:min-h-[863px]"
+      className="relative min-h-[100svh] overflow-hidden pt-8 lg:min-h-[863px] lg:pt-[100px]"
     >
       <div data-about-hero-media className="absolute inset-0 origin-center will-change-transform">
         <Image
@@ -47,7 +47,7 @@ export function AboutHero({ copy }: AboutHeroProps) {
       <div className={`relative z-[1] ${PAGE_CONTAINER}`}>
         <div
           data-about-hero-copy
-          className="flex min-h-[calc(100svh-100px)] max-w-[52rem] -translate-y-28 flex-col justify-center py-16 pb-24 will-change-transform md:min-h-[763px] md:-translate-y-40"
+          className="flex min-h-[calc(100svh-5rem)] max-w-[52rem] flex-col justify-center py-12 pb-24 will-change-transform sm:-translate-y-8 lg:min-h-[763px] lg:-translate-y-40 lg:py-16"
         >
           <RevealOnView>
             <p className="text-sm font-semibold tracking-[0.22em] text-pideh-orange uppercase">
@@ -55,7 +55,7 @@ export function AboutHero({ copy }: AboutHeroProps) {
             </p>
           </RevealOnView>
           <RevealOnView variants={titleSweep} delay={0.06}>
-            <h1 className="font-display mt-5 max-w-4xl text-5xl leading-[0.92] font-black tracking-tight text-pideh-ink md:text-7xl lg:text-8xl">
+            <h1 className="font-display mt-5 max-w-4xl text-[clamp(2.25rem,8vw,6rem)] leading-[0.92] font-black tracking-tight text-pideh-ink">
               {titleWords.map((word, index) => (
                 <span
                   key={`${word}-${index}`}

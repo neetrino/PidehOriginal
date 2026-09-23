@@ -219,7 +219,7 @@ export function ProfileMobileTabSheet({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[90] flex items-end overscroll-none lg:hidden"
+      className="fixed inset-0 z-[90] flex items-end overscroll-none md:hidden"
       role="dialog"
       aria-modal="true"
       aria-label={displayAriaLabel}

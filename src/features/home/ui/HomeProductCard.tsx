@@ -93,7 +93,7 @@ export function HomeProductCard({
 
   return (
     <motion.div
-      className={`group relative z-0 w-full max-w-full overflow-visible hover:z-50 ${className}`}
+      className={`group relative z-0 h-full w-full max-w-full overflow-visible hover:z-50 ${className}`}
       style={{ transformOrigin: "50% 100%" }}
       transition={PRODUCT_CARD_SPRING}
       whileTap={reduceMotion ? undefined : PRODUCT_CARD_TAP}
@@ -135,25 +135,21 @@ export function HomeProductCard({
           </p>
         ) : null}
 
-        <h3 className="relative z-[2] line-clamp-2 min-h-[31px] w-full text-[20px] leading-[1.25] font-extrabold text-[#1e1e1e]">
-          <AppLink href={href} prefetchPolicy="auto">
+        <h3 className="relative z-[2] h-[50px] w-full shrink-0 overflow-hidden text-[20px] leading-[1.25] font-extrabold text-[#1e1e1e]">
+          <AppLink href={href} prefetchPolicy="auto" className="line-clamp-2 block">
             {title}
           </AppLink>
         </h3>
 
-        {description ? (
-          <p className="line-clamp-2 w-[213px] max-w-full text-sm leading-[1.25] text-[#6b6b6b]">
-            {description}
-          </p>
-        ) : null}
+        <p className="line-clamp-2 h-[35px] w-full min-w-0 shrink-0 overflow-hidden text-sm leading-[1.25] text-[#6b6b6b]">
+          {description || '\u00A0'}
+        </p>
 
-        {prepTimeLabel ? (
-          <p className="w-full text-[13px] leading-[1.25] font-medium text-[#6b6b6b]">
-            {prepTimeLabel}
-          </p>
-        ) : null}
+        <p className="h-4 w-full shrink-0 overflow-hidden text-[13px] leading-[1.25] font-medium text-[#6b6b6b]">
+          {prepTimeLabel || '\u00A0'}
+        </p>
 
-        <div className="flex w-full flex-wrap items-baseline gap-2">
+        <div className="flex h-[26px] w-full shrink-0 items-baseline gap-2 overflow-hidden">
           <p className="text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]">
             {priceFormatted}
           </p>

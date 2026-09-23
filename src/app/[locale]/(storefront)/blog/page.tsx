@@ -21,12 +21,17 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const posts = await listPublishedBlogPosts(rawLocale);
 
   return (
-    <section className="flex flex-col gap-6">
-      <h1 className="text-3xl font-semibold tracking-tight">{dictionary.nav.blog}</h1>
+    <section className="flex min-w-0 flex-col gap-6">
+      <h1 className="font-display text-[clamp(2rem,6vw,3rem)] leading-[1.05] font-semibold tracking-tight text-[#ff6b00]">
+        {dictionary.nav.blog}
+      </h1>
 
       <div className="flex flex-col gap-4">
         {posts.map((post) => (
-          <article key={post.id} className="flex flex-col gap-4 border p-4 sm:flex-row">
+          <article
+            key={post.id}
+            className="flex min-w-0 flex-col gap-4 overflow-hidden rounded-[24px] border border-[#1e1e1e]/10 bg-white p-4 sm:flex-row"
+          >
             {post.coverUrl ? (
               <AppLink
                 href={`/${rawLocale}/blog/${post.copy.slug}`}

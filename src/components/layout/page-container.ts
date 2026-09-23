@@ -1,9 +1,20 @@
 /**
- * Shared horizontal page gutter for every desktop storefront surface.
+ * Shared storefront layout tokens.
  *
- * Anchor: Figma Pideh desktop (1:76) is a 1440 frame and the header pill (1:110)
- * is 1311 wide inside it, so every section must line up on that same column.
+ * Desktop Figma (1:76) is a 1440 frame; the header pill (1:110) is 1311 wide.
+ *
+ * CSS bands (no JS width detection):
+ * - Phone, and iPad portrait (e.g. 1032×1376): Figma-440 mobile tree + dock.
+ * - iPad landscape + desktop: 1440 compositions. Landscape density lives in
+ *   `storefront-ipad-adaptive.css` / landscape rules in `globals.css`.
  */
+
+/** Desktop chrome: landscape tablets and wide screens. Portrait iPad stays mobile. */
+export const STOREFRONT_DESKTOP_MEDIA =
+  '(min-width: 768px) and (min-height: 600px) and (orientation: landscape), (min-width: 1200px)';
+
+/** Horizontal gutter that scales between phone and the 1440 column. */
+export const PAGE_GUTTER = 'px-[clamp(1rem,3.2vw,2.5rem)]';
 
 /**
  * Content column + gutter in one element.
@@ -12,10 +23,29 @@
  * column stays 1311 wide and below it the padding takes over as a minimum
  * gutter. On the 1440 Figma frame content starts at 64.5px, matching the header.
  */
-export const PAGE_CONTAINER = 'mx-auto w-full max-w-[1391px] px-4 sm:px-6 lg:px-10';
+export const PAGE_CONTAINER = `mx-auto w-full max-w-[1391px] min-w-0 ${PAGE_GUTTER}`;
 
 /** Cancels `PAGE_CONTAINER` padding so a child can bleed to the container edge. */
-export const PAGE_BLEED = '-mx-4 sm:-mx-6 lg:-mx-10';
+export const PAGE_BLEED = '-mx-[clamp(1rem,3.2vw,2.5rem)]';
+
+/**
+ * Full-bleed phone / iPad-portrait marketing shell. Hidden on landscape
+ * tablets and desktop, where the 1440 tree takes over.
+ */
+export const MOBILE_STOREFRONT_SHELL =
+  'storefront-mobile-tree relative w-full min-w-0 md:hidden';
+
+/**
+ * Full-width column for Figma-440 layouts. `MobileFrame440` scales the 440
+ * artboard to this width, so phones fill the viewport.
+ */
+export const MOBILE_STOREFRONT_COLUMN = 'w-full min-w-0';
+
+/** Desktop dual-tree / footer / header visibility. Portrait iPad is forced
+ * back to mobile in `globals.css`. */
+export const STOREFRONT_DESKTOP_ONLY = 'storefront-desktop-tree hidden md:block';
+export const STOREFRONT_DESKTOP_FLEX = 'storefront-desktop-tree hidden md:flex';
+export const STOREFRONT_MOBILE_ONLY = 'md:hidden';
 
 /**
  * Vertical slice of a Figma frame, for sections that position art with absolute

@@ -49,31 +49,8 @@ function figmaBox(x: number, y: number, width: number, height: number) {
 export function HomeFeatures({ titleLine1, titleLine2, items }: HomeFeaturesProps) {
   return (
     <section className="relative z-10 overflow-x-clip overflow-y-hidden bg-[#ff6b00]">
-      <div className="px-4 py-12 md:hidden">
-        <RevealOnView variants={titleSweep}>
-          <h2 className="font-display mb-8 text-[clamp(2.5rem,12vw,4.5rem)] leading-[0.78] text-white">
-            <span className="block whitespace-nowrap">{titleLine1}</span>
-            <span className="block">{titleLine2}</span>
-          </h2>
-        </RevealOnView>
-        <StaggerGroup className="grid grid-cols-2 gap-6" stagger={0.1}>
-          {items.map((item, index) => (
-            <StaggerItem
-              key={item.title}
-              variants={FEATURE_ENTRANCES[index] ?? fadeUp}
-              className="flex flex-col items-center text-center"
-            >
-              <p className="mb-2 text-[22px] leading-[0.85] font-black text-white">{item.title}</p>
-              <div className="relative h-36 w-full">
-                <Image src={item.imageSrc} alt="" fill sizes="45vw" className="object-contain" />
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerGroup>
-      </div>
-
       <div
-        className="relative mx-auto hidden w-full max-w-[1440px] md:block"
+        className="relative mx-auto w-full max-w-[1440px]"
         style={{ aspectRatio: `${FRAME.w} / ${FRAME.h}` }}
       >
         <div className="absolute inset-x-0 z-30" style={pageColumnRow(42, 218, FRAME.h)}>
@@ -87,7 +64,7 @@ export function HomeFeatures({ titleLine1, titleLine2, items }: HomeFeaturesProp
               variants={titleSweep}
             >
               <h2>
-                <span className="block whitespace-nowrap">{titleLine1}</span>
+                <span className="block xl:whitespace-nowrap">{titleLine1}</span>
                 <span className="block">{titleLine2}</span>
               </h2>
             </RevealOnView>

@@ -1,5 +1,9 @@
 import { MobileBrandBar } from '@/components/layout/MobileBrandBar';
 import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
+import {
+  MOBILE_STOREFRONT_COLUMN,
+  MOBILE_STOREFRONT_SHELL,
+} from '@/components/layout/page-container';
 import { MobileCopyright } from '@/features/home/ui/mobile/MobileCopyright';
 import { MobileEllipse3469 } from '@/features/home/ui/mobile/MobileEllipse3469';
 import { MobileFrame440 } from '@/features/home/ui/mobile/MobileFrame440';
@@ -105,11 +109,12 @@ export function MobileHome({
 
   return (
     <div
-      className="pideh-home-mobile relative mx-auto w-full max-w-[440px] overflow-x-clip bg-[#ff6b00] md:hidden [overflow-clip-margin:28px]"
+      className={`${MOBILE_STOREFRONT_SHELL} pideh-home-mobile overflow-x-clip bg-[#ff6b00] [overflow-clip-margin:28px]`}
       style={{
         paddingBottom: COPYRIGHT_NAV_CLEARANCE_PX,
       }}
     >
+      <div className={MOBILE_STOREFRONT_COLUMN}>
       <MobileFrame440 height={MOBILE_TOP_BAND_HEIGHT}>
         <MobileEllipse3469 />
 
@@ -163,6 +168,7 @@ export function MobileHome({
       />
 
       <MobileCopyright className="mt-10" text={copyright} />
+      </div>
     </div>
   );
 }

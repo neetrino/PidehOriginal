@@ -154,7 +154,7 @@ export function AdminUsersView({ locale, users, total, q, role, copy }: AdminUse
           name="q"
           defaultValue={q ?? ''}
           placeholder={copy.users.searchPlaceholder}
-          className={`${ADMIN_INPUT} min-w-[220px] flex-1`}
+          className={`${ADMIN_INPUT} min-w-0 w-full flex-1`}
           aria-label={copy.users.searchAria}
         />
         {role ? <input type="hidden" name="role" value={role} /> : null}

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
+import { STOREFRONT_DESKTOP_MEDIA } from '@/components/layout/page-container';
 import { ProfileMobileHub } from '@/features/profile/ui/ProfileMobileHub';
 import { ProfileMobileTabSheet } from '@/features/profile/ui/ProfileMobileTabSheet';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -23,7 +24,7 @@ function isProfileHubPath(pathname: string, locale: Locale): boolean {
 
 /**
  * Mobile profile shell (MaMarie): hub always visible; section content in a bottom sheet.
- * Desktop content column is unchanged (`lg+`). Renders `children` once (matchMedia).
+ * Desktop content column is landscape tablet + wide screens. Renders `children` once (matchMedia).
  */
 export function ProfileMobileShell({
   locale,
@@ -40,7 +41,7 @@ export function ProfileMobileShell({
   const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const media = window.matchMedia('(min-width: 1024px)');
+    const media = window.matchMedia(STOREFRONT_DESKTOP_MEDIA);
     function sync(): void {
       setIsDesktop(media.matches);
     }
@@ -87,17 +88,17 @@ export function ProfileMobileShell({
   );
 
   const desktopColumn = (
-    <div className="min-w-0 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain">
+    <div className="min-w-0 md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
       {children}
     </div>
   );
 
-  // SSR / pre-hydration: hub on mobile via CSS; content only from lg up.
+  // SSR / pre-hydration: hub on phone + iPad portrait via CSS; desktop from landscape / 1200+.
   if (isDesktop === null) {
     return (
       <>
-        <div className="profile-mobile-page w-full lg:hidden">{hub}</div>
-        <div className="hidden lg:block lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain">
+        <div className="profile-mobile-page w-full md:hidden">{hub}</div>
+        <div className="storefront-desktop-tree hidden md:block md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
           {children}
         </div>
       </>

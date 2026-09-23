@@ -58,14 +58,14 @@ export function AdminOrdersFilters({
 
   return (
     <Card className="mb-6 overflow-visible">
-      <form ref={formRef} method="get" className="flex flex-nowrap items-center gap-3 p-4">
+      <form ref={formRef} method="get" className="flex flex-col gap-3 p-4 sm:flex-row sm:flex-wrap sm:items-center">
         <SelectDropdown
           name="status"
           ariaLabel={f.orderStatusAria}
           value={statusValue}
           allLabel={f.allStatuses}
           options={orderStatusFilters}
-          className="w-[180px] shrink-0"
+          className="w-full min-w-0 sm:w-[180px] sm:shrink-0"
           onValueChange={applyStatus}
         />
         <SelectDropdown
@@ -74,7 +74,7 @@ export function AdminOrdersFilters({
           value={paymentValue}
           allLabel={f.allPaymentStatuses}
           options={paymentStatusFilters}
-          className="w-[200px] shrink-0"
+          className="w-full min-w-0 sm:w-[200px] sm:shrink-0"
           onValueChange={applyPayment}
         />
         <input
