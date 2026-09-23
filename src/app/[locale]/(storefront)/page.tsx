@@ -1,12 +1,15 @@
 import { notFound } from 'next/navigation';
 
+import { STOREFRONT_DESKTOP_ONLY } from '@/components/layout/page-container';
+
 import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
 import { listActiveHeroSlides } from '@/features/hero/application/queries';
-import { listOrbitPideImageUrls } from '@/features/home/application/list-orbit-pide-images';
+import { listOrbitPidePhotos } from '@/features/home/application/list-orbit-pide-images';
 import { HomeCategories } from '@/features/home/ui/HomeCategories';
 import { HomeCtaBanner } from '@/features/home/ui/HomeCtaBanner';
 import { HomeFeaturedProducts } from '@/features/home/ui/HomeFeaturedProducts';
 import { HOME_FEATURE_VISUALS, HomeFeatures } from '@/features/home/ui/HomeFeatures';
+import { HeroVideoPreload } from '@/features/home/ui/HeroVideoPreload';
 import { HomeHero } from '@/features/home/ui/HomeHero';
 import { HomeReviews } from '@/features/home/ui/HomeReviews';
 import { MobileHome } from '@/features/home/ui/mobile/MobileHome';
@@ -56,12 +59,12 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const [heroSlides, categories, featuredProducts, orbitImageUrls, currency, user] =
+  const [heroSlides, categories, featuredProducts, orbitPhotos, currency, user] =
     await Promise.all([
       listActiveHeroSlides(locale),
       listStorefrontCategories(locale),
       getFeaturedProducts(locale),
-      listOrbitPideImageUrls(),
+      listOrbitPidePhotos(locale),
       getSelectedCurrency(),
       getCurrentUser(),
     ]);
@@ -92,6 +95,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <div className="pideh-home">
+      <HeroVideoPreload />
       <MobileHome
         locale={locale}
         dictionary={dictionary}
@@ -102,7 +106,7 @@ export default async function HomePage({ params }: HomePageProps) {
         prepTimeLabel={dictionary.product.prepTime}
       />
 
-      <div className="hidden md:block">
+      <div className={STOREFRONT_DESKTOP_ONLY}>
         <HomeHero
           slides={heroSlides}
           fallbackTitleAccent={dictionary.home.heroTitleLine2}
@@ -114,10 +118,11 @@ export default async function HomePage({ params }: HomePageProps) {
           title={dictionary.home.categoriesTitle}
           viewAllLabel={dictionary.home.viewAllMenu}
           viewAllHref={`/${locale}/products`}
-          typesLabel={dictionary.home.categoryTypes}
-          demoCategoryTitle={dictionary.home.categoryDemoTitle}
-          categories={categoryCards}
-          orbitImageUrls={orbitImageUrls}
+          demoProductTitle={dictionary.home.categoryDemoTitle}
+          orbitPhotos={orbitPhotos.map((photo) => ({
+            imageUrl: photo.url,
+            title: photo.title,
+          }))}
         />
 
         <HomeFeaturedProducts

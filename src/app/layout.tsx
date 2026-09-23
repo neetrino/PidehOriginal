@@ -73,7 +73,7 @@ export default function RootLayout({
   return (
     <html lang="hy" className="h-full" suppressHydrationWarning>
       <body
-        className={`${pricehigh.variable} ${montserratArm.variable} ${montserrat.variable} ${notoArmenian.variable} ${geistMono.variable} flex min-h-dvh flex-col overflow-x-hidden antialiased`}
+        className={`${pricehigh.variable} ${montserratArm.variable} ${montserrat.variable} ${notoArmenian.variable} ${geistMono.variable} flex min-h-dvh flex-col antialiased`}
       >
         {children}
       </body>

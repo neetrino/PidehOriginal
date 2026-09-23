@@ -32,7 +32,7 @@ export function NavEllipse3469({ className = '' }: NavEllipse3469Props) {
       style={{ height: NAV_DOCK_HEIGHT_PX }}
     >
       <div
-        className="relative w-full max-w-[440px] overflow-visible"
+        className="relative w-full overflow-visible"
         style={{ height: NAV_DOCK_HEIGHT_PX }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

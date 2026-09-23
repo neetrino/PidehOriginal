@@ -137,7 +137,7 @@ export function SelectDropdown({
 
       <div
         className={`absolute top-[calc(100%+0.5rem)] z-[100] grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isBrand ? 'left-0 w-max min-w-full' : 'left-0 w-full'
+          isBrand ? 'left-0 w-max min-w-full max-w-[min(100vw-2rem,24rem)]' : 'left-0 w-full'
         } ${
           open
             ? 'translate-y-0 grid-rows-[1fr] opacity-100'

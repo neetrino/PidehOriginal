@@ -26,9 +26,12 @@
   "writeDescription": "Fill out our form and we will contact you within 24 hours.",
   "emailLabel": "Email:",
   "hqTitle": "Headquarters:",
-  "hoursWeekdays": "Mon–Sun: 10:00 – 22:00",
+  "hoursWeekdays": "Del.: 10:00 - 22:00",
+  "hoursPickup": "Pickup: 10:00 - 22:00",
   "hoursSaturday": "Saturday: 11:00 - 15:00",
   "mapTitle": "Store location",
   "mapZoomIn": "Zoom in",
-  "mapZoomOut": "Zoom out"
+  "mapZoomOut": "Zoom out",
+  "mapZoomEnable": "Click the map to zoom",
+  "mapZoomDisable": "Press Esc or click to lock zoom"
 }

@@ -4,7 +4,7 @@ const LOGIN_FOOD_DESKTOP = '/brand/pideh/login-food-bg.png';
 const LOGIN_FOOD_MOBILE = '/brand/pideh/login-food-bg-kitchen.png';
 
 type LoginHeatProps = {
-  /** Portrait 9:16 source used below the `md` breakpoint. */
+  /** Portrait 9:16 source used on phone and iPad portrait. */
   mobileSrc?: string;
 };
 
@@ -19,7 +19,7 @@ export function LoginHeat({ mobileSrc = LOGIN_FOOD_MOBILE }: LoginHeatProps) {
         priority
         quality={75}
         sizes="100vw"
-        className="scale-[1.03] object-cover object-[center_30%] blur-[1px] md:hidden"
+        className="login-heat-mobile scale-[1.03] object-cover object-[center_30%] blur-[1px] md:hidden"
       />
       <Image
         src={LOGIN_FOOD_DESKTOP}
@@ -27,7 +27,7 @@ export function LoginHeat({ mobileSrc = LOGIN_FOOD_MOBILE }: LoginHeatProps) {
         fill
         quality={75}
         sizes="100vw"
-        className="hidden scale-[1.03] object-cover object-center blur-[3px] md:block"
+        className="login-heat-desktop hidden scale-[1.03] object-cover object-center blur-[3px] md:block"
       />
     </div>
   );

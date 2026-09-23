@@ -5,7 +5,7 @@ export const adminProductsFilterSchema = z.object({
   sku: z.string().trim().max(64).optional(),
   categoryId: z.string().uuid().optional(),
   stock: z.enum(['all', 'in_stock', 'out_of_stock', 'low_stock']).default('all'),
-  status: z.enum(['all', 'active', 'draft', 'low_remaining']).default('all'),
+  status: z.enum(['all', 'active', 'inactive', 'draft', 'low_remaining']).default('all'),
   sort: z.enum(['created', 'stock', 'price', 'title']).default('created'),
   dir: z.enum(['asc', 'desc']).default('desc'),
   page: z.coerce.number().int().min(1).max(500).default(1),

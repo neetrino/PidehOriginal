@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import { PAGE_CONTAINER, STOREFRONT_DESKTOP_ONLY } from '@/components/layout/page-container';
 import { RevealOnView } from '@/components/motion/RevealOnView';
 import { fadeUp, titleSweep } from '@/components/motion/presets';
 import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
@@ -115,7 +115,7 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
         isSignedIn={Boolean(user)}
       />
 
-      <div className={`hidden pt-6 pb-28 md:block md:pt-8 md:pb-32 ${PAGE_CONTAINER}`}>
+      <div className={`pt-6 pb-28 md:pt-8 md:pb-32 ${STOREFRONT_DESKTOP_ONLY} ${PAGE_CONTAINER}`}>
         <RevealOnView variants={fadeUp}>
           <ShopBreadcrumb
             backHref={`/${rawLocale}`}

@@ -1,4 +1,8 @@
 import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
+import {
+  MOBILE_STOREFRONT_COLUMN,
+  MOBILE_STOREFRONT_SHELL,
+} from '@/components/layout/page-container';
 import { MobileCopyright } from '@/features/home/ui/mobile/MobileCopyright';
 import type { MobileGridProduct } from '@/features/home/ui/mobile/MobileProductGrid';
 import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
@@ -50,16 +54,17 @@ export function MobileCatalog({
 
   return (
     <div
-      className="pideh-shop-mobile relative mx-auto w-full max-w-[440px] overflow-x-clip bg-[#ff6b00] md:hidden"
+      className={`${MOBILE_STOREFRONT_SHELL} pideh-shop-mobile overflow-x-clip bg-[#ff6b00]`}
       style={{ paddingBottom: COPYRIGHT_NAV_CLEARANCE_PX }}
     >
+      <div className={MOBILE_STOREFRONT_COLUMN}>
       <ShopCategoryChips
         locale={locale}
         filters={filters}
         categories={categories}
         allLabel={catalog.allChip}
         tone="onOrange"
-        className="overflow-x-auto px-6 pt-6 pb-1"
+        className="shop-chips-scroll px-6 pt-6 pb-1"
       />
 
       {sections.length === 0 ? (
@@ -90,6 +95,7 @@ export function MobileCatalog({
 
       <div className="pt-12">
         <MobileCopyright text={dictionary.footer.copyrightMobile.replace('{year}', String(year))} />
+      </div>
       </div>
     </div>
   );

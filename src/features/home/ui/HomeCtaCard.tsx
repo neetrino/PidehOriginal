@@ -122,25 +122,8 @@ export function HomeCtaCard({
 }: HomeCtaCardProps) {
   return (
     <>
-      <div className="md:hidden overflow-hidden rounded-[32px] bg-gradient-to-b from-[#ff6b00] to-[#ffd54a] px-6 py-12 text-center">
-        <h2
-          className="font-display mb-5 text-white"
-          style={{ fontSize: 'clamp(2rem, 10vw, 3rem)', lineHeight: 0.85 }}
-        >
-          <span className="block">{titleLine1}</span>
-          <span className="block">{titleLine2}</span>
-        </h2>
-        <p className="mb-5 text-lg leading-[1.25] text-white">{description}</p>
-        <PidehPillButton
-          href={ctaHref}
-          label={ctaLabel}
-          tone="orange"
-          className="w-full max-w-[300px]"
-        />
-      </div>
-
       <div
-        className="relative mx-auto hidden w-full max-w-[1240px] overflow-hidden rounded-[32px] bg-gradient-to-b from-[#ff6b00] to-[#ffd54a] md:block"
+        className="relative mx-auto w-full max-w-[1240px] overflow-hidden rounded-[32px] bg-gradient-to-b from-[#ff6b00] to-[#ffd54a]"
         style={{
           aspectRatio: `${FRAME.w} / ${FRAME.h}`,
           containerType: 'inline-size',

@@ -335,7 +335,8 @@
       "filterByStatus": "Զտել ըստ կարգավիճակի",
       "filterByStatusAria": "Զտել ըստ կարգավիճակի",
       "allStatuses": "Բոլոր կարգավիճակները",
-      "statusActive": "Ակտիվ",
+      "statusActive": "Միացված",
+      "statusInactive": "Անջատված",
       "statusDraft": "Սևագիր",
       "statusLowRemaining": "Քիչ է մնացել"
     },

@@ -64,17 +64,20 @@ export function HomeHero({
 
   return (
     <section
-      className="relative z-0 min-h-svh overflow-x-clip overflow-y-visible"
+      data-home-hero
+      className="relative z-0 overflow-x-clip overflow-y-visible"
       style={{ backgroundColor: backdrop }}
     >
       <HomeHeroMedia
         imageSrc={PIDEH_ASSETS.heroPide}
+        posterSrc={PIDEH_ASSETS.heroVideoPoster}
         videoSrc={reduceMotion ? null : PIDEH_ASSETS.heroVideoMp4}
         onBackdropColor={setBackdrop}
       />
 
       <div
-        className={`relative z-10 flex min-h-svh flex-col items-center text-center ${PAGE_CONTAINER} pt-[100px] pb-36 md:pb-44`}
+        data-home-hero-copy
+        className={`absolute inset-0 z-10 flex flex-col items-center text-center ${PAGE_CONTAINER} pt-[100px] pb-36 md:pb-44`}
       >
         <HomeHeroTitle line2={fallbackTitleAccent} />
 

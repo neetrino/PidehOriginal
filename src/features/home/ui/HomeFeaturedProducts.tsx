@@ -52,11 +52,11 @@ export function HomeFeaturedProducts({
   products,
 }: HomeFeaturedProductsProps) {
   return (
-    <section className="relative z-10 overflow-visible bg-transparent">
+    <section className="relative z-10 overflow-x-clip bg-[#ff6b00]">
       {/*
-        Shell is orange on home. In wave valleys the SVG is transparent above the
-        crest, so shell showed as a flat orange shelf. Yellow underlay matches
-        categories and hides that shelf — wave path itself is untouched.
+        Wave fill is #FF6B00. The drip path is inset on the lower left, so a
+        transparent section leaked the lighter home shell as a gutter triangle.
+        Yellow underlay still covers crest valleys so categories yellow shows.
       */}
       <div
         aria-hidden="true"
@@ -64,8 +64,8 @@ export function HomeFeaturedProducts({
       />
       <HomeOrangeWave />
 
-      <div className={`relative z-[1] pt-24 pb-16 md:pt-[240px] md:pb-20 ${PAGE_CONTAINER}`}>
-        <div className="mb-10 flex flex-col gap-6 md:mb-[113px] md:flex-row md:items-end md:justify-between">
+      <div className={`relative z-[1] pt-24 pb-16 lg:pt-[240px] lg:pb-20 ${PAGE_CONTAINER}`}>
+        <div className="mb-10 flex flex-col gap-6 lg:mb-[113px] lg:flex-row lg:items-end lg:justify-between">
           <RevealOnView variants={titleSweep}>
             <h2
               className="font-display max-w-[891px] text-white"
@@ -82,7 +82,7 @@ export function HomeFeaturedProducts({
               href={viewAllHref}
               label={viewAllLabel}
               tone="yellow"
-              className="self-start md:self-auto md:mb-2"
+              className="self-start lg:self-auto lg:mb-2"
             />
           </RevealOnView>
         </div>
@@ -91,14 +91,14 @@ export function HomeFeaturedProducts({
           <p className="text-white/90">{emptyLabel}</p>
         ) : (
           <StaggerGroup
-            className="grid grid-cols-2 gap-[13px] overflow-visible lg:grid-cols-4"
+            className="grid grid-cols-2 items-stretch gap-[13px] overflow-visible lg:grid-cols-3 xl:grid-cols-4"
             stagger={0.14}
           >
             {products.slice(0, 4).map((product, index) => (
               <StaggerItem
                 key={product.id}
                 variants={cardShelf}
-                className="relative z-0 min-w-0 w-full overflow-visible hover:z-50"
+                className="relative z-0 h-full min-w-0 w-full overflow-visible hover:z-50"
               >
                 <HomeProductCard
                   href={product.href}

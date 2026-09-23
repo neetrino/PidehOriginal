@@ -6,7 +6,8 @@ import { useEffect, useMemo } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 
 import { CONTACT_BRANCHES, type ContactBranchId } from '@/features/contact/ui/contact-locations';
-import { ContactMapControls, FlyToActiveBranch } from '@/features/contact/ui/ContactMapControls';
+import { FlyToActiveBranch } from '@/features/contact/ui/ContactMapControls';
+import { ContactMapZoom } from '@/features/contact/ui/ContactMapZoom';
 
 import 'leaflet/dist/leaflet.css';
 import '@/features/contact/ui/contact-map.css';
@@ -16,12 +17,15 @@ type ContactMapCanvasProps = {
   secondaryLabel: string;
   zoomInLabel: string;
   zoomOutLabel: string;
+  zoomEnableLabel: string;
+  zoomDisableLabel: string;
   activeBranchId: ContactBranchId | null;
 };
 
-const TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+/** CARTO voyager now watermarks tiles without an API key. OSM stays readable without one. */
+const TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTR =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
 const BRANCH_LABEL_KEY: Record<ContactBranchId, 'primary' | 'secondary'> = {
   andranik: 'primary',
@@ -54,6 +58,8 @@ export function ContactMapCanvas({
   secondaryLabel,
   zoomInLabel,
   zoomOutLabel,
+  zoomEnableLabel,
+  zoomDisableLabel,
   activeBranchId,
 }: ContactMapCanvasProps) {
   const labels = { primary: primaryLabel, secondary: secondaryLabel };
@@ -67,14 +73,36 @@ export function ContactMapCanvas({
     <MapContainer
       center={[origin.lat, origin.lng]}
       zoom={13}
+      minZoom={8}
+      maxZoom={19}
+      zoomSnap={1}
+      zoomDelta={1}
+      zoomAnimation
+      fadeAnimation={false}
+      markerZoomAnimation
+      wheelPxPerZoomLevel={140}
       scrollWheelZoom={false}
+      doubleClickZoom={false}
+      touchZoom={false}
+      dragging
       zoomControl={false}
       className="h-[min(70vh,540px)] w-full"
     >
-      <TileLayer attribution={TILE_ATTR} url={TILE_URL} />
+      <TileLayer
+        attribution={TILE_ATTR}
+        url={TILE_URL}
+        maxZoom={19}
+        keepBuffer={8}
+        updateWhenZooming={false}
+      />
       <FitBranches points={points} />
       <FlyToActiveBranch branchId={activeBranchId} />
-      <ContactMapControls zoomInLabel={zoomInLabel} zoomOutLabel={zoomOutLabel} />
+      <ContactMapZoom
+        zoomInLabel={zoomInLabel}
+        zoomOutLabel={zoomOutLabel}
+        zoomEnableLabel={zoomEnableLabel}
+        zoomDisableLabel={zoomDisableLabel}
+      />
       {CONTACT_BRANCHES.map((branch) => (
         <Marker key={branch.id} position={[branch.lat, branch.lng]} icon={pinIcon}>
           <Popup>{labels[BRANCH_LABEL_KEY[branch.id]]}</Popup>

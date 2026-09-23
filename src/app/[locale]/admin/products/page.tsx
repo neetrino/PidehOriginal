@@ -8,7 +8,6 @@ import {
 } from '@/features/products/application/list-admin-products';
 import { listModifiersForProductAdmin } from '@/features/products/application/product-modifiers';
 import { adminProductsFilterSchema } from '@/features/products/schemas/admin-list';
-import { AdminProductsFilters } from '@/features/products/ui/AdminProductsFilters';
 import { AdminProductsView } from '@/features/products/ui/AdminProductsView';
 import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
@@ -113,25 +112,22 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
     <section>
       <AdminPageHeading className="mb-6" title={adminCopy.nav.products} />
 
-      <AdminProductsFilters
-        total={total}
-        q={filters.q}
-        sku={filters.sku}
-        categoryId={filters.categoryId}
-        stock={filters.stock}
-        status={filters.status}
-        categories={categories}
-        sort={filters.sort}
-        dir={filters.dir}
-        copy={adminCopy.products.filters}
-      />
-
       <AdminProductsView
         locale={locale}
         products={rows}
         sortLinks={sortLinks}
         categories={categories}
         modifierLibrary={modifierLibrary}
+        filters={{
+          total,
+          q: filters.q,
+          sku: filters.sku,
+          categoryId: filters.categoryId,
+          stock: filters.stock,
+          status: filters.status,
+          sort: filters.sort,
+          dir: filters.dir,
+        }}
         copy={{
           products: adminCopy.products,
           common: adminCopy.common,

@@ -13,6 +13,7 @@ import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 
+import { STOREFRONT_DESKTOP_MEDIA } from '@/components/layout/page-container';
 import { LocaleCurrencySwitcher } from '@/components/layout/LocaleCurrencySwitcher';
 import { AppLink } from '@/components/ui/AppLink';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -138,7 +139,7 @@ export function MobileNavDrawer({
   }, [open, openMenu, closeMenu]);
 
   useEffect(() => {
-    const media = window.matchMedia('(min-width: 768px)');
+    const media = window.matchMedia(STOREFRONT_DESKTOP_MEDIA);
     function closeOnDesktop(): void {
       if (media.matches) setOpen(false);
     }
@@ -226,7 +227,7 @@ export function MobileNavDrawer({
 
       {mounted && rendered
         ? createPortal(
-            <div className="md:hidden">
+            <div>
               <button
                 type="button"
                 aria-label={dictionary.nav.closeMenu}
@@ -250,8 +251,9 @@ export function MobileNavDrawer({
                 }`}
                 style={{
                   top: panelTopPx + MENU_GAP_PX,
-                  left: MENU_INSET_PX,
                   right: MENU_INSET_PX,
+                  left: 'auto',
+                  width: `min(26.25rem, calc(100vw - ${MENU_INSET_PX * 2}px))`,
                   maxHeight: `calc(100dvh - ${panelTopPx + MENU_GAP_PX + MENU_INSET_PX}px)`,
                 }}
               >

@@ -21,12 +21,13 @@ export function ContactMapControls({ zoomInLabel, zoomOutLabel }: ContactMapCont
     'flex size-10 items-center justify-center rounded-full bg-pideh-orange text-lg font-bold text-white shadow-[0_8px_20px_rgba(30,30,30,0.25)]';
 
   return (
-    <div className="absolute right-4 bottom-4 z-10 flex flex-col gap-2">
+    <div className="absolute right-4 bottom-4 z-[1100] flex flex-col gap-2">
       <button
         type="button"
         className={buttonClass}
         aria-label={zoomInLabel}
-        onClick={() => map.zoomIn()}
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={() => map.zoomIn(1, { animate: true })}
       >
         +
       </button>
@@ -34,7 +35,8 @@ export function ContactMapControls({ zoomInLabel, zoomOutLabel }: ContactMapCont
         type="button"
         className={buttonClass}
         aria-label={zoomOutLabel}
-        onClick={() => map.zoomOut()}
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={() => map.zoomOut(1, { animate: true })}
       >
         −
       </button>

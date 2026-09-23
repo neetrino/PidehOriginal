@@ -23,7 +23,7 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 min-[28rem]:grid-cols-2">
         <label className={AUTH_LABEL_CLASS}>
           {dictionary.firstName}
           <input required name="firstName" autoComplete="given-name" className={AUTH_INPUT_CLASS} />

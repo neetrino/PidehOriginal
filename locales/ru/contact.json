@@ -26,9 +26,12 @@
   "writeDescription": "Заполните форму, и мы свяжемся с вами в течение 24 часов.",
   "emailLabel": "Email:",
   "hqTitle": "Главный офис:",
-  "hoursWeekdays": "Пн–Вс: 10:00 – 22:00",
+  "hoursWeekdays": "Дост.: 10:00 - 22:00",
+  "hoursPickup": "Самовывоз: 10:00 - 22:00",
   "hoursSaturday": "Суббота: 11:00 - 15:00",
   "mapTitle": "Расположение магазина",
   "mapZoomIn": "Увеличить карту",
-  "mapZoomOut": "Уменьшить карту"
+  "mapZoomOut": "Уменьшить карту",
+  "mapZoomEnable": "Нажмите на карту, чтобы увеличить",
+  "mapZoomDisable": "Esc или нажмите, чтобы отключить масштаб"
 }

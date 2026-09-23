@@ -18,7 +18,7 @@ export function AboutStory({ copy }: AboutStoryProps) {
     <section ref={sectionRef} className="relative overflow-hidden py-16 lg:py-24">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-10 right-[-6rem] font-display text-[28vw] leading-none text-pideh-orange/8 select-none"
+        className="pointer-events-none absolute top-10 right-[-6rem] max-w-none font-display text-[min(28vw,12rem)] leading-none text-pideh-orange/8 select-none"
       >
         01
       </div>

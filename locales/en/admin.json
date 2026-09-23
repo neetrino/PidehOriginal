@@ -335,7 +335,8 @@
       "filterByStatus": "Filter by status",
       "filterByStatusAria": "Filter by status",
       "allStatuses": "All statuses",
-      "statusActive": "Active",
+      "statusActive": "Enabled",
+      "statusInactive": "Disabled",
       "statusDraft": "Draft",
       "statusLowRemaining": "Few left"
     },

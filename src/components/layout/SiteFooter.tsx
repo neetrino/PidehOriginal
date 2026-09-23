@@ -49,7 +49,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   ];
 
   return (
-    <div className="mt-auto hidden md:block">
+    <div className="storefront-desktop-tree mt-auto hidden md:block">
       <footer className="storefront-footer relative -mt-10 overflow-hidden">
         <div className="relative w-full">
           <div aria-hidden="true" className="pointer-events-none absolute inset-0">
@@ -60,7 +60,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
 
           <div className={`relative z-[2] flex flex-col pb-10 pt-48 ${PAGE_CONTAINER}`}>
             <StaggerGroup
-              className="grid grid-cols-1 items-start gap-x-8 gap-y-8 md:grid-cols-2 lg:grid-cols-4"
+              className="grid grid-cols-1 items-start gap-x-8 gap-y-8 md:grid-cols-2 xl:grid-cols-4"
               stagger={0.12}
             >
               <StaggerItem variants={footerColumn}>
@@ -171,7 +171,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   </li>
                   {dictionary.contact.storeAddressSecondary ? (
                     <li className="flex items-center gap-2">
-                      <MapPin className="h-[21px] w-[21px] shrink-0 text-[#ff6b00]" />
+                      <MapPin className="h-[21px] w-[2ձpx] shrink-0 text-[#ff6b00]" />
                       <a
                         href={toMapsHref(dictionary.contact.storeAddressSecondary)}
                         target="_blank"
@@ -184,9 +184,14 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   ) : null}
                   <li className="flex items-start gap-2">
                     <Clock3 className="mt-0.5 h-[21px] w-[21px] shrink-0 text-[#ff6b00]" />
-                    <p className="text-base leading-[17px] text-[#1e1e1e]">
-                      {dictionary.contact.hoursWeekdays}
-                    </p>
+                    <div>
+                      <p className="text-base leading-[17px] text-[#1e1e1e]">
+                        {dictionary.contact.hoursWeekdays}
+                      </p>
+                      <p className="mt-0.5 text-[13px] leading-[15px] text-[#1e1e1e]/75">
+                        {dictionary.contact.hoursPickup}
+                      </p>
+                    </div>
                   </li>
                 </ul>
               </StaggerItem>
@@ -227,25 +232,26 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               </StaggerItem>
             </StaggerGroup>
 
-            <RevealOnView className="relative mt-10 md:mt-12" variants={footerColumn} delay={0.2}>
-              <div className="flex flex-wrap items-center justify-end gap-3">
-                {PAYMENT_BADGES.map((badge) => (
-                  <span
-                    key={badge.label}
-                    className="flex h-9 w-[104px] items-center justify-center rounded-full bg-white px-4"
-                  >
-                    <Image
-                      src={badge.src}
-                      alt={badge.label}
-                      width={256}
-                      height={65}
-                      className="h-[17px] w-auto object-contain"
-                    />
-                  </span>
-                ))}
-              </div>
+            <RevealOnView className="relative mt-10 lg:mt-12" variants={footerColumn} delay={0.2}>
+              <div className="flex flex-col items-center gap-4 xl:block">
+                <div className="flex flex-wrap items-center justify-center gap-3 xl:justify-end">
+                  {PAYMENT_BADGES.map((badge) => (
+                    <span
+                      key={badge.label}
+                      className="flex h-9 w-[104px] items-center justify-center rounded-full bg-white px-4"
+                    >
+                      <Image
+                        src={badge.src}
+                        alt={badge.label}
+                        width={256}
+                        height={65}
+                        className="h-[17px] w-auto object-contain"
+                      />
+                    </span>
+                  ))}
+                </div>
 
-              <p className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center text-sm leading-4 tracking-[0.35px] text-[#1e1e1e]">
+                <p className="px-2 text-center text-sm leading-4 tracking-[0.35px] text-[#1e1e1e] xl:absolute xl:inset-x-0 xl:top-1/2 xl:m-0 xl:-translate-y-1/2">
                 {footer.copyright
                   .replace('{year}', String(year))
                   .split('Neetrino IT Company')
@@ -267,6 +273,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                     ),
                   )}
               </p>
+              </div>
             </RevealOnView>
           </div>
         </div>

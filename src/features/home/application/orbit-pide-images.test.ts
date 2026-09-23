@@ -4,6 +4,7 @@ import {
   ORBIT_PIDE_SLUG_BY_SLOT,
   ORBIT_PIDE_SLUGS,
   resolveOrbitPideImageUrls,
+  resolveOrbitPidePhotos,
 } from '@/features/home/application/orbit-pide-images';
 
 describe('resolveOrbitPideImageUrls', () => {
@@ -13,6 +14,20 @@ describe('resolveOrbitPideImageUrls', () => {
     expect(resolveOrbitPideImageUrls(rows)).toEqual(
       ORBIT_PIDE_SLUGS.map((slug) => `https://cdn/${slug}.webp`),
     );
+  });
+
+  it('keeps leftover unique photos after the preferred five', () => {
+    expect(
+      resolveOrbitPideImageUrls([
+        { slug: 'pepperoni-pide', url: 'https://cdn/pepperoni.webp' },
+        { slug: 'extra-pide', url: 'https://cdn/extra.webp' },
+        { slug: 'shpinat', url: 'https://cdn/spinach.webp' },
+      ]),
+    ).toEqual([
+      'https://cdn/pepperoni.webp',
+      'https://cdn/spinach.webp',
+      'https://cdn/extra.webp',
+    ]);
   });
 
   it('fills missing preferred slugs from other unique photos', () => {
@@ -43,5 +58,19 @@ describe('resolveOrbitPideImageUrls', () => {
     const slugs = Object.values(ORBIT_PIDE_SLUG_BY_SLOT);
     expect(new Set(slugs).size).toBe(slugs.length);
     expect(ORBIT_PIDE_SLUGS).toEqual(slugs);
+  });
+});
+
+describe('resolveOrbitPidePhotos', () => {
+  it('keeps the product title with each unique photo', () => {
+    expect(
+      resolveOrbitPidePhotos([
+        { slug: 'pepperoni-pide', url: 'https://cdn/pepperoni.webp', title: 'Պեպպերոնի' },
+        { slug: 'shpinat', url: 'https://cdn/spinach.webp', title: 'Սպանախ' },
+      ]),
+    ).toEqual([
+      { url: 'https://cdn/pepperoni.webp', title: 'Պեպպերոնի' },
+      { url: 'https://cdn/spinach.webp', title: 'Սպանախ' },
+    ]);
   });
 });

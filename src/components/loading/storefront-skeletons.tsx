@@ -29,7 +29,7 @@ export function ShopCatalogSkeleton() {
   return (
     <div className={pulse} aria-busy="true" aria-live="polite">
       {/* Mobile menu (Figma 366:464): chips, display heading, 2-column grid. */}
-      <div className="space-y-6 px-6 pt-6 pb-24 md:hidden">
+      <div className="storefront-mobile-tree space-y-6 px-6 pt-6 pb-24 md:hidden">
         <div className="flex gap-2.5 overflow-hidden">
           <Block className="h-14 w-40 shrink-0 rounded-[40px] bg-white/70" />
           <Block className="h-14 w-44 shrink-0 rounded-[40px] bg-white/70" />
@@ -47,7 +47,7 @@ export function ShopCatalogSkeleton() {
         </div>
       </div>
 
-      <div className="hidden space-y-8 px-4 pt-8 pb-24 md:block md:px-[66px]">
+      <div className={`storefront-desktop-tree hidden space-y-8 px-4 pt-8 pb-24 md:block ${PAGE_CONTAINER}`}>
         <Block className="h-4 w-28 rounded-full bg-white/70" />
         <Block className="h-16 w-48 rounded-lg bg-white/70" />
         <div className="flex gap-2.5 overflow-hidden">
@@ -70,7 +70,7 @@ export function ShopCatalogSkeleton() {
 export function ProductDetailSkeleton() {
   return (
     <div className={`${pulse}`} aria-busy="true" aria-live="polite">
-      <div className="relative mx-auto w-full max-w-[440px] overflow-hidden md:hidden">
+      <div className="storefront-mobile-tree relative w-full overflow-hidden md:hidden">
         <Block className="h-[576px] w-full rounded-none bg-white/15" />
         <div className="relative -mt-8 space-y-4 rounded-t-[30px] bg-white px-[22px] pt-7 pb-24">
           <div className="flex items-start justify-between gap-4">
@@ -87,7 +87,7 @@ export function ProductDetailSkeleton() {
         </div>
       </div>
 
-      <div className={`hidden gap-8 pt-6 md:grid lg:grid-cols-2 ${PAGE_CONTAINER}`}>
+      <div className={`storefront-desktop-tree hidden gap-8 pt-6 md:grid md:grid-cols-2 ${PAGE_CONTAINER}`}>
         <Block className="min-h-[280px] w-full rounded-[24px] bg-[#fff3e0] sm:min-h-[380px] lg:min-h-[500px]" />
         <div className="space-y-4 rounded-[30px] bg-[#fff8f0] p-6">
           <Block className="h-12 w-3/4 bg-[#ffd9b3]" />

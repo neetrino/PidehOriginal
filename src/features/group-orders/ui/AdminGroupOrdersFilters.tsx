@@ -59,7 +59,7 @@ export function AdminGroupOrdersFilters({
   return (
     <>
       <Card className="overflow-visible">
-        <form ref={formRef} method="get" className="flex flex-nowrap items-center gap-3 p-4">
+        <form ref={formRef} method="get" className="flex flex-col gap-3 p-4 sm:flex-row sm:flex-wrap sm:items-center">
           <input type="hidden" name="kind" value="group" />
           <SelectDropdown
             name="status"
@@ -67,7 +67,7 @@ export function AdminGroupOrdersFilters({
             value={statusValue}
             allLabel={f.allStatuses}
             options={statusOptions}
-            className="w-[200px] shrink-0"
+            className="w-full min-w-0 sm:w-[200px] sm:shrink-0"
             onValueChange={applyStatus}
           />
           <SelectDropdown
@@ -76,10 +76,10 @@ export function AdminGroupOrdersFilters({
             value={modeValue}
             allLabel={f.allModes}
             options={modeOptions}
-            className="w-[220px] shrink-0"
+            className="w-full min-w-0 sm:w-[220px] sm:shrink-0"
             onValueChange={applyMode}
           />
-          <div className="relative min-w-0 flex-1">
+          <div className="relative min-w-0 w-full sm:flex-1">
             <Search
               aria-hidden
               className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"

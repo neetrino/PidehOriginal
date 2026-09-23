@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 
 import { SelectDropdown } from '@/components/ui/SelectDropdown';
@@ -17,11 +17,12 @@ type AdminProductsFiltersProps = {
   sku?: string;
   categoryId?: string;
   stock: 'all' | 'in_stock' | 'out_of_stock' | 'low_stock';
-  status: 'all' | 'active' | 'draft' | 'low_remaining';
+  status: 'all' | 'active' | 'inactive' | 'draft' | 'low_remaining';
   categories: AdminCategoryOption[];
   sort: string;
   dir: string;
   copy: Dictionary['admin']['products']['filters'];
+  action?: ReactNode;
 };
 
 export function AdminProductsFilters({
@@ -35,6 +36,7 @@ export function AdminProductsFilters({
   sort,
   dir,
   copy,
+  action,
 }: AdminProductsFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [categoryValue, setCategoryValue] = useState(categoryId ?? '');
@@ -56,6 +58,7 @@ export function AdminProductsFilters({
   const statusOptions = [
     { label: copy.allStatuses, value: 'all' as const },
     { label: copy.statusActive, value: 'active' as const },
+    { label: copy.statusInactive, value: 'inactive' as const },
     { label: copy.statusDraft, value: 'draft' as const },
     { label: copy.statusLowRemaining, value: 'low_remaining' as const },
   ];
@@ -126,16 +129,19 @@ export function AdminProductsFilters({
             onValueChange={applyStock}
           />
         </div>
-        <div>
-          <span className={ADMIN_LABEL}>{copy.filterByStatus}</span>
-          <SelectDropdown
-            name="status"
-            ariaLabel={copy.filterByStatusAria}
-            value={statusValue}
-            options={statusOptions}
-            className="mt-1"
-            onValueChange={applyStatus}
-          />
+        <div className="md:col-span-2 flex flex-col gap-4 sm:flex-row sm:items-end">
+          <div className="min-w-0 sm:flex-1">
+            <span className={ADMIN_LABEL}>{copy.filterByStatus}</span>
+            <SelectDropdown
+              name="status"
+              ariaLabel={copy.filterByStatusAria}
+              value={statusValue}
+              options={statusOptions}
+              className="mt-1"
+              onValueChange={applyStatus}
+            />
+          </div>
+          {action ? <div className="sm:flex-1">{action}</div> : null}
         </div>
       </form>
     </div>

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./storefront-ipad-adaptive.css" source(none);
 
 :root {
   --background: #f9fafb;
@@ -53,6 +54,10 @@ body {
   color: var(--foreground);
   font-family: var(--font-montserrat-arm), var(--font-montserrat),
     var(--font-noto-armenian), ui-sans-serif, sans-serif;
+}
+
+.storefront-shell {
+  overflow-wrap: break-word;
 }
 
 .font-display {
@@ -227,6 +232,27 @@ body {
   background: var(--pideh-hero-video-bg, #fc8521);
 }
 
+/*
+ * Desktop home seam: yellow drip overlaps the 2096×988 hero frame so it
+ * sits on the pide at every width (video bottom orange scales with width).
+ */
+.storefront-shell .pideh-home {
+  --home-drip-overlap: calc(100vw * 988 / 2096 * 0.3);
+}
+
+.storefront-shell .pideh-home [data-home-hero] {
+  min-height: 0;
+}
+
+.storefront-shell .pideh-home [data-home-hero-copy] {
+  padding-bottom: max(7rem, calc(var(--home-drip-overlap) - 1.5rem));
+}
+
+.storefront-shell .pideh-home [data-home-categories] {
+  margin-top: calc(-1 * var(--home-drip-overlap));
+  padding-top: calc(var(--home-drip-overlap) + 1.5rem);
+}
+
 .storefront-shell:has(.pideh-about) {
   background: var(--pideh-cream);
 }
@@ -247,6 +273,20 @@ body {
 
 .storefront-shell:has(.pideh-pdp) {
   background: #ff6b00;
+}
+
+.storefront-shell img {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.pideh-categories-orbit,
+.pideh-categories-orbit img {
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .storefront-shell:has(.pideh-home) .storefront-main,
@@ -298,10 +338,15 @@ body {
   background: #ff6b00;
 }
 
-@media (max-width: 767px) {
-  /* Figma mobile chrome (366:464) replaces the desktop header everywhere. */
+@media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
+  /* Phone + iPad portrait: Figma mobile header + dock. */
   .storefront-shell .site-header {
-    display: none;
+    display: none !important;
+  }
+
+  .storefront-shell .storefront-mobile-tree,
+  .storefront-shell .mobile-storefront-header {
+    display: block !important;
   }
 
   /* Pages that ship their own in-page chrome opt out of the shared bar. */
@@ -309,7 +354,7 @@ body {
   .storefront-shell:has(.profile-mobile-page) .mobile-storefront-header,
   .storefront-shell:has(.pideh-pdp-mobile) .mobile-storefront-header,
   .storefront-shell:has(.pideh-login) .mobile-storefront-header {
-    display: none;
+    display: none !important;
   }
 
   .storefront-shell:has(.pideh-home) .storefront-main,
@@ -323,7 +368,33 @@ body {
 
   /* Mobile home: dock clearance lives on .pideh-home-mobile (see MobileHome). */
   .storefront-shell:has(.pideh-home-mobile) .storefront-main {
-    padding-bottom: 0;
+    max-width: none;
+    padding: 0;
+  }
+
+  /* Mobile shop: orange page to the dock — no yellow footer strip under the nav. */
+  .storefront-shell:has(.pideh-shop-mobile) {
+    background: #ff6b00;
+  }
+
+  .storefront-shell:has(.pideh-shop-mobile) .storefront-main {
+    max-width: none;
+    padding: 0;
+  }
+
+  .storefront-shell:has(.pideh-shop-mobile) .storefront-footer {
+    display: none;
+  }
+
+  .pideh-shop-mobile .shop-chips-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .pideh-shop-mobile .shop-chips-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   /* Figma mobile home (259:369) uses in-page chrome instead of site header. */
@@ -336,7 +407,8 @@ body {
   }
 
   .storefront-shell:has(.pideh-pdp-mobile) .storefront-main {
-    padding-bottom: 0;
+    max-width: none;
+    padding: 0;
   }
 
   .storefront-shell:has(.pideh-pdp-mobile) .storefront-footer {
@@ -360,6 +432,26 @@ body {
 
   .pideh-login {
     padding-bottom: calc(var(--auth-nav-clearance, 16rem) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .storefront-shell .profile-mobile-page {
+    display: block !important;
+  }
+
+  .storefront-shell .storefront-desktop-tree {
+    display: none !important;
+  }
+
+  .storefront-shell .mobile-bottom-nav {
+    display: block !important;
+  }
+
+  .storefront-shell .login-heat-mobile {
+    display: block !important;
+  }
+
+  .storefront-shell .login-heat-desktop {
+    display: none !important;
   }
 }
 
@@ -581,7 +673,8 @@ body {
  * MaMarie-style profile desktop shell:
  * lock viewport height, hide footer, scroll only the content column.
  */
-@media (min-width: 1024px) {
+@media (min-width: 768px) and (min-height: 600px) and (orientation: landscape),
+  (min-width: 1200px) {
   .storefront-shell:has(.profile-desktop-page) {
     height: 100dvh;
     max-height: 100dvh;
@@ -609,7 +702,7 @@ body {
  * Hide the storefront top header — profile hub is the chrome on mobile.
  * Hide the storefront bottom tab bar — profile has its own hub chrome.
  */
-@media (max-width: 1023px) {
+@media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
   .storefront-shell:has(.profile-mobile-page) .site-header {
     display: none;
   }
@@ -620,7 +713,7 @@ body {
   }
 
   .storefront-shell:has(.profile-mobile-page) .mobile-bottom-nav {
-    display: none;
+    display: none !important;
   }
 
   .profile-mobile-tab-sheet-scroll {
@@ -711,3 +804,4 @@ body {
       transparent 52%
     );
 }
+

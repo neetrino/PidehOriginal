@@ -20,7 +20,7 @@ export function AboutGallery({ copy }: AboutGalleryProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative z-40 h-dvh w-full overflow-hidden bg-pideh-cream p-3 sm:p-5"
+      className="relative z-40 h-[100svh] w-full overflow-hidden bg-pideh-cream p-3 sm:p-5"
     >
       <div
         className={

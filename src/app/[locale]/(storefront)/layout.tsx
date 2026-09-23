@@ -34,7 +34,7 @@ export default async function StorefrontLayout({ children, params }: StorefrontL
   const groupOrderSession = await resolveActiveGroupOrderSession();
 
   return (
-    <div className="storefront-shell flex min-h-dvh flex-1 flex-col bg-[#fff8e7]">
+    <div className="storefront-shell flex min-h-dvh min-w-0 flex-1 flex-col bg-[#fff8e7]">
       <MobileStorefrontHeader locale={locale} currency={currency} dictionary={dictionary} />
       <SiteHeader locale={locale} currency={currency} dictionary={dictionary} />
       {groupOrderSession.kind === 'active' ? (
@@ -56,7 +56,7 @@ export default async function StorefrontLayout({ children, params }: StorefrontL
       {groupOrderSession.kind === 'ended' ? (
         <GroupOrderSessionWatcher labels={dictionary.groupOrder} mode="clear-ended" />
       ) : null}
-      <main className={`storefront-main flex-1 py-10 pb-24 md:pb-10 ${PAGE_CONTAINER}`}>
+      <main className={`storefront-main min-w-0 flex-1 py-10 pb-24 lg:pb-10 ${PAGE_CONTAINER}`}>
         <MaintenanceGate>{children}</MaintenanceGate>
       </main>
       <SiteFooter dictionary={dictionary} locale={locale} />

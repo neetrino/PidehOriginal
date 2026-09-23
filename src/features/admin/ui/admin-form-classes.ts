@@ -34,7 +34,7 @@ export const ADMIN_CHECKBOX_LABEL =
   'inline-flex cursor-pointer items-center gap-2.5 text-sm font-bold text-[#1e1e1e] select-none';
 
 /** Admin side sheets stretch to the viewport midline. */
-export const ADMIN_SHEET_PANEL = 'w-full sm:w-1/2';
+export const ADMIN_SHEET_PANEL = 'w-[min(100%,calc(100%-2.75rem))] sm:w-1/2';
 
 export const ADMIN_SHEET_HEADER = 'shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6';
 

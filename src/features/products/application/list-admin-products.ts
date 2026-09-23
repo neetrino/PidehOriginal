@@ -12,6 +12,7 @@ import {
   inArray,
   isNull,
   lte,
+  ne,
   or,
   sql,
   type SQL,
@@ -105,10 +106,12 @@ function buildWhere(filters: AdminProductsFilter, locale: Locale): SQL | undefin
     );
   }
 
-  if (filters.status === 'draft') {
-    conditions.push(eq(products.status, 'DRAFT'));
-  } else if (filters.status === 'active') {
+  if (filters.status === 'active') {
     conditions.push(eq(products.status, 'ACTIVE'));
+  } else if (filters.status === 'inactive') {
+    conditions.push(ne(products.status, 'ACTIVE'));
+  } else if (filters.status === 'draft') {
+    conditions.push(eq(products.status, 'DRAFT'));
   } else if (filters.status === 'low_remaining') {
     conditions.push(lt(products.stockOnHand, FEW_LEFT_STOCK_BELOW));
   }

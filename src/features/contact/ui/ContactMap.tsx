@@ -23,6 +23,8 @@ type ContactMapProps = {
   secondaryLabel: string;
   zoomInLabel: string;
   zoomOutLabel: string;
+  zoomEnableLabel: string;
+  zoomDisableLabel: string;
 };
 
 export function ContactMap({
@@ -31,6 +33,8 @@ export function ContactMap({
   secondaryLabel,
   zoomInLabel,
   zoomOutLabel,
+  zoomEnableLabel,
+  zoomDisableLabel,
 }: ContactMapProps) {
   const [activeBranchId, setActiveBranchId] = useState<ContactBranchId | null>(null);
 
@@ -63,6 +67,8 @@ export function ContactMap({
               secondaryLabel={secondaryLabel}
               zoomInLabel={zoomInLabel}
               zoomOutLabel={zoomOutLabel}
+              zoomEnableLabel={zoomEnableLabel}
+              zoomDisableLabel={zoomDisableLabel}
               activeBranchId={activeBranchId}
             />
           </div>

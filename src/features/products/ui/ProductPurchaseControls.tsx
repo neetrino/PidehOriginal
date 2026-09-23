@@ -53,7 +53,7 @@ export function ProductPurchaseControls({
           type="button"
           disabled={disabled}
           onClick={onAdd}
-          className="inline-flex h-12 w-full shrink-0 items-center justify-center gap-3 rounded-[66px] bg-[#ff6900] pr-2 pl-[18px] text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[283px]"
+          className="inline-flex h-12 w-full min-w-0 shrink-0 items-center justify-center gap-3 rounded-[66px] bg-[#ff6900] pr-2 pl-[18px] text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-[12rem] sm:max-w-[283px] sm:flex-1"
         >
           <Image
             src={PIDEH_ASSETS.pdpCart}

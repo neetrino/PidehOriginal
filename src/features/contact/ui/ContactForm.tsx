@@ -70,11 +70,11 @@ export function ContactForm({ copy }: ContactFormProps) {
   }
 
   return (
-    <div className="relative">
+    <div className="relative min-w-0 overflow-x-clip">
       <div aria-hidden="true" className="absolute inset-3 rotate-2 rounded-[2px] bg-pideh-yellow" />
       <form
         onSubmit={onSubmit}
-        className="relative overflow-hidden rounded-[2px] bg-white px-8 py-8 shadow-[12px_18px_0_0_rgba(30,30,30,0.18)] sm:px-10 sm:py-10"
+        className="relative overflow-hidden rounded-[2px] bg-white px-5 py-8 shadow-[12px_18px_0_0_rgba(30,30,30,0.18)] sm:px-10 sm:py-10"
       >
         <div
           aria-hidden="true"

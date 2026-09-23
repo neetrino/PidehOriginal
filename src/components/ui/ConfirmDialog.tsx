@@ -129,9 +129,10 @@ export function ConfirmDialog({
         }}
       />
       <div
-        className={`relative z-[1] w-full max-w-md rounded-3xl bg-white p-6 shadow-xl sm:p-7 ${panelClass}`}
+        className={`relative z-[1] flex max-h-[min(32rem,calc(100dvh-2rem))] w-full max-w-md flex-col overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
         onAnimationEnd={handlePanelAnimationEnd}
       >
+        <div className="min-h-0 overflow-y-auto p-6 sm:p-7">
         <h2 id="confirm-dialog-title" className="text-xl font-semibold text-gray-900">
           {displayTitle}
         </h2>
@@ -155,6 +156,7 @@ export function ConfirmDialog({
           >
             {isPending ? '…' : displayConfirmLabel}
           </button>
+        </div>
         </div>
       </div>
     </div>,

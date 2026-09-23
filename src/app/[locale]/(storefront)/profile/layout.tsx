@@ -22,8 +22,8 @@ export default async function ProfileLayout({ children, params }: ProfileLayoutP
   const dictionary = getDictionary(rawLocale);
 
   return (
-    <div className="profile-desktop-page flex flex-col gap-6 pb-10 lg:min-h-0 lg:flex-1 lg:flex-row lg:gap-8 lg:overflow-hidden lg:pb-0">
-      <div className="hidden w-[280px] shrink-0 lg:flex lg:h-full lg:min-h-0 lg:flex-col">
+    <div className="profile-desktop-page flex flex-col gap-6 pb-10 md:min-h-0 md:flex-1 md:flex-row md:gap-8 md:overflow-hidden md:pb-0">
+      <div className="storefront-desktop-tree hidden w-[280px] shrink-0 md:flex md:h-full md:min-h-0 md:flex-col">
         <ProfileSidebar locale={rawLocale} user={user} dictionary={dictionary.profile} />
       </div>
 

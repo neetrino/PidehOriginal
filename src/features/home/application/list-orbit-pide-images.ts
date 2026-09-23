@@ -6,17 +6,32 @@ import { unstable_cache } from 'next/cache';
 import { getDb } from '@/db/client';
 import { categories, mediaAssets, productCategories, products } from '@/db/schema';
 import {
-  resolveOrbitPideImageUrls,
+  resolveOrbitPidePhotos,
   type OrbitPideImageRow,
+  type OrbitPidePhoto,
 } from '@/features/home/application/orbit-pide-images';
 import { CACHE_TAGS, PUBLIC_CACHE_REVALIDATE_SECONDS } from '@/lib/cache/tags';
+import type { Locale } from '@/lib/i18n/config';
 import { mediaPublicUrl } from '@/lib/media/public-url';
 
 function productSlug(translations: (typeof products.$inferSelect)['translations']): string {
   return translations.en?.slug ?? translations.hy?.slug ?? translations.ru?.slug ?? '';
 }
 
-async function loadOrbitPideImageRows(): Promise<OrbitPideImageRow[]> {
+function productTitle(
+  translations: (typeof products.$inferSelect)['translations'],
+  locale: Locale,
+): string {
+  return (
+    translations[locale]?.title ??
+    translations.hy?.title ??
+    translations.en?.title ??
+    translations.ru?.title ??
+    ''
+  ).trim();
+}
+
+async function loadOrbitPideImageRows(locale: Locale): Promise<OrbitPideImageRow[]> {
   const rows = await getDb()
     .select({
       translations: products.translations,
@@ -43,15 +58,16 @@ async function loadOrbitPideImageRows(): Promise<OrbitPideImageRow[]> {
     .map((row) => ({
       slug: productSlug(row.translations),
       url: mediaPublicUrl(row.objectKey),
+      title: productTitle(row.translations, locale),
     }))
     .filter((row) => row.slug.length > 0);
 }
 
-/** Distinct pide product photos for the desktop categories orbit. */
-export async function listOrbitPideImageUrls(): Promise<string[]> {
+/** Distinct pide product photos and names for the desktop categories orbit. */
+export async function listOrbitPidePhotos(locale: Locale): Promise<OrbitPidePhoto[]> {
   return unstable_cache(
-    async () => resolveOrbitPideImageUrls(await loadOrbitPideImageRows()),
-    ['orbit-pide-images-v3'],
+    async () => resolveOrbitPidePhotos(await loadOrbitPideImageRows(locale)),
+    ['orbit-pide-photos-v1', locale],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

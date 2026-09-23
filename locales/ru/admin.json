@@ -335,7 +335,8 @@
       "filterByStatus": "Фильтр по статусу",
       "filterByStatusAria": "Фильтр по статусу",
       "allStatuses": "Все статусы",
-      "statusActive": "Активные",
+      "statusActive": "Включён",
+      "statusInactive": "Выключен",
       "statusDraft": "Черновик",
       "statusLowRemaining": "Мало осталось"
     },

@@ -28,6 +28,7 @@ export function GroupOrderHeaderButton({
         onClick={() => setOpen(true)}
         className="inline-flex shrink-0 items-center gap-1 rounded-[32px] bg-[#ff6b00] px-2.5 py-2 text-[10px] font-bold tracking-wide text-white uppercase transition hover:brightness-105 sm:gap-1.5 sm:px-3 sm:text-xs md:h-10 md:px-4 md:text-sm"
         aria-label={labels.createButton}
+        data-header-group-order
       >
         <Users className="h-4 w-4 shrink-0" aria-hidden />
         <span>{labels.createButton}</span>

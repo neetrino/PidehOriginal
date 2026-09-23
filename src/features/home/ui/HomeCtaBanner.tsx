@@ -58,13 +58,13 @@ export function HomeCtaBanner({
   );
 
   return (
-    <div className="relative z-30 -mt-32 md:-mt-48">
-      <HomeCtaOrangeBand className="top-16 md:top-24" />
+    <div className="relative z-30 -mt-24 lg:-mt-48">
+      <HomeCtaOrangeBand className="top-12 lg:top-24" />
       {reduceMotion ? (
-        <div className={`relative z-10 pb-12 md:pb-16 ${PAGE_CONTAINER}`}>{card}</div>
+        <div className={`relative z-10 pb-12 lg:pb-16 ${PAGE_CONTAINER}`}>{card}</div>
       ) : (
         <motion.div
-          className={`relative z-10 pb-12 md:pb-16 ${PAGE_CONTAINER}`}
+          className={`relative z-10 pb-12 lg:pb-16 ${PAGE_CONTAINER}`}
           initial="hidden"
           whileInView="show"
           viewport={VIEWPORT_ONCE}
