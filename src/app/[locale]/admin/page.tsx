@@ -31,6 +31,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
   return (
     <AdminDashboard
       locale={locale}
+      copy={dictionary.admin}
       dash={dash}
       navTitle={dictionary.admin.nav.dashboard}
       users={metrics.users}

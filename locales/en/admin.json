@@ -134,6 +134,12 @@
       "paymentPending": "Pending",
       "paymentFailed": "Failed"
     },
+    "kindSwitcher": {
+      "aria": "Order type",
+      "all": "All",
+      "individual": "Individual",
+      "group": "Group"
+    },
     "bulk": {
       "deleteSelected": "Delete selected",
       "selectAtLeastOne": "Select at least one order.",
@@ -185,6 +191,7 @@
       "floor": "Floor:",
       "intercomCode": "Intercom code:",
       "deliverySlot": "Delivery slot:",
+      "deliverySlotCaption": "Delivery · {slot}",
       "cashChange": "Cash change:",
       "paymentSection": "Payment",
       "method": "Method:",
@@ -207,6 +214,9 @@
       "couponDiscountWithCode": "Coupon discount ({code})",
       "bonusRedeemed": "Bonuses used",
       "bonusEarned": "Bonuses earned",
+      "receivedBonus": "Bonus received",
+      "bonusColumn": "Bonus",
+      "emptyParticipantItems": "This participant has no items.",
       "giftCard": "Gift card",
       "grandTotal": "Total"
     },
@@ -326,7 +336,9 @@
       "filterByStatusAria": "Filter by status",
       "allStatuses": "All statuses",
       "statusActive": "Enabled",
-      "statusInactive": "Disabled"
+      "statusInactive": "Disabled",
+      "statusDraft": "Draft",
+      "statusLowRemaining": "Few left"
     },
     "table": {
       "deleteSelected": "Delete Selected",

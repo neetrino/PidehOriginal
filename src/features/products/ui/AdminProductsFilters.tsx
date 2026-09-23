@@ -17,7 +17,7 @@ type AdminProductsFiltersProps = {
   sku?: string;
   categoryId?: string;
   stock: 'all' | 'in_stock' | 'out_of_stock' | 'low_stock';
-  status: 'all' | 'active' | 'inactive';
+  status: 'all' | 'active' | 'inactive' | 'draft' | 'low_remaining';
   categories: AdminCategoryOption[];
   sort: string;
   dir: string;
@@ -59,6 +59,8 @@ export function AdminProductsFilters({
     { label: copy.allStatuses, value: 'all' as const },
     { label: copy.statusActive, value: 'active' as const },
     { label: copy.statusInactive, value: 'inactive' as const },
+    { label: copy.statusDraft, value: 'draft' as const },
+    { label: copy.statusLowRemaining, value: 'low_remaining' as const },
   ];
 
   function applyCategory(next: string): void {

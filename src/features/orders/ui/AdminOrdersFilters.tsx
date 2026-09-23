@@ -5,6 +5,7 @@ import { flushSync } from 'react-dom';
 
 import { Card } from '@/components/ui/Card';
 import { SelectDropdown } from '@/components/ui/SelectDropdown';
+import type { AdminOrderListKind } from '@/features/orders/domain/admin-order-list-kind';
 import type { OrderStatus } from '@/features/orders/domain/order-status';
 import type { PaymentStatus } from '@/features/orders/domain/payment-status';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -17,6 +18,7 @@ type AdminOrdersFiltersProps = {
   status?: OrderStatus;
   paymentStatus?: string;
   q?: string;
+  kind: AdminOrderListKind;
   copy: Dictionary['admin'];
 };
 
@@ -25,6 +27,7 @@ export function AdminOrdersFilters({
   status,
   paymentStatus,
   q,
+  kind,
   copy,
 }: AdminOrdersFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -59,6 +62,7 @@ export function AdminOrdersFilters({
   return (
     <Card className="mb-6 overflow-visible">
       <form ref={formRef} method="get" className="flex flex-col gap-3 p-4 sm:flex-row sm:flex-wrap sm:items-center">
+        {kind === 'individual' ? <input type="hidden" name="kind" value="individual" /> : null}
         <SelectDropdown
           name="status"
           ariaLabel={f.orderStatusAria}

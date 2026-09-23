@@ -8,6 +8,7 @@ import {
   groupOrderParticipants,
   groupOrders,
   mediaAssets,
+  orders,
   products,
 } from '@/db/schema';
 import type { LocaleTranslation, TranslationsJson } from '@/db/schema/catalog';
@@ -262,6 +263,7 @@ export type AdminGroupOrderListItem = {
   createdTime: string;
   createdDate: string;
   orderId: string | null;
+  orderNumber: string | null;
 };
 
 const ADMIN_GROUP_ORDERS_PAGE_SIZE = 50;
@@ -324,8 +326,12 @@ export async function listAdminGroupOrders(filters: AdminGroupOrdersFilter = { p
 
   const [rows, [totalRow]] = await Promise.all([
     db
-      .select()
+      .select({
+        groupOrder: groupOrders,
+        orderNumber: orders.orderNumber,
+      })
       .from(groupOrders)
+      .leftJoin(orders, eq(groupOrders.orderId, orders.id))
       .where(where)
       .orderBy(desc(groupOrders.createdAt))
       .limit(ADMIN_GROUP_ORDERS_PAGE_SIZE)
@@ -341,7 +347,7 @@ export async function listAdminGroupOrders(filters: AdminGroupOrdersFilter = { p
     };
   }
 
-  const ids = rows.map((row) => row.id);
+  const ids = rows.map((row) => row.groupOrder.id);
   const statsRows = await db
     .select({
       groupOrderId: groupOrderParticipants.groupOrderId,
@@ -369,22 +375,24 @@ export async function listAdminGroupOrders(filters: AdminGroupOrdersFilter = { p
 
   return {
     rows: rows.map((row) => {
-      const stats = statsById.get(row.id);
+      const groupOrder = row.groupOrder;
+      const stats = statsById.get(groupOrder.id);
       const merchandiseTotal = stats?.merchandiseTotal ?? 0;
-      const created = formatAdminCreatedParts(row.createdAt);
+      const created = formatAdminCreatedParts(groupOrder.createdAt);
       return {
-        id: row.id,
-        inviteToken: row.inviteToken,
-        organizerDisplayName: row.organizerDisplayName,
-        paymentMode: row.paymentMode,
-        status: row.status,
+        id: groupOrder.id,
+        inviteToken: groupOrder.inviteToken,
+        organizerDisplayName: groupOrder.organizerDisplayName,
+        paymentMode: groupOrder.paymentMode,
+        status: groupOrder.status,
         participantCount: stats?.participantCount ?? 0,
-        totalAmount: merchandiseTotal + row.deliveryAmount,
-        deliveryAmount: row.deliveryAmount,
-        createdAt: row.createdAt.toISOString(),
+        totalAmount: merchandiseTotal + groupOrder.deliveryAmount,
+        deliveryAmount: groupOrder.deliveryAmount,
+        createdAt: groupOrder.createdAt.toISOString(),
         createdTime: created.time,
         createdDate: created.date,
-        orderId: row.orderId,
+        orderId: groupOrder.orderId,
+        orderNumber: row.orderNumber,
       };
     }),
     total: totalRow?.value ?? 0,

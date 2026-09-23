@@ -11,10 +11,37 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary';
 type OrderDetailsDrawerShippingProps = {
   detail: AdminOrderDetailView;
   copy: Dictionary['admin'];
+  variant?: 'full' | 'address';
 };
 
-export function OrderDetailsDrawerShipping({ detail, copy }: OrderDetailsDrawerShippingProps) {
+export function OrderDetailsDrawerShipping({
+  detail,
+  copy,
+  variant = 'full',
+}: OrderDetailsDrawerShippingProps) {
   const d = copy.orders.drawer;
+
+  if (variant === 'address') {
+    return (
+      <section className="rounded-2xl border border-gray-200 px-5 py-4">
+        <h3 className="mb-4 text-base font-semibold tracking-wide text-gray-900 uppercase">
+          {d.shippingAddress}
+        </h3>
+        <div className="flex items-start gap-2">
+          <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" aria-hidden />
+          <div className="min-w-0">
+            <p className="font-medium text-gray-900">{detail.addressLine}</p>
+            {detail.scheduledDelivery ? (
+              <p className="mt-1 text-xs text-gray-500">
+                {d.deliverySlotCaption.replace('{slot}', detail.scheduledDelivery)}
+              </p>
+            ) : null}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <section className="rounded-2xl border border-gray-200 px-5 py-4">

@@ -12,6 +12,10 @@ import {
 import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import { DashboardStatsGrid } from '@/features/admin/ui/DashboardStatsGrid';
 import { ADMIN_BADGE, paymentStatusBadgeClass } from '@/features/admin/ui/status-badge';
+import {
+  AdminOrderDetailsDrawerBind,
+  useAdminOrderDetailsDrawer,
+} from '@/features/orders/ui/useAdminOrderDetailsDrawer';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type RecentOrder = {
@@ -31,6 +35,7 @@ type TopProduct = {
 
 type AdminDashboardProps = {
   locale: string;
+  copy: Dictionary['admin'];
   dash: Dictionary['admin']['dashboard'];
   navTitle: string;
   users: number;
@@ -74,6 +79,7 @@ const QUICK_ACTION_DEFS = [
 
 export function AdminDashboard({
   locale,
+  copy,
   dash,
   navTitle,
   users,
@@ -84,6 +90,8 @@ export function AdminDashboard({
   recentOrders,
   topProducts,
 }: AdminDashboardProps) {
+  const drawer = useAdminOrderDetailsDrawer(locale);
+
   return (
     <section>
       <AdminPageHeading className="mb-6" title={navTitle} description={dash.welcome} />
@@ -109,9 +117,10 @@ export function AdminDashboard({
           <StaggerGroup className="space-y-3">
             {recentOrders.map((order) => (
               <StaggerItem key={order.id} variants={fadeUp}>
-                <Link
-                  href={`/${locale}/admin/orders/${order.orderNumber}`}
-                  className="block rounded-2xl border border-[#1e1e1e]/10 bg-[#fff8e7] p-4 transition hover:bg-[#ffd54a]/40"
+                <button
+                  type="button"
+                  onClick={() => drawer.openOrder(order.orderNumber)}
+                  className="block w-full rounded-2xl border border-[#1e1e1e]/10 bg-[#fff8e7] p-4 text-left transition hover:bg-[#ffd54a]/40"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
@@ -127,7 +136,7 @@ export function AdminDashboard({
                       {formatMoney(order.totalAmount)} {order.baseCurrency}
                     </p>
                   </div>
-                </Link>
+                </button>
               </StaggerItem>
             ))}
           </StaggerGroup>
@@ -189,6 +198,7 @@ export function AdminDashboard({
           ))}
         </div>
       </div>
+      <AdminOrderDetailsDrawerBind state={drawer} copy={copy} />
     </section>
   );
 }

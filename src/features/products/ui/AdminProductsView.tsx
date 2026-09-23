@@ -40,7 +40,7 @@ type AdminProductsViewProps = {
     sku?: string;
     categoryId?: string;
     stock: 'all' | 'in_stock' | 'out_of_stock' | 'low_stock';
-    status: 'all' | 'active' | 'inactive';
+    status: 'all' | 'active' | 'inactive' | 'draft' | 'low_remaining';
     sort: string;
     dir: string;
   };

@@ -1,19 +1,32 @@
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
+import { listAdminGroupOrders } from '@/features/group-orders/application/queries';
+import { adminGroupOrdersFilterSchema } from '@/features/group-orders/schemas';
+import { AdminGroupOrdersFilters } from '@/features/group-orders/ui/AdminGroupOrdersFilters';
+import { AdminGroupOrdersView } from '@/features/group-orders/ui/AdminGroupOrdersView';
 import { listAdminOrders } from '@/features/orders/application/queries';
+import {
+  parseAdminOrderListKind,
+  type AdminOrderListKind,
+} from '@/features/orders/domain/admin-order-list-kind';
 import type { OrderStatus } from '@/features/orders/domain/order-status';
 import { adminOrdersFilterSchema } from '@/features/orders/schemas/change-status';
 import { AdminOrdersFilters } from '@/features/orders/ui/AdminOrdersFilters';
+import { AdminOrdersKindSwitcher } from '@/features/orders/ui/AdminOrdersKindSwitcher';
 import { AdminOrdersView } from '@/features/orders/ui/AdminOrdersView';
-import { isLocale } from '@/lib/i18n/config';
-import { getDictionary } from '@/lib/i18n/get-dictionary';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { getDictionary, type Dictionary } from '@/lib/i18n/get-dictionary';
+import { getSelectedCurrency } from '@/lib/money/display-price';
 
 type AdminOrdersPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+type SearchRecord = Record<string, string | string[] | undefined>;
 
 function firstParam(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
@@ -22,12 +35,12 @@ function firstParam(value: string | string[] | undefined): string | undefined {
   return value;
 }
 
-function buildOrdersQuery(
+function buildCheckoutOrdersQuery(
   filters: {
     q?: string;
     status?: OrderStatus;
     paymentStatus?: string;
-    page: number;
+    kind: AdminOrderListKind;
   },
   page: number,
 ): string {
@@ -35,28 +48,162 @@ function buildOrdersQuery(
   if (filters.q) params.set('q', filters.q);
   if (filters.status) params.set('status', filters.status);
   if (filters.paymentStatus) params.set('paymentStatus', filters.paymentStatus);
+  if (filters.kind === 'individual') params.set('kind', 'individual');
   params.set('page', String(page));
   return params.toString();
 }
 
-export default async function AdminOrdersPage({ params, searchParams }: AdminOrdersPageProps) {
-  const { locale } = await params;
-  if (!isLocale(locale)) {
-    notFound();
-  }
+function buildGroupOrdersQuery(
+  filters: {
+    q?: string;
+    status?: string;
+    paymentMode?: string;
+  },
+  page: number,
+): string {
+  const params = new URLSearchParams();
+  params.set('kind', 'group');
+  if (filters.q) params.set('q', filters.q);
+  if (filters.status) params.set('status', filters.status);
+  if (filters.paymentMode) params.set('paymentMode', filters.paymentMode);
+  params.set('page', String(page));
+  return params.toString();
+}
 
-  const dictionary = getDictionary(locale);
-  const copy = dictionary.admin;
+function AdminOrdersPageShell({
+  locale,
+  kind,
+  copy,
+  children,
+}: {
+  locale: Locale;
+  kind: AdminOrderListKind;
+  copy: Dictionary['admin'];
+  children: ReactNode;
+}) {
+  return (
+    <section>
+      <AdminPageHeading className="mb-6" title={copy.orders.title} />
+      <AdminOrdersKindSwitcher locale={locale} kind={kind} labels={copy.orders.kindSwitcher} />
+      {children}
+    </section>
+  );
+}
 
-  const raw = await searchParams;
+function AdminListPagination({
+  locale,
+  page,
+  totalPages,
+  query,
+  previousLabel,
+  nextLabel,
+  pageOf,
+}: {
+  locale: Locale;
+  page: number;
+  totalPages: number;
+  query: (page: number) => string;
+  previousLabel: string;
+  nextLabel: string;
+  pageOf: string;
+}) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
+      {page > 1 ? (
+        <Link
+          href={`/${locale}/admin/orders?${query(page - 1)}`}
+          className="font-medium hover:underline"
+        >
+          {previousLabel}
+        </Link>
+      ) : null}
+      <span>
+        {pageOf.replace('{page}', String(page)).replace('{totalPages}', String(totalPages))}
+      </span>
+      {page < totalPages ? (
+        <Link
+          href={`/${locale}/admin/orders?${query(page + 1)}`}
+          className="font-medium hover:underline"
+        >
+          {nextLabel}
+        </Link>
+      ) : null}
+    </nav>
+  );
+}
+
+async function AdminGroupOrdersSection({
+  locale,
+  raw,
+  copy,
+}: {
+  locale: Locale;
+  raw: SearchRecord;
+  copy: Dictionary['admin'];
+}) {
+  const parsed = adminGroupOrdersFilterSchema.safeParse({
+    status: firstParam(raw.status) || undefined,
+    paymentMode: firstParam(raw.paymentMode) || undefined,
+    q: firstParam(raw.q) || undefined,
+    page: firstParam(raw.page) ?? '1',
+  });
+  const filters = parsed.success
+    ? parsed.data
+    : { page: 1 as const, status: undefined, paymentMode: undefined, q: undefined };
+  const currency = await getSelectedCurrency();
+  const { rows, total, pageSize } = await listAdminGroupOrders(filters);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  return (
+    <>
+      <AdminGroupOrdersFilters
+        total={total}
+        status={filters.status}
+        paymentMode={filters.paymentMode}
+        q={filters.q}
+        copy={copy.groupOrders}
+      />
+      <AdminGroupOrdersView
+        locale={locale}
+        currency={currency}
+        rows={rows}
+        copy={copy.groupOrders}
+        adminCopy={copy}
+      />
+      <AdminListPagination
+        locale={locale}
+        page={filters.page}
+        totalPages={totalPages}
+        query={(page) => buildGroupOrdersQuery(filters, page)}
+        previousLabel={copy.common.previous}
+        nextLabel={copy.common.next}
+        pageOf={copy.common.pageOf}
+      />
+    </>
+  );
+}
+
+async function AdminCheckoutOrdersSection({
+  locale,
+  kind,
+  raw,
+  copy,
+}: {
+  locale: Locale;
+  kind: Exclude<AdminOrderListKind, 'group'>;
+  raw: SearchRecord;
+  copy: Dictionary['admin'];
+}) {
   const parsed = adminOrdersFilterSchema.safeParse({
     status: firstParam(raw.status) || undefined,
     paymentStatus: firstParam(raw.paymentStatus) || undefined,
     archived: 'active',
     q: firstParam(raw.q) || undefined,
+    kind,
     page: firstParam(raw.page) ?? '1',
   });
-
   const filters = parsed.success
     ? parsed.data
     : {
@@ -67,50 +214,53 @@ export default async function AdminOrdersPage({ params, searchParams }: AdminOrd
         dateFrom: undefined,
         dateTo: undefined,
         q: undefined,
+        kind,
       };
-
   const { rows, total, pageSize } = await listAdminOrders(filters);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <section>
-      <AdminPageHeading className="mb-6" title={copy.orders.title} />
-
+    <>
       <AdminOrdersFilters
         total={total}
         status={filters.status}
         paymentStatus={filters.paymentStatus}
         q={filters.q}
+        kind={kind}
         copy={copy}
       />
-
       <AdminOrdersView locale={locale} orders={rows} copy={copy} />
+      <AdminListPagination
+        locale={locale}
+        page={filters.page}
+        totalPages={totalPages}
+        query={(page) => buildCheckoutOrdersQuery({ ...filters, kind }, page)}
+        previousLabel={copy.common.previous}
+        nextLabel={copy.common.next}
+        pageOf={copy.common.pageOf}
+      />
+    </>
+  );
+}
 
-      {totalPages > 1 ? (
-        <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
-          {filters.page > 1 ? (
-            <Link
-              href={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
-              className="font-medium hover:underline"
-            >
-              {copy.common.previous}
-            </Link>
-          ) : null}
-          <span>
-            {copy.common.pageOf
-              .replace('{page}', String(filters.page))
-              .replace('{totalPages}', String(totalPages))}
-          </span>
-          {filters.page < totalPages ? (
-            <Link
-              href={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
-              className="font-medium hover:underline"
-            >
-              {copy.common.next}
-            </Link>
-          ) : null}
-        </nav>
-      ) : null}
-    </section>
+export default async function AdminOrdersPage({ params, searchParams }: AdminOrdersPageProps) {
+  const { locale: rawLocale } = await params;
+  if (!isLocale(rawLocale)) {
+    notFound();
+  }
+  const locale = rawLocale;
+
+  const copy = getDictionary(locale).admin;
+  const raw = await searchParams;
+  const kind = parseAdminOrderListKind(firstParam(raw.kind));
+
+  return (
+    <AdminOrdersPageShell locale={locale} kind={kind} copy={copy}>
+      {kind === 'group' ? (
+        <AdminGroupOrdersSection locale={locale} raw={raw} copy={copy} />
+      ) : (
+        <AdminCheckoutOrdersSection locale={locale} kind={kind} raw={raw} copy={copy} />
+      )}
+    </AdminOrdersPageShell>
   );
 }
