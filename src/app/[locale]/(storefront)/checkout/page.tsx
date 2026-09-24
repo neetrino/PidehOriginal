@@ -16,6 +16,13 @@ import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { mediaPublicUrl } from '@/lib/media/public-url';
 
+const CASH_NOTE_FALLBACK: Record<number, string> = {
+  10_000: '/brand/pideh/cash/10000.jpg',
+  20_000: '/brand/pideh/cash/20000.jpg',
+  50_000: '/brand/pideh/cash/50000.jpg',
+  100_000: '/brand/pideh/cash/100000.jpg',
+};
+
 type CheckoutPageProps = {
   params: Promise<{ locale: string }>;
 };
@@ -59,7 +66,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   ).map((item) => ({
     id: item.id,
     amount: item.amount,
-    imageUrl: item.imageObjectKey ? mediaPublicUrl(item.imageObjectKey) : null,
+    imageUrl: item.imageObjectKey
+      ? mediaPublicUrl(item.imageObjectKey)
+      : (CASH_NOTE_FALLBACK[item.amount] ?? null),
   }));
 
   const storePickupAddress = deliverySettings.originAddress.trim() || storeIdentity.name || null;
@@ -132,6 +141,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         cashChangeTitle: copy.cashChange.title,
         cashChangeHint: copy.cashChange.hint,
         cashChangeAria: copy.cashChange.aria,
+        cashChangeNotNeeded: copy.cashChange.notNeeded,
         cashOnDelivery: copy.payment.cashOnDelivery,
         cashOnDeliveryDescription: copy.payment.cashOnDeliveryDescription,
         idram: copy.payment.idram,

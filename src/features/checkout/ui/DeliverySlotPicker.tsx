@@ -1,7 +1,15 @@
 'use client';
 
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
+import {
+  buildMonthCells,
+  monthLabel,
+  parseYmd,
+  startOfMonthYmd,
+  weekdayLabels,
+} from '@/features/checkout/ui/delivery-slot-calendar';
 import {
   formatYerevanDate,
   listAvailableDeliveryDays,
@@ -27,78 +35,27 @@ type DeliverySlotPickerProps = {
   locale: string;
 };
 
-function startOfMonthYmd(year: number, monthIndex: number): string {
-  return `${year}-${String(monthIndex + 1).padStart(2, '0')}-01`;
+const NAV_BUTTON =
+  'inline-flex size-9 items-center justify-center rounded-full border border-[#ff6b00]/25 bg-white text-[#ff6b00] transition-colors hover:bg-[#ffd54a] disabled:cursor-not-allowed disabled:opacity-35';
+
+function dayClass(isSelected: boolean, bookable: boolean, isToday: boolean): string {
+  if (isSelected) {
+    return 'bg-[#ff6b00] font-bold text-white';
+  }
+  if (bookable && isToday) {
+    return 'bg-[#ffd54a] font-bold text-[#1e1e1e] hover:bg-[#ff6b00] hover:text-white';
+  }
+  if (bookable) {
+    return 'bg-white font-bold text-[#1e1e1e] ring-1 ring-[#ff6b00]/30 hover:bg-[#ffd54a]';
+  }
+  return 'cursor-not-allowed font-medium text-[#1e1e1e]/22';
 }
 
-function daysInMonth(year: number, monthIndex: number): number {
-  return new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
-}
-
-function parseYmd(ymd: string): { year: number; monthIndex: number; day: number } {
-  const [yearText, monthText, dayText] = ymd.split('-');
-  return {
-    year: Number(yearText),
-    monthIndex: Number(monthText) - 1,
-    day: Number(dayText),
-  };
-}
-
-/**
- * Fixed month names — avoid `Intl.DateTimeFormat` here: Node ICU and browsers
- * disagree for `hy` (SSR: "2026 թ․ հուլիս", client: "July 2026"), which
- * causes a hydration mismatch.
- */
-const MONTH_NAMES = {
-  en: [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ],
-  hy: [
-    'հունվար',
-    'փետրվար',
-    'մարտ',
-    'ապրիլ',
-    'մայիս',
-    'հունիս',
-    'հուլիս',
-    'օգոստոս',
-    'սեպտեմբեր',
-    'հոկտեմբեր',
-    'նոյեմբեր',
-    'դեկտեմբեր',
-  ],
-  ru: [
-    'январь',
-    'февраль',
-    'март',
-    'апрель',
-    'май',
-    'июнь',
-    'июль',
-    'август',
-    'сентябрь',
-    'октябрь',
-    'ноябрь',
-    'декабрь',
-  ],
-} as const;
-
-function monthLabel(year: number, monthIndex: number, locale: string): string {
-  const months =
-    locale === 'hy' || locale === 'ru' || locale === 'en' ? MONTH_NAMES[locale] : MONTH_NAMES.en;
-  const month = months[monthIndex] ?? months[0];
-  return `${month} ${year}`;
+function timeClass(isSelected: boolean): string {
+  if (isSelected) {
+    return 'border-[#ff6b00] bg-[#ff6b00] text-white';
+  }
+  return 'border-[#ff6b00]/20 bg-white text-[#1e1e1e] hover:border-[#ff6b00] hover:bg-[#ffd54a]';
 }
 
 /**
@@ -125,22 +82,23 @@ export function DeliverySlotPicker({
   const todayParts = parseYmd(todayYmd);
   const [viewYear, setViewYear] = useState(todayParts.year);
   const [viewMonth, setViewMonth] = useState(todayParts.monthIndex);
-
   const selectedDay = selected ? (availableByDate.get(selected.date) ?? null) : null;
+  const weekdays = weekdayLabels(locale);
+  const cells = buildMonthCells(viewYear, viewMonth);
+
+  const maxDate = availableDays[availableDays.length - 1]?.date ?? todayYmd;
+  const maxParts = parseYmd(maxDate);
+  const viewMonthYmd = startOfMonthYmd(viewYear, viewMonth);
+  const canPrev = viewMonthYmd > startOfMonthYmd(todayParts.year, todayParts.monthIndex);
+  const canNext = viewMonthYmd < startOfMonthYmd(maxParts.year, maxParts.monthIndex);
 
   function selectDate(date: string): void {
     const day = availableByDate.get(date);
-    if (!day || disabled) return;
-    const first = day.slots[0];
-    if (!first) {
-      onChange(null);
+    const first = day?.slots[0];
+    if (!day || !first || disabled) {
       return;
     }
-    onChange({
-      date,
-      startTime: first.startTime,
-      endTime: first.endTime,
-    });
+    onChange({ date, startTime: first.startTime, endTime: first.endTime });
   }
 
   function shiftMonth(delta: number): void {
@@ -149,99 +107,78 @@ export function DeliverySlotPicker({
     setViewMonth(next.getUTCMonth());
   }
 
-  const totalDays = daysInMonth(viewYear, viewMonth);
-  const firstWeekday = new Date(Date.UTC(viewYear, viewMonth, 1)).getUTCDay();
-  const leadingBlanks = firstWeekday === 0 ? 6 : firstWeekday - 1;
-  const cells: Array<string | null> = [
-    ...Array.from({ length: leadingBlanks }, () => null),
-    ...Array.from({ length: totalDays }, (_, index) => {
-      const day = index + 1;
-      return `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    }),
-  ];
-
-  const maxDate =
-    availableDays.length > 0 ? availableDays[availableDays.length - 1]?.date : todayYmd;
-  const minMonth = startOfMonthYmd(todayParts.year, todayParts.monthIndex);
-  const maxParts = parseYmd(maxDate ?? todayYmd);
-  const maxMonth = startOfMonthYmd(maxParts.year, maxParts.monthIndex);
-  const viewMonthYmd = startOfMonthYmd(viewYear, viewMonth);
-  const canPrev = viewMonthYmd > minMonth;
-  const canNext = viewMonthYmd < maxMonth;
-
   return (
-    <div className="space-y-4 rounded-2xl border border-gray-200 p-4">
-      <h3 className="text-base font-semibold text-gray-900">{labels.title}</h3>
+    <div className="overflow-hidden rounded-[22px] border border-[#ff6b00]/15 bg-white">
+      <div className="border-b border-[#ff6b00]/10 bg-[#fff8e7] px-4 py-3.5 sm:px-5">
+        <h3 className="font-display text-xl leading-none text-[#1e1e1e] uppercase">{labels.title}</h3>
+      </div>
 
       {availableDays.length === 0 ? (
-        <p className="text-sm text-red-700">{labels.noSlots}</p>
+        <p className="px-4 py-4 text-sm text-red-700 sm:px-5">{labels.noSlots}</p>
       ) : (
-        <>
-          <div>
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <button
-                type="button"
-                disabled={disabled || !canPrev}
-                onClick={() => shiftMonth(-1)}
-                className="rounded-xl border border-gray-200 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
-              >
-                {labels.prevMonth}
-              </button>
-              <p className="text-sm font-medium text-gray-900">
-                {monthLabel(viewYear, viewMonth, locale)}
-              </p>
-              <button
-                type="button"
-                disabled={disabled || !canNext}
-                onClick={() => shiftMonth(1)}
-                className="rounded-xl border border-gray-200 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
-              >
-                {labels.nextMonth}
-              </button>
-            </div>
-
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
-              {labels.pickDate}
+        <div className="space-y-5 px-4 py-4 sm:px-5">
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              disabled={disabled || !canPrev}
+              onClick={() => shiftMonth(-1)}
+              className={NAV_BUTTON}
+              aria-label={labels.prevMonth}
+            >
+              <ChevronLeft className="size-4" aria-hidden />
+            </button>
+            <p className="font-display text-lg leading-none text-[#1e1e1e] uppercase">
+              {monthLabel(viewYear, viewMonth, locale)}
             </p>
-            <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((label) => (
-                <div key={label} className="py-1 font-medium">
-                  {label}
-                </div>
-              ))}
-              {cells.map((date, index) => {
-                if (!date) {
-                  return <div key={`blank-${index}`} />;
-                }
-                const bookable = availableByDate.has(date);
-                const isSelected = selected?.date === date;
-                return (
-                  <button
-                    key={date}
-                    type="button"
-                    disabled={disabled || !bookable}
-                    onClick={() => selectDate(date)}
-                    className={`h-10 rounded-xl text-sm font-medium transition-colors ${
-                      isSelected
-                        ? 'bg-gray-900 text-white'
-                        : bookable
-                          ? 'bg-gray-50 text-gray-900 hover:bg-gray-100'
-                          : 'cursor-not-allowed text-gray-300'
-                    }`}
-                  >
-                    {Number(date.slice(-2))}
-                  </button>
-                );
-              })}
-            </div>
+            <button
+              type="button"
+              disabled={disabled || !canNext}
+              onClick={() => shiftMonth(1)}
+              className={NAV_BUTTON}
+              aria-label={labels.nextMonth}
+            >
+              <ChevronRight className="size-4" aria-hidden />
+            </button>
           </div>
 
           <div>
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+            <p className="mb-3 font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
+              {labels.pickDate}
+            </p>
+            <div className="grid grid-cols-7 gap-y-1.5 text-center">
+              {weekdays.map((label) => (
+                <div key={label} className="pb-1 text-[11px] font-bold text-[#1e1e1e]/45 sm:text-xs">
+                  {label}
+                </div>
+              ))}
+              {cells.map((date, index) =>
+                date ? (
+                  <button
+                    key={date}
+                    type="button"
+                    disabled={disabled || !availableByDate.has(date)}
+                    onClick={() => selectDate(date)}
+                    className={`mx-auto flex size-9 items-center justify-center rounded-full text-sm transition-colors sm:size-10 ${dayClass(
+                      selected?.date === date,
+                      availableByDate.has(date),
+                      selected == null && date === todayYmd,
+                    )}`}
+                  >
+                    {Number(date.slice(-2))}
+                  </button>
+                ) : (
+                  <div key={`blank-${index}`} />
+                ),
+              )}
+            </div>
+          </div>
+
+          <div className="border-t border-[#ff6b00]/10 pt-4">
+            <p className="mb-3 font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
               {labels.pickTime}
             </p>
             {selectedDay ? (
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {selectedDay.slots.map((slot) => {
                   const isSelected =
                     selected?.startTime === slot.startTime && selected?.endTime === slot.endTime;
@@ -257,11 +194,7 @@ export function DeliverySlotPicker({
                           endTime: slot.endTime,
                         })
                       }
-                      className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
-                        isSelected
-                          ? 'border-gray-900 bg-gray-900 text-white'
-                          : 'border-gray-200 bg-white text-gray-800 hover:bg-gray-50'
-                      }`}
+                      className={`h-10 rounded-full border text-sm font-bold transition-colors ${timeClass(isSelected)}`}
                     >
                       {slot.label}
                     </button>
@@ -269,10 +202,12 @@ export function DeliverySlotPicker({
                 })}
               </div>
             ) : (
-              <p className="text-sm text-gray-500">{labels.pickDate}</p>
+              <p className="rounded-2xl bg-[#fff8e7] px-3 py-2.5 text-sm text-[#1e1e1e]/65">
+                {labels.pickDate}
+              </p>
             )}
           </div>
-        </>
+        </div>
       )}
     </div>
   );

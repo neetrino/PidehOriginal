@@ -2,7 +2,9 @@ import { notFound, redirect } from 'next/navigation';
 
 import { getCustomerBonusSummary } from '@/features/bonuses/application/queries';
 import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
+import { ProfilePageHeading } from '@/features/profile/ui/ProfilePageHeading';
 import { ProfileStatCard } from '@/features/profile/ui/ProfileStatCard';
+import { PROFILE_PANEL } from '@/features/profile/ui/profile-ui-classes';
 import { getCurrentUser } from '@/lib/auth/session';
 import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
@@ -34,11 +36,10 @@ export default async function ProfileBonusesPage({ params }: ProfileBonusesPageP
 
   return (
     <section className="profile-sheet-keep-frame space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          {dictionary.profile.bonuses}
-        </h1>
-      </div>
+      <ProfilePageHeading
+        eyebrow={dictionary.profile.loyaltyEyebrow}
+        title={dictionary.profile.bonuses}
+      />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <ProfileStatCard label={copy.available} value={summary.availableBalance} suffix=" AMD" />
@@ -47,23 +48,25 @@ export default async function ProfileBonusesPage({ params }: ProfileBonusesPageP
       </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">{copy.history}</h2>
+        <h2 className="mb-4 text-lg font-bold text-[#1e1e1e]">{copy.history}</h2>
         {summary.transactions.length === 0 ? (
-          <p className="text-sm text-gray-600">{copy.empty}</p>
+          <p className="rounded-[22px] bg-[#fff8e7] px-4 py-6 text-sm text-[#1e1e1e]/65">
+            {copy.empty}
+          </p>
         ) : (
-          <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <ul className={`${PROFILE_PANEL} divide-y divide-[#ff6b00]/10 p-0`}>
             {summary.transactions.map((row) => {
               const positive = row.delta > 0;
               return (
                 <li
                   key={row.id}
-                  className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5"
+                  className="flex flex-col gap-2 px-5 py-4 first:pt-5 sm:flex-row sm:items-center sm:justify-between sm:px-6"
                 >
                   <div className="min-w-0 space-y-1">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-bold text-[#1e1e1e]">
                       {typeLabel(row.type, copy.types)}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-[#1e1e1e]/55">
                       {formatYerevanDateTime(row.createdAt)}
                       {row.orderNumber ? (
                         <>
@@ -78,7 +81,7 @@ export default async function ProfileBonusesPage({ params }: ProfileBonusesPageP
                       ) : null}
                     </p>
                     {row.type === 'EARN' ? (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-[#1e1e1e]/55">
                         {row.expiresAt
                           ? copy.expires.replace('{date}', row.expiresAt.toISOString().slice(0, 10))
                           : copy.noExpiry}
@@ -88,8 +91,8 @@ export default async function ProfileBonusesPage({ params }: ProfileBonusesPageP
                   <p
                     className={
                       positive
-                        ? 'text-sm font-semibold text-emerald-700'
-                        : 'text-sm font-semibold text-gray-900'
+                        ? 'text-sm font-bold text-[#ff6b00]'
+                        : 'text-sm font-bold text-[#1e1e1e]'
                     }
                   >
                     {positive ? '+' : ''}

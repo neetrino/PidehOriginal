@@ -57,10 +57,13 @@ export function CheckoutProductsInOrder({
   }
 
   return (
-    <section className="mb-8 rounded-3xl bg-[#eef3f8] px-5 py-5 sm:px-6" aria-label={title}>
+    <section
+      className="mb-8 rounded-[26px] border-t-[3px] border-t-[#ff6b00] bg-white px-5 py-5 sm:px-6"
+      aria-label={title}
+    >
       <div className="mb-4 flex items-start justify-between gap-4">
-        <h2 className="text-sm font-bold tracking-wide text-gray-900 uppercase">{title}</h2>
-        <p className="shrink-0 text-sm text-gray-800">
+        <h2 className="font-display text-2xl leading-none text-[#1e1e1e] uppercase">{title}</h2>
+        <p className="shrink-0 text-sm font-bold text-[#1e1e1e]/70">
           {formatItemCount(itemCount, itemsOneLabel, itemsManyLabel)}
         </p>
       </div>
@@ -69,7 +72,7 @@ export function CheckoutProductsInOrder({
         {products.map((product) => (
           <li key={product.id} className="w-24 sm:w-28">
             <div className="relative">
-              <div className="relative aspect-square overflow-hidden rounded-2xl bg-white">
+              <div className="relative aspect-square overflow-hidden rounded-2xl bg-[#fff8e7]">
                 {product.imageUrl ? (
                   <Image
                     src={product.imageUrl}
@@ -79,7 +82,7 @@ export function CheckoutProductsInOrder({
                     className="object-contain p-2"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
+                  <div className="flex h-full w-full items-center justify-center text-xs text-[#1e1e1e]/35">
                     —
                   </div>
                 )}
@@ -88,18 +91,18 @@ export function CheckoutProductsInOrder({
                 type="button"
                 onClick={() => onRemove(product.id)}
                 disabled={pending}
-                className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white text-gray-700 shadow-sm transition-colors hover:text-gray-900 disabled:opacity-60"
+                className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#ff6b00] text-white transition-colors hover:bg-[#e85f00] disabled:opacity-60"
                 aria-label={removeItemLabel}
               >
                 <X className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
             </div>
-            <p className="mt-2 truncate text-sm text-gray-900" title={product.title}>
+            <p className="mt-2 truncate text-sm font-bold text-[#1e1e1e]" title={product.title}>
               {product.title}
             </p>
             {product.modifierSummary ? (
               <p
-                className="mt-0.5 line-clamp-2 text-xs text-gray-500"
+                className="mt-0.5 line-clamp-2 text-xs text-[#1e1e1e]/55"
                 title={product.modifierSummary}
               >
                 {product.modifierSummary}

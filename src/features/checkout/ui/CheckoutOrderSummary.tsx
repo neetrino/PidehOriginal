@@ -1,7 +1,13 @@
 'use client';
 
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import {
+  CHECKOUT_APPLY_BTN,
+  CHECKOUT_FIELD,
+  CHECKOUT_INSET,
+  CHECKOUT_PANEL,
+  CHECKOUT_PRIMARY_BTN,
+} from '@/features/checkout/ui/checkout-ui-classes';
 
 type CheckoutOrderSummaryProps = {
   title: string;
@@ -120,11 +126,13 @@ export function CheckoutOrderSummary({
 }: CheckoutOrderSummaryProps) {
   return (
     <div>
-      <Card className="sticky top-4 rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">{title}</h2>
+      <aside className={`${CHECKOUT_PANEL} sticky top-[5.75rem] md:top-28`}>
+        <h2 className="font-display mb-5 text-2xl leading-none text-[#1e1e1e] uppercase">{title}</h2>
 
-        <div className="mb-6 rounded-xl border border-gray-200 p-4">
-          <p className="mb-3 text-sm text-gray-700">{couponTitle}</p>
+        <div className={`mb-6 ${CHECKOUT_INSET}`}>
+          <p className="mb-3 font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
+            {couponTitle}
+          </p>
           <div className="flex gap-2">
             <input
               type="text"
@@ -140,13 +148,13 @@ export function CheckoutOrderSummary({
               placeholder={couponPlaceholder}
               autoComplete="off"
               disabled={isSubmitting || isApplyingCoupon}
-              className="h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className={`${CHECKOUT_FIELD} min-w-0 flex-1 !bg-white`}
             />
             <Button
               type="button"
               variant="secondary"
               size="md"
-              className="h-11 shrink-0 rounded-lg px-4 text-sm"
+              className={CHECKOUT_APPLY_BTN}
               disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
               onClick={onApplyCoupon}
             >
@@ -160,8 +168,10 @@ export function CheckoutOrderSummary({
           ) : null}
         </div>
 
-        <div className="mb-6 rounded-xl border border-gray-200 p-4">
-          <p className="mb-3 text-sm text-gray-700">{giftCardTitle}</p>
+        <div className={`mb-6 ${CHECKOUT_INSET}`}>
+          <p className="mb-3 font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
+            {giftCardTitle}
+          </p>
           <div className="flex gap-2">
             <input
               type="text"
@@ -177,13 +187,13 @@ export function CheckoutOrderSummary({
               placeholder={giftCardPlaceholder}
               autoComplete="off"
               disabled={isSubmitting || isApplyingGiftCard}
-              className="h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className={`${CHECKOUT_FIELD} min-w-0 flex-1 !bg-white`}
             />
             <Button
               type="button"
               variant="secondary"
               size="md"
-              className="h-11 shrink-0 rounded-lg px-4 text-sm"
+              className={CHECKOUT_APPLY_BTN}
               disabled={isSubmitting || isApplyingGiftCard || !giftCardDraft.trim()}
               onClick={onApplyGiftCard}
             >
@@ -196,50 +206,47 @@ export function CheckoutOrderSummary({
             </p>
           ) : null}
           {giftCardPreview ? (
-            <dl className="mt-3 space-y-1 text-xs text-gray-600">
+            <dl className="mt-3 space-y-1.5 rounded-2xl bg-white px-3 py-2.5 text-xs text-[#1e1e1e]/70">
               <div className="flex justify-between gap-3">
                 <dt>{giftCardInitialLabel}</dt>
-                <dd>{formatMoney(giftCardPreview.initialAmount)}</dd>
+                <dd className="font-bold text-[#1e1e1e]">{formatMoney(giftCardPreview.initialAmount)}</dd>
               </div>
               <div className="flex justify-between gap-3">
                 <dt>{giftCardUsedLabel}</dt>
-                <dd>{formatMoney(giftCardPreview.redeemAmount)}</dd>
+                <dd className="font-bold text-[#ff6b00]">{formatMoney(giftCardPreview.redeemAmount)}</dd>
               </div>
               <div className="flex justify-between gap-3">
                 <dt>{giftCardRemainingLabel}</dt>
-                <dd>{formatMoney(giftCardPreview.remainingBalance)}</dd>
+                <dd className="font-bold text-[#1e1e1e]">
+                  {formatMoney(giftCardPreview.remainingBalance)}
+                </dd>
               </div>
               <div className="flex justify-between gap-3">
                 <dt>{giftCardPayableLabel}</dt>
-                <dd>{formatMoney(giftCardPreview.payableAfter)}</dd>
+                <dd className="font-bold text-[#1e1e1e]">{formatMoney(giftCardPreview.payableAfter)}</dd>
               </div>
             </dl>
           ) : null}
         </div>
 
         {bonus?.enabled ? (
-          <div className="mb-6 rounded-xl border border-gray-200 p-4">
-            <div className="mb-3 flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium text-gray-900">{bonus.labels.title}</p>
-                <p className="mt-1 text-xs text-gray-500">
-                  {bonus.labels.available.replace(
-                    '{amount}',
-                    bonus.formatMoney(bonus.availableBalance),
-                  )}
-                </p>
-              </div>
-              <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={bonus.useBonuses}
-                  disabled={isSubmitting || bonus.maxRedeem <= 0}
-                  onChange={(event) => bonus.onToggle(event.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-400"
-                />
-                {bonus.labels.useBonuses}
-              </label>
-            </div>
+          <div className={`mb-6 ${CHECKOUT_INSET}`}>
+            <p className="font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
+              {bonus.labels.title}
+            </p>
+            <p className="mt-2 text-xs text-[#1e1e1e]/55">
+              {bonus.labels.available.replace('{amount}', bonus.formatMoney(bonus.availableBalance))}
+            </p>
+            <label className="mt-3 flex cursor-pointer items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-bold text-[#1e1e1e]">
+              <input
+                type="checkbox"
+                checked={bonus.useBonuses}
+                disabled={isSubmitting || bonus.maxRedeem <= 0}
+                onChange={(event) => bonus.onToggle(event.target.checked)}
+                className="h-4 w-4 rounded border-[#ff6b00]/40 text-[#ff6b00] accent-[#ff6b00] focus:ring-[#ff6b00]"
+              />
+              {bonus.labels.useBonuses}
+            </label>
             {bonus.useBonuses ? (
               <div className="flex gap-2">
                 <input
@@ -254,13 +261,13 @@ export function CheckoutOrderSummary({
                   }}
                   disabled={isSubmitting}
                   aria-label={bonus.labels.amount}
-                  className="h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                  className={`${CHECKOUT_FIELD} min-w-0 flex-1 !bg-white`}
                 />
                 <Button
                   type="button"
                   variant="secondary"
                   size="md"
-                  className="h-11 shrink-0 rounded-lg px-3 text-sm"
+                  className={CHECKOUT_APPLY_BTN}
                   disabled={isSubmitting || bonus.maxRedeem <= 0}
                   onClick={bonus.onUseMax}
                 >
@@ -271,48 +278,50 @@ export function CheckoutOrderSummary({
           </div>
         ) : null}
 
-        <div className="mb-6 space-y-4">
-          <div className="flex justify-between text-gray-600">
+        <div className="mb-5 space-y-2.5 text-sm">
+          <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
             <span>{subtotalLabel}</span>
-            <span>{subtotalFormatted}</span>
+            <span className="font-bold text-[#1e1e1e]">{subtotalFormatted}</span>
           </div>
           {discountFormatted ? (
-            <div className="flex justify-between text-gray-600">
+            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
               <span>{discountLabel}</span>
-              <span className="text-emerald-700">-{discountFormatted}</span>
+              <span className="text-[#ff6b00]">-{discountFormatted}</span>
             </div>
           ) : null}
           {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
-            <div className="flex justify-between text-gray-600">
+            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
               <span>{bonus.labels.applied}</span>
-              <span className="text-emerald-700">-{bonus.formatMoney(bonus.redeemAmount)}</span>
+              <span className="text-[#ff6b00]">-{bonus.formatMoney(bonus.redeemAmount)}</span>
             </div>
           ) : null}
           {giftCardPreview && giftCardPreview.redeemAmount > 0 ? (
-            <div className="flex justify-between text-gray-600">
+            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
               <span>{giftCardAppliedLabel}</span>
-              <span className="text-emerald-700">-{formatMoney(giftCardPreview.redeemAmount)}</span>
+              <span className="text-[#ff6b00]">-{formatMoney(giftCardPreview.redeemAmount)}</span>
             </div>
           ) : null}
-          <div className="flex justify-between text-gray-600">
-            <span>{shippingLabel}</span>
-            <span className="text-right">{shippingFormatted}</span>
+          <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
+            <span className="shrink-0">{shippingLabel}</span>
+            <span className="max-w-[62%] text-right text-xs leading-snug font-bold text-[#1e1e1e]">
+              {shippingFormatted}
+            </span>
           </div>
           {participantsPrepaidFormatted && participantsPrepaidLabel ? (
-            <div className="flex justify-between text-gray-600">
+            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
               <span>{participantsPrepaidLabel}</span>
-              <span className="text-emerald-700">-{participantsPrepaidFormatted}</span>
+              <span className="text-[#ff6b00]">-{participantsPrepaidFormatted}</span>
             </div>
           ) : null}
-          <div className="flex justify-between text-gray-600">
+          <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
             <span>{taxLabel}</span>
-            <span>{taxFormatted}</span>
+            <span className="font-bold text-[#1e1e1e]">{taxFormatted}</span>
           </div>
-          <div className="border-t border-gray-200 pt-4">
-            <div className="flex justify-between text-lg font-bold text-gray-900">
-              <span>{totalLabel}</span>
-              <span>{totalFormatted}</span>
-            </div>
+          <div className="mt-1 flex items-end justify-between gap-3 rounded-[18px] bg-[#fff8e7] px-4 py-3">
+            <span className="font-display text-xl leading-none text-[#1e1e1e] uppercase">
+              {totalLabel}
+            </span>
+            <span className="font-display text-2xl leading-none text-[#ff6b00]">{totalFormatted}</span>
           </div>
         </div>
 
@@ -326,12 +335,12 @@ export function CheckoutOrderSummary({
           type="submit"
           variant="primary"
           size="lg"
-          className="h-12 w-full"
+          className={CHECKOUT_PRIMARY_BTN}
           disabled={isSubmitting}
         >
           {isSubmitting ? processingLabel : placeOrderLabel}
         </Button>
-      </Card>
+      </aside>
     </div>
   );
 }

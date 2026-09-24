@@ -18,8 +18,17 @@ export function ProfileSidebar({ locale, user, dictionary }: ProfileSidebarProps
       className="flex w-full flex-col overflow-hidden rounded-[28px] border border-[#ff6b00]/15 bg-[#fff8e7] shadow-[0_14px_32px_rgba(30,30,30,0.08)] lg:h-full lg:min-h-0"
       aria-label={dictionary.title}
     >
-      <div className="shrink-0 border-b border-[#ff6b00]/12 bg-[#ffd54a]/35 p-5">
-        <div className="flex flex-col items-center gap-4 text-center">
+      <div className="relative shrink-0 overflow-hidden border-b border-[#ff6b00]/12 p-5">
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/brand/pideh/login-food-bg.png')" }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-[#fff8e7]/45 via-[#fff8e7]/72 to-[#ffd54a]/80"
+        />
+        <div className="relative flex flex-col items-center gap-4 text-center">
           <div className="flex size-[4.5rem] items-center justify-center rounded-full bg-[#ff6b00] text-xl font-bold text-white shadow-[0_0_0_4px_#fff8e7,0_8px_20px_rgba(255,107,0,0.35)]">
             {user.firstName.slice(0, 1).toUpperCase()}
             {user.lastName.slice(0, 1).toUpperCase()}
@@ -30,9 +39,9 @@ export function ProfileSidebar({ locale, user, dictionary }: ProfileSidebarProps
             </p>
             <p className="text-xs font-bold tracking-wide text-[#1e1e1e]/60">{user.lastName}</p>
           </div>
-        </div>
-        <div className="mt-5 rounded-2xl bg-white/80 px-3.5 py-2.5 text-left text-xs font-medium break-words text-[#1e1e1e]/75 sm:text-sm">
-          {user.email}
+          <div className="w-full rounded-2xl bg-white/85 px-3.5 py-2.5 text-left text-xs font-medium break-words text-[#1e1e1e]/75 sm:text-sm">
+            {user.email}
+          </div>
         </div>
       </div>
 

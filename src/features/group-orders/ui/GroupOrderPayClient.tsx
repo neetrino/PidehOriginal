@@ -79,7 +79,7 @@ export function GroupOrderPayClient({
                 id: 'idram' as const,
                 name: labels.payIdram,
                 description: labels.payIdramDescription,
-                logo: '/assets/payments/idram.svg',
+                logo: '/assets/payments/idram.png',
               },
             ] as const
           ).map((option) => (
@@ -99,7 +99,9 @@ export function GroupOrderPayClient({
                 onChange={() => setProvider(option.id)}
                 className="sr-only"
               />
-              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
+              <span
+                className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white"
+              >
                 <Image src={option.logo} alt="" width={36} height={36} className="object-contain" />
               </span>
               <span className="min-w-0 flex-1">

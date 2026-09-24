@@ -49,7 +49,8 @@
     "title": "Сдача с купюры",
     "hint": "Выберите купюру, которой будете платить, чтобы курьер привёз сдачу.",
     "aria": "Купюра для сдачи",
-    "select": "Выберите купюру, которой будете платить"
+    "select": "Выберите купюру, которой будете платить",
+    "notNeeded": "Сдача не нужна"
   },
   "shipping": {
     "storePickup": "Самовывоз",
@@ -68,8 +69,8 @@
     "cashOnDeliveryDescription": "Оплатите наличными при получении заказа",
     "idram": "Idram",
     "idramDescription": "Оплата через Idram или картой",
-    "arca": "ArCa",
-    "arcaDescription": "Оплата картой ArCa"
+    "arca": "Картой",
+    "arcaDescription": "Оплатите картой Visa, Mastercard или ArCa"
   },
   "coupon": {
     "title": "Есть промокод?",

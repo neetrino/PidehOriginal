@@ -31,7 +31,7 @@ export const checkoutSchema = z
       .string()
       .regex(/^([01]\d|2[0-3]):([0-5]\d)$/)
       .optional(),
-    cashChangeAmount: z.coerce.number().int().min(1).max(100_000_000).optional(),
+    cashChangeAmount: z.coerce.number().int().min(0).max(100_000_000).optional(),
     region: z.string().trim().max(80).optional(),
     postalCode: z.string().trim().max(32).optional(),
     idempotencyKey: z.string().trim().min(8).max(128),

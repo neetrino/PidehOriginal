@@ -18,6 +18,9 @@ export type CashChangeDenominationView = {
 
 const DEFAULT_AMOUNTS = [10_000, 20_000, 50_000, 100_000] as const;
 
+/** Checkout sentinel: the customer does not need change. */
+export const CASH_CHANGE_NOT_NEEDED = 0;
+
 /** Default cash-change options offered at checkout for COD. */
 export function createDefaultCashChangeDenominations(): CashChangeDenomination[] {
   return DEFAULT_AMOUNTS.map((amount, index) => ({

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState, useTransition, type FormEvent } from 'react';
 
-import { Card } from '@/components/ui/Card';
+import { CHECKOUT_PANEL } from '@/features/checkout/ui/checkout-ui-classes';
 import type { CheckoutOrderProduct } from '@/features/checkout/ui/checkout-order-product';
 import { previewCouponAction } from '@/features/checkout/application/preview-coupon';
 import { createOrderAction } from '@/features/checkout/create-order';
@@ -67,6 +67,7 @@ type CheckoutLabels = {
   cashChangeTitle: string;
   cashChangeHint: string;
   cashChangeAria: string;
+  cashChangeNotNeeded: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
   idram: string;
@@ -215,19 +216,23 @@ export function CheckoutForm({
         id: 'cash_on_delivery' as const,
         name: labels.cashOnDelivery,
         description: labels.cashOnDeliveryDescription,
-        logoSrc: null,
+        logos: ['/assets/payments/cash-bag.png'],
       },
       {
         id: 'idram' as const,
         name: labels.idram,
         description: labels.idramDescription,
-        logoSrc: '/assets/payments/idram.svg',
+        logos: ['/assets/payments/idram.png'],
       },
       {
         id: 'arca' as const,
         name: labels.arca,
         description: labels.arcaDescription,
-        logoSrc: '/assets/payments/arca.png',
+        logos: [
+          '/assets/payments/arca.png',
+          '/assets/payments/mastercard.png',
+          '/assets/payments/visa.png',
+        ],
       },
     ],
     [
@@ -368,16 +373,18 @@ export function CheckoutForm({
   if (!hasItems) {
     return (
       <div className="py-12">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
-        <Card className="rounded-2xl border border-gray-200/80 p-6 text-center shadow-none">
-          <p className="mb-4 text-gray-600">{labels.cartEmpty}</p>
+        <h1 className="font-display mb-8 text-3xl leading-[0.9] text-[#1e1e1e] uppercase sm:text-4xl">
+          {labels.title}
+        </h1>
+        <div className={`${CHECKOUT_PANEL} text-center`}>
+          <p className="mb-4 text-[#1e1e1e]/65">{labels.cartEmpty}</p>
           <Link
             href={productsHref}
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-gray-900 px-4 text-sm font-medium text-white hover:bg-gray-800"
+            className="inline-flex h-12 items-center justify-center rounded-full bg-[#ff6b00] px-8 font-bold text-white hover:bg-[#e85f00]"
           >
             {labels.continueShopping}
           </Link>
-        </Card>
+        </div>
       </div>
     );
   }
@@ -446,7 +453,9 @@ export function CheckoutForm({
 
   return (
     <div className="min-w-0 py-8 sm:py-12">
-      <h1 className="mb-8 text-[clamp(1.75rem,5vw,1.875rem)] font-bold text-gray-900">{labels.title}</h1>
+      <h1 className="font-display mb-8 text-[clamp(1.75rem,4vw,2.25rem)] leading-[0.9] text-[#1e1e1e] uppercase">
+        {labels.title}
+      </h1>
 
       <CheckoutProductsInOrder
         products={orderProducts}

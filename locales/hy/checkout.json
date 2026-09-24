@@ -49,7 +49,8 @@
     "title": "Մանր տալ",
     "hint": "Ընտրեք թղթադրամը, որով կվճարեք, որպեսզի առաքիչը մանր բերի։",
     "aria": "Մանրի անվանում",
-    "select": "Ընտրեք թղթադրամը, որով կվճարեք"
+    "select": "Ընտրեք թղթադրամը, որով կվճարեք",
+    "notNeeded": "Մանր պետք չէ"
   },
   "shipping": {
     "storePickup": "Ինքնաառաքում",
@@ -68,8 +69,8 @@
     "cashOnDeliveryDescription": "Վճարեք կանխիկ՝ պատվերը ստանալիս",
     "idram": "Idram",
     "idramDescription": "Վճարեք Idram դրամապանակով կամ քարտով",
-    "arca": "ArCa",
-    "arcaDescription": "Վճարեք ArCa քարտով"
+    "arca": "Քարտով",
+    "arcaDescription": "Վճարեք Visa, Mastercard կամ ArCa քարտով"
   },
   "coupon": {
     "title": "Ունե՞ք պրոմոկոդ",
