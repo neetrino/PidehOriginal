@@ -1,5 +1,9 @@
 export const PROFILE_PANEL =
-  'rounded-[22px] border border-[#ff6b00]/12 bg-white p-5 shadow-[0_10px_24px_rgba(30,30,30,0.05)] sm:p-7 lg:p-8';
+  'rounded-[26px] border-t-[3px] border-t-[#ff6b00] bg-white p-5 sm:p-7 lg:p-8';
+
+/** List item card: white surface, orange edge, no drop shadow. */
+export const PROFILE_LIST_CARD =
+  'rounded-[22px] border-l-[3px] border-l-[#ff6b00] bg-white p-4 sm:p-5';
 
 export const PROFILE_FIELD =
   'h-11 w-full rounded-[18px] border-[1.5px] border-[#1e1e1e]/12 bg-[#fff8e7] px-4 text-[#1e1e1e] outline-none transition placeholder:text-[#1e1e1e]/35 focus:border-[#ff6b00] focus:ring-2 focus:ring-[#ff6b00]/20';

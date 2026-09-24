@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/Button';
-import { PROFILE_OUTLINE_BTN } from '@/features/profile/ui/profile-ui-classes';
+import { PROFILE_LIST_CARD, PROFILE_OUTLINE_BTN } from '@/features/profile/ui/profile-ui-classes';
 import type { CustomerAddressListItem } from '@/features/profile/application/address-queries';
 
 type ProfileAddressCardProps = {
@@ -27,7 +27,7 @@ export function ProfileAddressCard({
   onDelete,
 }: ProfileAddressCardProps) {
   return (
-    <div className="rounded-[22px] border border-[#ff6b00]/12 bg-[#fff8e7] p-4 sm:p-5 lg:p-6">
+    <div className={`${PROFILE_LIST_CARD} lg:p-6`}>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">

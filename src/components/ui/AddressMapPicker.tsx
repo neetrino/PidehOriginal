@@ -175,10 +175,10 @@ export function AddressMapPicker({
           setExiting(false);
           setOpen(true);
         }}
-        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 text-sm font-medium text-gray-800 shadow-sm transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full border-[1.5px] border-[#ff6b00]/30 bg-white px-3 text-sm font-bold text-[#1e1e1e] transition-colors hover:border-[#ff6b00] hover:bg-[#fff8e7] disabled:cursor-not-allowed disabled:opacity-50"
         aria-label={labels.openMap}
       >
-        <MapPin className="h-4 w-4 text-gray-700" aria-hidden />
+        <MapPin className="h-4 w-4 text-[#ff6b00]" aria-hidden />
         <span className="hidden sm:inline">{labels.openMap}</span>
       </button>
 
@@ -198,14 +198,14 @@ export function AddressMapPicker({
                 onClick={closePicker}
               />
               <div
-                className={`relative z-[1] flex max-h-[min(90dvh,calc(100dvh-2rem))] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
+                className={`relative z-[1] flex max-h-[min(90dvh,calc(100dvh-2rem))] w-full max-w-2xl flex-col overflow-hidden rounded-[26px] border-t-[3px] border-t-[#ff6b00] bg-white ${panelClass}`}
                 onAnimationEnd={handlePanelAnimationEnd}
               >
                 <MapPickerHeader labels={labels} onClose={closePicker} resolving={resolving} />
                 <div className="relative min-h-[min(40dvh,320px)] flex-1 bg-gray-100 sm:min-h-[420px]">
                   <div ref={mapElementRef} className="absolute inset-0" />
                   {loading ? (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-gray-600">
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-[#1e1e1e]/60">
                       …
                     </div>
                   ) : null}
@@ -291,16 +291,16 @@ function MapPickerHeader({
   resolving: boolean;
 }) {
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-5 py-4">
+    <div className="flex items-start justify-between gap-3 border-b border-[#ff6b00]/15 px-5 py-4">
       <div>
-        <h2 id="address-map-picker-title" className="text-lg font-semibold text-gray-900">
+        <h2 id="address-map-picker-title" className="font-display text-2xl leading-none text-[#1e1e1e] uppercase">
           {labels.title}
         </h2>
-        <p className="mt-1 text-sm text-gray-600">{labels.hint}</p>
+        <p className="mt-2 text-sm text-[#1e1e1e]/60">{labels.hint}</p>
       </div>
       <button
         type="button"
-        className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+        className="rounded-full p-2 text-[#1e1e1e]/55 hover:bg-[#fff8e7] hover:text-[#ff6b00]"
         aria-label={labels.cancel}
         disabled={resolving}
         onClick={onClose}
@@ -329,15 +329,15 @@ function MapPickerFooter({
   onConfirm: () => void;
 }) {
   return (
-    <div className="space-y-3 border-t border-gray-100 px-5 py-4">
+    <div className="space-y-3 border-t border-[#ff6b00]/15 px-5 py-4">
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      <p className="min-h-5 text-sm text-gray-700">{resolving ? labels.resolving : address}</p>
+      <p className="min-h-5 text-sm text-[#1e1e1e]/70">{resolving ? labels.resolving : address}</p>
       <div className="flex flex-wrap items-center justify-end gap-3">
         <button
           type="button"
           disabled={resolving}
           onClick={onCancel}
-          className="inline-flex h-10 items-center justify-center rounded-full border border-gray-200 bg-white px-5 text-sm font-medium text-gray-800 hover:bg-gray-50 disabled:opacity-50"
+          className="inline-flex h-10 items-center justify-center rounded-full border border-[#ff6b00]/30 bg-white px-5 text-sm font-bold text-[#1e1e1e] hover:bg-[#fff8e7] disabled:opacity-50"
         >
           {labels.cancel}
         </button>
@@ -345,7 +345,7 @@ function MapPickerFooter({
           type="button"
           disabled={!canConfirm}
           onClick={onConfirm}
-          className="inline-flex h-10 items-center justify-center rounded-full bg-gray-900 px-5 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
+          className="inline-flex h-10 items-center justify-center rounded-full bg-[#ff6b00] px-5 text-sm font-bold text-white hover:bg-[#e85f00] disabled:opacity-50"
         >
           {labels.confirm}
         </button>

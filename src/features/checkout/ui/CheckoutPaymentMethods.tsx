@@ -3,15 +3,18 @@
 import { useState } from 'react';
 
 import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
+import {
+  CHECKOUT_PANEL,
+  CHECKOUT_RADIO_OFF,
+  CHECKOUT_RADIO_ON,
+  CHECKOUT_SECTION_TITLE,
+} from '@/features/checkout/ui/checkout-ui-classes';
 
-const RADIO_SELECTED = 'border-gray-900 bg-gray-50';
-const RADIO_IDLE = 'border-gray-300 hover:bg-gray-50';
-
-type PaymentOption = {
+export type PaymentOption = {
   id: CheckoutPaymentMethod;
   name: string;
   description: string;
-  logoSrc: string | null;
+  logos: string[];
 };
 
 type CheckoutPaymentMethodsProps = {
@@ -32,18 +35,19 @@ export function CheckoutPaymentMethods({
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({});
 
   return (
-    <section className="rounded-2xl border border-gray-200/80 bg-white p-6">
-      <h2 className="mb-6 text-xl font-semibold text-gray-900">{title}</h2>
+    <section className={CHECKOUT_PANEL}>
+      <h2 className={CHECKOUT_SECTION_TITLE}>{title}</h2>
       <div className="space-y-3">
         {options.map((option) => {
           const selected = value === option.id;
-          const showFallback = !option.logoSrc || logoErrors[option.id];
+          const logos = option.logos.filter((src) => !logoErrors[src]);
+          const showFallback = logos.length === 0;
 
           return (
             <label
               key={option.id}
-              className={`flex cursor-pointer items-center rounded-lg border-2 p-4 transition-all ${
-                selected ? RADIO_SELECTED : RADIO_IDLE
+              className={`flex cursor-pointer items-center rounded-[18px] border-2 p-4 transition-colors ${
+                selected ? CHECKOUT_RADIO_ON : CHECKOUT_RADIO_OFF
               }`}
             >
               <input
@@ -52,14 +56,14 @@ export function CheckoutPaymentMethods({
                 value={option.id}
                 checked={selected}
                 onChange={() => onChange(option.id)}
-                className="mr-4"
+                className="mr-4 accent-[#ff6b00]"
                 disabled={disabled}
               />
               <div className="flex flex-1 items-center gap-4">
-                <div className="relative flex h-12 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded border border-gray-200 bg-white">
-                  {showFallback ? (
+                {showFallback ? (
+                  <div className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#ff6b00]/15 bg-white">
                     <svg
-                      className="h-8 w-8 text-gray-400"
+                      className="h-8 w-8 text-[#ff6b00]/70"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -72,20 +76,29 @@ export function CheckoutPaymentMethods({
                         d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
                       />
                     </svg>
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element -- payment logos
-                    <img
-                      src={option.logoSrc ?? ''}
-                      alt={option.name}
-                      className="h-full w-full object-contain p-1.5"
-                      loading="lazy"
-                      onError={() => setLogoErrors((prev) => ({ ...prev, [option.id]: true }))}
-                    />
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {logos.map((src) => (
+                      <span
+                        key={src}
+                        className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-[#ff6b00]/15 bg-white"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element -- payment logos */}
+                        <img
+                          src={src}
+                          alt=""
+                          className="h-full w-full object-contain p-1"
+                          loading="lazy"
+                          onError={() => setLogoErrors((prev) => ({ ...prev, [src]: true }))}
+                        />
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <div className="flex-1">
-                  <div className="font-medium text-gray-900">{option.name}</div>
-                  <div className="text-sm text-gray-600">{option.description}</div>
+                  <div className="font-bold text-[#1e1e1e]">{option.name}</div>
+                  <div className="text-sm text-[#1e1e1e]/60">{option.description}</div>
                 </div>
               </div>
             </label>

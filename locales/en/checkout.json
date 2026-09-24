@@ -49,7 +49,8 @@
     "title": "Need change from",
     "hint": "Select the banknote you will pay with so the courier can bring change.",
     "aria": "Cash change denomination",
-    "select": "Please select the banknote you will pay with"
+    "select": "Please select the banknote you will pay with",
+    "notNeeded": "No change needed"
   },
   "shipping": {
     "storePickup": "Store Pickup",
@@ -68,8 +69,8 @@
     "cashOnDeliveryDescription": "Pay cash when you receive your order",
     "idram": "Idram",
     "idramDescription": "Pay with Idram wallet or card",
-    "arca": "ArCa",
-    "arcaDescription": "Pay with ArCa card"
+    "arca": "Card",
+    "arcaDescription": "Pay with a Visa, Mastercard, or ArCa card"
   },
   "coupon": {
     "title": "Have a coupon?",

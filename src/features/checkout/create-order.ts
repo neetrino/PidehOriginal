@@ -54,6 +54,7 @@ import {
 import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
 import { DEFAULT_DELIVERY_CITY } from '@/features/delivery/domain/service-area';
 import {
+  CASH_CHANGE_NOT_NEEDED,
   findActiveCashChangeByAmount,
   listActiveCashChangeDenominations,
 } from '@/features/delivery/domain/cash-change';
@@ -175,18 +176,22 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
           error: 'Please select the banknote you will pay with.',
         };
       }
-      const matched = findActiveCashChangeByAmount(
-        deliverySettings.cashChangeDenominations,
-        input.cashChangeAmount,
-      );
-      if (!matched) {
-        return {
-          ok: false,
-          error: 'Selected cash-change amount is no longer available.',
-        };
+      if (input.cashChangeAmount === CASH_CHANGE_NOT_NEEDED) {
+        cashChangeAmount = undefined;
+      } else {
+        const matched = findActiveCashChangeByAmount(
+          deliverySettings.cashChangeDenominations,
+          input.cashChangeAmount,
+        );
+        if (!matched) {
+          return {
+            ok: false,
+            error: 'Selected cash-change amount is no longer available.',
+          };
+        }
+        cashChangeAmount = matched.amount;
+        cashChangeImageKey = matched.imageObjectKey ?? undefined;
       }
-      cashChangeAmount = matched.amount;
-      cashChangeImageKey = matched.imageObjectKey ?? undefined;
     }
   }
 

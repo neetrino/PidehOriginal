@@ -1,21 +1,26 @@
 'use client';
 
-import { Card } from '@/components/ui/Card';
+import {
+  CHECKOUT_FIELD,
+  CHECKOUT_LABEL,
+  CHECKOUT_PANEL,
+  CHECKOUT_SECTION_TITLE,
+} from '@/features/checkout/ui/checkout-ui-classes';
 import { AddressAutocomplete } from '@/components/ui/AddressAutocomplete';
 import { AddressMapPicker } from '@/components/ui/AddressMapPicker';
 import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
 import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
 import { CashChangePicker } from '@/features/checkout/ui/CashChangePicker';
-import { CheckoutPaymentMethods } from '@/features/checkout/ui/CheckoutPaymentMethods';
+import {
+  CheckoutPaymentMethods,
+  type PaymentOption,
+} from '@/features/checkout/ui/CheckoutPaymentMethods';
 import { CheckoutShippingMethods } from '@/features/checkout/ui/CheckoutShippingMethods';
 import { DeliverySlotPicker } from '@/features/checkout/ui/DeliverySlotPicker';
 import type { CashChangeDenominationView } from '@/features/delivery/domain/cash-change';
 import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delivery-schedule';
 import type { SelectedDeliverySlot } from '@/features/delivery/domain/delivery-schedule';
 import type { Locale } from '@/lib/i18n/config';
-
-const FIELD_CLASS =
-  'h-11 w-full rounded-2xl border border-gray-200 px-4 text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300 disabled:bg-gray-50';
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -49,14 +54,8 @@ type CheckoutDetailsLabels = {
   cashChangeTitle: string;
   cashChangeHint: string;
   cashChangeAria: string;
+  cashChangeNotNeeded: string;
   pickupStoreHint: string;
-};
-
-type PaymentOption = {
-  id: CheckoutPaymentMethod;
-  name: string;
-  description: string;
-  logoSrc: string | null;
 };
 
 type ShippingOption = {
@@ -126,35 +125,35 @@ export function CheckoutDetailsSections({
 
   return (
     <div className="space-y-6 lg:col-span-2">
-      <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">{labels.contactInformation}</h2>
+      <section className={CHECKOUT_PANEL}>
+        <h2 className={CHECKOUT_SECTION_TITLE}>{labels.contactInformation}</h2>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={CHECKOUT_LABEL}>
               {labels.firstName}
               <input
                 name="firstName"
                 required
                 defaultValue={defaultFirstName}
                 disabled={pending}
-                className={FIELD_CLASS}
+                className={CHECKOUT_FIELD}
                 autoComplete="given-name"
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={CHECKOUT_LABEL}>
               {labels.lastName}
               <input
                 name="lastName"
                 required
                 defaultValue={defaultLastName}
                 disabled={pending}
-                className={FIELD_CLASS}
+                className={CHECKOUT_FIELD}
                 autoComplete="family-name"
               />
             </label>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={CHECKOUT_LABEL}>
               {labels.email}
               <input
                 name="contactEmail"
@@ -162,11 +161,11 @@ export function CheckoutDetailsSections({
                 required
                 defaultValue={defaultEmail}
                 disabled={pending}
-                className={FIELD_CLASS}
+                className={CHECKOUT_FIELD}
                 autoComplete="email"
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={CHECKOUT_LABEL}>
               {labels.phone}
               <input
                 name="contactPhone"
@@ -174,13 +173,13 @@ export function CheckoutDetailsSections({
                 defaultValue={defaultPhone}
                 placeholder={labels.phonePlaceholder}
                 disabled={pending}
-                className={FIELD_CLASS}
+                className={CHECKOUT_FIELD}
                 autoComplete="tel"
               />
             </label>
           </div>
         </div>
-      </Card>
+      </section>
 
       <CheckoutShippingMethods
         title={labels.shippingMethod}
@@ -190,13 +189,13 @@ export function CheckoutDetailsSections({
         disabled={pending}
       />
 
-      <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">{labels.shippingAddress}</h2>
+      <section className={CHECKOUT_PANEL}>
+        <h2 className={CHECKOUT_SECTION_TITLE}>{labels.shippingAddress}</h2>
         <div className="space-y-4">
           {isDelivery ? (
             <>
               <div className="space-y-1.5">
-                <span className="text-sm font-medium text-gray-700">{labels.address}</span>
+                <span className="text-sm font-bold text-[#1e1e1e]">{labels.address}</span>
                 <div className="flex items-start gap-2">
                   <div className="min-w-0 flex-1">
                     <AddressAutocomplete
@@ -206,7 +205,7 @@ export function CheckoutDetailsSections({
                       onValueChange={onLine1Change}
                       placeholder={labels.addressPlaceholder}
                       disabled={pending}
-                      className={FIELD_CLASS}
+                      className={CHECKOUT_FIELD}
                       languageCode={locale}
                     />
                   </div>
@@ -226,22 +225,22 @@ export function CheckoutDetailsSections({
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+                <label className={CHECKOUT_LABEL}>
                   {labels.floor}
                   <input
                     name="floor"
                     disabled={pending}
                     placeholder={labels.floorPlaceholder}
-                    className={FIELD_CLASS}
+                    className={CHECKOUT_FIELD}
                   />
                 </label>
-                <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+                <label className={CHECKOUT_LABEL}>
                   {labels.intercomCode}
                   <input
                     name="intercomCode"
                     disabled={pending}
                     placeholder={labels.intercomCodePlaceholder}
-                    className={FIELD_CLASS}
+                    className={CHECKOUT_FIELD}
                   />
                 </label>
               </div>
@@ -262,7 +261,7 @@ export function CheckoutDetailsSections({
               />
             </>
           ) : (
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#1e1e1e]/65">
               {storePickupAddress
                 ? `${labels.pickupStoreHint} ${storePickupAddress}`
                 : labels.pickupStoreHint}
@@ -279,20 +278,21 @@ export function CheckoutDetailsSections({
                 title: labels.cashChangeTitle,
                 hint: labels.cashChangeHint,
                 ariaLabel: labels.cashChangeAria,
+                notNeeded: labels.cashChangeNotNeeded,
               }}
             />
           ) : null}
         </div>
         {isDelivery && deliveryQuotePending ? (
-          <p className="mt-2 text-sm text-gray-500">{labels.calculatingDelivery}</p>
+          <p className="mt-2 text-sm text-[#1e1e1e]/55">{labels.calculatingDelivery}</p>
         ) : null}
         {isDelivery && deliveryQuoteError ? (
           <p className="mt-2 text-sm text-red-700">{deliveryQuoteError}</p>
         ) : null}
         {isDelivery && !deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
-          <p className="mt-2 text-sm text-gray-600">{deliveryQuoteHint}</p>
+          <p className="mt-2 text-sm text-[#1e1e1e]/65">{deliveryQuoteHint}</p>
         ) : null}
-      </Card>
+      </section>
 
       <CheckoutPaymentMethods
         title={labels.paymentMethod}

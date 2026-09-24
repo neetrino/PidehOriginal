@@ -8,10 +8,10 @@ type NavEllipse3469Props = {
 const CRESCENT_W = 268;
 const CRESCENT_H = 739;
 const DOCK_WIDTH = 440;
-/** Horizontal span of the rotated crescent. */
+/** Wide enough that the crescent tips sit past the screen edges and stay clipped. */
 const DOCK_LENGTH_SCALE = (DOCK_WIDTH / CRESCENT_H) * 1.5;
-/** Band thickness vs length — a bit slimmer than a uniform scale. */
-const DOCK_THICKNESS_SCALE = DOCK_LENGTH_SCALE * 0.84;
+/** Band height, a little smaller than a uniform scale, independent of the span. */
+const DOCK_THICKNESS_SCALE = (DOCK_WIDTH / CRESCENT_H) * 1.1;
 /** Scaled band height after rotation — shared with icon layout. */
 export const NAV_DOCK_HEIGHT_PX = Math.round(CRESCENT_W * DOCK_THICKNESS_SCALE);
 /** Nudge the band slightly toward the bottom of the screen. */
@@ -28,11 +28,11 @@ export function NavEllipse3469({ className = '' }: NavEllipse3469Props) {
       aria-hidden="true"
       data-node-id="268:526"
       data-name="Ellipse 3469"
-      className={`pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-visible ${className}`}
+      className={`pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-hidden ${className}`}
       style={{ height: NAV_DOCK_HEIGHT_PX }}
     >
       <div
-        className="relative w-full overflow-visible"
+        className="relative w-full overflow-hidden"
         style={{ height: NAV_DOCK_HEIGHT_PX }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

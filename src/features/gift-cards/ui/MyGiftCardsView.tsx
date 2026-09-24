@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import { BuyGiftCardDrawer } from '@/features/gift-cards/ui/BuyGiftCardDrawer';
+import { PROFILE_LIST_CARD } from '@/features/profile/ui/profile-ui-classes';
 import type {
   CustomerGiftCardListItem,
   GiftCardDetail,
@@ -77,7 +78,7 @@ export function MyGiftCardsView({
   return (
     <section className="profile-sheet-keep-frame space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold tracking-tight text-[#1e1e1e] sm:text-3xl">
+        <h1 className="font-display text-3xl leading-[0.9] text-[#1e1e1e] uppercase sm:text-4xl">
           {copy.title}
         </h1>
         <button
@@ -119,13 +120,13 @@ export function MyGiftCardsView({
       </div>
 
       {filteredDetails.length === 0 ? (
-        <p className="text-sm text-[#1e1e1e]/65">{copy.empty}</p>
+        <p className="rounded-[22px] bg-[#fff8e7] px-4 py-6 text-sm text-[#1e1e1e]/65">{copy.empty}</p>
       ) : (
         <ul className="space-y-4">
           {filteredDetails.map(({ card, detail }) => (
             <li
               key={card.id}
-              className="overflow-hidden rounded-2xl border border-[#ff6b00]/15 bg-white shadow-[0_8px_20px_rgba(30,30,30,0.04)]"
+              className={PROFILE_LIST_CARD}
             >
               <div className="space-y-2 px-4 py-4 sm:px-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
