@@ -124,7 +124,7 @@ export function MobileProductCard({
           emptyIconSrc={MOBILE_HOME_ASSETS.heartOutline}
           emptyIconWidth={34}
           emptyIconHeight={34}
-          className="absolute top-0 right-0 z-20 size-[34px] bg-transparent text-[#ff6b00] shadow-none"
+          className="absolute -top-3 -right-1.5 z-20 size-[34px] bg-transparent text-[#ff6b00] shadow-none"
         />
       </div>
 

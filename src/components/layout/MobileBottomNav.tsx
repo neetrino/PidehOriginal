@@ -31,6 +31,9 @@ const ICON_HOME = 75;
 /** Gaps from Figma frames. */
 const GAP_LEFT_PAIR = 28;
 const GAP_RIGHT_PAIR = 27;
+/** Follow the crescent: outer icons sit higher, icons beside the home circle sit lower. */
+const LIFT_OUTER = '-translate-y-3.5';
+const DROP_INNER = 'translate-y-2.5';
 
 function isHomePath(pathname: string, locale: Locale): boolean {
   return pathname === `/${locale}` || pathname === `/${locale}/`;
@@ -121,7 +124,8 @@ export function MobileBottomNav({
 
         {/*
           Icon row sits in the orange band (below the curve lip).
-          Home is raised into the center dip; side pairs share one baseline.
+          Home is raised into the center dip. Outer icons lift with the arc;
+          cart and wishlist drop beside the circle.
         */}
         <div
           data-node-id="268:539"
@@ -130,7 +134,7 @@ export function MobileBottomNav({
         >
           {/* Frame 1000002396 — chef + cart */}
           <div data-node-id="268:538" className="flex items-center" style={{ gap: GAP_LEFT_PAIR }}>
-            <IconHit size={ICON_CHEF} nodeId="268:529">
+            <IconHit size={ICON_CHEF} className={LIFT_OUTER} nodeId="268:529">
               <AppLink
                 href={`/${locale}/products`}
                 prefetchPolicy="intent"
@@ -142,7 +146,7 @@ export function MobileBottomNav({
               </AppLink>
             </IconHit>
 
-            <IconHit size={ICON_CART} nodeId="268:531">
+            <IconHit size={ICON_CART} className={DROP_INNER} nodeId="268:531">
               <CartDrawer
                 locale={locale}
                 currency={currency}
@@ -167,7 +171,7 @@ export function MobileBottomNav({
           </div>
 
           {/* Home — center dip (268:527) */}
-          <IconHit size={ICON_HOME} className="-mb-1 -translate-y-3" nodeId="268:527">
+          <IconHit size={ICON_HOME} className="-mb-1 -translate-y-1" nodeId="268:527">
             <AppLink
               href={`/${locale}`}
               prefetchPolicy="intent"
@@ -181,7 +185,7 @@ export function MobileBottomNav({
 
           {/* Frame 1000002395 — heart + user */}
           <div data-node-id="268:537" className="flex items-center" style={{ gap: GAP_RIGHT_PAIR }}>
-            <IconHit size={ICON_HEART} nodeId="268:533">
+            <IconHit size={ICON_HEART} className={DROP_INNER} nodeId="268:533">
               <AppLink
                 href={`/${locale}/wishlist`}
                 prefetchPolicy="intent"
@@ -194,7 +198,7 @@ export function MobileBottomNav({
               </AppLink>
             </IconHit>
 
-            <IconHit size={ICON_USER} nodeId="268:535">
+            <IconHit size={ICON_USER} className={LIFT_OUTER} nodeId="268:535">
               <AppLink
                 href={profileHref}
                 prefetchPolicy="intent"

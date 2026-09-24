@@ -5,6 +5,8 @@ import { defaultLocale, isLocale } from '@/lib/i18n/config';
 
 function nextWithPathname(request: NextRequest, pathname: string): NextResponse {
   const requestHeaders = new Headers(request.headers);
+  // Overriding `next-url` makes Next drop the matched route and return 404.
+  requestHeaders.delete('next-url');
   requestHeaders.set('x-pathname', pathname);
   return NextResponse.next({
     request: { headers: requestHeaders },
