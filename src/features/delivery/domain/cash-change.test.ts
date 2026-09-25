@@ -8,10 +8,21 @@ import {
 } from '@/features/delivery/domain/cash-change';
 
 describe('cash-change denominations', () => {
-  it('defaults to 10k / 20k / 50k / 100k', () => {
+  it('defaults to 1k through 100k banknotes', () => {
     expect(createDefaultCashChangeDenominations().map((item) => item.amount)).toEqual([
-      10_000, 20_000, 50_000, 100_000,
+      1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000,
     ]);
+  });
+
+  it('adds missing standard banknotes to an older saved list', () => {
+    const parsed = parseCashChangeDenominations([
+      { id: 'a', amount: 10_000, isActive: true, sortOrder: 0 },
+      { id: 'b', amount: 100_000, isActive: true, sortOrder: 1 },
+    ]);
+    expect(parsed.map((item) => item.amount)).toEqual([
+      1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000,
+    ]);
+    expect(parsed.find((item) => item.amount === 10_000)?.id).toBe('a');
   });
 
   it('restores defaults when value is missing', () => {

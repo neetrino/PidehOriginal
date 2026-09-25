@@ -48,6 +48,7 @@ type CheckoutDetailsLabels = {
   scheduleTitle: string;
   schedulePickDate: string;
   schedulePickTime: string;
+  scheduleTimeHint: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;
@@ -254,6 +255,7 @@ export function CheckoutDetailsSections({
                   title: labels.scheduleTitle,
                   pickDate: labels.schedulePickDate,
                   pickTime: labels.schedulePickTime,
+                  timeHint: labels.scheduleTimeHint,
                   noSlots: labels.scheduleNoSlots,
                   prevMonth: labels.schedulePrevMonth,
                   nextMonth: labels.scheduleNextMonth,
@@ -267,21 +269,6 @@ export function CheckoutDetailsSections({
                 : labels.pickupStoreHint}
             </p>
           )}
-          {paymentMethod === 'cash_on_delivery' ? (
-            <CashChangePicker
-              options={cashChangeOptions}
-              value={cashChangeAmount}
-              onChange={onCashChangeAmountChange}
-              disabled={pending}
-              locale={locale}
-              labels={{
-                title: labels.cashChangeTitle,
-                hint: labels.cashChangeHint,
-                ariaLabel: labels.cashChangeAria,
-                notNeeded: labels.cashChangeNotNeeded,
-              }}
-            />
-          ) : null}
         </div>
         {isDelivery && deliveryQuotePending ? (
           <p className="mt-2 text-sm text-[#1e1e1e]/55">{labels.calculatingDelivery}</p>
@@ -300,6 +287,21 @@ export function CheckoutDetailsSections({
         value={paymentMethod}
         onChange={onPaymentMethodChange}
         disabled={pending}
+        afterCash={
+          <CashChangePicker
+            options={cashChangeOptions}
+            value={cashChangeAmount}
+            onChange={onCashChangeAmountChange}
+            disabled={pending}
+            locale={locale}
+            labels={{
+              title: labels.cashChangeTitle,
+              hint: labels.cashChangeHint,
+              ariaLabel: labels.cashChangeAria,
+              notNeeded: labels.cashChangeNotNeeded,
+            }}
+          />
+        }
       />
     </div>
   );

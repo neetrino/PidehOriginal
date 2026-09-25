@@ -17,6 +17,9 @@ import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { mediaPublicUrl } from '@/lib/media/public-url';
 
 const CASH_NOTE_FALLBACK: Record<number, string> = {
+  1_000: '/brand/pideh/cash/1000.jpg',
+  2_000: '/brand/pideh/cash/2000.jpg',
+  5_000: '/brand/pideh/cash/5000.jpg',
   10_000: '/brand/pideh/cash/10000.jpg',
   20_000: '/brand/pideh/cash/20000.jpg',
   50_000: '/brand/pideh/cash/50000.jpg',
@@ -133,6 +136,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         scheduleTitle: copy.schedule.title,
         schedulePickDate: copy.schedule.pickDate,
         schedulePickTime: copy.schedule.pickTime,
+        scheduleTimeHint: copy.schedule.timeHint,
         scheduleNoSlots: copy.schedule.noSlots,
         schedulePrevMonth: copy.schedule.prevMonth,
         scheduleNextMonth: copy.schedule.nextMonth,

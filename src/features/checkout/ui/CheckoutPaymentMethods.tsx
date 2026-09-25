@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
 import {
@@ -23,6 +23,8 @@ type CheckoutPaymentMethodsProps = {
   value: CheckoutPaymentMethod;
   onChange: (method: CheckoutPaymentMethod) => void;
   disabled: boolean;
+  /** Shown under the cash option while cash on delivery is selected. */
+  afterCash?: ReactNode;
 };
 
 export function CheckoutPaymentMethods({
@@ -31,6 +33,7 @@ export function CheckoutPaymentMethods({
   value,
   onChange,
   disabled,
+  afterCash,
 }: CheckoutPaymentMethodsProps) {
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({});
 
@@ -44,12 +47,12 @@ export function CheckoutPaymentMethods({
           const showFallback = logos.length === 0;
 
           return (
-            <label
-              key={option.id}
-              className={`flex cursor-pointer items-center rounded-[18px] border-2 p-4 transition-colors ${
-                selected ? CHECKOUT_RADIO_ON : CHECKOUT_RADIO_OFF
-              }`}
-            >
+            <div key={option.id} className="space-y-3">
+              <label
+                className={`flex cursor-pointer items-center rounded-[18px] border-2 p-4 transition-colors ${
+                  selected ? CHECKOUT_RADIO_ON : CHECKOUT_RADIO_OFF
+                }`}
+              >
               <input
                 type="radio"
                 name="paymentMethod"
@@ -102,6 +105,8 @@ export function CheckoutPaymentMethods({
                 </div>
               </div>
             </label>
+              {option.id === 'cash_on_delivery' && selected ? afterCash : null}
+            </div>
           );
         })}
       </div>

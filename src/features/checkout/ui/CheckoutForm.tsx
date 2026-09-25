@@ -59,6 +59,7 @@ type CheckoutLabels = {
   scheduleTitle: string;
   schedulePickDate: string;
   schedulePickTime: string;
+  scheduleTimeHint: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;

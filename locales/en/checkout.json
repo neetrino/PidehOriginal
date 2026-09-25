@@ -40,14 +40,15 @@
     "title": "Delivery date & time",
     "pickDate": "Pick a date",
     "pickTime": "Pick a time",
+    "timeHint": "Choose a day on the calendar first. Available times will show up here.",
     "noSlots": "No delivery slots are available right now.",
     "prevMonth": "Previous",
     "nextMonth": "Next",
     "selectSlot": "Please select a delivery date and time"
   },
   "cashChange": {
-    "title": "Need change from",
-    "hint": "Select the banknote you will pay with so the courier can bring change.",
+    "title": "Change",
+    "hint": "Tap the banknote you will pay with so we can prepare the change.",
     "aria": "Cash change denomination",
     "select": "Please select the banknote you will pay with",
     "notNeeded": "No change needed"
