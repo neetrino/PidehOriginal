@@ -32,6 +32,7 @@ export type {
 } from '@/features/products/types';
 
 const RELATED_PRODUCTS_LIMIT = 4;
+const RELATED_CATEGORY_SLUGS = ['sauces', 'drinks'] as const;
 const HOME_OFFERS_LIMIT = 8;
 const HOME_OFFERS_CANDIDATE_LIMIT = 48;
 export const CATALOG_PAGE_SIZE = DEFAULT_CATALOG_PAGE_SIZE;
@@ -338,27 +339,58 @@ export const getProductDetailBySlug = cache(
   },
 );
 
-/** Active products sharing at least one category with the given product. */
+function upsellCategoryMatch() {
+  const matches = (['hy', 'en', 'ru'] as const).map((locale) => {
+    const slugList = sql.join(
+      RELATED_CATEGORY_SLUGS.map((slug) => sql`${slug}`),
+      sql`, `,
+    );
+    return sql`${categories.translations}->${locale}->>'slug' in (${slugList})`;
+  });
+
+  return sql`(${sql.join(matches, sql` OR `)})`;
+}
+
+function pickRandomIds(ids: string[], limit: number): string[] {
+  const unique = [...new Set(ids)];
+  for (let index = unique.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    const current = unique[index];
+    const swap = unique[swapIndex];
+    if (current === undefined || swap === undefined) {
+      continue;
+    }
+    unique[index] = swap;
+    unique[swapIndex] = current;
+  }
+  return unique.slice(0, limit);
+}
+
+/** Sauces and drinks shown under a product. The current product is left out. */
 export async function getRelatedProducts(
   locale: Locale,
   productId: string,
 ): Promise<CatalogProduct[]> {
-  const seedCategories = getDb()
-    .select({ categoryId: productCategories.categoryId })
-    .from(productCategories)
-    .where(eq(productCategories.productId, productId));
-
-  const relatedLinks = await getDb()
-    .selectDistinct({ productId: productCategories.productId })
-    .from(productCategories)
+  const links = await getDb()
+    .select({ productId: products.id })
+    .from(products)
+    .innerJoin(productCategories, eq(productCategories.productId, products.id))
+    .innerJoin(categories, eq(categories.id, productCategories.categoryId))
     .where(
       and(
-        inArray(productCategories.categoryId, seedCategories),
-        sql`${productCategories.productId} <> ${productId}`,
+        activeCatalogWhere,
+        sql`${products.id} <> ${productId}`,
+        eq(categories.status, 'ACTIVE'),
+        isNull(categories.deletedAt),
+        upsellCategoryMatch(),
       ),
     );
 
-  const relatedIds = relatedLinks.map((row) => row.productId);
+  const relatedIds = pickRandomIds(
+    links.map((link) => link.productId),
+    RELATED_PRODUCTS_LIMIT,
+  );
+
   if (relatedIds.length === 0) {
     return [];
   }
@@ -366,8 +398,12 @@ export async function getRelatedProducts(
   const rows = await getDb()
     .select()
     .from(products)
-    .where(and(inArray(products.id, relatedIds), activeCatalogWhere))
-    .limit(RELATED_PRODUCTS_LIMIT);
+    .where(and(inArray(products.id, relatedIds), activeCatalogWhere));
+  const byId = new Map(rows.map((row) => [row.id, row]));
+  const ordered = relatedIds.flatMap((id) => {
+    const row = byId.get(id);
+    return row ? [row] : [];
+  });
 
-  return enrichCatalogProducts(rows, locale);
+  return enrichCatalogProducts(ordered, locale);
 }
