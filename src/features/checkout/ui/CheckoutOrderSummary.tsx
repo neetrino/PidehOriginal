@@ -32,7 +32,7 @@ type CheckoutOrderSummaryProps = {
   participantsPrepaidLabel?: string;
   participantsPrepaidFormatted?: string | null;
   subtotalFormatted: string;
-  shippingFormatted: string;
+  shippingFormatted: string | null;
   taxFormatted: string;
   discountFormatted: string | null;
   totalFormatted: string;
@@ -301,12 +301,14 @@ export function CheckoutOrderSummary({
               <span className="text-[#ff6b00]">-{formatMoney(giftCardPreview.redeemAmount)}</span>
             </div>
           ) : null}
-          <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
-            <span className="shrink-0">{shippingLabel}</span>
-            <span className="max-w-[62%] text-right text-xs leading-snug font-bold text-[#1e1e1e]">
-              {shippingFormatted}
-            </span>
-          </div>
+          {shippingFormatted ? (
+            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
+              <span className="shrink-0">{shippingLabel}</span>
+              <span className="max-w-[62%] text-right text-xs leading-snug font-bold text-[#1e1e1e]">
+                {shippingFormatted}
+              </span>
+            </div>
+          ) : null}
           {participantsPrepaidFormatted && participantsPrepaidLabel ? (
             <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
               <span>{participantsPrepaidLabel}</span>

@@ -11,6 +11,7 @@ import { createOrderAction } from '@/features/checkout/create-order';
 import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
 import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
 import { CheckoutDetailsSections } from '@/features/checkout/ui/CheckoutDetailsSections';
+import type { PickupBranchOption } from '@/features/checkout/ui/CheckoutShippingMethods';
 import { CheckoutOrderSummary } from '@/features/checkout/ui/CheckoutOrderSummary';
 import { CheckoutProductsInOrder } from '@/features/checkout/ui/CheckoutProductsInOrder';
 import { useDistanceDeliveryQuote } from '@/features/checkout/ui/use-distance-delivery-quote';
@@ -59,6 +60,7 @@ type CheckoutLabels = {
   scheduleTitle: string;
   schedulePickDate: string;
   schedulePickTime: string;
+  scheduleTimeHint: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;
@@ -108,7 +110,6 @@ type CheckoutLabels = {
   storePickupDescription: string;
   deliveryOption: string;
   deliveryOptionDescription: string;
-  freePickup: string;
   pickupStoreHint: string;
 };
 
@@ -126,6 +127,7 @@ type CheckoutFormProps = {
   deliverySchedule: DeliveryScheduleSettings;
   cashChangeOptions: CashChangeDenominationView[];
   storePickupAddress: string | null;
+  pickupBranches: PickupBranchOption[];
   hasItems: boolean;
   bonusAvailableBalance: number | null;
   bonusMaxRedeemPercent: number;
@@ -155,6 +157,7 @@ export function CheckoutForm({
   deliverySchedule,
   cashChangeOptions,
   storePickupAddress,
+  pickupBranches = [],
   hasItems,
   bonusAvailableBalance,
   bonusMaxRedeemPercent,
@@ -163,6 +166,7 @@ export function CheckoutForm({
   const router = useRouter();
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
   const [shippingMethod, setShippingMethod] = useState<CheckoutShippingMethod>('delivery');
+  const [pickupBranchId, setPickupBranchId] = useState(pickupBranches[0]?.id ?? '');
   const [line1, setLine1] = useState(defaultLine1);
   const [deliveryPoint, setDeliveryPoint] = useState<{
     lat: number;
@@ -192,14 +196,14 @@ export function CheckoutForm({
   const shippingOptions = useMemo(
     () => [
       {
-        id: 'delivery' as const,
-        name: labels.deliveryOption,
-        description: labels.deliveryOptionDescription,
-      },
-      {
         id: 'pickup' as const,
         name: labels.storePickup,
         description: labels.storePickupDescription,
+      },
+      {
+        id: 'delivery' as const,
+        name: labels.deliveryOption,
+        description: labels.deliveryOptionDescription,
       },
     ],
     [
@@ -279,7 +283,7 @@ export function CheckoutForm({
     : cartComputedTotal;
 
   const shippingFormatted = isPickup
-    ? labels.freePickup
+    ? null
     : lockedDelivery != null
       ? formatMoney(shippingAmount)
       : deliveryQuote.pending
@@ -425,7 +429,12 @@ export function CheckoutForm({
         contactPhone: String(data.get('contactPhone') ?? ''),
         shippingMethod,
         paymentMethod,
-        line1: shippingMethod === 'delivery' ? line1 : undefined,
+        line1:
+          shippingMethod === 'delivery'
+            ? line1
+            : (pickupBranches.find((branch) => branch.id === pickupBranchId)?.address ??
+              storePickupAddress ??
+              undefined),
         deliveryLat: shippingMethod === 'delivery' ? deliveryPoint?.lat : undefined,
         deliveryLng: shippingMethod === 'delivery' ? deliveryPoint?.lng : undefined,
         floor: shippingMethod === 'delivery' ? String(data.get('floor') ?? '') : undefined,
@@ -483,6 +492,9 @@ export function CheckoutForm({
               }
             }}
             shippingOptions={shippingOptions}
+            pickupBranches={pickupBranches}
+            pickupBranchId={pickupBranchId}
+            onPickupBranchChange={setPickupBranchId}
             storePickupAddress={storePickupAddress}
             deliverySchedule={deliverySchedule}
             deliverySlot={deliverySlot}

@@ -16,20 +16,35 @@ export type CashChangeDenominationView = {
   imageUrl: string | null;
 };
 
-const DEFAULT_AMOUNTS = [10_000, 20_000, 50_000, 100_000] as const;
+const STANDARD_CASH_AMOUNTS = [1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000] as const;
 
 /** Checkout sentinel: the customer does not need change. */
 export const CASH_CHANGE_NOT_NEEDED = 0;
 
-/** Default cash-change options offered at checkout for COD. */
-export function createDefaultCashChangeDenominations(): CashChangeDenomination[] {
-  return DEFAULT_AMOUNTS.map((amount, index) => ({
+function standardDenomination(amount: number, sortOrder: number): CashChangeDenomination {
+  return {
     id: `cash-change-${amount}`,
     amount,
     imageObjectKey: null,
     isActive: true,
-    sortOrder: index,
-  }));
+    sortOrder,
+  };
+}
+
+/** Default cash-change options offered at checkout for COD. */
+export function createDefaultCashChangeDenominations(): CashChangeDenomination[] {
+  return STANDARD_CASH_AMOUNTS.map((amount, index) => standardDenomination(amount, index));
+}
+
+/** Adds any standard banknote that an older saved list does not include yet. */
+function withStandardAmounts(items: CashChangeDenomination[]): CashChangeDenomination[] {
+  const present = new Set(items.map((item) => item.amount));
+  const missing = STANDARD_CASH_AMOUNTS.filter((amount) => !present.has(amount)).map((amount) =>
+    standardDenomination(amount, 0),
+  );
+  return [...items, ...missing]
+    .sort((left, right) => left.amount - right.amount)
+    .map((item, index) => ({ ...item, sortOrder: index }));
 }
 
 function isFiniteNumber(value: unknown): value is number {
@@ -88,7 +103,7 @@ export function parseCashChangeDenominations(value: unknown): CashChangeDenomina
     .filter((item): item is CashChangeDenomination => item != null)
     .sort((a, b) => a.sortOrder - b.sortOrder || a.amount - b.amount);
 
-  return parsed.length > 0 ? parsed : createDefaultCashChangeDenominations();
+  return parsed.length > 0 ? withStandardAmounts(parsed) : createDefaultCashChangeDenominations();
 }
 
 /** Active denominations customers may pick at checkout (sorted). */

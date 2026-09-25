@@ -1,6 +1,6 @@
 {
   "title": "Checkout",
-  "productsInOrder": "Products in your order",
+  "productsInOrder": "My order",
   "itemsOne": "1 item",
   "itemsMany": "{count} items",
   "removeItem": "Remove item",
@@ -40,25 +40,25 @@
     "title": "Delivery date & time",
     "pickDate": "Pick a date",
     "pickTime": "Pick a time",
+    "timeHint": "Choose a day on the calendar first. Available times will show up here.",
     "noSlots": "No delivery slots are available right now.",
     "prevMonth": "Previous",
     "nextMonth": "Next",
     "selectSlot": "Please select a delivery date and time"
   },
   "cashChange": {
-    "title": "Need change from",
-    "hint": "Select the banknote you will pay with so the courier can bring change.",
+    "title": "Change",
+    "hint": "Tap the banknote you will pay with so we can prepare the change.",
     "aria": "Cash change denomination",
     "select": "Please select the banknote you will pay with",
     "notNeeded": "No change needed"
   },
   "shipping": {
-    "storePickup": "Store Pickup",
-    "storePickupDescription": "Pick up your order from our store (Free)",
+    "storePickup": "Pick up from a branch",
+    "storePickupDescription": "Pick up your order at a branch (Free)",
     "pickupStoreHint": "You can pick up your order at our store.",
     "delivery": "Delivery",
     "deliveryDescription": "We will deliver your order to your address. Price is based on distance.",
-    "freePickup": "Free (Store Pickup)",
     "enterCity": "Enter City",
     "selectDeliveryLocation": "Select delivery location",
     "enterDeliveryAddress": "Enter a delivery address to calculate shipping",

@@ -15,7 +15,10 @@ import {
   CheckoutPaymentMethods,
   type PaymentOption,
 } from '@/features/checkout/ui/CheckoutPaymentMethods';
-import { CheckoutShippingMethods } from '@/features/checkout/ui/CheckoutShippingMethods';
+import {
+  CheckoutShippingMethods,
+  type PickupBranchOption,
+} from '@/features/checkout/ui/CheckoutShippingMethods';
 import { DeliverySlotPicker } from '@/features/checkout/ui/DeliverySlotPicker';
 import type { CashChangeDenominationView } from '@/features/delivery/domain/cash-change';
 import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delivery-schedule';
@@ -48,6 +51,7 @@ type CheckoutDetailsLabels = {
   scheduleTitle: string;
   schedulePickDate: string;
   schedulePickTime: string;
+  scheduleTimeHint: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;
@@ -71,6 +75,9 @@ type CheckoutDetailsSectionsProps = {
   shippingMethod: CheckoutShippingMethod;
   onShippingMethodChange: (method: CheckoutShippingMethod) => void;
   shippingOptions: ShippingOption[];
+  pickupBranches: PickupBranchOption[];
+  pickupBranchId: string;
+  onPickupBranchChange: (branchId: string) => void;
   storePickupAddress: string | null;
   deliverySchedule: DeliveryScheduleSettings;
   deliverySlot: SelectedDeliverySlot | null;
@@ -100,6 +107,9 @@ export function CheckoutDetailsSections({
   shippingMethod,
   onShippingMethodChange,
   shippingOptions,
+  pickupBranches,
+  pickupBranchId,
+  onPickupBranchChange,
   storePickupAddress,
   deliverySchedule,
   deliverySlot,
@@ -187,13 +197,15 @@ export function CheckoutDetailsSections({
         value={shippingMethod}
         onChange={onShippingMethodChange}
         disabled={pending}
+        pickupBranches={pickupBranches}
+        pickupBranchId={pickupBranchId}
+        onPickupBranchChange={onPickupBranchChange}
       />
 
+      {isDelivery ? (
       <section className={CHECKOUT_PANEL}>
         <h2 className={CHECKOUT_SECTION_TITLE}>{labels.shippingAddress}</h2>
         <div className="space-y-4">
-          {isDelivery ? (
-            <>
               <div className="space-y-1.5">
                 <span className="text-sm font-bold text-[#1e1e1e]">{labels.address}</span>
                 <div className="flex items-start gap-2">
@@ -254,45 +266,32 @@ export function CheckoutDetailsSections({
                   title: labels.scheduleTitle,
                   pickDate: labels.schedulePickDate,
                   pickTime: labels.schedulePickTime,
+                  timeHint: labels.scheduleTimeHint,
                   noSlots: labels.scheduleNoSlots,
                   prevMonth: labels.schedulePrevMonth,
                   nextMonth: labels.scheduleNextMonth,
                 }}
               />
-            </>
-          ) : (
-            <p className="text-sm text-[#1e1e1e]/65">
-              {storePickupAddress
-                ? `${labels.pickupStoreHint} ${storePickupAddress}`
-                : labels.pickupStoreHint}
-            </p>
-          )}
-          {paymentMethod === 'cash_on_delivery' ? (
-            <CashChangePicker
-              options={cashChangeOptions}
-              value={cashChangeAmount}
-              onChange={onCashChangeAmountChange}
-              disabled={pending}
-              locale={locale}
-              labels={{
-                title: labels.cashChangeTitle,
-                hint: labels.cashChangeHint,
-                ariaLabel: labels.cashChangeAria,
-                notNeeded: labels.cashChangeNotNeeded,
-              }}
-            />
-          ) : null}
         </div>
-        {isDelivery && deliveryQuotePending ? (
+        {deliveryQuotePending ? (
           <p className="mt-2 text-sm text-[#1e1e1e]/55">{labels.calculatingDelivery}</p>
         ) : null}
-        {isDelivery && deliveryQuoteError ? (
+        {deliveryQuoteError ? (
           <p className="mt-2 text-sm text-red-700">{deliveryQuoteError}</p>
         ) : null}
-        {isDelivery && !deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
+        {!deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
           <p className="mt-2 text-sm text-[#1e1e1e]/65">{deliveryQuoteHint}</p>
         ) : null}
       </section>
+      ) : pickupBranches.length === 0 ? (
+        <section className={CHECKOUT_PANEL}>
+          <p className="text-sm text-[#1e1e1e]/65">
+            {storePickupAddress
+              ? `${labels.pickupStoreHint} ${storePickupAddress}`
+              : labels.pickupStoreHint}
+          </p>
+        </section>
+      ) : null}
 
       <CheckoutPaymentMethods
         title={labels.paymentMethod}
@@ -300,6 +299,21 @@ export function CheckoutDetailsSections({
         value={paymentMethod}
         onChange={onPaymentMethodChange}
         disabled={pending}
+        afterCash={
+          <CashChangePicker
+            options={cashChangeOptions}
+            value={cashChangeAmount}
+            onChange={onCashChangeAmountChange}
+            disabled={pending}
+            locale={locale}
+            labels={{
+              title: labels.cashChangeTitle,
+              hint: labels.cashChangeHint,
+              ariaLabel: labels.cashChangeAria,
+              notNeeded: labels.cashChangeNotNeeded,
+            }}
+          />
+        }
       />
     </div>
   );

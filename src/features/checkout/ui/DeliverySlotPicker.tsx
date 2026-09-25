@@ -21,6 +21,7 @@ type DeliverySlotPickerLabels = {
   title: string;
   pickDate: string;
   pickTime: string;
+  timeHint: string;
   noSlots: string;
   prevMonth: string;
   nextMonth: string;
@@ -36,7 +37,7 @@ type DeliverySlotPickerProps = {
 };
 
 const NAV_BUTTON =
-  'inline-flex size-9 items-center justify-center rounded-full border border-[#ff6b00]/25 bg-white text-[#ff6b00] transition-colors hover:bg-[#ffd54a] disabled:cursor-not-allowed disabled:opacity-35';
+  'inline-flex size-7 items-center justify-center rounded-full border border-[#ff6b00]/25 bg-white text-[#ff6b00] transition-colors hover:bg-[#ffd54a] disabled:cursor-not-allowed disabled:opacity-35';
 
 function dayClass(isSelected: boolean, bookable: boolean, isToday: boolean): string {
   if (isSelected) {
@@ -49,6 +50,25 @@ function dayClass(isSelected: boolean, bookable: boolean, isToday: boolean): str
     return 'bg-white font-bold text-[#1e1e1e] ring-1 ring-[#ff6b00]/30 hover:bg-[#ffd54a]';
   }
   return 'cursor-not-allowed font-medium text-[#1e1e1e]/22';
+}
+
+function SlotWaitArt({ hint }: { hint: string }) {
+  return (
+    <div className="mt-2 flex flex-1 flex-col items-center justify-center rounded-2xl bg-[#fff8e7] px-4 py-5 text-center">
+      <svg viewBox="0 0 88 88" className="size-[4.5rem]" aria-hidden>
+        <circle cx="44" cy="44" r="40" fill="#fffdf8" stroke="#ff6b00" strokeWidth="3" />
+        <circle cx="44" cy="44" r="28" fill="#fff4d2" />
+        <circle cx="44" cy="20" r="2.4" fill="#ff6b00" />
+        <circle cx="44" cy="68" r="2.4" fill="#ff6b00" />
+        <circle cx="20" cy="44" r="2.4" fill="#ff6b00" />
+        <circle cx="68" cy="44" r="2.4" fill="#ff6b00" />
+        <path d="M44 46 V30" stroke="#1e1e1e" strokeWidth="3" strokeLinecap="round" />
+        <path d="M44 46 L57 52" stroke="#ff6b00" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="44" cy="46" r="3.2" fill="#ff6b00" />
+      </svg>
+      <p className="mt-3 max-w-[16rem] text-sm leading-snug text-[#1e1e1e]/70">{hint}</p>
+    </div>
+  );
 }
 
 function timeClass(isSelected: boolean): string {
@@ -109,45 +129,44 @@ export function DeliverySlotPicker({
 
   return (
     <div className="overflow-hidden rounded-[22px] border border-[#ff6b00]/15 bg-white">
-      <div className="border-b border-[#ff6b00]/10 bg-[#fff8e7] px-4 py-3.5 sm:px-5">
-        <h3 className="font-display text-xl leading-none text-[#1e1e1e] uppercase">{labels.title}</h3>
+      <div className="border-b border-[#ff6b00]/10 bg-[#fff8e7] px-3 py-2.5">
+        <h3 className="font-display text-base leading-none text-[#1e1e1e] uppercase">{labels.title}</h3>
       </div>
 
       {availableDays.length === 0 ? (
-        <p className="px-4 py-4 text-sm text-red-700 sm:px-5">{labels.noSlots}</p>
+        <p className="px-3 py-3 text-sm text-red-700">{labels.noSlots}</p>
       ) : (
-        <div className="space-y-5 px-4 py-4 sm:px-5">
-          <div className="flex items-center justify-between gap-3">
-            <button
-              type="button"
-              disabled={disabled || !canPrev}
-              onClick={() => shiftMonth(-1)}
-              className={NAV_BUTTON}
-              aria-label={labels.prevMonth}
-            >
-              <ChevronLeft className="size-4" aria-hidden />
-            </button>
-            <p className="font-display text-lg leading-none text-[#1e1e1e] uppercase">
-              {monthLabel(viewYear, viewMonth, locale)}
-            </p>
-            <button
-              type="button"
-              disabled={disabled || !canNext}
-              onClick={() => shiftMonth(1)}
-              className={NAV_BUTTON}
-              aria-label={labels.nextMonth}
-            >
-              <ChevronRight className="size-4" aria-hidden />
-            </button>
-          </div>
-
-          <div>
-            <p className="mb-3 font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
+        <div className="grid items-stretch gap-3 p-3 md:grid-cols-[15.5rem_minmax(0,1fr)]">
+          <div className="rounded-2xl bg-[#fff8e7]/80 p-2">
+            <p className="mb-2 font-display text-xs leading-none tracking-wide text-[#ff6b00] uppercase">
               {labels.pickDate}
             </p>
-            <div className="grid grid-cols-7 gap-y-1.5 text-center">
+            <div className="mb-1 flex items-center justify-between gap-1">
+              <button
+                type="button"
+                disabled={disabled || !canPrev}
+                onClick={() => shiftMonth(-1)}
+                className={NAV_BUTTON}
+                aria-label={labels.prevMonth}
+              >
+                <ChevronLeft className="size-3.5" aria-hidden />
+              </button>
+              <p className="font-display text-sm leading-none text-[#1e1e1e] uppercase">
+                {monthLabel(viewYear, viewMonth, locale)}
+              </p>
+              <button
+                type="button"
+                disabled={disabled || !canNext}
+                onClick={() => shiftMonth(1)}
+                className={NAV_BUTTON}
+                aria-label={labels.nextMonth}
+              >
+                <ChevronRight className="size-3.5" aria-hidden />
+              </button>
+            </div>
+            <div className="grid grid-cols-7 text-center">
               {weekdays.map((label) => (
-                <div key={label} className="pb-1 text-[11px] font-bold text-[#1e1e1e]/45 sm:text-xs">
+                <div key={label} className="py-1 text-[10px] font-bold text-[#1e1e1e]/45">
                   {label}
                 </div>
               ))}
@@ -158,7 +177,7 @@ export function DeliverySlotPicker({
                     type="button"
                     disabled={disabled || !availableByDate.has(date)}
                     onClick={() => selectDate(date)}
-                    className={`mx-auto flex size-9 items-center justify-center rounded-full text-sm transition-colors sm:size-10 ${dayClass(
+                    className={`mx-auto flex size-7 items-center justify-center rounded-full text-xs transition-colors ${dayClass(
                       selected?.date === date,
                       availableByDate.has(date),
                       selected == null && date === todayYmd,
@@ -167,18 +186,18 @@ export function DeliverySlotPicker({
                     {Number(date.slice(-2))}
                   </button>
                 ) : (
-                  <div key={`blank-${index}`} />
+                  <div key={`blank-${index}`} className="size-7" />
                 ),
               )}
             </div>
           </div>
 
-          <div className="border-t border-[#ff6b00]/10 pt-4">
-            <p className="mb-3 font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
+          <div className="flex h-full flex-col">
+            <p className="mb-2 font-display text-xs leading-none tracking-wide text-[#ff6b00] uppercase">
               {labels.pickTime}
             </p>
             {selectedDay ? (
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <div className="grid grid-cols-3 gap-1">
                 {selectedDay.slots.map((slot) => {
                   const isSelected =
                     selected?.startTime === slot.startTime && selected?.endTime === slot.endTime;
@@ -194,7 +213,7 @@ export function DeliverySlotPicker({
                           endTime: slot.endTime,
                         })
                       }
-                      className={`h-10 rounded-full border text-sm font-bold transition-colors ${timeClass(isSelected)}`}
+                      className={`h-7 rounded-full border px-1 text-[11px] font-semibold transition-colors ${timeClass(isSelected)}`}
                     >
                       {slot.label}
                     </button>
@@ -202,9 +221,7 @@ export function DeliverySlotPicker({
                 })}
               </div>
             ) : (
-              <p className="rounded-2xl bg-[#fff8e7] px-3 py-2.5 text-sm text-[#1e1e1e]/65">
-                {labels.pickDate}
-              </p>
+              <SlotWaitArt hint={labels.timeHint} />
             )}
           </div>
         </div>
