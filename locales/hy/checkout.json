@@ -1,6 +1,6 @@
 {
   "title": "Վճարում",
-  "productsInOrder": "Պատվերի ապրանքներ",
+  "productsInOrder": "Իմ պատվերը",
   "itemsOne": "1 ապրանք",
   "itemsMany": "{count} ապրանք",
   "removeItem": "Հեռացնել ապրանքը",
@@ -54,12 +54,11 @@
     "notNeeded": "Մանր պետք չէ"
   },
   "shipping": {
-    "storePickup": "Ինքնաառաքում",
-    "storePickupDescription": "Վերցրեք պատվերը խանութից (Անվճար)",
+    "storePickup": "Վերցնել մասնաճյուղից",
+    "storePickupDescription": "Վերցրեք պատվերը մասնաճյուղից (Անվճար)",
     "pickupStoreHint": "Պատվերը կարող եք վերցնել խանութից։",
     "delivery": "Առաքում",
     "deliveryDescription": "Կառաքենք ձեր հասցեով։ Գինը հաշվվում է հեռավորությամբ։",
-    "freePickup": "Անվճար (Ինքնաառաքում)",
     "enterCity": "Մուտքագրեք քաղաքը",
     "selectDeliveryLocation": "Ընտրեք առաքման վայրը",
     "enterDeliveryAddress": "Մուտքագրեք հասցեն՝ առաքման գինը հաշվելու համար",

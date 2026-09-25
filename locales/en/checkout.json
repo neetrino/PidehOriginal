@@ -1,6 +1,6 @@
 {
   "title": "Checkout",
-  "productsInOrder": "Products in your order",
+  "productsInOrder": "My order",
   "itemsOne": "1 item",
   "itemsMany": "{count} items",
   "removeItem": "Remove item",
@@ -54,12 +54,11 @@
     "notNeeded": "No change needed"
   },
   "shipping": {
-    "storePickup": "Store Pickup",
-    "storePickupDescription": "Pick up your order from our store (Free)",
+    "storePickup": "Pick up from a branch",
+    "storePickupDescription": "Pick up your order at a branch (Free)",
     "pickupStoreHint": "You can pick up your order at our store.",
     "delivery": "Delivery",
     "deliveryDescription": "We will deliver your order to your address. Price is based on distance.",
-    "freePickup": "Free (Store Pickup)",
     "enterCity": "Enter City",
     "selectDeliveryLocation": "Select delivery location",
     "enterDeliveryAddress": "Enter a delivery address to calculate shipping",

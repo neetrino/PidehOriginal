@@ -210,7 +210,7 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
       email: input.contactEmail.toLowerCase(),
       shippingMethod: input.shippingMethod,
       paymentMethod: input.paymentMethod,
-      line1: input.shippingMethod === 'delivery' ? input.line1?.trim() : null,
+      line1: input.line1?.trim() || null,
       deliveryAmount: deliveryQuote?.deliveryAmount ?? 0,
       distanceMeters: deliveryQuote?.distanceMeters ?? null,
       scheduledDeliveryDate:
@@ -242,7 +242,10 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
       }
 
       const pickupLine1 =
-        deliverySettings.originAddress.trim() || storeIdentity.name || 'Store pickup';
+        input.line1?.trim() ||
+        deliverySettings.originAddress.trim() ||
+        storeIdentity.name ||
+        'Store pickup';
 
       const address = {
         recipientFirstName: input.firstName,

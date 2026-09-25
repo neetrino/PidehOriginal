@@ -75,6 +75,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   }));
 
   const storePickupAddress = deliverySettings.originAddress.trim() || storeIdentity.name || null;
+  const pickupBranches = [
+    { id: 'andranik', address: dictionary.contact.storeAddress },
+    { id: 'koghbatsi', address: dictionary.contact.storeAddressSecondary },
+  ].filter((branch) => branch.address.trim().length > 0);
 
   return (
     <CheckoutForm
@@ -91,6 +95,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       deliverySchedule={deliverySettings.schedule}
       cashChangeOptions={cashChangeOptions}
       storePickupAddress={storePickupAddress}
+      pickupBranches={pickupBranches}
       bonusAvailableBalance={bonusAvailableBalance}
       bonusMaxRedeemPercent={bonusSettings.maxRedeemPercent}
       groupOrderCheckout={
@@ -186,7 +191,6 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         storePickupDescription: copy.shipping.storePickupDescription,
         deliveryOption: copy.shipping.delivery,
         deliveryOptionDescription: copy.shipping.deliveryDescription,
-        freePickup: copy.shipping.freePickup,
         pickupStoreHint: copy.shipping.pickupStoreHint,
       }}
     />

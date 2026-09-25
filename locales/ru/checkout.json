@@ -1,6 +1,6 @@
 {
   "title": "Оформление",
-  "productsInOrder": "Товары в заказе",
+  "productsInOrder": "Мой заказ",
   "itemsOne": "1 товар",
   "itemsMany": "{count} товаров",
   "removeItem": "Удалить товар",
@@ -54,12 +54,11 @@
     "notNeeded": "Сдача не нужна"
   },
   "shipping": {
-    "storePickup": "Самовывоз",
-    "storePickupDescription": "Заберите заказ в магазине (Бесплатно)",
+    "storePickup": "Забрать из филиала",
+    "storePickupDescription": "Заберите заказ в филиале (Бесплатно)",
     "pickupStoreHint": "Заказ можно забрать в магазине.",
     "delivery": "Доставка",
     "deliveryDescription": "Доставим заказ по вашему адресу. Цена зависит от расстояния.",
-    "freePickup": "Бесплатно (Самовывоз)",
     "enterCity": "Укажите город",
     "selectDeliveryLocation": "Выберите место доставки",
     "enterDeliveryAddress": "Введите адрес, чтобы рассчитать доставку",
