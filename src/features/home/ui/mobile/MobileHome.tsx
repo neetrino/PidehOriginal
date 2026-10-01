@@ -36,6 +36,8 @@ type FeaturedItem = {
   imageUrl: string | null;
   inStock: boolean;
   inWishlist?: boolean;
+  cartQuantity?: number;
+  maxQuantity?: number;
 };
 
 type CategoryItem = {

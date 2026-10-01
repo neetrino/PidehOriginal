@@ -1,5 +1,6 @@
 import { PidehPillButton } from '@/components/brand/PidehPillButton';
 import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
+import { getActivePlainCartQuantities } from '@/features/cart/get-active-plain-quantities';
 import { getRelatedProducts } from '@/features/products/queries';
 import { getWishlistProductIds } from '@/features/wishlist/queries';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -32,9 +33,11 @@ export async function ProductRelatedSection({
     return <section className="mt-16 flex justify-center md:mt-20">{menuButton}</section>;
   }
 
-  const [wishlistIds, formatPrice] = await Promise.all([
-    getWishlistProductIds(related.map((item) => item.id)),
+  const relatedIds = related.map((item) => item.id);
+  const [wishlistIds, formatPrice, cartQuantities] = await Promise.all([
+    getWishlistProductIds(relatedIds),
     createDisplayPriceFormatter(locale, currency),
+    getActivePlainCartQuantities(relatedIds),
   ]);
 
   const labels = dictionary.product;
@@ -65,6 +68,8 @@ export async function ProductRelatedSection({
               locale={locale}
               productId={item.id}
               inWishlist={wishlistIds.has(item.id)}
+              cartQuantity={cartQuantities[item.id] ?? 0}
+              maxQuantity={item.stockOnHand}
               isSignedIn={isSignedIn}
               wishlistLabel={dictionary.nav.wishlist}
               orderLabel={dictionary.home.orderCta}

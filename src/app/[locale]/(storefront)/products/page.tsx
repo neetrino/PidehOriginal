@@ -18,6 +18,7 @@ import { ShopBreadcrumb } from '@/features/products/ui/ShopBreadcrumb';
 import { ShopProductGrid } from '@/features/products/ui/ShopProductGrid';
 import { MobileCatalog } from '@/features/products/ui/mobile/MobileCatalog';
 import { buildMobileCatalogSections } from '@/features/products/ui/mobile/mobile-catalog-sections';
+import { getActivePlainCartQuantities } from '@/features/cart/get-active-plain-quantities';
 import { getWishlistProductIds } from '@/features/wishlist/queries';
 import { getCurrentUser } from '@/lib/auth/session';
 import { isLocale } from '@/lib/i18n/config';
@@ -78,9 +79,10 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
       .concat(sections.flatMap((section) => section.products.map((product) => product.id))),
   );
 
-  const [wishlistIds, formatPrice] = await Promise.all([
+  const [wishlistIds, formatPrice, cartQuantities] = await Promise.all([
     getWishlistProductIds([...wishlistTargets]),
     createDisplayPriceFormatter(rawLocale, currency),
+    getActivePlainCartQuantities([...wishlistTargets]),
   ]);
 
   const priced = catalog.products.map((product) => {
@@ -99,6 +101,7 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
     filters,
     sections,
     wishlistIds,
+    cartQuantities,
     formatPrice: (amount) => formatPrice(amount).formatted,
     seeAllTemplate: catalogCopy.seeAllCategory,
     withSeeAll: !filters.category,
@@ -157,6 +160,7 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
               locale={rawLocale}
               products={priced}
               wishlistIds={wishlistIds}
+              cartQuantities={cartQuantities}
               isSignedIn={Boolean(user)}
               emptyTitle={catalogCopy.emptyTitle}
               emptyDescription={catalogCopy.emptyDescription}

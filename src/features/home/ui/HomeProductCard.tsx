@@ -1,14 +1,11 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { useRouter } from "next/navigation";
-import { useState, useTransition, type MouseEvent, type PointerEvent } from "react";
+import { type PointerEvent } from "react";
 
-import { PidehPillButton } from "@/components/brand/PidehPillButton";
 import { AppLink } from "@/components/ui/AppLink";
-import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
-import { alertIfSpendLimitExceeded } from "@/features/group-orders/ui/alert-spend-limit-exceeded";
 import { PIDEH_ASSETS } from "@/features/home/ui/brand-assets";
+import { ProductCardCartControl } from "@/features/home/ui/ProductCardCartControl";
 import {
   PRODUCT_CARD_SPRING,
   PRODUCT_CARD_TAP,
@@ -36,6 +33,8 @@ type HomeProductCardProps = {
   isSignedIn: boolean;
   wishlistLabel: string;
   orderLabel: string;
+  cartQuantity?: number;
+  maxQuantity?: number;
   outOfStockLabel?: string;
   ratingLabel?: string;
   prepTimeLabel?: string;
@@ -57,39 +56,14 @@ export function HomeProductCard({
   isSignedIn,
   wishlistLabel,
   orderLabel,
+  cartQuantity = 0,
+  maxQuantity,
   outOfStockLabel,
   ratingLabel,
   prepTimeLabel,
   className = "",
 }: HomeProductCardProps) {
-  const router = useRouter();
   const reduceMotion = useReducedMotion();
-  const [pending, startTransition] = useTransition();
-  const [justAdded, setJustAdded] = useState(false);
-
-  function handleOrder(event: MouseEvent<HTMLButtonElement>): void {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!inStock || pending) {
-      return;
-    }
-
-    startTransition(async () => {
-      try {
-        const result = await addProductToActiveCart(productId, 1);
-        if (!result.ok) {
-          alertIfSpendLimitExceeded(locale, result);
-          setJustAdded(false);
-          return;
-        }
-        setJustAdded(true);
-        router.refresh();
-        window.setTimeout(() => setJustAdded(false), 1500);
-      } catch {
-        setJustAdded(false);
-      }
-    });
-  }
 
   return (
     <motion.div
@@ -165,11 +139,14 @@ export function HomeProductCard({
         ) : null}
 
         <div className="relative z-10 mt-auto w-full" onPointerDown={stopCardPress}>
-          <PidehPillButton
-            label={justAdded ? "✓" : orderLabel}
-            onClick={handleOrder}
-            disabled={!inStock || pending}
-            className="w-full"
+          <ProductCardCartControl
+            productId={productId}
+            locale={locale}
+            orderLabel={orderLabel}
+            initialQuantity={cartQuantity}
+            maxQuantity={maxQuantity}
+            inStock={inStock}
+            variant="pill"
           />
         </div>
       </article>

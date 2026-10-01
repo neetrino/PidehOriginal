@@ -1,11 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useTransition, type MouseEvent } from 'react';
 
 import { AppLink } from '@/components/ui/AppLink';
-import { beginCartBadgeAdd } from '@/features/cart/ui/cart-badge-count';
-import { addProductToActiveCart } from '@/features/group-orders/application/add-to-active';
+import { ProductCardCartControl } from '@/features/home/ui/ProductCardCartControl';
 import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 import { WishlistButton } from '@/features/wishlist/ui/WishlistButton';
 import type { Locale } from '@/lib/i18n/config';
@@ -23,6 +21,8 @@ type MobileProductCardProps = {
   isSignedIn: boolean;
   wishlistLabel: string;
   addLabel: string;
+  cartQuantity?: number;
+  maxQuantity?: number;
   ratingLabel?: string;
   prepTimeLabel?: string;
   priority?: boolean;
@@ -47,37 +47,12 @@ export function MobileProductCard({
   isSignedIn,
   wishlistLabel,
   addLabel,
+  cartQuantity = 0,
+  maxQuantity,
   ratingLabel,
   prepTimeLabel,
   priority = false,
 }: MobileProductCardProps) {
-  const [pending, startTransition] = useTransition();
-  const [justAdded, setJustAdded] = useState(false);
-
-  function handleAdd(event: MouseEvent<HTMLButtonElement>): void {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!inStock || pending) return;
-
-    setJustAdded(true);
-    const settleBadge = beginCartBadgeAdd();
-    startTransition(async () => {
-      try {
-        const result = await addProductToActiveCart(productId, 1);
-        if (!result.ok) {
-          settleBadge(null);
-          setJustAdded(false);
-          return;
-        }
-        settleBadge(result.itemCount);
-        window.setTimeout(() => setJustAdded(false), 1500);
-      } catch {
-        settleBadge(null);
-        setJustAdded(false);
-      }
-    });
-  }
-
   return (
     <article
       data-node-id="260:512"
@@ -167,7 +142,7 @@ export function MobileProductCard({
 
       <div
         data-node-id="260:875"
-        className="mt-auto flex h-[56px] w-full shrink-0 items-center gap-7"
+        className="mt-auto flex h-[56px] w-full shrink-0 items-center gap-2"
       >
         <p
           data-node-id="260:522"
@@ -175,30 +150,15 @@ export function MobileProductCard({
         >
           {priceFormatted}
         </p>
-        <button
-          type="button"
-          data-node-id="260:934"
-          aria-label={addLabel}
-          disabled={!inStock || pending}
-          onClick={handleAdd}
-          className="relative z-10 box-border flex h-[56px] w-[59px] shrink-0 -translate-y-3 items-center justify-center overflow-hidden rounded-[42px] border-0 bg-[#ff6b00] p-0 transition enabled:hover:brightness-105 enabled:active:scale-95 disabled:pointer-events-none disabled:opacity-50"
-        >
-          {justAdded ? (
-            <span className="text-lg font-bold text-white" aria-hidden>
-              ✓
-            </span>
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={MOBILE_HOME_ASSETS.plus}
-              alt=""
-              width={24}
-              height={24}
-              className="pointer-events-none size-6 max-w-none"
-              draggable={false}
-            />
-          )}
-        </button>
+        <ProductCardCartControl
+          productId={productId}
+          locale={locale}
+          orderLabel={addLabel}
+          initialQuantity={cartQuantity}
+          maxQuantity={maxQuantity}
+          inStock={inStock}
+          variant="compact"
+        />
       </div>
     </article>
   );

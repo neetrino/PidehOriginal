@@ -13,6 +13,7 @@ import { HeroVideoPreload } from '@/features/home/ui/HeroVideoPreload';
 import { HomeHero } from '@/features/home/ui/HomeHero';
 import { HomeReviews } from '@/features/home/ui/HomeReviews';
 import { MobileHome } from '@/features/home/ui/mobile/MobileHome';
+import { getActivePlainCartQuantities } from '@/features/cart/get-active-plain-quantities';
 import { getFeaturedProducts, type CatalogProduct } from '@/features/products/queries';
 import { getWishlistProductIds } from '@/features/wishlist/queries';
 import { getCurrentUser } from '@/lib/auth/session';
@@ -31,6 +32,7 @@ function toProductCards(
   locale: Locale,
   formatPrice: DisplayPriceFormatter,
   wishlistIds: Set<string>,
+  cartQuantities: Record<string, number>,
 ) {
   return products.map((product) => {
     const price = formatPrice(product.priceAmount);
@@ -46,6 +48,8 @@ function toProductCards(
       imageUrl: product.imageUrl,
       inStock: product.stockOnHand > 0,
       inWishlist: wishlistIds.has(product.id),
+      cartQuantity: cartQuantities?.[product.id] ?? 0,
+      maxQuantity: product.stockOnHand,
     };
   });
 }
@@ -70,12 +74,19 @@ export default async function HomePage({ params }: HomePageProps) {
     ]);
 
   const productIds = featuredProducts.map((product) => product.id);
-  const [wishlistIds, formatPrice] = await Promise.all([
+  const [wishlistIds, formatPrice, cartQuantities] = await Promise.all([
     getWishlistProductIds(productIds),
     createDisplayPriceFormatter(locale, currency),
+    getActivePlainCartQuantities(productIds),
   ]);
 
-  const featuredCards = toProductCards(featuredProducts, locale, formatPrice, wishlistIds);
+  const featuredCards = toProductCards(
+    featuredProducts,
+    locale,
+    formatPrice,
+    wishlistIds,
+    cartQuantities,
+  );
 
   const featureTitles = {
     delivery: dictionary.home.features.deliveryTitle,

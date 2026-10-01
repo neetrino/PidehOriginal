@@ -17,6 +17,8 @@ type FeaturedItem = {
   imageUrl: string | null;
   inStock: boolean;
   inWishlist?: boolean;
+  cartQuantity?: number;
+  maxQuantity?: number;
 };
 
 type HomeFeaturedProductsProps = {
@@ -112,6 +114,8 @@ export function HomeFeaturedProducts({
                   locale={locale}
                   productId={product.id}
                   inWishlist={product.inWishlist ?? false}
+                  cartQuantity={product.cartQuantity}
+                  maxQuantity={product.maxQuantity}
                   isSignedIn={isSignedIn}
                   wishlistLabel={wishlistLabel}
                   orderLabel={orderLabel}

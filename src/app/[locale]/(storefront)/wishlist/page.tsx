@@ -5,6 +5,7 @@ import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
 import { cardShelf, fadeUp, titleSweep } from '@/components/motion/presets';
 import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
 import { ShopBreadcrumb } from '@/features/products/ui/ShopBreadcrumb';
+import { getActivePlainCartQuantities } from '@/features/cart/get-active-plain-quantities';
 import { listWishlistProducts } from '@/features/wishlist/queries';
 import { WishlistEmptyState } from '@/features/wishlist/ui/WishlistEmptyState';
 import { getCurrentUser } from '@/lib/auth/session';
@@ -80,7 +81,10 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
     );
   }
 
-  const formatPrice = await createDisplayPriceFormatter(rawLocale, currency);
+  const [formatPrice, cartQuantities] = await Promise.all([
+    createDisplayPriceFormatter(rawLocale, currency),
+    getActivePlainCartQuantities(products.map((product) => product.id)),
+  ]);
   const priced = products.map((product) => {
     const price = formatPrice(product.priceAmount);
     const compareAt = product.compareAtAmount != null ? formatPrice(product.compareAtAmount) : null;
@@ -138,6 +142,8 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                   locale={rawLocale}
                   productId={product.id}
                   inWishlist
+                  cartQuantity={cartQuantities[product.id] ?? 0}
+                  maxQuantity={product.stockOnHand}
                   isSignedIn
                   wishlistLabel={title}
                   orderLabel={dictionary.home.orderCta}

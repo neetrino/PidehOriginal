@@ -68,7 +68,7 @@ function syncRenderedCount(next: number): void {
  */
 export function beginCartBadgeAdd(quantity = 1): (count: number | null) => void {
   inFlight += 1;
-  override = (override ?? renderedCount) + quantity;
+  override = Math.max((override ?? renderedCount) + quantity, 0);
   publish();
 
   return (count) => {

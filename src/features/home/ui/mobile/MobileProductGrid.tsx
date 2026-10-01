@@ -11,6 +11,8 @@ export type MobileGridProduct = {
   imageUrl: string | null;
   inStock: boolean;
   inWishlist?: boolean;
+  cartQuantity?: number;
+  maxQuantity?: number;
 };
 
 /** Figma row pitch between two stacked product cards (260:547 → 260:959). */
@@ -65,6 +67,8 @@ export function MobileProductGrid({
                 locale={locale}
                 productId={product.id}
                 inWishlist={product.inWishlist ?? false}
+                cartQuantity={product.cartQuantity}
+                maxQuantity={product.maxQuantity}
                 isSignedIn={isSignedIn}
                 wishlistLabel={wishlistLabel}
                 addLabel={addLabel}
