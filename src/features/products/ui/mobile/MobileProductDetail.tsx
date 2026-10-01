@@ -23,7 +23,7 @@ import { ProductSpecialRequestsField } from '@/features/products/ui/ProductSpeci
 import { MobileProductHero } from '@/features/products/ui/mobile/MobileProductHero';
 import { MobileProductSheet } from '@/features/products/ui/mobile/MobileProductSheet';
 import { useProductConfigurator } from '@/features/products/ui/use-product-configurator';
-import { WishlistButton } from '@/features/wishlist/ui/WishlistButton';
+import { WISHLIST_RING_BUTTON_CLASS, WishlistButton } from '@/features/wishlist/ui/WishlistButton';
 import type { Locale } from '@/lib/i18n/config';
 import type { Currency } from '@/lib/money/currency';
 
@@ -136,7 +136,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
             emptyIconSrc={PIDEH_ASSETS.pdpHeart}
             emptyIconWidth={22}
             emptyIconHeight={22}
-            className="size-11 border-2 border-[rgba(255,107,0,0.75)] bg-white text-[#ff6b00] hover:bg-white"
+            className={WISHLIST_RING_BUTTON_CLASS}
           />
         }
         priceRow={

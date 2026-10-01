@@ -19,7 +19,6 @@ export function useAboutHeroScroll(sectionRef: RefObject<HTMLElement | null>): v
       }
 
       const media = section.querySelector('[data-about-hero-media]');
-      const veil = section.querySelector('[data-about-hero-veil]');
       const copy = section.querySelector('[data-about-hero-copy]');
       const words = section.querySelectorAll('[data-about-hero-word]');
 
@@ -33,10 +32,9 @@ export function useAboutHeroScroll(sectionRef: RefObject<HTMLElement | null>): v
             scrub: 1.2,
           },
         })
-        .fromTo(media, { scale: 1.08, yPercent: 0 }, { scale: 1.2, yPercent: 14 }, 0)
-        .fromTo(veil, { opacity: 0.35 }, { opacity: 0.92 }, 0)
-        .to(copy, { y: -72 }, 0)
-        .to(words, { yPercent: -40, opacity: 0.15, stagger: 0.05 }, 0);
+        .fromTo(media, { y: 0 }, { y: -16 }, 0)
+        .to(copy, { y: -20 }, 0)
+        .to(words, { y: -8, opacity: 0.45, stagger: 0.04 }, 0);
     },
     { scope: sectionRef, dependencies: [reduceMotion] },
   );

@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 
 import { PAGE_CONTAINER } from '@/components/layout/page-container';
+import { ABOUT_STORY_UNDER_PHOTO } from '@/features/about/content/team-members';
 import { useAboutStoryScroll } from '@/features/about/ui/useAboutStoryScroll';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
@@ -30,6 +31,9 @@ export function AboutStory({ copy }: AboutStoryProps) {
         />
         <ol className="space-y-10 md:space-y-14">
           {copy.paragraphs.map((paragraph, index) => {
+            if (index === ABOUT_STORY_UNDER_PHOTO.index) {
+              return null;
+            }
             const title = copy.storyTitles[index] ?? copy.eyebrow;
             const step = String(index + 1).padStart(2, '0');
 
