@@ -337,7 +337,7 @@
       "allStatuses": "Все статусы",
       "statusActive": "Включён",
       "statusInactive": "Выключен",
-      "statusDraft": "Черновик",
+      "statusDraft": "Stop product",
       "statusLowRemaining": "Мало осталось"
     },
     "table": {

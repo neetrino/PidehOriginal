@@ -337,7 +337,7 @@
       "allStatuses": "Բոլոր կարգավիճակները",
       "statusActive": "Միացված",
       "statusInactive": "Անջատված",
-      "statusDraft": "Սևագիր",
+      "statusDraft": "Stop product",
       "statusLowRemaining": "Քիչ է մնացել"
     },
     "table": {
