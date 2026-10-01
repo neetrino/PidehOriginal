@@ -95,6 +95,9 @@ function paymentMethodLabel(method: string): string {
   if (normalized === 'ARCA') {
     return 'ArCa';
   }
+  if (normalized === 'TERMINAL') {
+    return 'Terminal';
+  }
   return method;
 }
 

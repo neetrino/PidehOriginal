@@ -70,7 +70,9 @@
     "idram": "Idram",
     "idramDescription": "Վճարեք Idram դրամապանակով կամ քարտով",
     "arca": "Քարտով",
-    "arcaDescription": "Վճարեք Visa, Mastercard կամ ArCa քարտով"
+    "arcaDescription": "Վճարեք Visa, Mastercard կամ ArCa քարտով",
+    "terminal": "Terminal",
+    "terminalDescription": "Վճարեք քարտով՝ պատվերը ստանալիս"
   },
   "coupon": {
     "title": "Ունե՞ք պրոմոկոդ",

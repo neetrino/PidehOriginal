@@ -157,6 +157,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         idramDescription: copy.payment.idramDescription,
         arca: copy.payment.arca,
         arcaDescription: copy.payment.arcaDescription,
+        terminal: copy.payment.terminal,
+        terminalDescription: copy.payment.terminalDescription,
         couponTitle: copy.coupon.title,
         couponPlaceholder: copy.coupon.placeholder,
         couponApply: copy.coupon.apply,

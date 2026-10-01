@@ -76,6 +76,8 @@ type CheckoutLabels = {
   idramDescription: string;
   arca: string;
   arcaDescription: string;
+  terminal: string;
+  terminalDescription: string;
   couponTitle: string;
   couponPlaceholder: string;
   couponApply: string;
@@ -238,6 +240,12 @@ export function CheckoutForm({
           '/assets/payments/visa.png',
         ],
       },
+      {
+        id: 'terminal' as const,
+        name: labels.terminal,
+        description: labels.terminalDescription,
+        logos: ['/assets/payments/terminal.png'],
+      },
     ],
     [
       labels.arca,
@@ -246,6 +254,8 @@ export function CheckoutForm({
       labels.cashOnDeliveryDescription,
       labels.idram,
       labels.idramDescription,
+      labels.terminal,
+      labels.terminalDescription,
     ],
   );
 

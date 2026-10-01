@@ -70,7 +70,9 @@
     "idram": "Idram",
     "idramDescription": "Оплата через Idram или картой",
     "arca": "Картой",
-    "arcaDescription": "Оплатите картой Visa, Mastercard или ArCa"
+    "arcaDescription": "Оплатите картой Visa, Mastercard или ArCa",
+    "terminal": "Terminal",
+    "terminalDescription": "Оплатите картой при получении заказа"
   },
   "coupon": {
     "title": "Есть промокод?",

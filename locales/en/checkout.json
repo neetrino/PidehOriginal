@@ -70,7 +70,9 @@
     "idram": "Idram",
     "idramDescription": "Pay with Idram wallet or card",
     "arca": "Card",
-    "arcaDescription": "Pay with a Visa, Mastercard, or ArCa card"
+    "arcaDescription": "Pay with a Visa, Mastercard, or ArCa card",
+    "terminal": "Terminal",
+    "terminalDescription": "Pay by card when you receive your order"
   },
   "coupon": {
     "title": "Have a coupon?",
