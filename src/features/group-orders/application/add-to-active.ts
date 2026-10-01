@@ -22,7 +22,7 @@ export type AddProductToActiveCartResult =
 export async function addProductToActiveCart(
   productId: string,
   quantity: number,
-  options?: { modifierIds?: string[] },
+  options?: { modifierIds?: string[]; customerNote?: string },
 ): Promise<AddProductToActiveCartResult> {
   const session = await peekGroupOrderSession();
   if (session.inviteToken && session.participantId) {
@@ -31,6 +31,7 @@ export async function addProductToActiveCart(
       productId,
       quantity,
       modifierIds: options?.modifierIds,
+      customerNote: options?.customerNote,
     });
     if (!result.ok) return result;
     const { getActiveGroupSessionItemCount } =

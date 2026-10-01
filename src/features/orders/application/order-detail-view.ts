@@ -35,6 +35,7 @@ export type AdminOrderDetailItemView = {
     name: string;
     unitPriceAmount: number;
   }>;
+  customerNote: string | null;
 };
 
 export type AdminOrderDetailView = {
@@ -64,6 +65,7 @@ export type AdminOrderDetailView = {
   scheduledDelivery: string | null;
   cashChangeAmount: number | null;
   cashChangeImageUrl: string | null;
+  customerNote: string | null;
   paymentMethod: string;
   paymentAmount: number;
   /** Present when this order was placed from a group session. */
@@ -82,6 +84,17 @@ function formatAddressLine(address: AdminOrderDetail['order']['shippingAddress']
   ].filter((part): part is string => Boolean(part && part.trim()));
 
   return parts.join(', ');
+}
+
+function formatOrderCustomerNotes(
+  items: ReadonlyArray<{ productTitleSnapshot: string; customerNote: string | null }>,
+): string | null {
+  const lines = items.flatMap((item) => {
+    const note = item.customerNote?.trim();
+    if (!note) return [];
+    return [`${item.productTitleSnapshot}: ${note}`];
+  });
+  return lines.length > 0 ? lines.join('\n') : null;
 }
 
 function paymentMethodLabel(method: string): string {
@@ -152,6 +165,7 @@ export function toAdminOrderDetailView(
     cashChangeImageUrl: order.shippingAddress.cashChangeImageKey
       ? mediaPublicUrl(order.shippingAddress.cashChangeImageKey)
       : null,
+    customerNote: formatOrderCustomerNotes(items),
     paymentMethod: latestPayment ? paymentMethodLabel(latestPayment.method) : '—',
     paymentAmount: latestPayment?.amount ?? order.totalAmount,
     participants,
@@ -169,6 +183,7 @@ export function toAdminOrderDetailView(
       lineTotalAmount: item.lineTotalAmount,
       currency: item.currency,
       modifiers: item.modifiers,
+      customerNote: item.customerNote?.trim() || null,
     })),
   };
 }

@@ -65,6 +65,8 @@ export const cartItems = pgTable(
      * selections to coexist as separate cart lines.
      */
     selectionKey: text('selection_key').notNull().default(''),
+    /** Optional special request written on the product page. */
+    customerNote: text('customer_note'),
     quantity: integer('quantity').notNull(),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),

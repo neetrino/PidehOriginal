@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 import { ProductPriceFlow } from '@/features/products/ui/ProductPriceFlow';
 import { ProductPurchaseControls } from '@/features/products/ui/ProductPurchaseControls';
@@ -47,10 +45,7 @@ export function ProductInfoCard({
   labels,
   state,
 }: ProductInfoCardProps) {
-  const [note, setNote] = useState('');
-
   function handleReset(): void {
-    setNote('');
     state.resetSelection();
   }
 
@@ -116,9 +111,9 @@ export function ProductInfoCard({
       <ProductSpecialRequestsField
         label={labels.specialRequests}
         placeholder={labels.specialRequestsPlaceholder}
-        value={note}
+        value={state.customerNote}
         disabled={state.disabled}
-        onChange={setNote}
+        onChange={state.setCustomerNote}
       />
     </div>
   );

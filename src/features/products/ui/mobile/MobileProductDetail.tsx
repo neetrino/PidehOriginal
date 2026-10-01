@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
 import {
@@ -84,7 +84,6 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
     labels,
   } = props;
   const galleryRef = useRef<HTMLDivElement>(null);
-  const [note, setNote] = useState('');
   const state = useProductConfigurator({
     locale,
     currency,
@@ -99,7 +98,6 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
   });
 
   function handleReset(): void {
-    setNote('');
     state.resetSelection();
   }
 
@@ -169,10 +167,10 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
               <ProductSpecialRequestsField
                 label={labels.specialRequests}
                 placeholder={labels.specialRequestsPlaceholder}
-                value={note}
+                value={state.customerNote}
                 disabled={state.disabled}
                 minHeightClassName="min-h-[155px]"
-                onChange={setNote}
+                onChange={state.setCustomerNote}
               />
             </div>
             <button

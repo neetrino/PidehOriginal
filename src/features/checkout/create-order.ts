@@ -296,6 +296,7 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
         lineTotal: number;
         groupOrderParticipantId: string | null;
         participantNameSnapshot: string | null;
+        customerNote: string | null;
         modifiers: Array<{
           modifierId: string;
           kind: 'ADDITION' | 'EXCEPTION';
@@ -378,6 +379,7 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
           lineTotal,
           groupOrderParticipantId: null,
           participantNameSnapshot: null,
+          customerNote: item.customerNote,
           modifiers: modifiers.map((modifier) => ({
             modifierId: modifier.id,
             kind: modifier.kind,
@@ -468,6 +470,7 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
             lineTotal,
             groupOrderParticipantId: row.participantId,
             participantNameSnapshot: row.participantName,
+            customerNote: row.item.customerNote,
             modifiers: mods.map((mod) => ({
               modifierId: mod.modifierId,
               kind:
@@ -733,6 +736,7 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
           currency: defaultCurrency,
           groupOrderParticipantId: line.groupOrderParticipantId,
           participantNameSnapshot: line.participantNameSnapshot,
+          customerNote: line.customerNote,
         });
 
         if (line.modifiers.length > 0) {

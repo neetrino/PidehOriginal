@@ -218,7 +218,8 @@
       "bonusColumn": "Бонус",
       "emptyParticipantItems": "У этого участника нет товаров.",
       "giftCard": "Подарочная карта",
-      "grandTotal": "Итого"
+      "grandTotal": "Итого",
+      "customerNote": "Примечание"
     },
     "detail": {
       "customer": "Клиент",

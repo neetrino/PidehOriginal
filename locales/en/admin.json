@@ -218,7 +218,8 @@
       "bonusColumn": "Bonus",
       "emptyParticipantItems": "This participant has no items.",
       "giftCard": "Gift card",
-      "grandTotal": "Total"
+      "grandTotal": "Total",
+      "customerNote": "Note"
     },
     "detail": {
       "customer": "Customer",

@@ -218,7 +218,8 @@
       "bonusColumn": "Բոնուս",
       "emptyParticipantItems": "Այս մասնակցի համար ապրանքներ չկան։",
       "giftCard": "Gift card",
-      "grandTotal": "Ընդամենը"
+      "grandTotal": "Ընդամենը",
+      "customerNote": "Նշում"
     },
     "detail": {
       "customer": "Հաճախորդ",

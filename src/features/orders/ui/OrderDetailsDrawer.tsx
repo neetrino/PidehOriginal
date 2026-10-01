@@ -99,6 +99,14 @@ export function OrderDetailsDrawer({
               copy={copy}
               variant={isGroup ? 'group' : 'full'}
             />
+            {detail.customerNote ? (
+              <section className="rounded-2xl border border-gray-200 px-5 py-4">
+                <h3 className="mb-2 text-base font-semibold text-gray-900">
+                  {copy.orders.drawer.customerNote}
+                </h3>
+                <p className="text-sm whitespace-pre-wrap text-gray-800">{detail.customerNote}</p>
+              </section>
+            ) : null}
           </>
         ) : null}
       </div>

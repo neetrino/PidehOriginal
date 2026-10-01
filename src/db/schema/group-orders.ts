@@ -149,6 +149,8 @@ export const groupOrderItems = pgTable(
       .notNull()
       .references(() => products.id, { onDelete: 'restrict' }),
     selectionKey: text('selection_key').notNull().default(''),
+    /** Optional special request written on the product page. */
+    customerNote: text('customer_note'),
     quantity: integer('quantity').notNull(),
     /** Unit price snapshot at last recalculation (AMD, product + additions). */
     unitAmount: integer('unit_amount').notNull().default(0),

@@ -41,6 +41,7 @@ export function useProductConfigurator({
   const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
   const [additionIds, setAdditionIds] = useState<string[]>([]);
   const [exceptionIds, setExceptionIds] = useState<string[]>([]);
+  const [customerNote, setCustomerNote] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -68,6 +69,7 @@ export function useProductConfigurator({
     setQuantity(1);
     setAdditionIds([]);
     setExceptionIds([]);
+    setCustomerNote('');
     clearStatus();
   }
 
@@ -82,6 +84,7 @@ export function useProductConfigurator({
       try {
         const result = await addProductToActiveCart(productId, quantity, {
           modifierIds: [...additionIds, ...exceptionIds],
+          customerNote,
         });
         if (!result.ok) {
           settleBadge(null);
@@ -92,6 +95,7 @@ export function useProductConfigurator({
           return;
         }
         settleBadge(result.itemCount);
+        setCustomerNote('');
       } catch {
         settleBadge(null);
         setError(errorLabel);
@@ -109,6 +113,8 @@ export function useProductConfigurator({
     quantity,
     additionIds,
     exceptionIds,
+    customerNote,
+    setCustomerNote,
     error,
     pending,
     extraHintPrice,
