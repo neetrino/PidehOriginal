@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { Button } from '@/components/ui/Button';
 import {
   CHECKOUT_APPLY_BTN,
@@ -8,6 +10,37 @@ import {
   CHECKOUT_PANEL,
   CHECKOUT_PRIMARY_BTN,
 } from '@/features/checkout/ui/checkout-ui-classes';
+
+type CheckoutMemberBonus = {
+  mode: 'member';
+  enabled: boolean;
+  availableBalance: number;
+  maxRedeem: number;
+  useBonuses: boolean;
+  redeemAmount: number;
+  onToggle: (enabled: boolean) => void;
+  onAmountChange: (amount: number) => void;
+  onUseMax: () => void;
+  labels: {
+    title: string;
+    available: string;
+    useBonuses: string;
+    amount: string;
+    useMax: string;
+    applied: string;
+  };
+  formatMoney: (amount: number) => string;
+};
+
+type CheckoutGuestBonus = {
+  mode: 'guest';
+  earnPoints: number;
+  registerHref: string;
+  labels: {
+    warning: string;
+    register: string;
+  };
+};
 
 type CheckoutOrderSummaryProps = {
   title: string;
@@ -58,25 +91,7 @@ type CheckoutOrderSummaryProps = {
   isSubmitting: boolean;
   placeOrderLabel: string;
   processingLabel: string;
-  bonus?: {
-    enabled: boolean;
-    availableBalance: number;
-    maxRedeem: number;
-    useBonuses: boolean;
-    redeemAmount: number;
-    onToggle: (enabled: boolean) => void;
-    onAmountChange: (amount: number) => void;
-    onUseMax: () => void;
-    labels: {
-      title: string;
-      available: string;
-      useBonuses: string;
-      amount: string;
-      useMax: string;
-      applied: string;
-    };
-    formatMoney: (amount: number) => string;
-  };
+  bonus?: CheckoutMemberBonus | CheckoutGuestBonus;
 };
 
 export function CheckoutOrderSummary({
@@ -229,7 +244,21 @@ export function CheckoutOrderSummary({
           ) : null}
         </div>
 
-        {bonus?.enabled ? (
+        {bonus?.mode === 'guest' ? (
+          <div className={`mb-6 ${CHECKOUT_INSET}`}>
+            <p className="text-sm leading-snug text-[#1e1e1e]">
+              {bonus.labels.warning.replace('{amount}', String(bonus.earnPoints))}
+            </p>
+            <Link
+              href={bonus.registerHref}
+              className="mt-3 inline-flex font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase underline-offset-2 hover:underline"
+            >
+              {bonus.labels.register}
+            </Link>
+          </div>
+        ) : null}
+
+        {bonus?.mode === 'member' && bonus.enabled ? (
           <div className={`mb-6 ${CHECKOUT_INSET}`}>
             <p className="font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
               {bonus.labels.title}
@@ -289,7 +318,7 @@ export function CheckoutOrderSummary({
               <span className="text-[#ff6b00]">-{discountFormatted}</span>
             </div>
           ) : null}
-          {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
+          {bonus?.mode === 'member' && bonus.useBonuses && bonus.redeemAmount > 0 ? (
             <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
               <span>{bonus.labels.applied}</span>
               <span className="text-[#ff6b00]">-{bonus.formatMoney(bonus.redeemAmount)}</span>

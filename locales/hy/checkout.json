@@ -18,8 +18,8 @@
     "floor": "Հարկ",
     "intercomCode": "Դոմոֆոնի կոդ",
     "city": "Քաղաք",
-    "deliveryLocation": "Առաքման վայր",
-    "selectLocation": "Ընտրեք վայրը"
+    "deliveryLocation": "Համայնք",
+    "selectLocation": "Ընտրեք համայնքը"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
@@ -27,14 +27,6 @@
     "floor": "Օր․ 3",
     "intercomCode": "Օր․ 24#",
     "city": "Քաղաք"
-  },
-  "map": {
-    "openMap": "Քարտեզ",
-    "title": "Ընտրեք հասցեն քարտեզից",
-    "hint": "Սեղմեք քարտեզին կամ տեղափոխեք նշիչը՝ կոնկրետ կետ ընտրելու համար։",
-    "confirm": "Օգտագործել այս հասցեն",
-    "cancel": "Փակել",
-    "resolving": "Հասցեն որոշվում է…"
   },
   "schedule": {
     "title": "Ամսաթիվ և ժամ",
@@ -64,7 +56,7 @@
     "delivery": "Առաքում",
     "deliveryDescription": "Պատվերը կառաքենք ձեր հասցեով։ Գինը կախված է ընտրված առաքման գոտուց։",
     "enterCity": "Մուտքագրեք քաղաքը",
-    "selectDeliveryLocation": "Ընտրեք առաքման գոտին",
+    "selectDeliveryLocation": "Ընտրեք համայնքը",
     "enterDeliveryAddress": "Մուտքագրեք առաքման հասցեն",
     "calculatingDelivery": "Առաքման գինը հաշվվում է…"
   },
@@ -126,6 +118,8 @@
     "use": "Օգտագործել բոնուսները",
     "amount": "Օգտագործվող բոնուսներ",
     "useMax": "Առավելագույնը",
-    "applied": "Բոնուսներ"
+    "applied": "Բոնուսներ",
+    "guestWarning": "Չգրանցված լինելու պատճառով կկորցնեք {amount} կուտակային միավոր",
+    "register": "Գրանցվել"
   }
 }

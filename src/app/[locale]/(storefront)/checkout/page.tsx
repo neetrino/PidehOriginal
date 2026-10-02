@@ -111,6 +111,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       storePickupAddress={storePickupAddress}
       pickupBranches={pickupBranches}
       bonusAvailableBalance={bonusAvailableBalance}
+      bonusAccrualPercent={bonusSettings.accrualPercent}
       bonusMaxRedeemPercent={bonusSettings.maxRedeemPercent}
       groupOrderCheckout={
         groupFlags.isGroupOrderCheckout
@@ -147,12 +148,6 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         deliveryLocation: copy.form.deliveryLocation,
         selectLocation: copy.form.selectLocation,
         selectDeliveryLocation: copy.shipping.selectDeliveryLocation,
-        openMap: copy.map.openMap,
-        mapTitle: copy.map.title,
-        mapHint: copy.map.hint,
-        mapConfirm: copy.map.confirm,
-        mapCancel: copy.map.cancel,
-        mapResolving: copy.map.resolving,
         enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
         scheduleTitle: copy.schedule.title,
         scheduleDeliverTo: copy.schedule.deliverTo,
@@ -208,6 +203,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         bonusAmount: copy.bonus.amount,
         bonusUseMax: copy.bonus.useMax,
         bonusApplied: copy.bonus.applied,
+        bonusGuestWarning: copy.bonus.guestWarning,
+        bonusRegister: copy.bonus.register,
         storePickup: copy.shipping.storePickup,
         storePickupDescription: copy.shipping.storePickupDescription,
         deliveryOption: copy.shipping.delivery,

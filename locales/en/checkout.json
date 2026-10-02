@@ -18,8 +18,8 @@
     "floor": "Floor",
     "intercomCode": "Intercom code",
     "city": "City",
-    "deliveryLocation": "Delivery location",
-    "selectLocation": "Select location"
+    "deliveryLocation": "Community",
+    "selectLocation": "Select community"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
@@ -27,14 +27,6 @@
     "floor": "e.g. 3",
     "intercomCode": "e.g. 24#",
     "city": "City"
-  },
-  "map": {
-    "openMap": "Map",
-    "title": "Pick address on the map",
-    "hint": "Click the map or drag the pin to choose the exact delivery point.",
-    "confirm": "Use this address",
-    "cancel": "Close",
-    "resolving": "Resolving address…"
   },
   "schedule": {
     "title": "Date and time",
@@ -64,7 +56,7 @@
     "delivery": "Delivery",
     "deliveryDescription": "We will deliver your order to your address. Price depends on the selected delivery zone.",
     "enterCity": "Enter City",
-    "selectDeliveryLocation": "Select delivery location",
+    "selectDeliveryLocation": "Select community",
     "enterDeliveryAddress": "Enter a delivery address",
     "calculatingDelivery": "Calculating delivery…"
   },
@@ -126,6 +118,8 @@
     "use": "Use bonuses",
     "amount": "Bonus points to use",
     "useMax": "Use max",
-    "applied": "Bonuses"
+    "applied": "Bonuses",
+    "guestWarning": "Because you are not registered, you will lose {amount} loyalty points",
+    "register": "Register"
   }
 }

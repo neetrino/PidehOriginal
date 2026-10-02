@@ -29,7 +29,7 @@ export function resolveDeliveryLocationTranslation(
   return { ...EMPTY_DELIVERY_LOCATION_TRANSLATION };
 }
 
-/** Builds a checkout/admin label like "Yerevan, Shengavit". */
+/** Builds a checkout community label (area only, e.g. "Shengavit"). */
 export function formatDeliveryLocationLabel(
   translations: DeliveryLocationTranslationsJson | null | undefined,
   locale: Locale,
@@ -39,8 +39,7 @@ export function formatDeliveryLocationLabel(
   const resolved = resolveDeliveryLocationTranslation(translations, locale);
   const city = resolved.city || fallbackCity?.trim() || '';
   const area = resolved.area || fallbackArea?.trim() || '';
-  if (city && area) return `${city}, ${area}`;
-  return city || area || 'Delivery';
+  return area || city || 'Delivery';
 }
 
 /**
