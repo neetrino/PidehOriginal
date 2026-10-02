@@ -118,6 +118,13 @@
     "sendDate": "Send date",
     "paymentMethod": "Payment method",
     "cashOnDelivery": "Cash on delivery",
+    "cashOnDeliveryDescription": "Pay cash when the gift card purchase is confirmed",
+    "idram": "Idram",
+    "idramDescription": "Pay with Idram wallet or card",
+    "arca": "Card",
+    "arcaDescription": "Pay with a Visa, Mastercard, or ArCa card",
+    "terminal": "Terminal",
+    "terminalDescription": "Pay by card at a terminal",
     "submit": "Place purchase",
     "submitting": "Submitting…",
     "successPending": "Purchase created. The gift card is active and the code was emailed to the recipient."

@@ -68,6 +68,7 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
         dateFrom: undefined,
         dateTo: undefined,
         q: undefined,
+        onlyNew: false,
       };
 
   const { rows, total, pageSize } = await listCustomerOrders(user.id, filters);

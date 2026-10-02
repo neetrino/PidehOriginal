@@ -24,7 +24,8 @@
     "adminMenuAria": "Меню администратора",
     "expandSidebar": "Развернуть боковую панель",
     "collapseSidebar": "Свернуть боковую панель",
-    "toggleProductSubpages": "Переключить подстраницы товаров"
+    "toggleProductSubpages": "Переключить подстраницы товаров",
+    "newOrdersBadgeAria": "{count} новых заказов"
   },
   "common": {
     "save": "Сохранить",
@@ -140,6 +141,26 @@
       "individual": "Индивидуальные",
       "group": "Групповые"
     },
+    "newSwitch": {
+      "aria": "Показать только новые заказы",
+      "new": "Новые"
+    },
+    "newOrderAlert": {
+      "header": "Новый заказ ({count} ожидают)",
+      "orderTitle": "Заказ #{orderNumber}",
+      "customer": "Клиент",
+      "total": "Итого",
+      "payment": "Оплата",
+      "placed": "Время",
+      "heard": "Услышал — закрыть все ({count})",
+      "paymentMethods": {
+        "cash": "Cash",
+        "idram": "Idram",
+        "arca": "ArCa",
+        "terminal": "Терминал",
+        "unknown": "—"
+      }
+    },
     "bulk": {
       "deleteSelected": "Удалить выбранные",
       "selectAtLeastOne": "Выберите хотя бы один заказ.",
@@ -158,7 +179,13 @@
       "bonus": "Бонус",
       "bonusEmpty": "—",
       "placed": "Оформлен",
-      "archivedBadge": "В архиве"
+      "paymentMethod": "Способ",
+      "archivedBadge": "В архиве",
+      "newBadge": "Новый"
+    },
+    "customerComment": {
+      "title": "Комментарий о клиенте",
+      "bellAria": "Посмотреть комментарий администратора об этом клиенте"
     },
     "inlineStatus": {
       "changeOrderAria": "Изменить статус заказа",
@@ -219,7 +246,18 @@
       "emptyParticipantItems": "У этого участника нет товаров.",
       "giftCard": "Подарочная карта",
       "grandTotal": "Итого",
-      "customerNote": "Примечание"
+      "customerNote": "Примечание",
+      "reviewTitle": "Отзыв о заказе",
+      "reviewHint": "Оцените заказ после доставки.",
+      "reviewRating": "Ваша оценка",
+      "reviewComment": "Ваш отзыв",
+      "reviewPlaceholder": "Расскажите о своём опыте…",
+      "reviewSubmit": "Отправить отзыв",
+      "reviewSubmitting": "Отправка…",
+      "deliveryFee": "Стоимость доставки:",
+      "deliveryZone": "Зона доставки:",
+      "methodDelivery": "Доставка",
+      "methodPickup": "Самовывоз"
     },
     "detail": {
       "customer": "Клиент",
@@ -469,10 +507,10 @@
   },
   "delivery": {
     "title": "Доставка",
-    "subtitle": "Укажите адрес магазина, цену за километр в AMD и календарь доставки, из которого клиенты смогут выбрать время при оформлении заказа.",
+    "subtitle": "Укажите адрес магазина, зоны доставки с фиксированными ценами и календарь, из которого клиенты смогут выбрать время при оформлении заказа.",
     "saved": "Настройки доставки сохранены.",
-    "storeAndPricing": "Магазин и цены",
-    "storeAndPricingHint": "Адрес отправления и стоимость доставки за километр, используемые при оформлении заказа.",
+    "storeAndPricing": "Настройки магазина",
+    "storeAndPricingHint": "Адрес магазина для самовывоза и карты. Цены доставки задаются зонами ниже.",
     "storeAddress": "Адрес магазина",
     "storeAddressPlaceholder": "например, Андраник 108/10, Ереван",
     "storeAddressHint": "Начните вводить название улицы — выберите вариант из подсказок Google или откройте карту, чтобы поставить метку, затем сохраните.",
@@ -489,6 +527,12 @@
     "pricePerKmPlaceholder": "1000",
     "pricePerKmExample": "Пример: 1.101 км → {amount}",
     "offerDelivery": "Предлагать доставку при оформлении заказа",
+    "locations": {
+      "title": "Зоны доставки",
+      "hint": "Фиксированные цены по городу и району. Клиент выбирает зону при оформлении заказа.",
+      "add": "Добавить новый адрес",
+      "empty": "Зон доставки пока нет. Добавьте город и район с ценой."
+    },
     "cashChange": {
       "title": "Купюры для сдачи",
       "hint": "Купюры, которые покупатель может выбрать при оформлении, чтобы курьер привёз нужную сдачу.",
@@ -524,18 +568,17 @@
       "noClosedDates": "Закрытых дат нет. Добавьте праздники или дни без доставки."
     },
     "locationDrawer": {
-      "addTitle": "Добавить местоположение",
-      "editTitle": "Редактировать местоположение",
-      "addAria": "Добавить местоположение",
-      "editAria": "Редактировать местоположение",
-      "country": "Страна",
-      "countryPlaceholder": "Армения",
+      "addTitle": "Добавить адрес",
+      "editTitle": "Редактировать адрес",
+      "addAria": "Добавить адрес доставки",
+      "editAria": "Редактировать адрес доставки",
+      "translations": "Язык",
       "city": "Город",
       "cityPlaceholder": "Ереван",
+      "area": "Район",
+      "areaPlaceholder": "Шенгавит",
       "priceAmd": "Цена (AMD)",
-      "pricePlaceholder": "1500",
-      "freeDeliveryFrom": "Бесплатная доставка от (AMD)",
-      "freeDeliveryPlaceholder": "50000"
+      "pricePlaceholder": "600"
     }
   },
   "discounts": {
@@ -621,17 +664,22 @@
       "code": "Код",
       "type": "Тип",
       "value": "Значение",
-      "usageLimit": "Лимит использования",
       "used": "Использовано",
-      "active": "Активен",
+      "status": "Статус",
       "validUntil": "Действует до",
       "actions": "Действия",
       "percentOff": "Скидка в процентах",
       "fixedAmountAmd": "Фиксированная сумма (AMD)",
-      "activeAria": "Активен",
       "editAria": "Редактировать {code}",
       "duplicateAria": "Дублировать {code}",
       "deleteAria": "Удалить {code}"
+    },
+    "statuses": {
+      "ACTIVE": "Активен",
+      "SCHEDULED": "Запланирован",
+      "EXPIRED": "Истёк",
+      "USED_UP": "Использован",
+      "INACTIVE": "Неактивен"
     },
     "drawer": {
       "newTitle": "Новый купон",
@@ -742,6 +790,14 @@
       "newStatus": "Новый статус",
       "newStatusAria": "Новый статус",
       "updateStatus": "Обновить статус"
+    },
+    "commentForm": {
+      "title": "Комментарий администратора",
+      "hint": "Внутренняя заметка о клиенте. На его заказах появится значок колокольчика.",
+      "label": "Комментарий",
+      "placeholder": "Хороший клиент, задерживает оплату, VIP…",
+      "save": "Сохранить комментарий",
+      "saved": "Комментарий сохранён."
     }
   },
   "analytics": {

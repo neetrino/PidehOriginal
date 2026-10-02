@@ -19,6 +19,11 @@ export const adminOrdersFilterSchema = z.object({
   dateTo: z.string().date().optional(),
   q: z.string().trim().max(100).optional(),
   kind: z.enum(['all', 'individual', 'group']).optional(),
+  /** When true, only orders that an admin has not opened yet. */
+  onlyNew: z.preprocess((value) => {
+    if (value === true || value === '1' || value === 'true') return true;
+    return false;
+  }, z.boolean()),
   page: z.coerce.number().int().min(1).max(500).default(1),
 });
 

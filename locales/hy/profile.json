@@ -118,6 +118,13 @@
     "sendDate": "Ուղարկման ամսաթիվ",
     "paymentMethod": "Վճարման եղանակ",
     "cashOnDelivery": "Կանխիկ առաքման ժամանակ",
+    "cashOnDeliveryDescription": "Վճարեք կանխիկ՝ Gift Card-ը հաստատելիս",
+    "idram": "Idram",
+    "idramDescription": "Վճարեք Idram դրամապանակով կամ քարտով",
+    "arca": "Քարտով",
+    "arcaDescription": "Վճարեք Visa, Mastercard կամ ArCa քարտով",
+    "terminal": "Terminal",
+    "terminalDescription": "Վճարեք քարտով տերմինալով",
     "submit": "Գրանցել գնումը",
     "submitting": "Ուղարկվում է…",
     "successPending": "Գնումը գրանցվեց։ Gift Card-ը ակտիվ է, կոդը ուղարկվել է ստացողի email-ին։"

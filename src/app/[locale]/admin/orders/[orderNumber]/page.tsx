@@ -57,11 +57,10 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
   const d = copy.orders.detail;
   const drawer = copy.orders.drawer;
 
-  const deliveryLabel = order.deliveryLabelSnapshot
-    ? d.deliveryWithLabel
-        .replace('{label}', order.deliveryLabelSnapshot)
-        .replace('{amount}', formatMoney(order.deliveryAmount, order.baseCurrency))
-    : d.delivery.replace('{amount}', formatMoney(order.deliveryAmount, order.baseCurrency));
+  const deliveryLabel = d.delivery.replace(
+    '{amount}',
+    formatMoney(order.deliveryAmount, order.baseCurrency),
+  );
 
   const couponLabel = order.promotionCodeSnapshot
     ? d.couponDiscountWithCode
@@ -170,6 +169,20 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                   ) : null,
                 )}
               </ul>
+            </div>
+          ) : null}
+          {view?.customerReview ? (
+            <div className="mt-4">
+              <p className="text-sm text-gray-500">{drawer.reviewTitle}</p>
+              <p className="mt-1 text-sm font-medium text-gray-900">
+                {'★'.repeat(view.customerReview.rating)}
+                {'☆'.repeat(5 - view.customerReview.rating)}
+              </p>
+              {view.customerReview.comment ? (
+                <p className="mt-1 text-sm whitespace-pre-wrap text-gray-900">
+                  {view.customerReview.comment}
+                </p>
+              ) : null}
             </div>
           ) : null}
         </Card>

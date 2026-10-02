@@ -107,6 +107,23 @@ export const orders = pgTable(
     })
       .notNull()
       .default(sql`now()`),
+    /**
+     * When an admin first opened this order in the admin drawer.
+     * Null means the order is still "new" for admin notifications.
+     */
+    adminSeenAt: timestamp('admin_seen_at', {
+      withTimezone: true,
+      mode: 'date',
+    }),
+    /** Customer 1–5 star rating after the order is delivered. */
+    customerReviewRating: integer('customer_review_rating'),
+    /** Customer review text submitted with the rating. */
+    customerReviewComment: text('customer_review_comment'),
+    /** When the customer submitted the order review. */
+    customerReviewedAt: timestamp('customer_reviewed_at', {
+      withTimezone: true,
+      mode: 'date',
+    }),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
@@ -121,10 +138,17 @@ export const orders = pgTable(
     index('orders_status_placed_idx').on(table.status, table.placedAt),
     index('orders_payment_status_placed_idx').on(table.paymentStatus, table.placedAt),
     index('orders_promotion_user_status_idx').on(table.promotionId, table.userId, table.status),
+    index('orders_admin_unseen_idx')
+      .on(table.placedAt)
+      .where(sql`${table.adminSeenAt} IS NULL`),
     check('orders_money_nonneg_chk', sql`${table.totalAmount} >= 0`),
     check('orders_bonus_redeemed_nonneg_chk', sql`${table.bonusRedeemedAmount} >= 0`),
     check('orders_bonus_earned_nonneg_chk', sql`${table.bonusEarnedAmount} >= 0`),
     check('orders_gift_card_amount_nonneg_chk', sql`${table.giftCardAmount} >= 0`),
+    check(
+      'orders_customer_review_rating_chk',
+      sql`${table.customerReviewRating} IS NULL OR (${table.customerReviewRating} BETWEEN 1 AND 5)`,
+    ),
   ],
 );
 

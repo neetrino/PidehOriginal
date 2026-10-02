@@ -82,18 +82,23 @@ export async function saveDeliverySettingsAction(
 
   const data = parsed.data;
 
-  let originLat: number;
-  let originLng: number;
-  let formattedAddress: string;
+  const now = new Date();
+  const [existing] = await getDb()
+    .select({ key: storeSettings.key, value: storeSettings.value })
+    .from(storeSettings)
+    .where(eq(storeSettings.key, DELIVERY_SETTING_KEY))
+    .limit(1);
+  const previous = parseDeliverySettings(existing?.value ?? null);
 
-  if (data.originLat != null && data.originLng != null) {
+  let originLat: number | null = data.originLat ?? null;
+  let originLng: number | null = data.originLng ?? null;
+  let formattedAddress = data.originAddress.trim();
+
+  if (originLat != null && originLng != null && formattedAddress.length >= 3) {
     // Prefer the admin-dropped pin over address geocoding (street center ≠ entrance).
-    originLat = data.originLat;
-    originLng = data.originLng;
-    formattedAddress = data.originAddress;
-  } else {
+  } else if (formattedAddress.length >= 3) {
     try {
-      const geocoded = await geocodeAddress(data.originAddress);
+      const geocoded = await geocodeAddress(formattedAddress);
       originLat = geocoded.location.lat;
       originLng = geocoded.location.lng;
       formattedAddress = geocoded.formattedAddress;
@@ -106,6 +111,11 @@ export async function saveDeliverySettingsAction(
         error instanceof Error ? error.message : 'Store address could not be found on the map.',
       );
     }
+  } else {
+    // Schedule / cash-change saves may omit store origin — keep previous values.
+    formattedAddress = previous.originAddress;
+    originLat = previous.originLat;
+    originLng = previous.originLng;
   }
 
   const value = {
@@ -124,16 +134,9 @@ export async function saveDeliverySettingsAction(
     })),
   };
 
-  const now = new Date();
-  const [existing] = await getDb()
-    .select({ key: storeSettings.key, value: storeSettings.value })
-    .from(storeSettings)
-    .where(eq(storeSettings.key, DELIVERY_SETTING_KEY))
-    .limit(1);
-
   const previousKeys = new Set(
-    parseDeliverySettings(existing?.value ?? null)
-      .cashChangeDenominations.map((item) => item.imageObjectKey)
+    previous.cashChangeDenominations
+      .map((item) => item.imageObjectKey)
       .filter((key): key is string => Boolean(key)),
   );
   const nextKeys = new Set(
@@ -173,5 +176,9 @@ export async function saveDeliverySettingsAction(
   }
 
   revalidateDeliveryPaths(locale);
-  return ok({ originAddress: formattedAddress, originLat, originLng });
+  return ok({
+    originAddress: formattedAddress,
+    originLat: originLat ?? 0,
+    originLng: originLng ?? 0,
+  });
 }

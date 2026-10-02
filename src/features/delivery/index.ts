@@ -9,8 +9,25 @@ export {
   quoteDistanceDeliveryAction,
 } from '@/features/delivery/application/quote-distance-delivery';
 export {
+  quoteZoneDelivery,
+  quoteZoneDeliveryAction,
+} from '@/features/delivery/application/quote-zone-delivery';
+export {
+  listAdminDeliveryLocations,
+  listCheckoutDeliveryOptions,
+} from '@/features/delivery/application/queries';
+export {
+  createDeliveryLocationAction,
+  updateDeliveryLocationAction,
+  deleteDeliveryLocationAction,
+} from '@/features/delivery/application/manage-delivery';
+export {
   deliverySettingsSchema,
+  deliveryLocationSchema,
   quoteDistanceDeliverySchema,
+  quoteZoneDeliverySchema,
   type DeliverySettingsInput,
+  type DeliveryLocationInput,
   type QuoteDistanceDeliveryInput,
+  type QuoteZoneDeliveryInput,
 } from '@/features/delivery/schemas';

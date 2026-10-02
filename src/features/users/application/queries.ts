@@ -16,6 +16,7 @@ export type AdminUserListItem = {
   lastName: string;
   role: string;
   status: string;
+  adminComment: string | null;
   orderCount: number;
   lastLoginAt: Date | null;
   createdAt: Date;
@@ -30,6 +31,7 @@ export type AdminUserDetail = {
     phone: string | null;
     role: string;
     status: string;
+    adminComment: string | null;
     emailVerifiedAt: Date | null;
     lastLoginAt: Date | null;
     anonymizedAt: Date | null;
@@ -86,6 +88,7 @@ export async function listAdminUsers(
         lastName: users.lastName,
         role: users.role,
         status: users.status,
+        adminComment: users.adminComment,
         lastLoginAt: users.lastLoginAt,
         createdAt: users.createdAt,
       })
@@ -141,6 +144,7 @@ export async function getAdminUserById(userId: string): Promise<AdminUserDetail 
       phone: users.phone,
       role: users.role,
       status: users.status,
+      adminComment: users.adminComment,
       emailVerifiedAt: users.emailVerifiedAt,
       lastLoginAt: users.lastLoginAt,
       anonymizedAt: users.anonymizedAt,

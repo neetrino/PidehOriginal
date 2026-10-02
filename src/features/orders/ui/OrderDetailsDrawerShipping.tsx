@@ -49,8 +49,24 @@ export function OrderDetailsDrawerShipping({
         <dl className="space-y-3 text-sm">
           <div className="flex flex-wrap items-center gap-x-2">
             <dt className="text-gray-500">{d.shippingMethod}</dt>
-            <dd className="font-medium text-gray-900">{detail.shippingMethod}</dd>
+            <dd className="font-medium text-gray-900">
+              {detail.isPickup ? d.methodPickup : d.methodDelivery}
+            </dd>
           </div>
+          {!detail.isPickup ? (
+            <div className="flex flex-wrap items-center gap-x-2">
+              <dt className="text-gray-500">{d.deliveryFee}</dt>
+              <dd className="font-medium text-gray-900">
+                {formatOrderDrawerMoney(detail.deliveryAmount, detail.baseCurrency)}
+              </dd>
+            </div>
+          ) : null}
+          {!detail.isPickup && detail.deliveryLabel ? (
+            <div className="flex flex-wrap items-center gap-x-2">
+              <dt className="text-gray-500">{d.deliveryZone}</dt>
+              <dd className="font-medium text-gray-900">{detail.deliveryLabel}</dd>
+            </div>
+          ) : null}
           {detail.isPickup ? (
             <div className="flex flex-wrap items-center gap-x-2">
               <dt className="text-gray-500">{d.pickupStore}</dt>

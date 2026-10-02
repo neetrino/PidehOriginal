@@ -15,6 +15,7 @@ import {
   isUserStatus,
 } from '@/features/users/domain/user-lifecycle';
 import { AdminUserLoyaltySections } from '@/features/users/ui/AdminUserLoyaltySections';
+import { UpdateUserAdminCommentForm } from '@/features/users/ui/UpdateUserAdminCommentForm';
 import { UpdateUserRoleForm } from '@/features/users/ui/UpdateUserRoleForm';
 import { UpdateUserStatusForm } from '@/features/users/ui/UpdateUserStatusForm';
 import { isLocale } from '@/lib/i18n/config';
@@ -139,6 +140,16 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
         ) : (
           <p className="text-sm text-red-700">{d.unknownStatus}</p>
         )}
+      </div>
+
+      <div className="mb-6">
+        <UpdateUserAdminCommentForm
+          locale={locale}
+          userId={user.id}
+          initialComment={user.adminComment}
+          disabled={isAnonymized}
+          copy={t}
+        />
       </div>
 
       <AdminUserLoyaltySections

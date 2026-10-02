@@ -58,10 +58,10 @@
     "storePickupDescription": "Pick up your order at a branch (Free)",
     "pickupStoreHint": "You can pick up your order at our store.",
     "delivery": "Delivery",
-    "deliveryDescription": "We will deliver your order to your address. Price is based on distance.",
+    "deliveryDescription": "We will deliver your order to your address. Price depends on the selected delivery zone.",
     "enterCity": "Enter City",
     "selectDeliveryLocation": "Select delivery location",
-    "enterDeliveryAddress": "Enter a delivery address to calculate shipping",
+    "enterDeliveryAddress": "Enter a delivery address",
     "calculatingDelivery": "Calculating delivery…"
   },
   "payment": {

@@ -38,6 +38,12 @@ export type AdminOrderDetailItemView = {
   customerNote: string | null;
 };
 
+export type AdminOrderCustomerReview = {
+  rating: number;
+  comment: string | null;
+  reviewedAt: string;
+};
+
 export type AdminOrderDetailView = {
   orderNumber: string;
   status: string;
@@ -66,6 +72,13 @@ export type AdminOrderDetailView = {
   cashChangeAmount: number | null;
   cashChangeImageUrl: string | null;
   customerNote: string | null;
+  /** Submitted order review; null when the customer has not reviewed yet. */
+  customerReview: AdminOrderCustomerReview | null;
+  /**
+   * True only for the order owner on a delivered, unreviewed order.
+   * Always false for admin loaders; set by the customer detail action.
+   */
+  canSubmitReview: boolean;
   paymentMethod: string;
   paymentAmount: number;
   /** Present when this order was placed from a group session. */
@@ -124,6 +137,15 @@ export function toAdminOrderDetailView(
   const { order, items, payments } = detail;
   const isPickup = order.deliveryLabelSnapshot === STORE_PICKUP_LABEL;
   const latestPayment = payments[0] ?? null;
+  const reviewRating = order.customerReviewRating;
+  const customerReview =
+    reviewRating != null && order.customerReviewedAt
+      ? {
+          rating: reviewRating,
+          comment: order.customerReviewComment?.trim() || null,
+          reviewedAt: order.customerReviewedAt.toISOString(),
+        }
+      : null;
 
   return {
     orderNumber: order.orderNumber,
@@ -166,6 +188,8 @@ export function toAdminOrderDetailView(
       ? mediaPublicUrl(order.shippingAddress.cashChangeImageKey)
       : null,
     customerNote: formatOrderCustomerNotes(items),
+    customerReview,
+    canSubmitReview: false,
     paymentMethod: latestPayment ? paymentMethodLabel(latestPayment.method) : '—',
     paymentAmount: latestPayment?.amount ?? order.totalAmount,
     participants,

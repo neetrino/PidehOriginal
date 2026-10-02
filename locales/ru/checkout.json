@@ -58,10 +58,10 @@
     "storePickupDescription": "Заберите заказ в филиале (Бесплатно)",
     "pickupStoreHint": "Заказ можно забрать в магазине.",
     "delivery": "Доставка",
-    "deliveryDescription": "Доставим заказ по вашему адресу. Цена зависит от расстояния.",
+    "deliveryDescription": "Мы доставим заказ по вашему адресу. Цена зависит от выбранной зоны доставки.",
     "enterCity": "Укажите город",
-    "selectDeliveryLocation": "Выберите место доставки",
-    "enterDeliveryAddress": "Введите адрес, чтобы рассчитать доставку",
+    "selectDeliveryLocation": "Выберите зону доставки",
+    "enterDeliveryAddress": "Введите адрес доставки",
     "calculatingDelivery": "Расчёт доставки…"
   },
   "payment": {

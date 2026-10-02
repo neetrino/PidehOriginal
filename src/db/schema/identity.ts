@@ -33,6 +33,8 @@ export const users = pgTable(
     phone: text('phone'),
     role: userRoleEnum('role').notNull().default('CUSTOMER'),
     status: userStatusEnum('status').notNull().default('ACTIVE'),
+    /** Internal admin comment about this customer (not visible to the customer). */
+    adminComment: text('admin_comment'),
     /** Available loyalty bonus points (1 point = 1 AMD). Never negative. */
     bonusBalance: integer('bonus_balance').notNull().default(0),
     termsAcceptedAt: timestamp('terms_accepted_at', {

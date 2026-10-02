@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
+import { listAdminDeliveryLocations } from '@/features/delivery/application/queries';
 import { AdminDeliveryView } from '@/features/delivery/ui/AdminDeliveryView';
 import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
@@ -16,7 +17,11 @@ export default async function AdminDeliveryPage({ params }: AdminDeliveryPagePro
     notFound();
   }
 
-  const [settings, dict] = await Promise.all([getDeliverySettings(), getDictionary(locale)]);
+  const [settings, locations, dict] = await Promise.all([
+    getDeliverySettings(),
+    listAdminDeliveryLocations(locale),
+    getDictionary(locale),
+  ]);
 
   const initialImageUrls: Record<string, string> = {};
   for (const item of settings.cashChangeDenominations) {
@@ -29,6 +34,7 @@ export default async function AdminDeliveryPage({ params }: AdminDeliveryPagePro
     <AdminDeliveryView
       locale={locale}
       settings={settings}
+      locations={locations}
       initialImageUrls={initialImageUrls}
       copy={{ delivery: dict.admin.delivery, common: dict.admin.common }}
     />

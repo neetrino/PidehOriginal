@@ -1,4 +1,5 @@
 import { neon } from "@neondatabase/serverless";
+import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/neon-http";
 
 import { hashPassword } from "@/lib/auth/password";
@@ -70,30 +71,121 @@ async function seed(): Promise<void> {
       },
     });
 
+  // Legacy single-city rule — keep inactive when present.
   await db
-    .insert(schema.deliveryRules)
-    .values({
-      id: seedIds.deliveryArmenia,
-      countryCode: "Armenia",
-      city: "Yerevan",
-      priceAmount: 1500,
-      freeThresholdAmount: 50000,
-      estimatedDaysMin: 1,
-      estimatedDaysMax: 3,
-      isActive: true,
-      priority: 100,
-    })
-    .onConflictDoUpdate({
-      target: schema.deliveryRules.id,
-      set: {
+    .update(schema.deliveryRules)
+    .set({ isActive: false, updatedAt: now })
+    .where(eq(schema.deliveryRules.id, seedIds.deliveryArmenia));
+
+  const yerevanCity = {
+    hy: "Երևան",
+    en: "Yerevan",
+    ru: "Ереван",
+  } as const;
+
+  const yerevanZones = [
+    {
+      id: seedIds.deliveryKentron,
+      area: { hy: "Կենտրոն", en: "Kentron", ru: "Кентрон" },
+      priceAmount: 500,
+      priority: 200,
+    },
+    {
+      id: seedIds.deliveryAjapnyak,
+      area: { hy: "Աջափնյակ", en: "Ajapnyak", ru: "Аджапняк" },
+      priceAmount: 500,
+      priority: 199,
+    },
+    {
+      id: seedIds.deliveryArabkir,
+      area: { hy: "Արաբկիր", en: "Arabkir", ru: "Арабкир" },
+      priceAmount: 1000,
+      priority: 198,
+    },
+    {
+      id: seedIds.deliveryAvan,
+      area: { hy: "Ավան", en: "Avan", ru: "Аван" },
+      priceAmount: 1000,
+      priority: 197,
+    },
+    {
+      id: seedIds.deliveryDavtashen,
+      area: { hy: "Դավթաշեն", en: "Davtashen", ru: "Давташен" },
+      priceAmount: 1000,
+      priority: 196,
+    },
+    {
+      id: seedIds.deliveryErebuni,
+      area: { hy: "Էրեբունի", en: "Erebuni", ru: "Эребуни" },
+      priceAmount: 1000,
+      priority: 195,
+    },
+    {
+      id: seedIds.deliveryKanakerZeytun,
+      area: { hy: "Քանաքեռ-Զեյթուն", en: "Kanaker-Zeytun", ru: "Канакер-Зейтун" },
+      priceAmount: 1000,
+      priority: 194,
+    },
+    {
+      id: seedIds.deliveryMalatiaSebastia,
+      area: { hy: "Մալաթիա-Սեբաստիա", en: "Malatia-Sebastia", ru: "Малатия-Себастия" },
+      priceAmount: 1000,
+      priority: 193,
+    },
+    {
+      id: seedIds.deliveryNorNork,
+      area: { hy: "Նոր Նորք", en: "Nor Nork", ru: "Нор Норк" },
+      priceAmount: 1000,
+      priority: 192,
+    },
+    {
+      id: seedIds.deliveryNorkMarash,
+      area: { hy: "Նորք-Մարաշ", en: "Nork-Marash", ru: "Норк-Мараш" },
+      priceAmount: 1000,
+      priority: 191,
+    },
+    {
+      id: seedIds.deliveryShengavit,
+      area: { hy: "Շենգավիթ", en: "Shengavit", ru: "Шенгавит" },
+      priceAmount: 1000,
+      priority: 190,
+    },
+  ] as const;
+
+  for (const zone of yerevanZones) {
+    const translations = {
+      hy: { city: yerevanCity.hy, area: zone.area.hy },
+      en: { city: yerevanCity.en, area: zone.area.en },
+      ru: { city: yerevanCity.ru, area: zone.area.ru },
+    };
+    await db
+      .insert(schema.deliveryRules)
+      .values({
+        id: zone.id,
+        countryCode: "AM",
+        city: yerevanCity.en,
+        region: zone.area.en,
+        translations,
+        priceAmount: zone.priceAmount,
+        freeThresholdAmount: null,
         isActive: true,
-        countryCode: "Armenia",
-        city: "Yerevan",
-        priceAmount: 1500,
-        freeThresholdAmount: 50000,
-        updatedAt: now,
-      },
-    });
+        priority: zone.priority,
+      })
+      .onConflictDoUpdate({
+        target: schema.deliveryRules.id,
+        set: {
+          isActive: true,
+          countryCode: "AM",
+          city: yerevanCity.en,
+          region: zone.area.en,
+          translations,
+          priceAmount: zone.priceAmount,
+          freeThresholdAmount: null,
+          priority: zone.priority,
+          updatedAt: now,
+        },
+      });
+  }
 
   await db
     .insert(schema.heroSlides)

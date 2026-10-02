@@ -18,6 +18,13 @@ type BuyGiftCardDrawerCopy = {
   sendDate: string;
   paymentMethod: string;
   cashOnDelivery: string;
+  cashOnDeliveryDescription: string;
+  idram: string;
+  idramDescription: string;
+  arca: string;
+  arcaDescription: string;
+  terminal: string;
+  terminalDescription: string;
   submit: string;
   submitting: string;
   successPending: string;
@@ -70,6 +77,13 @@ export function BuyGiftCardDrawer({
               sendDate: copy.sendDate,
               paymentMethod: copy.paymentMethod,
               cashOnDelivery: copy.cashOnDelivery,
+              cashOnDeliveryDescription: copy.cashOnDeliveryDescription,
+              idram: copy.idram,
+              idramDescription: copy.idramDescription,
+              arca: copy.arca,
+              arcaDescription: copy.arcaDescription,
+              terminal: copy.terminal,
+              terminalDescription: copy.terminalDescription,
               submit: copy.submit,
               submitting: copy.submitting,
               successPending: copy.successPending,
