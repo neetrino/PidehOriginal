@@ -23,7 +23,7 @@ function isProfileHubPath(pathname: string, locale: Locale): boolean {
 }
 
 /**
- * Mobile profile shell (MaMarie): hub always visible; section content in a bottom sheet.
+ * Mobile profile shell: hub always visible; section content in a bottom sheet.
  * Desktop content column is landscape tablet + wide screens. Renders `children` once (matchMedia).
  */
 export function ProfileMobileShell({
