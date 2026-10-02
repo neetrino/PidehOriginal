@@ -40,8 +40,8 @@ export function AboutHero({ copy }: AboutHeroProps) {
           data-about-hero-copy
           className="flex min-h-[calc(100svh-5rem)] max-w-[52rem] flex-col justify-center py-12 pb-24 will-change-transform sm:-translate-y-8 lg:min-h-[763px] lg:-translate-y-40 lg:py-16"
         >
-          <RevealOnView>
-            <p className="text-sm font-semibold tracking-[0.22em] text-pideh-orange uppercase">
+          <RevealOnView className="w-fit">
+            <p className="rounded-full bg-pideh-orange px-4 py-2 text-sm font-bold tracking-[0.22em] text-white uppercase">
               {copy.eyebrow}
             </p>
           </RevealOnView>

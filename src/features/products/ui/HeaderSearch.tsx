@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 
 import { catalogHref } from '@/features/products/application/catalog-search-params';
+import { DEFAULT_CATALOG_PAGE_SIZE } from '@/features/products/schemas/catalog-list';
 import {
   searchHeaderProductsAction,
   type HeaderSearchProduct,
@@ -154,7 +155,7 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     q: searchedQuery || query.trim(),
     sort: 'newest',
     page: 1,
-    pageSize: 24,
+    pageSize: DEFAULT_CATALOG_PAGE_SIZE,
   });
 
   return (

@@ -474,7 +474,7 @@
     "storeAndPricing": "Խանութ և գնագոյացում",
     "storeAndPricingHint": "Մեկնարկային հասցեն և մեկ կիլոմետրի առաքման վճարը, որոնք օգտագործվում են պատվերի ձևակերպման ժամանակ։",
     "storeAddress": "Խանութի հասցե",
-    "storeAddressPlaceholder": "օր.՝ Անդրանիկ 108/10, Երևան",
+    "storeAddressPlaceholder": "օր.՝ Անդրանիկ 108/10, Երեվան",
     "storeAddressHint": "Սկսեք մուտքագրել փողոցի անունը — ընտրեք Google-ի առաջարկներից, կամ բացեք քարտեզը pin դնելու համար, ապա պահպանեք։",
     "geocoded": "Pin՝ {lat}, {lng}",
     "map": {
@@ -531,7 +531,7 @@
       "country": "Երկիր",
       "countryPlaceholder": "Հայաստան",
       "city": "Քաղաք",
-      "cityPlaceholder": "Երևան",
+      "cityPlaceholder": "Երեվան",
       "priceAmd": "Գին (AMD)",
       "pricePlaceholder": "1500",
       "freeDeliveryFrom": "Անվճար առաքում սկսած (AMD)",
