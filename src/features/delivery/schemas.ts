@@ -69,7 +69,7 @@ const cashChangeDenominationSchema = z.object({
 
 export const deliverySettingsSchema = z
   .object({
-    originAddress: z.string().trim().min(3).max(300),
+    originAddress: z.string().trim().max(300).default(''),
     originLat: z.number().finite().min(-90).max(90).nullable().optional(),
     originLng: z.number().finite().min(-180).max(180).nullable().optional(),
     pricePerKmAmount: z.coerce.number().int().min(0).max(10_000_000),
@@ -116,15 +116,25 @@ export type DeliveryDestinationPoint = {
   lng: number;
 };
 
-/** @deprecated City-based rules; kept for historical order FK rows. */
+const deliveryLocationLocaleSchema = z.object({
+  city: z.string().trim().max(80).default(''),
+  area: z.string().trim().max(80).default(''),
+});
+
+/** Admin delivery zone: localized city + district and fixed AMD price. */
 export const deliveryLocationSchema = z.object({
-  country: z.string().trim().min(1).max(80),
-  city: z.string().trim().min(1).max(80),
   priceAmount: z.coerce.number().int().min(0).max(10_000_000),
-  freeThresholdAmount: z.preprocess((value) => {
-    if (value === '' || value == null) return null;
-    return value;
-  }, z.coerce.number().int().min(0).max(100_000_000).nullable()),
+  translations: z.object({
+    hy: deliveryLocationLocaleSchema,
+    en: deliveryLocationLocaleSchema,
+    ru: deliveryLocationLocaleSchema,
+  }),
 });
 
 export type DeliveryLocationInput = z.infer<typeof deliveryLocationSchema>;
+
+export const quoteZoneDeliverySchema = z.object({
+  deliveryRuleId: z.string().uuid(),
+});
+
+export type QuoteZoneDeliveryInput = z.infer<typeof quoteZoneDeliverySchema>;

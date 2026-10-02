@@ -16,7 +16,6 @@ type AdminProductsFiltersProps = {
   q?: string;
   sku?: string;
   categoryId?: string;
-  stock: 'all' | 'in_stock' | 'out_of_stock' | 'low_stock';
   status: 'all' | 'active' | 'inactive' | 'draft' | 'low_remaining';
   categories: AdminCategoryOption[];
   sort: string;
@@ -30,7 +29,6 @@ export function AdminProductsFilters({
   q,
   sku,
   categoryId,
-  stock,
   status,
   categories,
   sort,
@@ -40,20 +38,12 @@ export function AdminProductsFilters({
 }: AdminProductsFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [categoryValue, setCategoryValue] = useState(categoryId ?? '');
-  const [stockValue, setStockValue] = useState(stock);
   const [statusValue, setStatusValue] = useState(status);
 
   const categoryOptions = categories.map((category) => ({
     label: category.title,
     value: category.id,
   }));
-
-  const stockOptions = [
-    { label: copy.allProducts, value: 'all' as const },
-    { label: copy.inStock, value: 'in_stock' as const },
-    { label: copy.outOfStock, value: 'out_of_stock' as const },
-    { label: copy.lowStock, value: 'low_stock' as const },
-  ];
 
   const statusOptions = [
     { label: copy.allStatuses, value: 'all' as const },
@@ -65,11 +55,6 @@ export function AdminProductsFilters({
 
   function applyCategory(next: string): void {
     flushSync(() => setCategoryValue(next));
-    formRef.current?.requestSubmit();
-  }
-
-  function applyStock(next: string): void {
-    flushSync(() => setStockValue(next as AdminProductsFiltersProps['stock']));
     formRef.current?.requestSubmit();
   }
 
@@ -116,17 +101,6 @@ export function AdminProductsFilters({
             options={categoryOptions}
             className="mt-1"
             onValueChange={applyCategory}
-          />
-        </div>
-        <div>
-          <span className={ADMIN_LABEL}>{copy.filterByStock}</span>
-          <SelectDropdown
-            name="stock"
-            ariaLabel={copy.filterByStockAria}
-            value={stockValue}
-            options={stockOptions}
-            className="mt-1"
-            onValueChange={applyStock}
           />
         </div>
         <div className="md:col-span-2 flex flex-col gap-4 sm:flex-row sm:items-end">

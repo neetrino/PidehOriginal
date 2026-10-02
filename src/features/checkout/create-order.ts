@@ -38,6 +38,7 @@ import {
   calculateMaxRedeemAmount,
   clampBonusRedeemRequest,
 } from '@/features/bonuses/domain/bonus-rules';
+import { resolveStockAfterSale } from '@/features/products/domain/stock-levels';
 import { redeemGiftCardForOrder } from '@/features/gift-cards/application/gift-card-ledger';
 import {
   calculateGiftCardRedeemAmount,
@@ -48,17 +49,27 @@ import {
 } from '@/features/gift-cards/domain/gift-card-rules';
 import { completeGroupOrderAfterStandardCheckout } from '@/features/group-orders/application/complete-after-checkout';
 import {
-  quoteDistanceDelivery,
-  type DistanceDeliveryQuote,
-} from '@/features/delivery/application/quote-distance-delivery';
+  quoteZoneDelivery,
+  type ZoneDeliveryQuote,
+} from '@/features/delivery/application/quote-zone-delivery';
 import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
 import { DEFAULT_DELIVERY_CITY } from '@/features/delivery/domain/service-area';
+
+type CheckoutDeliveryQuote = {
+  deliveryAmount: number;
+  deliveryRuleId: string | null;
+  label: string;
+  city: string | null;
+  area: string | null;
+  destinationFormattedAddress: string | null;
+};
 import {
   CASH_CHANGE_NOT_NEEDED,
   findActiveCashChangeByAmount,
   listActiveCashChangeDenominations,
 } from '@/features/delivery/domain/cash-change';
 import {
+  ASAP_DELIVERY_ESTIMATE_SNAPSHOT,
   formatDeliverySlotSnapshot,
   isDeliverySlotAvailable,
 } from '@/features/delivery/domain/delivery-schedule';
@@ -113,7 +124,7 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
     return { ok: false, error: 'Exchange rate unavailable. Try again shortly.' };
   }
 
-  let deliveryQuote: DistanceDeliveryQuote | null = null;
+  let deliveryQuote: CheckoutDeliveryQuote | null = null;
   let deliverySlotSnapshot: string | null = null;
   let cashChangeAmount: number | undefined;
   let cashChangeImageKey: string | undefined;
@@ -130,39 +141,60 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
       groupCheckout.deliveryAddress
     ) {
       deliveryQuote = {
-        distanceMeters: 0,
-        distanceLabel: groupCheckout.deliveryDistanceLabel ?? 'group-order',
-        pricePerKmAmount: 0,
         deliveryAmount: groupCheckout.deliveryAmount,
-        destinationFormattedAddress: groupCheckout.deliveryAddress,
+        deliveryRuleId: null,
+        label: groupCheckout.deliveryDistanceLabel ?? 'group-order',
         city: null,
-        countryCode: null,
+        area: null,
+        destinationFormattedAddress: groupCheckout.deliveryAddress,
       };
     } else {
-      const quoted = await quoteDistanceDelivery(
-        input.line1 ?? '',
-        input.deliveryLat != null && input.deliveryLng != null
-          ? { lat: input.deliveryLat, lng: input.deliveryLng }
-          : null,
-      );
+      if (!input.deliveryRuleId) {
+        return { ok: false, error: 'Select a delivery location.' };
+      }
+      const quoted = await quoteZoneDelivery(input.deliveryRuleId, input.locale);
       if (!quoted.ok) {
         return { ok: false, error: quoted.error };
       }
-      deliveryQuote = quoted.quote;
-    }
-
-    const selectedSlot = {
-      date: input.scheduledDeliveryDate ?? '',
-      startTime: input.scheduledDeliveryStart ?? '',
-      endTime: input.scheduledDeliveryEnd ?? '',
-    };
-    if (!isDeliverySlotAvailable(deliverySettings.schedule, selectedSlot)) {
-      return {
-        ok: false,
-        error: 'Selected delivery time is no longer available.',
+      const zone: ZoneDeliveryQuote = quoted.quote;
+      deliveryQuote = {
+        deliveryAmount: zone.deliveryAmount,
+        deliveryRuleId: zone.deliveryRuleId,
+        label: zone.label,
+        city: zone.city,
+        area: zone.area,
+        destinationFormattedAddress: input.line1?.trim() || null,
       };
     }
-    deliverySlotSnapshot = formatDeliverySlotSnapshot(selectedSlot);
+
+    const hasScheduledSlot = Boolean(
+      input.scheduledDeliveryDate &&
+        input.scheduledDeliveryStart &&
+        input.scheduledDeliveryEnd,
+    );
+    if (hasScheduledSlot) {
+      const selectedSlot = {
+        date: input.scheduledDeliveryDate ?? '',
+        startTime: input.scheduledDeliveryStart ?? '',
+        endTime: input.scheduledDeliveryEnd ?? '',
+      };
+      if (!isDeliverySlotAvailable(deliverySettings.schedule, selectedSlot)) {
+        return {
+          ok: false,
+          error: 'Selected delivery time is no longer available.',
+        };
+      }
+      deliverySlotSnapshot = formatDeliverySlotSnapshot(selectedSlot);
+    } else {
+      deliverySlotSnapshot = ASAP_DELIVERY_ESTIMATE_SNAPSHOT;
+    }
+  }
+
+  if (groupCheckout.active && input.paymentMethod === 'cash_on_delivery') {
+    return {
+      ok: false,
+      error: 'Cash on delivery is not available for group orders.',
+    };
   }
 
   if (input.paymentMethod === 'cash_on_delivery') {
@@ -212,7 +244,7 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
       paymentMethod: input.paymentMethod,
       line1: input.line1?.trim() || null,
       deliveryAmount: deliveryQuote?.deliveryAmount ?? 0,
-      distanceMeters: deliveryQuote?.distanceMeters ?? null,
+      deliveryRuleId: deliveryQuote?.deliveryRuleId ?? null,
       scheduledDeliveryDate:
         input.shippingMethod === 'delivery' ? input.scheduledDeliveryDate : null,
       scheduledDeliveryStart:
@@ -251,8 +283,8 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
         recipientFirstName: input.firstName,
         recipientLastName: input.lastName,
         phone: input.contactPhone,
-        countryCode: deliveryQuote?.countryCode?.trim().toUpperCase().slice(0, 2) || 'AM',
-        region: input.region,
+        countryCode: 'AM',
+        region: deliveryQuote?.area?.trim() || input.region,
         city: deliveryQuote?.city?.trim() || input.city?.trim() || DEFAULT_DELIVERY_CITY,
         line1:
           input.shippingMethod === 'pickup'
@@ -264,9 +296,15 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
           ? {
               floor: input.floor?.trim() || undefined,
               intercomCode: input.intercomCode?.trim() || undefined,
-              scheduledDeliveryDate: input.scheduledDeliveryDate,
-              scheduledDeliveryStart: input.scheduledDeliveryStart,
-              scheduledDeliveryEnd: input.scheduledDeliveryEnd,
+              ...(input.scheduledDeliveryDate &&
+              input.scheduledDeliveryStart &&
+              input.scheduledDeliveryEnd
+                ? {
+                    scheduledDeliveryDate: input.scheduledDeliveryDate,
+                    scheduledDeliveryStart: input.scheduledDeliveryStart,
+                    scheduledDeliveryEnd: input.scheduledDeliveryEnd,
+                  }
+                : {}),
               ...(cashChangeAmount != null
                 ? {
                     cashChangeAmount,
@@ -672,24 +710,16 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
         promotionTypeSnapshot: appliedPromotion?.discountType ?? null,
         promotionValueSnapshot: appliedPromotion?.discountValue ?? null,
         promotionDiscountAmount: appliedPromotion ? discountAmount : null,
-        deliveryRuleId: null,
+        deliveryRuleId: deliveryQuote?.deliveryRuleId ?? null,
         deliveryLabelSnapshot:
           input.shippingMethod === 'pickup'
             ? STORE_PICKUP_LABEL
-            : deliveryQuote
-              ? `Distance delivery (${deliveryQuote.distanceLabel})`
-              : 'Delivery',
+            : deliveryQuote?.label || 'Delivery',
         deliveryEstimateSnapshot:
           input.shippingMethod === 'pickup'
             ? storeIdentity.name
-            : [
-                deliveryQuote
-                  ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
-                  : null,
-                deliverySlotSnapshot,
-              ]
-                .filter(Boolean)
-                .join(' · ') || null,
+            : [deliveryQuote?.label ?? null, deliverySlotSnapshot].filter(Boolean).join(' · ') ||
+              null,
         idempotencyScopeHash: scopeHash,
         idempotencyKeyHash: keyHash,
         requestFingerprint: fingerprint,
@@ -754,10 +784,11 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
       }
 
       for (const [productId, nextStock] of stockAfterOrder) {
+        const resolved = resolveStockAfterSale(nextStock);
         await tx
           .update(products)
           .set({
-            stockOnHand: nextStock,
+            stockOnHand: resolved.stockOnHand,
             version: sql`${products.version} + 1`,
             updatedAt: now,
           })
@@ -773,6 +804,18 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
           resultingBalance: nextStock,
           correlationId: number,
         });
+
+        if (resolved.replenished) {
+          await tx.insert(stockMovements).values({
+            id: createId(),
+            productId,
+            delta: resolved.refillDelta,
+            reason: 'ADMIN_ADJUSTMENT',
+            orderId,
+            resultingBalance: resolved.stockOnHand,
+            correlationId: number,
+          });
+        }
       }
 
       const payment = await getProviders().payment.createPayment({

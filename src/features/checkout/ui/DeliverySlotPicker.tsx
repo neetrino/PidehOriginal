@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import {
@@ -11,6 +11,7 @@ import {
   weekdayLabels,
 } from '@/features/checkout/ui/delivery-slot-calendar';
 import {
+  formatDeliverySlotSnapshot,
   formatYerevanDate,
   listAvailableDeliveryDays,
   type DeliveryScheduleSettings,
@@ -19,6 +20,10 @@ import {
 
 type DeliverySlotPickerLabels = {
   title: string;
+  deliverTo: string;
+  approximatelyOneHour: string;
+  change: string;
+  useAsap: string;
   pickDate: string;
   pickTime: string;
   timeHint: string;
@@ -79,7 +84,7 @@ function timeClass(isSelected: boolean): string {
 }
 
 /**
- * Calendar + time-slot picker for checkout delivery scheduling.
+ * Collapsed ASAP (~1 hour) summary by default; Change opens calendar + slots.
  */
 export function DeliverySlotPicker({
   schedule,
@@ -89,6 +94,7 @@ export function DeliverySlotPicker({
   labels,
   locale,
 }: DeliverySlotPickerProps) {
+  const [isEditing, setIsEditing] = useState(false);
   const availableDays = useMemo(() => listAvailableDeliveryDays(schedule), [schedule]);
   const availableByDate = useMemo(() => {
     const map = new Map<string, (typeof availableDays)[number]>();
@@ -111,6 +117,9 @@ export function DeliverySlotPicker({
   const viewMonthYmd = startOfMonthYmd(viewYear, viewMonth);
   const canPrev = viewMonthYmd > startOfMonthYmd(todayParts.year, todayParts.monthIndex);
   const canNext = viewMonthYmd < startOfMonthYmd(maxParts.year, maxParts.monthIndex);
+  const summaryValue = selected
+    ? formatDeliverySlotSnapshot(selected)
+    : labels.approximatelyOneHour;
 
   function selectDate(date: string): void {
     const day = availableByDate.get(date);
@@ -127,105 +136,151 @@ export function DeliverySlotPicker({
     setViewMonth(next.getUTCMonth());
   }
 
+  function selectAsap(): void {
+    onChange(null);
+    setIsEditing(false);
+  }
+
+  function selectSlot(slot: SelectedDeliverySlot): void {
+    onChange(slot);
+    setIsEditing(false);
+  }
+
   return (
-    <div className="overflow-hidden rounded-[22px] border border-[#ff6b00]/15 bg-white">
-      <div className="border-b border-[#ff6b00]/10 bg-[#fff8e7] px-3 py-2.5">
-        <h3 className="font-display text-base leading-none text-[#1e1e1e] uppercase">{labels.title}</h3>
+    <div className="space-y-3">
+      <h3 className="text-base font-bold text-[#1e1e1e]">{labels.title}</h3>
+
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#fff1e6]">
+          <Calendar className="size-5 text-[#ff6b00]" aria-hidden />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-[#1e1e1e]">{labels.deliverTo}</p>
+          <p className="truncate text-sm text-[#1e1e1e]">{summaryValue}</p>
+        </div>
+        <button
+          type="button"
+          disabled={disabled || availableDays.length === 0}
+          onClick={() => setIsEditing((open) => !open)}
+          className="shrink-0 text-sm font-semibold text-[#ff6b00] transition-colors hover:text-[#e85f00] disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {labels.change}
+        </button>
       </div>
 
       {availableDays.length === 0 ? (
-        <p className="px-3 py-3 text-sm text-red-700">{labels.noSlots}</p>
-      ) : (
-        <div className="grid items-stretch gap-3 p-3 md:grid-cols-[15.5rem_minmax(0,1fr)]">
-          <div className="rounded-2xl bg-[#fff8e7]/80 p-2">
-            <p className="mb-2 font-display text-xs leading-none tracking-wide text-[#ff6b00] uppercase">
-              {labels.pickDate}
-            </p>
-            <div className="mb-1 flex items-center justify-between gap-1">
-              <button
-                type="button"
-                disabled={disabled || !canPrev}
-                onClick={() => shiftMonth(-1)}
-                className={NAV_BUTTON}
-                aria-label={labels.prevMonth}
-              >
-                <ChevronLeft className="size-3.5" aria-hidden />
-              </button>
-              <p className="font-display text-sm leading-none text-[#1e1e1e] uppercase">
-                {monthLabel(viewYear, viewMonth, locale)}
+        <p className="text-sm text-red-700">{labels.noSlots}</p>
+      ) : null}
+
+      {isEditing && availableDays.length > 0 ? (
+        <div className="overflow-hidden rounded-[22px] border border-[#ff6b00]/15 bg-white">
+          <div className="border-b border-[#ff6b00]/10 bg-[#fff8e7] px-3 py-2.5">
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={selectAsap}
+              className={`text-sm font-semibold transition-colors ${
+                selected == null
+                  ? 'text-[#ff6b00]'
+                  : 'text-[#1e1e1e]/70 hover:text-[#ff6b00]'
+              }`}
+            >
+              {labels.useAsap}
+            </button>
+          </div>
+
+          <div className="grid items-stretch gap-3 p-3 md:grid-cols-[15.5rem_minmax(0,1fr)]">
+            <div className="rounded-2xl bg-[#fff8e7]/80 p-2">
+              <p className="mb-2 font-display text-xs leading-none tracking-wide text-[#ff6b00] uppercase">
+                {labels.pickDate}
               </p>
-              <button
-                type="button"
-                disabled={disabled || !canNext}
-                onClick={() => shiftMonth(1)}
-                className={NAV_BUTTON}
-                aria-label={labels.nextMonth}
-              >
-                <ChevronRight className="size-3.5" aria-hidden />
-              </button>
+              <div className="mb-1 flex items-center justify-between gap-1">
+                <button
+                  type="button"
+                  disabled={disabled || !canPrev}
+                  onClick={() => shiftMonth(-1)}
+                  className={NAV_BUTTON}
+                  aria-label={labels.prevMonth}
+                >
+                  <ChevronLeft className="size-3.5" aria-hidden />
+                </button>
+                <p className="font-display text-sm leading-none text-[#1e1e1e] uppercase">
+                  {monthLabel(viewYear, viewMonth, locale)}
+                </p>
+                <button
+                  type="button"
+                  disabled={disabled || !canNext}
+                  onClick={() => shiftMonth(1)}
+                  className={NAV_BUTTON}
+                  aria-label={labels.nextMonth}
+                >
+                  <ChevronRight className="size-3.5" aria-hidden />
+                </button>
+              </div>
+              <div className="grid grid-cols-7 text-center">
+                {weekdays.map((label) => (
+                  <div key={label} className="py-1 text-[10px] font-bold text-[#1e1e1e]/45">
+                    {label}
+                  </div>
+                ))}
+                {cells.map((date, index) =>
+                  date ? (
+                    <button
+                      key={date}
+                      type="button"
+                      disabled={disabled || !availableByDate.has(date)}
+                      onClick={() => selectDate(date)}
+                      className={`mx-auto flex size-7 items-center justify-center rounded-full text-xs transition-colors ${dayClass(
+                        selected?.date === date,
+                        availableByDate.has(date),
+                        selected == null && date === todayYmd,
+                      )}`}
+                    >
+                      {Number(date.slice(-2))}
+                    </button>
+                  ) : (
+                    <div key={`blank-${index}`} className="size-7" />
+                  ),
+                )}
+              </div>
             </div>
-            <div className="grid grid-cols-7 text-center">
-              {weekdays.map((label) => (
-                <div key={label} className="py-1 text-[10px] font-bold text-[#1e1e1e]/45">
-                  {label}
+
+            <div className="flex h-full flex-col">
+              <p className="mb-2 font-display text-xs leading-none tracking-wide text-[#ff6b00] uppercase">
+                {labels.pickTime}
+              </p>
+              {selectedDay ? (
+                <div className="grid grid-cols-3 gap-1">
+                  {selectedDay.slots.map((slot) => {
+                    const isSelected =
+                      selected?.startTime === slot.startTime &&
+                      selected?.endTime === slot.endTime;
+                    return (
+                      <button
+                        key={slot.label}
+                        type="button"
+                        disabled={disabled}
+                        onClick={() =>
+                          selectSlot({
+                            date: selectedDay.date,
+                            startTime: slot.startTime,
+                            endTime: slot.endTime,
+                          })
+                        }
+                        className={`h-7 rounded-full border px-1 text-[11px] font-semibold transition-colors ${timeClass(isSelected)}`}
+                      >
+                        {slot.label}
+                      </button>
+                    );
+                  })}
                 </div>
-              ))}
-              {cells.map((date, index) =>
-                date ? (
-                  <button
-                    key={date}
-                    type="button"
-                    disabled={disabled || !availableByDate.has(date)}
-                    onClick={() => selectDate(date)}
-                    className={`mx-auto flex size-7 items-center justify-center rounded-full text-xs transition-colors ${dayClass(
-                      selected?.date === date,
-                      availableByDate.has(date),
-                      selected == null && date === todayYmd,
-                    )}`}
-                  >
-                    {Number(date.slice(-2))}
-                  </button>
-                ) : (
-                  <div key={`blank-${index}`} className="size-7" />
-                ),
+              ) : (
+                <SlotWaitArt hint={labels.timeHint} />
               )}
             </div>
           </div>
-
-          <div className="flex h-full flex-col">
-            <p className="mb-2 font-display text-xs leading-none tracking-wide text-[#ff6b00] uppercase">
-              {labels.pickTime}
-            </p>
-            {selectedDay ? (
-              <div className="grid grid-cols-3 gap-1">
-                {selectedDay.slots.map((slot) => {
-                  const isSelected =
-                    selected?.startTime === slot.startTime && selected?.endTime === slot.endTime;
-                  return (
-                    <button
-                      key={slot.label}
-                      type="button"
-                      disabled={disabled}
-                      onClick={() =>
-                        onChange({
-                          date: selectedDay.date,
-                          startTime: slot.startTime,
-                          endTime: slot.endTime,
-                        })
-                      }
-                      className={`h-7 rounded-full border px-1 text-[11px] font-semibold transition-colors ${timeClass(isSelected)}`}
-                    >
-                      {slot.label}
-                    </button>
-                  );
-                })}
-              </div>
-            ) : (
-              <SlotWaitArt hint={labels.timeHint} />
-            )}
-          </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

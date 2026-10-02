@@ -10,6 +10,7 @@ import {
 } from '@/features/admin/ui/admin-menu.config';
 import { AdminBrandLogo } from '@/features/admin/ui/AdminBrandLogo';
 import { AdminMenuDrawer } from '@/features/admin/ui/AdminMenuDrawer';
+import { AdminNavBadge } from '@/features/admin/ui/AdminNavBadge';
 import { AdminSidebarBackdrop } from '@/features/admin/ui/AdminSidebarBackdrop';
 import { AdminSidebarBrand } from '@/features/admin/ui/AdminSidebarBrand';
 import { useAdminSidebarCollapse } from '@/features/admin/ui/AdminSidebarCollapseContext';
@@ -19,6 +20,7 @@ import {
   ADMIN_SIDEBAR_NAV,
 } from '@/features/admin/ui/admin-shell-classes';
 import { useAdminProductsSubnavExpanded } from '@/features/admin/ui/useAdminProductsSubnavExpanded';
+import { useAdminOrderAlertsOptional } from '@/features/orders/ui/AdminOrderAlertsProvider';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminSidebarProps = {
@@ -48,6 +50,8 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
     pathname,
     locale,
   );
+  const alerts = useAdminOrderAlertsOptional();
+  const unseenCount = alerts?.unseenCount ?? 0;
 
   const asideWidthClass = collapsed ? 'lg:w-16' : 'lg:w-64';
 
@@ -72,7 +76,15 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
               }
 
               const isActive = isAdminTabActive(tab.href, pathname, locale);
-              const rowClasses = `flex w-full shrink-0 items-center rounded-full text-sm font-bold transition-all ${
+              const ordersBadge =
+                tab.id === 'orders' ? (
+                  <AdminNavBadge
+                    count={unseenCount}
+                    collapsed={collapsed}
+                    ariaLabel={shell.newOrdersBadgeAria}
+                  />
+                ) : null;
+              const rowClasses = `relative flex w-full shrink-0 items-center rounded-full text-sm font-bold transition-all ${
                 collapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'
               } ${tab.isSubCategory && !collapsed ? 'pl-12' : ''} ${
                 isActive
@@ -143,7 +155,13 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                   <span className={`shrink-0 ${isActive ? 'text-white' : 'text-white/45'}`}>
                     {tab.icon}
                   </span>
-                  {collapsed ? null : <span className="min-w-0 truncate">{tab.label}</span>}
+                  {collapsed ? null : (
+                    <>
+                      <span className="min-w-0 flex-1 truncate">{tab.label}</span>
+                      {ordersBadge}
+                    </>
+                  )}
+                  {collapsed ? ordersBadge : null}
                 </Link>
               );
             })}

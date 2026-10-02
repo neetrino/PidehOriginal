@@ -9,10 +9,12 @@ import {
 import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
 import { OrderDetailsDrawerItems } from '@/features/orders/ui/OrderDetailsDrawerItems';
 import { OrderDetailsDrawerParticipants } from '@/features/orders/ui/OrderDetailsDrawerParticipants';
+import { OrderDetailsDrawerReview } from '@/features/orders/ui/OrderDetailsDrawerReview';
 import { OrderDetailsDrawerShipping } from '@/features/orders/ui/OrderDetailsDrawerShipping';
 import { OrderDetailsDrawerSummary } from '@/features/orders/ui/OrderDetailsDrawerSummary';
 import { OrderDetailsDrawerTotals } from '@/features/orders/ui/OrderDetailsDrawerTotals';
 import { orderDrawerStatusLabel } from '@/features/orders/ui/order-drawer-format';
+import type { Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type OrderDetailsDrawerProps = {
@@ -22,6 +24,9 @@ type OrderDetailsDrawerProps = {
   error: string | null;
   isLoading: boolean;
   copy: Dictionary['admin'];
+  /** Required when the customer review form can be shown. */
+  locale?: Locale;
+  onReviewSubmitted?: (detail: AdminOrderDetailView) => void;
 };
 
 export function OrderDetailsDrawer({
@@ -31,6 +36,8 @@ export function OrderDetailsDrawer({
   error,
   isLoading,
   copy,
+  locale,
+  onReviewSubmitted,
 }: OrderDetailsDrawerProps) {
   const isGroup = detail?.participants != null && detail.participants.length > 0;
   const labels = copy.orders.statusLabels;
@@ -107,6 +114,12 @@ export function OrderDetailsDrawer({
                 <p className="text-sm whitespace-pre-wrap text-gray-800">{detail.customerNote}</p>
               </section>
             ) : null}
+            <OrderDetailsDrawerReview
+              detail={detail}
+              copy={copy.orders.drawer}
+              locale={locale}
+              onReviewSubmitted={onReviewSubmitted}
+            />
           </>
         ) : null}
       </div>

@@ -2,28 +2,18 @@
 
 import { useMemo, useState, useTransition } from 'react';
 
-import { AddressAutocomplete } from '@/components/ui/AddressAutocomplete';
-import { AddressMapPicker } from '@/components/ui/AddressMapPicker';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import {
-  ADMIN_CHECKBOX,
-  ADMIN_CHECKBOX_LABEL,
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from '@/features/admin/ui/admin-form-classes';
 import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
-import { getMapPickerConfigAction } from '@/features/delivery/application/get-map-picker-config';
 import { saveDeliverySettingsAction } from '@/features/delivery/application/save-delivery-settings';
 import type { CashChangeDenomination } from '@/features/delivery/domain/cash-change';
 import type { StoreDeliverySettings } from '@/features/delivery/domain/delivery-settings';
 import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delivery-schedule';
 import { timeToMinutes } from '@/features/delivery/domain/delivery-schedule';
+import type { AdminDeliveryLocation } from '@/features/delivery/application/queries';
 import { AdminCashChangeEditor } from '@/features/delivery/ui/AdminCashChangeEditor';
+import { AdminDeliveryLocations } from '@/features/delivery/ui/AdminDeliveryLocations';
 import { AdminDeliveryScheduleEditor } from '@/features/delivery/ui/AdminDeliveryScheduleEditor';
-import { formatMoneyAmount } from '@/lib/money/format';
-import type { Locale } from '@/lib/i18n/config';
-import { isLocale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminDeliveryViewCopy = {
@@ -34,6 +24,7 @@ type AdminDeliveryViewCopy = {
 type AdminDeliveryViewProps = {
   locale: string;
   settings: StoreDeliverySettings;
+  locations: AdminDeliveryLocation[];
   initialImageUrls: Record<string, string>;
   copy: AdminDeliveryViewCopy;
 };
@@ -69,16 +60,10 @@ function normalizeScheduleForSave(
 export function AdminDeliveryView({
   locale,
   settings,
+  locations,
   initialImageUrls,
   copy,
 }: AdminDeliveryViewProps) {
-  const [originAddress, setOriginAddress] = useState(settings.originAddress);
-  const [originLat, setOriginLat] = useState(settings.originLat);
-  const [originLng, setOriginLng] = useState(settings.originLng);
-  const [pricePerKmAmount, setPricePerKmAmount] = useState(
-    settings.pricePerKmAmount > 0 ? String(settings.pricePerKmAmount) : '',
-  );
-  const [isActive, setIsActive] = useState(settings.isActive);
   const [schedule, setSchedule] = useState<DeliveryScheduleSettings>(settings.schedule);
   const [cashChangeDenominations, setCashChangeDenominations] = useState<CashChangeDenomination[]>(
     settings.cashChangeDenominations,
@@ -87,7 +72,6 @@ export function AdminDeliveryView({
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const languageCode: Locale = isLocale(locale) ? locale : 'hy';
 
   const sortedDenominations = useMemo(
     () =>
@@ -102,11 +86,11 @@ export function AdminDeliveryView({
       const weekly = normalizeScheduleForSave(schedule);
       setSchedule({ ...schedule, weekly });
       const result = await saveDeliverySettingsAction(locale, {
-        originAddress,
-        originLat,
-        originLng,
-        pricePerKmAmount: Number(pricePerKmAmount),
-        isActive,
+        originAddress: settings.originAddress,
+        originLat: settings.originLat,
+        originLng: settings.originLng,
+        pricePerKmAmount: settings.pricePerKmAmount,
+        isActive: true,
         schedule: {
           slotMinutes: schedule.slotMinutes,
           maxDaysAhead: schedule.maxDaysAhead,
@@ -122,19 +106,7 @@ export function AdminDeliveryView({
         setError(result.error.message);
         return;
       }
-      setOriginAddress(result.value.originAddress);
-      setOriginLat(result.value.originLat);
-      setOriginLng(result.value.originLng);
       setMessage(copy.delivery.saved);
-    });
-  }
-
-  function onPlaceSelected(address: string): void {
-    startTransition(async () => {
-      const config = await getMapPickerConfigAction(address);
-      if (!config.ok) return;
-      setOriginLat(config.center.lat);
-      setOriginLng(config.center.lng);
     });
   }
 
@@ -149,141 +121,58 @@ export function AdminDeliveryView({
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
       {message ? <p className="mb-3 text-sm text-green-700">{message}</p> : null}
 
-      <form
-        className="grid gap-6 xl:grid-cols-2"
-        onSubmit={(event) => {
-          event.preventDefault();
-          onSave();
-        }}
-      >
-        <Card className="p-6">
-          <div className="flex flex-col gap-4">
-            <div>
-              <h2 className="text-base font-semibold text-gray-900">
-                {copy.delivery.storeAndPricing}
-              </h2>
-              <p className="mt-1 text-sm text-gray-600">{copy.delivery.storeAndPricingHint}</p>
-            </div>
-
-            <div>
-              <span className={ADMIN_LABEL}>{copy.delivery.storeAddress}</span>
-              <div className="mt-1 flex items-start gap-2">
-                <div className="min-w-0 flex-1">
-                  <AddressAutocomplete
-                    value={originAddress}
-                    onValueChange={setOriginAddress}
-                    onPlaceSelected={onPlaceSelected}
-                    placeholder={copy.delivery.storeAddressPlaceholder}
-                    required
-                    className={ADMIN_INPUT}
-                    disabled={isPending}
-                    languageCode={languageCode}
-                  />
-                </div>
-                <AddressMapPicker
-                  addressValue={originAddress}
-                  disabled={isPending}
-                  onAddressSelected={(address, point) => {
-                    setOriginAddress(address);
-                    setOriginLat(point.lat);
-                    setOriginLng(point.lng);
-                  }}
-                  labels={{
-                    openMap: copy.delivery.map.openMap,
-                    title: copy.delivery.map.title,
-                    hint: copy.delivery.map.hint,
-                    confirm: copy.delivery.map.confirm,
-                    cancel: copy.delivery.map.cancel,
-                    resolving: copy.delivery.map.resolving,
-                  }}
-                />
+      <div className="grid items-start gap-6 xl:grid-cols-2">
+        <form
+          className="contents"
+          onSubmit={(event) => {
+            event.preventDefault();
+            onSave();
+          }}
+        >
+          <Card className="p-6">
+            <div className="flex flex-col gap-5">
+              <AdminDeliveryScheduleEditor
+                value={schedule}
+                onChange={setSchedule}
+                disabled={isPending}
+                copy={copy.delivery.schedule}
+              />
+              <div>
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? copy.common.saving : copy.common.save}
+                </Button>
               </div>
-              <span className="mt-1 block text-xs text-gray-500">
-                {copy.delivery.storeAddressHint}
-              </span>
-              {originLat != null && originLng != null ? (
-                <span className="mt-1 block text-xs text-gray-500">
-                  {copy.delivery.geocoded
-                    .replace('{lat}', originLat.toFixed(5))
-                    .replace('{lng}', originLng.toFixed(5))}
-                </span>
-              ) : null}
             </div>
+          </Card>
+        </form>
 
-            <label>
-              <span className={ADMIN_LABEL}>{copy.delivery.pricePerKm}</span>
-              <input
-                type="number"
-                min={0}
-                step={1}
-                required
-                value={pricePerKmAmount}
-                onChange={(event) => setPricePerKmAmount(event.target.value)}
-                placeholder={copy.delivery.pricePerKmPlaceholder}
-                className={ADMIN_INPUT}
-                disabled={isPending}
-              />
-              {pricePerKmAmount !== '' && Number.isFinite(Number(pricePerKmAmount)) ? (
-                <span className="mt-1 block text-xs text-gray-500">
-                  {copy.delivery.pricePerKmExample.replace(
-                    '{amount}',
-                    formatMoneyAmount(
-                      Math.round((1101 * Number(pricePerKmAmount)) / 1000),
-                      'AMD',
-                      locale,
-                    ),
-                  )}
-                </span>
-              ) : null}
-            </label>
+        <AdminDeliveryLocations locale={locale} locations={locations} copy={copy} />
 
-            <label className={ADMIN_CHECKBOX_LABEL}>
-              <input
-                type="checkbox"
-                checked={isActive}
-                onChange={(event) => setIsActive(event.target.checked)}
-                disabled={isPending}
-                className={ADMIN_CHECKBOX}
-              />
-              {copy.delivery.offerDelivery}
-            </label>
-
-            <div>
+        <form
+          className="contents"
+          onSubmit={(event) => {
+            event.preventDefault();
+            onSave();
+          }}
+        >
+          <Card className="p-6 xl:col-span-2">
+            <AdminCashChangeEditor
+              locale={locale}
+              value={sortedDenominations}
+              imageUrls={imageUrls}
+              onChange={setCashChangeDenominations}
+              onImageUrlsChange={setImageUrls}
+              disabled={isPending}
+              copy={copy.delivery.cashChange}
+            />
+            <div className="mt-5">
               <Button type="submit" disabled={isPending}>
                 {isPending ? copy.common.saving : copy.common.save}
               </Button>
             </div>
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex flex-col gap-5">
-            <AdminDeliveryScheduleEditor
-              value={schedule}
-              onChange={setSchedule}
-              disabled={isPending}
-              copy={copy.delivery.schedule}
-            />
-          </div>
-        </Card>
-
-        <Card className="p-6 xl:col-span-2">
-          <AdminCashChangeEditor
-            locale={locale}
-            value={sortedDenominations}
-            imageUrls={imageUrls}
-            onChange={setCashChangeDenominations}
-            onImageUrlsChange={setImageUrls}
-            disabled={isPending}
-            copy={copy.delivery.cashChange}
-          />
-          <div className="mt-5">
-            <Button type="submit" disabled={isPending}>
-              {isPending ? copy.common.saving : copy.common.save}
-            </Button>
-          </div>
-        </Card>
-      </form>
+          </Card>
+        </form>
+      </div>
     </section>
   );
 }

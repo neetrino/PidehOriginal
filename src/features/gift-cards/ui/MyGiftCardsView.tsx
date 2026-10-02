@@ -40,6 +40,13 @@ type MyGiftCardsViewCopy = {
     sendDate: string;
     paymentMethod: string;
     cashOnDelivery: string;
+    cashOnDeliveryDescription: string;
+    idram: string;
+    idramDescription: string;
+    arca: string;
+    arcaDescription: string;
+    terminal: string;
+    terminalDescription: string;
     submit: string;
     submitting: string;
     successPending: string;

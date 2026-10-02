@@ -15,6 +15,7 @@ import {
   createProductFromDrawerAction,
   updateProductFromDrawerAction,
 } from '@/features/products/application/upsert-product';
+import { DEFAULT_PRODUCT_STOCK_ON_HAND } from '@/features/products/domain/stock-levels';
 import { ProductDrawerCategories } from '@/features/products/ui/ProductDrawerCategories';
 import { ProductDrawerDiscount } from '@/features/products/ui/ProductDrawerDiscount';
 import {
@@ -93,7 +94,6 @@ export function ProductDrawer({
   const [discount, setDiscount] = useState<ProductDiscountDraft | null>(null);
   const [priceAmount, setPriceAmount] = useState('');
   const [sku, setSku] = useState('');
-  const [stockOnHand, setStockOnHand] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -126,7 +126,6 @@ export function ProductDrawer({
       );
       setPriceAmount(String(product.priceAmount));
       setSku(product.sku);
-      setStockOnHand(String(product.stockOnHand));
       setError(null);
     } else {
       setTitle('');
@@ -139,7 +138,6 @@ export function ProductDrawer({
       setDiscount(null);
       setPriceAmount('');
       setSku('');
-      setStockOnHand('');
       setError(null);
     }
   }, [open, product, initialCategories, initialModifierLibrary]);
@@ -189,7 +187,9 @@ export function ProductDrawer({
             slug: slug.trim(),
             description: description.trim() || undefined,
             priceAmount: Number(priceAmount),
-            stockOnHand: Number(stockOnHand),
+            stockOnHand: product
+              ? product.stockOnHand
+              : DEFAULT_PRODUCT_STOCK_ON_HAND,
             categoryIds,
             modifierIds,
             discount,
@@ -326,37 +326,19 @@ export function ProductDrawer({
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label>
-              <span className={ADMIN_LABEL}>
-                {copy.drawer.sku} <span className="text-red-600">{copy.common.requiredMark}</span>
-              </span>
-              <input
-                required
-                value={sku}
-                onChange={(event) => setSku(event.target.value)}
-                placeholder={copy.drawer.skuPlaceholder}
-                className={ADMIN_INPUT}
-                disabled={isPending}
-              />
-            </label>
-            <label>
-              <span className={ADMIN_LABEL}>
-                {copy.drawer.quantity}{' '}
-                <span className="text-red-600">{copy.common.requiredMark}</span>
-              </span>
-              <input
-                required
-                min={0}
-                type="number"
-                value={stockOnHand}
-                onChange={(event) => setStockOnHand(event.target.value)}
-                placeholder={copy.drawer.quantityPlaceholder}
-                className={ADMIN_INPUT}
-                disabled={isPending}
-              />
-            </label>
-          </div>
+          <label>
+            <span className={ADMIN_LABEL}>
+              {copy.drawer.sku} <span className="text-red-600">{copy.common.requiredMark}</span>
+            </span>
+            <input
+              required
+              value={sku}
+              onChange={(event) => setSku(event.target.value)}
+              placeholder={copy.drawer.skuPlaceholder}
+              className={ADMIN_INPUT}
+              disabled={isPending}
+            />
+          </label>
 
           {error ? <p className="text-sm text-red-700">{error}</p> : null}
         </div>

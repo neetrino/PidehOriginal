@@ -18,6 +18,7 @@ import {
   type ProductSeed,
 } from "@/db/seed/pideh-catalog";
 import { headCatalogProductImage } from "@/db/seed/r2-catalog-images";
+import { DEFAULT_PRODUCT_STOCK_ON_HAND } from "@/features/products/domain/stock-levels";
 import { createId } from "@/lib/id";
 
 type SeedDb = NeonHttpDatabase<typeof schema>;
@@ -95,7 +96,7 @@ async function upsertProductRow(
     sku: skuFromSlug(item.slug),
     translations: productTranslations(item),
     priceAmount: item.price,
-    stockOnHand: item.isAvailable ? 100 : 0,
+    stockOnHand: item.isAvailable ? DEFAULT_PRODUCT_STOCK_ON_HAND : 0,
     lowStockThreshold: 5,
     status: item.isAvailable ? ("ACTIVE" as const) : ("ARCHIVED" as const),
     isFeatured: badge?.featured ?? false,

@@ -19,7 +19,6 @@ import {
   ADMIN_TABLE_THEAD,
 } from '@/features/admin/ui/admin-table-classes';
 import {
-  duplicateProductAction,
   softDeleteProductsAction,
   toggleProductFeaturedAction,
   toggleProductVisibilityAction,
@@ -30,7 +29,6 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminProductsSortLinks = {
   title: string;
-  stock: string;
   price: string;
   created: string;
 };
@@ -180,11 +178,6 @@ export function AdminProductsTable({
                     </Link>
                   </th>
                   <th className={ADMIN_TABLE_TH}>
-                    <Link href={sortLinks.stock} className="hover:text-gray-900">
-                      {copy.table.stock}
-                    </Link>
-                  </th>
-                  <th className={ADMIN_TABLE_TH}>
                     <Link href={sortLinks.price} className="hover:text-gray-900">
                       {copy.table.price}
                     </Link>
@@ -213,12 +206,6 @@ export function AdminProductsTable({
                     onFeatured={() =>
                       runAction(async () => {
                         const result = await toggleProductFeaturedAction(locale, product.id);
-                        if (!result.ok) throw new Error(result.error.message);
-                      })
-                    }
-                    onDuplicate={() =>
-                      runAction(async () => {
-                        const result = await duplicateProductAction(locale, product.id);
                         if (!result.ok) throw new Error(result.error.message);
                       })
                     }

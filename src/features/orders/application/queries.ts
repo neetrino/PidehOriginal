@@ -41,14 +41,37 @@ export type AdminOrderListItem = {
   orderNumber: string;
   status: string;
   paymentStatus: string;
+  /** First payment attempt method (COD / IDRAM / ARCA / TERMINAL). */
+  paymentMethod: string | null;
   contactName: string;
   contactEmail: string;
+  /** Linked account admin comment; null when guest order or no comment. */
+  customerAdminComment: string | null;
   totalAmount: number;
   bonusRedeemedAmount: number;
   bonusEarnedAmount: number;
   baseCurrency: string;
   placedAt: Date;
   isArchived: boolean;
+  /** True when no admin has opened the order drawer yet. */
+  isAdminNew: boolean;
+};
+
+export type AdminUnseenOrderAlert = {
+  id: string;
+  orderNumber: string;
+  contactName: string;
+  totalAmount: number;
+  baseCurrency: string;
+  paymentMethod: string | null;
+  placedAt: Date;
+};
+
+export type AdminUnseenOrdersSnapshot = {
+  count: number;
+  /** All unseen order ids (for “heard — close all”). */
+  unseenIds: string[];
+  latest: AdminUnseenOrderAlert[];
 };
 
 export type OrderItemModifierSnapshot = {
@@ -110,6 +133,10 @@ function buildOrderFilters(filters: AdminOrdersFilter): SQL | undefined {
     );
   }
 
+  if (filters.onlyNew) {
+    conditions.push(isNull(orders.adminSeenAt));
+  }
+
   return conditions.length > 0 ? and(...conditions) : undefined;
 }
 
@@ -127,16 +154,24 @@ export async function listAdminOrders(
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        paymentMethod: payments.method,
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
+        customerAdminComment: users.adminComment,
         totalAmount: orders.totalAmount,
         bonusRedeemedAmount: orders.bonusRedeemedAmount,
         bonusEarnedAmount: orders.bonusEarnedAmount,
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
+        isAdminNew: sql<boolean>`(${orders.adminSeenAt} IS NULL)`.mapWith(Boolean),
       })
       .from(orders)
+      .leftJoin(users, eq(orders.userId, users.id))
+      .leftJoin(
+        payments,
+        and(eq(payments.orderId, orders.id), eq(payments.attemptNumber, 1)),
+      )
       .where(where)
       .orderBy(desc(orders.placedAt))
       .limit(PAGE_SIZE)
@@ -172,8 +207,10 @@ export async function listCustomerOrders(
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        paymentMethod: payments.method,
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
+        customerAdminComment: sql<string | null>`CAST(NULL AS text)`,
         /** Own group-order share when applicable; admin list keeps raw total. */
         totalAmount: customerFacingOrderAmountSql(userId),
         bonusRedeemedAmount: orders.bonusRedeemedAmount,
@@ -182,8 +219,13 @@ export async function listCustomerOrders(
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
+        isAdminNew: sql<boolean>`false`.mapWith(Boolean),
       })
       .from(orders)
+      .leftJoin(
+        payments,
+        and(eq(payments.orderId, orders.id), eq(payments.attemptNumber, 1)),
+      )
       .where(where)
       .orderBy(desc(orders.placedAt))
       .limit(PAGE_SIZE)
@@ -196,6 +238,62 @@ export async function listCustomerOrders(
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
   };
+}
+
+const UNSEEN_ALERT_LIMIT = 5;
+const UNSEEN_IDS_LIMIT = 200;
+
+/** Counts and lists orders that admins have not opened yet (active only). */
+export async function getAdminUnseenOrdersSnapshot(): Promise<AdminUnseenOrdersSnapshot> {
+  const unseenWhere = and(eq(orders.isArchived, false), isNull(orders.adminSeenAt));
+
+  const [[countRow], idRows, latest] = await Promise.all([
+    getDb().select({ value: count() }).from(orders).where(unseenWhere),
+    getDb()
+      .select({ id: orders.id })
+      .from(orders)
+      .where(unseenWhere)
+      .orderBy(desc(orders.placedAt))
+      .limit(UNSEEN_IDS_LIMIT),
+    getDb()
+      .select({
+        id: orders.id,
+        orderNumber: orders.orderNumber,
+        contactName: orders.contactName,
+        totalAmount: orders.totalAmount,
+        baseCurrency: orders.baseCurrency,
+        paymentMethod: payments.method,
+        placedAt: orders.placedAt,
+      })
+      .from(orders)
+      .leftJoin(
+        payments,
+        and(eq(payments.orderId, orders.id), eq(payments.attemptNumber, 1)),
+      )
+      .where(unseenWhere)
+      .orderBy(desc(orders.placedAt))
+      .limit(UNSEEN_ALERT_LIMIT),
+  ]);
+
+  return {
+    count: countRow?.value ?? 0,
+    unseenIds: idRows.map((row) => row.id),
+    latest,
+  };
+}
+
+/** Marks an order as seen by admin when the details drawer is opened. */
+export async function markOrderAdminSeen(orderNumber: string): Promise<boolean> {
+  const trimmed = orderNumber.trim();
+  if (!trimmed) return false;
+
+  const updated = await getDb()
+    .update(orders)
+    .set({ adminSeenAt: new Date(), updatedAt: new Date() })
+    .where(and(eq(orders.orderNumber, trimmed), isNull(orders.adminSeenAt)))
+    .returning({ id: orders.id });
+
+  return updated.length > 0;
 }
 
 /** Loads a single order with line items and immutable event history. */
@@ -365,16 +463,24 @@ export async function getAdminDashboardMetrics(input: {
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        paymentMethod: payments.method,
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
+        customerAdminComment: users.adminComment,
         totalAmount: orders.totalAmount,
         bonusRedeemedAmount: orders.bonusRedeemedAmount,
         bonusEarnedAmount: orders.bonusEarnedAmount,
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
+        isAdminNew: sql<boolean>`(${orders.adminSeenAt} IS NULL)`.mapWith(Boolean),
       })
       .from(orders)
+      .leftJoin(users, eq(orders.userId, users.id))
+      .leftJoin(
+        payments,
+        and(eq(payments.orderId, orders.id), eq(payments.attemptNumber, 1)),
+      )
       .where(eq(orders.isArchived, false))
       .orderBy(desc(orders.placedAt))
       .limit(8),

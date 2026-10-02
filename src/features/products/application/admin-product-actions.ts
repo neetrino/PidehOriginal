@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { getDb } from '@/db/client';
 import { products, type TranslationsJson } from '@/db/schema';
 import { productIdsSchema, type ProductIdsInput } from '@/features/products/schemas/admin-list';
+import { DEFAULT_PRODUCT_STOCK_ON_HAND } from '@/features/products/domain/stock-levels';
 import { requireAdmin } from '@/lib/auth/policies';
 import { invalidateProductsCache } from '@/lib/cache/invalidate-public';
 import { createId } from '@/lib/id';
@@ -187,7 +188,7 @@ export async function duplicateProductAction(
       translations: withCopySuffix(existing.translations),
       priceAmount: existing.priceAmount,
       compareAtAmount: existing.compareAtAmount,
-      stockOnHand: 0,
+      stockOnHand: DEFAULT_PRODUCT_STOCK_ON_HAND,
       lowStockThreshold: existing.lowStockThreshold,
       status: 'DRAFT',
       isFeatured: false,

@@ -16,7 +16,6 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminProductsSortLinks = {
   title: string;
-  stock: string;
   price: string;
   created: string;
 };
@@ -39,7 +38,6 @@ type AdminProductsViewProps = {
     q?: string;
     sku?: string;
     categoryId?: string;
-    stock: 'all' | 'in_stock' | 'out_of_stock' | 'low_stock';
     status: 'all' | 'active' | 'inactive' | 'draft' | 'low_remaining';
     sort: string;
     dir: string;
@@ -80,7 +78,6 @@ export function AdminProductsView({
         q={filters.q}
         sku={filters.sku}
         categoryId={filters.categoryId}
-        stock={filters.stock}
         status={filters.status}
         categories={categories}
         sort={filters.sort}

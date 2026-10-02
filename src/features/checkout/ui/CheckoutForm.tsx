@@ -8,13 +8,18 @@ import { CHECKOUT_PANEL } from '@/features/checkout/ui/checkout-ui-classes';
 import type { CheckoutOrderProduct } from '@/features/checkout/ui/checkout-order-product';
 import { previewCouponAction } from '@/features/checkout/application/preview-coupon';
 import { createOrderAction } from '@/features/checkout/create-order';
-import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
+import {
+  isCashOnDeliveryAllowedForCheckout,
+  type CheckoutPaymentMethod,
+} from '@/features/checkout/domain/payment-methods';
 import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
-import { CheckoutDetailsSections } from '@/features/checkout/ui/CheckoutDetailsSections';
+import {
+  CheckoutDetailsSections,
+  type CheckoutDeliveryZoneOption,
+} from '@/features/checkout/ui/CheckoutDetailsSections';
 import type { PickupBranchOption } from '@/features/checkout/ui/CheckoutShippingMethods';
 import { CheckoutOrderSummary } from '@/features/checkout/ui/CheckoutOrderSummary';
 import { CheckoutProductsInOrder } from '@/features/checkout/ui/CheckoutProductsInOrder';
-import { useDistanceDeliveryQuote } from '@/features/checkout/ui/use-distance-delivery-quote';
 import {
   calculateMaxRedeemAmount,
   clampBonusRedeemRequest,
@@ -49,6 +54,9 @@ type CheckoutLabels = {
   addressPlaceholder: string;
   floorPlaceholder: string;
   intercomCodePlaceholder: string;
+  deliveryLocation: string;
+  selectLocation: string;
+  selectDeliveryLocation: string;
   openMap: string;
   mapTitle: string;
   mapHint: string;
@@ -56,15 +64,17 @@ type CheckoutLabels = {
   mapCancel: string;
   mapResolving: string;
   enterDeliveryAddress: string;
-  calculatingDelivery: string;
   scheduleTitle: string;
+  scheduleDeliverTo: string;
+  scheduleApproximatelyOneHour: string;
+  scheduleChange: string;
+  scheduleUseAsap: string;
   schedulePickDate: string;
   schedulePickTime: string;
   scheduleTimeHint: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;
-  selectDeliverySlot: string;
   selectCashChange: string;
   cashChangeTitle: string;
   cashChangeHint: string;
@@ -127,6 +137,7 @@ type CheckoutFormProps = {
   defaultLine1: string;
   subtotalAmount: number;
   deliverySchedule: DeliveryScheduleSettings;
+  deliveryZones: CheckoutDeliveryZoneOption[];
   cashChangeOptions: CashChangeDenominationView[];
   storePickupAddress: string | null;
   pickupBranches: PickupBranchOption[];
@@ -157,6 +168,7 @@ export function CheckoutForm({
   defaultLine1,
   subtotalAmount,
   deliverySchedule,
+  deliveryZones,
   cashChangeOptions,
   storePickupAddress,
   pickupBranches = [],
@@ -169,6 +181,7 @@ export function CheckoutForm({
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
   const [shippingMethod, setShippingMethod] = useState<CheckoutShippingMethod>('delivery');
   const [pickupBranchId, setPickupBranchId] = useState(pickupBranches[0]?.id ?? '');
+  const [deliveryRuleId, setDeliveryRuleId] = useState('');
   const [line1, setLine1] = useState(defaultLine1);
   const [deliveryPoint, setDeliveryPoint] = useState<{
     lat: number;
@@ -176,11 +189,14 @@ export function CheckoutForm({
   } | null>(null);
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(null);
   const [cashChangeAmount, setCashChangeAmount] = useState<number | null>(null);
-  const deliveryQuote = useDistanceDeliveryQuote(
-    shippingMethod === 'delivery' ? line1 : '',
-    shippingMethod === 'delivery' ? deliveryPoint : null,
+  const selectedZone = useMemo(
+    () => deliveryZones.find((zone) => zone.id === deliveryRuleId) ?? null,
+    [deliveryRuleId, deliveryZones],
   );
-  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>('cash_on_delivery');
+  const isGroupOrderCheckout = groupOrderCheckout != null;
+  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>(() =>
+    isCashOnDeliveryAllowedForCheckout(isGroupOrderCheckout) ? 'cash_on_delivery' : 'idram',
+  );
   const [error, setError] = useState<string | null>(null);
   const [couponDraft, setCouponDraft] = useState('');
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
@@ -216,22 +232,27 @@ export function CheckoutForm({
     ],
   );
 
-  const paymentOptions = useMemo(
-    () => [
+  const paymentOptions = useMemo(() => {
+    const options: Array<{
+      id: CheckoutPaymentMethod;
+      name: string;
+      description: string;
+      logos: string[];
+    }> = [
       {
-        id: 'cash_on_delivery' as const,
+        id: 'cash_on_delivery',
         name: labels.cashOnDelivery,
         description: labels.cashOnDeliveryDescription,
         logos: ['/assets/payments/cash-bag.png'],
       },
       {
-        id: 'idram' as const,
+        id: 'idram',
         name: labels.idram,
         description: labels.idramDescription,
         logos: ['/assets/payments/idram.png'],
       },
       {
-        id: 'arca' as const,
+        id: 'arca',
         name: labels.arca,
         description: labels.arcaDescription,
         logos: [
@@ -241,23 +262,27 @@ export function CheckoutForm({
         ],
       },
       {
-        id: 'terminal' as const,
+        id: 'terminal',
         name: labels.terminal,
         description: labels.terminalDescription,
         logos: ['/assets/payments/terminal.png'],
       },
-    ],
-    [
-      labels.arca,
-      labels.arcaDescription,
-      labels.cashOnDelivery,
-      labels.cashOnDeliveryDescription,
-      labels.idram,
-      labels.idramDescription,
-      labels.terminal,
-      labels.terminalDescription,
-    ],
-  );
+    ];
+    if (isCashOnDeliveryAllowedForCheckout(isGroupOrderCheckout)) {
+      return options;
+    }
+    return options.filter((option) => option.id !== 'cash_on_delivery');
+  }, [
+    isGroupOrderCheckout,
+    labels.arca,
+    labels.arcaDescription,
+    labels.cashOnDelivery,
+    labels.cashOnDeliveryDescription,
+    labels.idram,
+    labels.idramDescription,
+    labels.terminal,
+    labels.terminalDescription,
+  ]);
 
   function formatMoney(amount: number): string {
     return formatMoneyAmount(amount, 'AMD', locale);
@@ -269,7 +294,7 @@ export function CheckoutForm({
     ? 0
     : lockedDelivery != null
       ? lockedDelivery
-      : deliveryQuote.deliveryAmount;
+      : (selectedZone?.priceAmount ?? 0);
   const merchandiseAfterDiscount = Math.max(0, subtotalAmount - discountAmount);
   const maxBonusRedeem =
     bonusAvailableBalance == null
@@ -296,18 +321,12 @@ export function CheckoutForm({
     ? null
     : lockedDelivery != null
       ? formatMoney(shippingAmount)
-      : deliveryQuote.pending
-        ? labels.calculatingDelivery
-        : deliveryQuote.error
-          ? labels.enterDeliveryAddress
-          : deliveryQuote.distanceLabel
-            ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
-            : labels.enterDeliveryAddress;
+      : selectedZone
+        ? formatMoney(shippingAmount)
+        : labels.selectDeliveryLocation;
 
-  const deliveryQuoteHint =
-    !isPickup && deliveryQuote.distanceLabel && !deliveryQuote.error
-      ? `${deliveryQuote.distanceLabel} · ${formatMoney(shippingAmount)}`
-      : null;
+  const deliveryFeeHint =
+    !isPickup && selectedZone ? `${selectedZone.label} · ${formatMoney(shippingAmount)}` : null;
 
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
@@ -409,13 +428,13 @@ export function CheckoutForm({
     setError(null);
 
     if (shippingMethod === 'delivery') {
-      if (deliveryQuote.pending || deliveryQuote.error || !deliveryQuote.distanceLabel) {
-        setError(labels.enterDeliveryAddress);
+      if (!deliveryRuleId || !selectedZone) {
+        setError(labels.selectDeliveryLocation);
         return;
       }
 
-      if (!deliverySlot) {
-        setError(labels.selectDeliverySlot);
+      if (!line1.trim() || line1.trim().length < 3) {
+        setError(labels.enterDeliveryAddress);
         return;
       }
     }
@@ -439,6 +458,7 @@ export function CheckoutForm({
         contactPhone: String(data.get('contactPhone') ?? ''),
         shippingMethod,
         paymentMethod,
+        deliveryRuleId: shippingMethod === 'delivery' ? deliveryRuleId : undefined,
         line1:
           shippingMethod === 'delivery'
             ? line1
@@ -499,6 +519,7 @@ export function CheckoutForm({
               if (method === 'pickup') {
                 setDeliverySlot(null);
                 setDeliveryPoint(null);
+                setDeliveryRuleId('');
               }
             }}
             shippingOptions={shippingOptions}
@@ -512,6 +533,9 @@ export function CheckoutForm({
             cashChangeOptions={cashChangeOptions}
             cashChangeAmount={cashChangeAmount}
             onCashChangeAmountChange={setCashChangeAmount}
+            deliveryZones={deliveryZones}
+            deliveryRuleId={deliveryRuleId}
+            onDeliveryRuleIdChange={setDeliveryRuleId}
             line1={line1}
             onLine1Change={(value) => {
               setLine1(value);
@@ -521,9 +545,7 @@ export function CheckoutForm({
               setLine1(address);
               setDeliveryPoint(point);
             }}
-            deliveryQuotePending={deliveryQuote.pending}
-            deliveryQuoteError={deliveryQuote.error}
-            deliveryQuoteHint={deliveryQuoteHint}
+            deliveryFeeHint={deliveryFeeHint}
             paymentMethod={paymentMethod}
             onPaymentMethodChange={(method) => {
               setPaymentMethod(method);

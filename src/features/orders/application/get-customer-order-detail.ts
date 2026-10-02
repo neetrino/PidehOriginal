@@ -5,10 +5,11 @@ import {
   getAdminOrderDetailView,
   type AdminOrderDetailView,
 } from '@/features/orders/application/order-detail-view';
+import { getAdminOrderByNumber } from '@/features/orders/application/queries';
+import { isReviewEligibleOrderStatus } from '@/features/reviews/domain/review-rules';
 import { requireUser } from '@/lib/auth/policies';
 import { isLocale, type Locale } from '@/lib/i18n/config';
 import { err, ok, type Result } from '@/lib/result';
-import { getAdminOrderByNumber } from '@/features/orders/application/queries';
 
 /**
  * Customer fetch of a single order for the profile order details drawer.
@@ -50,5 +51,10 @@ export async function getCustomerOrderDetailAction(
     return err('NOT_FOUND', 'Order not found.');
   }
 
-  return ok(detail);
+  const canSubmitReview =
+    loaded.order.userId === user.id &&
+    isReviewEligibleOrderStatus(loaded.order.status) &&
+    detail.customerReview == null;
+
+  return ok({ ...detail, canSubmitReview });
 }

@@ -6,6 +6,11 @@ export function isCheckoutPaymentMethod(value: string): value is CheckoutPayment
   return (CHECKOUT_PAYMENT_METHODS as readonly string[]).includes(value);
 }
 
+/** Cash on delivery is only for solo checkout, not group-order organizer pay. */
+export function isCashOnDeliveryAllowedForCheckout(isGroupOrderCheckout: boolean): boolean {
+  return !isGroupOrderCheckout;
+}
+
 /** Maps checkout UI payment choice to payments.provider / payments.method. */
 export function toPaymentRecord(method: CheckoutPaymentMethod): {
   provider: string;

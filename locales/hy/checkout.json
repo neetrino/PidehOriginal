@@ -37,7 +37,11 @@
     "resolving": "Հասցեն որոշվում է…"
   },
   "schedule": {
-    "title": "Առաքման օր և ժամ",
+    "title": "Ամսաթիվ և ժամ",
+    "deliverTo": "Առաքում",
+    "approximatelyOneHour": "մոտավորապես 1 ժամում",
+    "change": "Փոխել",
+    "useAsap": "Հնարավորինս շուտ (~1 ժամ)",
     "pickDate": "Ընտրեք օրը",
     "pickTime": "Ընտրեք ժամը",
     "timeHint": "Նախ օրացույցից ընտրեք օրը. հասանելի ժամերը կհայտնվեն այստեղ։",
@@ -58,10 +62,10 @@
     "storePickupDescription": "Վերցրեք պատվերը մասնաճյուղից (Անվճար)",
     "pickupStoreHint": "Պատվերը կարող եք վերցնել խանութից։",
     "delivery": "Առաքում",
-    "deliveryDescription": "Կառաքենք ձեր հասցեով։ Գինը հաշվվում է հեռավորությամբ։",
+    "deliveryDescription": "Պատվերը կառաքենք ձեր հասցեով։ Գինը կախված է ընտրված առաքման գոտուց։",
     "enterCity": "Մուտքագրեք քաղաքը",
-    "selectDeliveryLocation": "Ընտրեք առաքման վայրը",
-    "enterDeliveryAddress": "Մուտքագրեք հասցեն՝ առաքման գինը հաշվելու համար",
+    "selectDeliveryLocation": "Ընտրեք առաքման գոտին",
+    "enterDeliveryAddress": "Մուտքագրեք առաքման հասցեն",
     "calculatingDelivery": "Առաքման գինը հաշվվում է…"
   },
   "payment": {
