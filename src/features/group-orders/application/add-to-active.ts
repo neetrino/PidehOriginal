@@ -4,6 +4,7 @@ import { addToCart } from '@/features/cart/cart';
 import { setPlainCartQuantity } from '@/features/cart/plain-line';
 import { addGroupOrderItem } from '@/features/group-orders/application/items';
 import { setGroupPlainLineQuantity } from '@/features/group-orders/application/set-plain-line';
+import { peekCartOrderMode } from '@/features/cart/order-mode';
 import { peekGroupOrderSession } from '@/features/group-orders/session';
 
 /**
@@ -25,7 +26,11 @@ export async function addProductToActiveCart(
   options?: { modifierIds?: string[]; customerNote?: string },
 ): Promise<AddProductToActiveCartResult> {
   const session = await peekGroupOrderSession();
-  if (session.inviteToken && session.participantId) {
+  if (
+    session.inviteToken &&
+    session.participantId &&
+    (await peekCartOrderMode()) === 'group'
+  ) {
     const result = await addGroupOrderItem({
       inviteToken: session.inviteToken,
       productId,
@@ -72,7 +77,11 @@ export async function setActiveCartProductQuantity(
   }
 
   const session = await peekGroupOrderSession();
-  if (session.inviteToken && session.participantId) {
+  if (
+    session.inviteToken &&
+    session.participantId &&
+    (await peekCartOrderMode()) === 'group'
+  ) {
     const result = await setGroupPlainLineQuantity(
       session.inviteToken,
       session.participantId,

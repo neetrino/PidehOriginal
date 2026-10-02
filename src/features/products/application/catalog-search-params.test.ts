@@ -11,7 +11,7 @@ describe('parseCatalogSearchParams', () => {
     expect(parseCatalogSearchParams({})).toEqual({
       sort: 'newest',
       page: 1,
-      pageSize: 24,
+      pageSize: 16,
     });
   });
 
@@ -26,7 +26,7 @@ describe('parseCatalogSearchParams', () => {
         onSale: 'true',
         sort: 'price_asc',
         page: '2',
-        pageSize: '12',
+        pageSize: '16',
       }),
     ).toMatchObject({
       q: 'oak',
@@ -37,7 +37,7 @@ describe('parseCatalogSearchParams', () => {
       onSale: true,
       sort: 'price_asc',
       page: 2,
-      pageSize: 12,
+      pageSize: 16,
     });
   });
 
@@ -52,7 +52,7 @@ describe('parseCatalogSearchParams', () => {
     ).toMatchObject({
       sort: 'newest',
       page: 1,
-      pageSize: 24,
+      pageSize: 16,
       category: 'tables',
       inStock: true,
     });
@@ -65,7 +65,7 @@ describe('buildCatalogQueryString', () => {
       buildCatalogQueryString({
         sort: 'newest',
         page: 1,
-        pageSize: 24,
+        pageSize: 16,
       }),
     ).toBe('');
   });
@@ -75,7 +75,7 @@ describe('buildCatalogQueryString', () => {
       {
         sort: 'popular',
         page: 3,
-        pageSize: 12,
+        pageSize: 16,
         category: 'chairs',
         inStock: true,
       },
@@ -84,7 +84,7 @@ describe('buildCatalogQueryString', () => {
     expect(query).toContain('sort=popular');
     expect(query).toContain('category=chairs');
     expect(query).toContain('inStock=true');
-    expect(query).toContain('pageSize=12');
+    expect(query).not.toContain('pageSize=');
     expect(query).not.toContain('page=');
   });
 });
@@ -95,7 +95,7 @@ describe('hasActiveCatalogFilters', () => {
       hasActiveCatalogFilters({
         sort: 'price_desc',
         page: 2,
-        pageSize: 48,
+        pageSize: 16,
       }),
     ).toBe(false);
   });
@@ -105,7 +105,7 @@ describe('hasActiveCatalogFilters', () => {
       hasActiveCatalogFilters({
         sort: 'newest',
         page: 1,
-        pageSize: 24,
+        pageSize: 16,
         onSale: true,
       }),
     ).toBe(true);

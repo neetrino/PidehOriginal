@@ -4,6 +4,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 
 import { getDb } from '@/db/client';
 import { groupOrderItems } from '@/db/schema';
+import { peekCartOrderMode } from '@/features/cart/order-mode';
 import { getPlainCartQuantities } from '@/features/cart/plain-line';
 import { peekGroupOrderSession } from '@/features/group-orders/session';
 
@@ -17,7 +18,11 @@ export async function getActivePlainCartQuantities(
   if (productIds.length === 0) return {};
 
   const session = await peekGroupOrderSession();
-  if (session.inviteToken && session.participantId) {
+  if (
+    session.inviteToken &&
+    session.participantId &&
+    (await peekCartOrderMode()) === 'group'
+  ) {
     return readGroupPlainQuantities(session.participantId, productIds);
   }
 

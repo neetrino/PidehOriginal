@@ -1,13 +1,18 @@
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { ShoppingCart } from 'lucide-react';
 
 import { SideSheet } from '@/components/ui/SideSheet';
 import { removeItem, updateQuantity } from '@/features/cart/cart';
-import type { CartDrawerView } from '@/features/cart/get-cart-drawer-view';
-import { loadCartDrawerViewAction } from '@/features/cart/load-cart-drawer-view-action';
+import type { CartDrawerBundle } from '@/features/cart/get-cart-drawer-view';
+import {
+  loadCartDrawerViewAction,
+  setCartOrderModeAction,
+} from '@/features/cart/load-cart-drawer-view-action';
 import { CartDrawerEmpty } from '@/features/cart/ui/CartDrawerEmpty';
+import { CartOrderModeSwitch } from '@/features/cart/ui/CartOrderModeSwitch';
 import { CartDrawerItems } from '@/features/cart/ui/CartDrawerItems';
 import { CartDrawerTotals } from '@/features/cart/ui/CartDrawerTotals';
 import { useCartBadge } from '@/features/cart/ui/cart-badge-count';
@@ -51,27 +56,55 @@ export function CartDrawer({
   itemCount,
   renderTrigger,
 }: CartDrawerProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [view, setView] = useState<CartDrawerView | null>(null);
+  const [bundle, setBundle] = useState<CartDrawerBundle | null>(null);
+  const [orderMode, setOrderMode] = useState<'group' | 'personal'>('group');
   const [loadingView, setLoadingView] = useState(false);
   const [pending, startTransition] = useTransition();
   const { count: cartCount, adding: cartAdding } = useCartBadge(itemCount);
   const syncedItemCountRef = useRef(cartCount);
   const labels = dictionary.cartDrawer;
+  const view =
+    bundle == null
+      ? null
+      : orderMode === 'group' && bundle.group
+        ? bundle.group
+        : bundle.personal;
   const isGroupSource = view?.source === 'group';
   const badgeCount = open && view ? view.itemCount : cartCount;
   const hasItems = Boolean(view && view.items.length > 0);
   const displayCurrency = view?.currency ?? currency;
+
+  function applyBundle(next: CartDrawerBundle): void {
+    setBundle(next);
+    setOrderMode(next.group ? next.orderMode : 'personal');
+    syncedItemCountRef.current = (next.group && next.orderMode === 'group'
+      ? next.group
+      : next.personal
+    ).itemCount;
+  }
 
   function loadView(showPlaceholder: boolean): void {
     if (showPlaceholder) {
       setLoadingView(true);
     }
     startTransition(async () => {
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
-      syncedItemCountRef.current = next.itemCount;
+      applyBundle(await loadCartDrawerViewAction(locale, currency));
       setLoadingView(false);
+    });
+  }
+
+  function chooseOrderMode(mode: 'group' | 'personal'): void {
+    setOrderMode(mode);
+    startTransition(async () => {
+      await setCartOrderModeAction(mode);
+      const next = await loadCartDrawerViewAction(locale, currency);
+      setBundle(next);
+      setOrderMode(next.group ? mode : 'personal');
+      const selected = mode === 'group' && next.group ? next.group : next.personal;
+      syncedItemCountRef.current = selected.itemCount;
+      router.refresh();
     });
   }
 
@@ -122,9 +155,7 @@ export function CartDrawer({
       } else {
         await updateQuantity(itemId, quantity);
       }
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
-      syncedItemCountRef.current = next.itemCount;
+      applyBundle(await loadCartDrawerViewAction(locale, currency));
     });
   }
 
@@ -138,9 +169,7 @@ export function CartDrawer({
       } else {
         await removeItem(itemId);
       }
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
-      syncedItemCountRef.current = next.itemCount;
+      applyBundle(await loadCartDrawerViewAction(locale, currency));
     });
   }
 
@@ -157,14 +186,19 @@ export function CartDrawer({
         backdropBlur
       >
         <div className="border-b border-[#ff6b00]/15 px-6 py-5">
-          {isGroupSource ? (
-            <p className="text-[11px] font-bold tracking-[0.22em] text-[#ff6b00] uppercase">
-              {labels.groupOrderEyebrow}
-            </p>
-          ) : null}
-          <h2 className="font-display mt-1 text-3xl leading-[0.9] text-[#1e1e1e] uppercase">
-            {isGroupSource ? labels.groupOrder : labels.title}
+          <h2 className="font-display text-3xl leading-[0.9] text-[#1e1e1e] uppercase">
+            {labels.title}
           </h2>
+          {bundle?.group ? (
+            <CartOrderModeSwitch
+              mode={orderMode === 'group' ? 'group' : 'personal'}
+              groupLabel={labels.groupOrder}
+              personalLabel={labels.regularOrder}
+              hint={labels.orderModeHint}
+              disabled={pending}
+              onChange={chooseOrderMode}
+            />
+          ) : null}
           {hasItems ? (
             <p className="mt-2 text-sm text-[#1e1e1e]/55">{formatItemCount(badgeCount, labels)}</p>
           ) : null}
@@ -205,7 +239,7 @@ export function CartDrawer({
           currency={displayCurrency}
           subtotalLabel={labels.subtotal}
           totalLabel={labels.total}
-          checkoutLabel={isGroupSource ? labels.groupOrder : labels.checkout}
+          checkoutLabel={isGroupSource ? labels.continueGroupOrder : labels.checkout}
           checkoutHref={view?.checkoutHref ?? `/${locale}/checkout`}
           subtotalAmount={view?.subtotalAmount ?? 0}
           totalAmount={view?.totalAmount ?? 0}

@@ -15,6 +15,7 @@ import {
 import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 import { useOrbitSwipe } from '@/features/home/ui/mobile/use-orbit-swipe';
 import { catalogHref } from '@/features/products/application/catalog-search-params';
+import { DEFAULT_CATALOG_PAGE_SIZE } from '@/features/products/schemas/catalog-list';
 import type { Locale } from '@/lib/i18n/config';
 
 type CategoryItem = {
@@ -139,7 +140,7 @@ export function MobileHomeHero({
         q: trimmed || undefined,
         sort: 'newest',
         page: 1,
-        pageSize: 24,
+        pageSize: DEFAULT_CATALOG_PAGE_SIZE,
       }),
     );
   }

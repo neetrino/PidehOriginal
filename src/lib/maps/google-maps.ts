@@ -71,7 +71,7 @@ function geocodeQueryCandidates(address: string): string[] {
   if (!mentionsCityOrCountry(trimmed)) {
     candidates.push(`${trimmed}, Yerevan`);
     candidates.push(`${trimmed}, Yerevan, Armenia`);
-    candidates.push(`${trimmed}, Երևան, Հայաստան`);
+    candidates.push(`${trimmed}, Երեվան, Հայաստան`);
   } else if (!/armenia|հայաստան/i.test(trimmed)) {
     candidates.push(`${trimmed}, Armenia`);
   }
@@ -152,7 +152,7 @@ export async function geocodeAddress(address: string): Promise<GeocodeResult> {
 
   logger.warn('maps.geocode_zero_results', { status: lastStatus });
   throw new Error(
-    'Address could not be found on the map. Include city, e.g. «Անդրանիկի 108/10, Երևան».',
+    'Address could not be found on the map. Include city, e.g. «Անդրանիկի 108/10, Երեվան».',
   );
 }
 

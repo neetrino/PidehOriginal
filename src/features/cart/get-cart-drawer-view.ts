@@ -3,6 +3,8 @@ import 'server-only';
 import { and, asc, eq, inArray, or } from 'drizzle-orm';
 
 import { getCartItemCount, getCartWithItems } from '@/features/cart/cart';
+import { peekCartOrderMode } from '@/features/cart/order-mode';
+import type { CartOrderMode } from '@/features/cart/order-mode';
 import { getDb } from '@/db/client';
 import { mediaAssets } from '@/db/schema';
 import { sumAdditionPrices } from '@/features/products/domain/modifier-selection';
@@ -38,6 +40,13 @@ export type CartDrawerView = {
   shippingAmount: number;
   totalAmount: number;
   currency: Currency;
+};
+
+/** Group session plus the personal cart, so the drawer can offer both. */
+export type CartDrawerBundle = {
+  group: CartDrawerView | null;
+  personal: CartDrawerView;
+  orderMode: CartOrderMode;
 };
 
 async function loadPrimaryProductImages(productIds: string[]): Promise<Map<string, string>> {
@@ -88,25 +97,34 @@ function convertDisplayAmount(
 export async function getStorefrontCartItemCount(): Promise<number> {
   const { getActiveGroupSessionItemCount } =
     await import('@/features/group-orders/application/active-session-cart');
-  const groupCount = await getActiveGroupSessionItemCount();
-  if (groupCount != null) {
-    return groupCount;
+  if ((await peekCartOrderMode()) === 'group') {
+    const groupCount = await getActiveGroupSessionItemCount();
+    if (groupCount != null) {
+      return groupCount;
+    }
   }
   return getCartItemCount();
 }
 
-/** Builds storefront cart-drawer display data for the active cart. */
+/** Builds the group session and the personal cart together. */
 export async function getCartDrawerView(
   locale: Locale,
   currency: Currency,
-): Promise<CartDrawerView> {
+): Promise<CartDrawerBundle> {
   const { getActiveGroupSessionCartView } =
     await import('@/features/group-orders/application/active-session-cart');
-  const groupView = await getActiveGroupSessionCartView(locale, currency);
-  if (groupView) {
-    return groupView;
-  }
+  const [group, personal, orderMode] = await Promise.all([
+    getActiveGroupSessionCartView(locale, currency),
+    buildPersonalCartDrawerView(locale, currency),
+    peekCartOrderMode(),
+  ]);
+  return { group, personal, orderMode: group ? orderMode : 'personal' };
+}
 
+async function buildPersonalCartDrawerView(
+  locale: Locale,
+  currency: Currency,
+): Promise<CartDrawerView> {
   const { items: rows } = await getCartWithItems();
   const [images, quote, prices] = await Promise.all([
     loadPrimaryProductImages(rows.map(({ product }) => product.id)),
