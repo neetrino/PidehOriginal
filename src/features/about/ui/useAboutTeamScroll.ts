@@ -8,37 +8,26 @@ import type { RefObject } from 'react';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-function animateGallerySlides(section: HTMLElement, cards: HTMLElement[]): void {
-  cards.forEach((card, index) => {
-    gsap.set(card, {
-      zIndex: index === cards.length - 1 ? 50 : index + 1,
-      yPercent: index === 0 ? 0 : 125,
-      autoAlpha: index === 0 ? 1 : 0,
-    });
-  });
+/** Vertical scroll, in viewports, needed to move one gallery frame. */
+const GALLERY_SCROLL_VIEWPORTS = 2.4;
+const GALLERY_SCROLL_SCRUB = 1.8;
 
-  const timeline = gsap.timeline({
-    defaults: { ease: 'none' },
+function animateGalleryTrack(section: HTMLElement, track: HTMLElement, count: number): void {
+  if (count < 2) {
+    return;
+  }
+
+  gsap.to(track, {
+    xPercent: -((count - 1) / count) * 100,
+    ease: 'none',
     scrollTrigger: {
       trigger: section,
       start: 'top top',
-      end: () => `+=${cards.length * window.innerHeight}`,
+      end: () => `+=${(count - 1) * window.innerHeight * GALLERY_SCROLL_VIEWPORTS}`,
       pin: true,
-      scrub: 1.1,
+      scrub: GALLERY_SCROLL_SCRUB,
       invalidateOnRefresh: true,
     },
-  });
-
-  cards.forEach((card, index) => {
-    if (index === 0) {
-      return;
-    }
-    timeline.fromTo(
-      card,
-      { autoAlpha: 1, yPercent: 125 },
-      { yPercent: 0, duration: 1 },
-      index - 0.38,
-    );
   });
 }
 
@@ -51,11 +40,12 @@ export function useAboutTeamScroll(sectionRef: RefObject<HTMLElement | null>): v
       if (reduceMotion || !section) {
         return;
       }
-      const cards = gsap.utils.toArray<HTMLElement>('[data-team-card]');
-      if (cards.length === 0) {
+      const track = section.querySelector<HTMLElement>('[data-gallery-track]');
+      const count = track?.querySelectorAll('[data-team-card]').length ?? 0;
+      if (!track || count === 0) {
         return;
       }
-      animateGallerySlides(section, cards);
+      animateGalleryTrack(section, track, count);
     },
     { scope: sectionRef, dependencies: [reduceMotion] },
   );

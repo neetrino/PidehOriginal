@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-
 import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 import { ProductPriceFlow } from '@/features/products/ui/ProductPriceFlow';
 import { ProductPurchaseControls } from '@/features/products/ui/ProductPurchaseControls';
 import { ProductSectionHeading } from '@/features/products/ui/ProductSectionHeading';
 import { ProductSpecialRequestsField } from '@/features/products/ui/ProductSpecialRequestsField';
 import type { useProductConfigurator } from '@/features/products/ui/use-product-configurator';
-import { WishlistButton } from '@/features/wishlist/ui/WishlistButton';
+import { WISHLIST_RING_BUTTON_CLASS, WishlistButton } from '@/features/wishlist/ui/WishlistButton';
 import type { Locale } from '@/lib/i18n/config';
 
 export type ProductInfoCardLabels = {
@@ -47,10 +45,7 @@ export function ProductInfoCard({
   labels,
   state,
 }: ProductInfoCardProps) {
-  const [note, setNote] = useState('');
-
   function handleReset(): void {
-    setNote('');
     state.resetSelection();
   }
 
@@ -69,7 +64,7 @@ export function ProductInfoCard({
           emptyIconSrc={PIDEH_ASSETS.pdpHeart}
           emptyIconWidth={22}
           emptyIconHeight={22}
-          className="size-11 shrink-0 border-2 border-[rgba(255,107,0,0.75)] bg-white text-[#ff6b00] hover:bg-white"
+          className={WISHLIST_RING_BUTTON_CLASS}
         />
       </div>
 
@@ -116,9 +111,9 @@ export function ProductInfoCard({
       <ProductSpecialRequestsField
         label={labels.specialRequests}
         placeholder={labels.specialRequestsPlaceholder}
-        value={note}
+        value={state.customerNote}
         disabled={state.disabled}
-        onChange={setNote}
+        onChange={state.setCustomerNote}
       />
     </div>
   );

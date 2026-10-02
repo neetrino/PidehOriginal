@@ -218,7 +218,8 @@
       "bonusColumn": "Բոնուս",
       "emptyParticipantItems": "Այս մասնակցի համար ապրանքներ չկան։",
       "giftCard": "Gift card",
-      "grandTotal": "Ընդամենը"
+      "grandTotal": "Ընդամենը",
+      "customerNote": "Նշում"
     },
     "detail": {
       "customer": "Հաճախորդ",
@@ -337,7 +338,7 @@
       "allStatuses": "Բոլոր կարգավիճակները",
       "statusActive": "Միացված",
       "statusInactive": "Անջատված",
-      "statusDraft": "Սևագիր",
+      "statusDraft": "Stop product",
       "statusLowRemaining": "Քիչ է մնացել"
     },
     "table": {
@@ -637,8 +638,8 @@
       "editTitle": "Խմբագրել կուպոնը",
       "newAria": "Նոր կուպոն",
       "editAria": "Խմբագրել կուպոնը",
-      "name": "Անուն",
-      "namePlaceholder": "Անուն",
+      "name": "Անվանում",
+      "namePlaceholder": "Անվանում",
       "code": "Կոդ",
       "codePlaceholder": "Կոդ",
       "codeRequired": "Կոդը պարտադիր է։",

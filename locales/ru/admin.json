@@ -218,7 +218,8 @@
       "bonusColumn": "Бонус",
       "emptyParticipantItems": "У этого участника нет товаров.",
       "giftCard": "Подарочная карта",
-      "grandTotal": "Итого"
+      "grandTotal": "Итого",
+      "customerNote": "Примечание"
     },
     "detail": {
       "customer": "Клиент",
@@ -337,7 +338,7 @@
       "allStatuses": "Все статусы",
       "statusActive": "Включён",
       "statusInactive": "Выключен",
-      "statusDraft": "Черновик",
+      "statusDraft": "Stop product",
       "statusLowRemaining": "Мало осталось"
     },
     "table": {

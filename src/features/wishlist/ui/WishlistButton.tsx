@@ -25,6 +25,13 @@ type WishlistButtonProps = {
   emptyIconHeight?: number;
 };
 
+/** Circled heart on the product page. Hover warms the ring and lifts the icon. */
+export const WISHLIST_RING_BUTTON_CLASS =
+  'size-11 shrink-0 border-2 border-[rgba(255,107,0,0.75)] bg-white text-[#ff6b00] transition duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-110 hover:border-[#ff6b00] hover:bg-[#fff4ec] hover:shadow-[0_8px_20px_rgba(255,107,0,0.28)] hover:[&_img]:scale-110 hover:[&_svg]:scale-110 active:scale-95 motion-reduce:hover:scale-100 motion-reduce:hover:[&_img]:scale-100 motion-reduce:hover:[&_svg]:scale-100 motion-reduce:active:scale-100';
+
+const ICON_TRANSFORM_CLASS =
+  'origin-center transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]';
+
 function wishlistHeartClass(
   inWishlist: boolean,
   usesFigmaIcon: boolean,
@@ -131,11 +138,12 @@ export function WishlistButton({
               alt=""
               width={emptyIconWidth}
               height={emptyIconHeight}
+              className={ICON_TRANSFORM_CLASS}
               aria-hidden
             />
           ) : (
             <Heart
-              className={wishlistHeartClass(inWishlist, Boolean(emptyIconSrc), iconClass)}
+              className={`${wishlistHeartClass(inWishlist, Boolean(emptyIconSrc), iconClass)} ${ICON_TRANSFORM_CLASS}`}
               style={emptyIconSrc ? { width: emptyIconWidth, height: emptyIconHeight } : undefined}
               aria-hidden
             />

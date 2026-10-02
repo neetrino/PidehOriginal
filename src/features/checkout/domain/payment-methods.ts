@@ -1,4 +1,4 @@
-export const CHECKOUT_PAYMENT_METHODS = ['cash_on_delivery', 'idram', 'arca'] as const;
+export const CHECKOUT_PAYMENT_METHODS = ['cash_on_delivery', 'idram', 'arca', 'terminal'] as const;
 
 export type CheckoutPaymentMethod = (typeof CHECKOUT_PAYMENT_METHODS)[number];
 
@@ -18,5 +18,7 @@ export function toPaymentRecord(method: CheckoutPaymentMethod): {
       return { provider: 'arca', method: 'ARCA' };
     case 'cash_on_delivery':
       return { provider: 'cod', method: 'COD' };
+    case 'terminal':
+      return { provider: 'terminal', method: 'TERMINAL' };
   }
 }

@@ -15,6 +15,7 @@ type ShopProductGridProps = {
   locale: Locale;
   products: readonly PricedProduct[];
   wishlistIds: ReadonlySet<string>;
+  cartQuantities: Readonly<Record<string, number>>;
   isSignedIn: boolean;
   emptyTitle: string;
   emptyDescription: string;
@@ -36,6 +37,7 @@ export function ShopProductGrid({
   locale,
   products,
   wishlistIds,
+  cartQuantities,
   isSignedIn,
   emptyTitle,
   emptyDescription,
@@ -88,6 +90,8 @@ export function ShopProductGrid({
               locale={locale}
               productId={item.product.id}
               inWishlist={wishlistIds.has(item.product.id)}
+              cartQuantity={cartQuantities[item.product.id] ?? 0}
+              maxQuantity={item.product.stockOnHand}
               isSignedIn={isSignedIn}
               wishlistLabel={wishlistLabel}
               orderLabel={orderLabel}

@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 import { getDb } from '@/db/client';
 import { cartItemModifiers, cartItems, carts, productModifiers, products } from '@/db/schema';
+import { mergeCustomerNotes, normalizeCustomerNote } from '@/features/cart/customer-note';
 import { getGuestCartToken, hashGuestToken, peekGuestCartToken } from '@/features/cart/guest-token';
 import { buildModifierSelectionKey } from '@/features/products/domain/modifier-selection';
 import { resolveSelectedModifiersForProduct } from '@/features/products/application/product-modifiers';
@@ -176,6 +177,7 @@ export async function getCartItemCount(): Promise<number> {
 
 export type AddToCartModifiers = {
   modifierIds?: ReadonlyArray<string>;
+  customerNote?: string;
 };
 
 /**
@@ -220,8 +222,13 @@ export async function addToCart(
   const selectionKey = buildModifierSelectionKey(resolved.modifiers.map((modifier) => modifier.id));
   const addQty = Math.min(quantity, product.stock);
 
+  const customerNote = normalizeCustomerNote(options.customerNote);
   const [existing] = await getDb()
-    .select({ id: cartItems.id, quantity: cartItems.quantity })
+    .select({
+      id: cartItems.id,
+      quantity: cartItems.quantity,
+      customerNote: cartItems.customerNote,
+    })
     .from(cartItems)
     .where(
       and(
@@ -237,6 +244,7 @@ export async function addToCart(
       .update(cartItems)
       .set({
         quantity: Math.min(existing.quantity + addQty, product.stock),
+        customerNote: mergeCustomerNotes(existing.customerNote, customerNote),
         updatedAt: new Date(),
       })
       .where(eq(cartItems.id, existing.id));
@@ -247,6 +255,7 @@ export async function addToCart(
       cartId: cart.id,
       productId,
       selectionKey,
+      customerNote,
       quantity: addQty,
     });
     await insertCartItemModifiers(itemId, resolved.modifiers);

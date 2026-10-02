@@ -67,6 +67,11 @@ export function OrderDetailsDrawerParticipants({
                     <ParticipantItemThumb title={item.title} imageUrl={item.imageUrl} />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-gray-900">{item.title}</p>
+                      {item.customerNote ? (
+                        <p className="mt-0.5 text-xs whitespace-pre-wrap text-gray-600">
+                          {item.customerNote}
+                        </p>
+                      ) : null}
                       <p className="mt-1 text-sm font-semibold text-gray-900">
                         {formatOrderDrawerMoney(item.lineTotalAmount, item.currency)}
                       </p>

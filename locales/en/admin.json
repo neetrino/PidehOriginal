@@ -218,7 +218,8 @@
       "bonusColumn": "Bonus",
       "emptyParticipantItems": "This participant has no items.",
       "giftCard": "Gift card",
-      "grandTotal": "Total"
+      "grandTotal": "Total",
+      "customerNote": "Note"
     },
     "detail": {
       "customer": "Customer",
@@ -337,7 +338,7 @@
       "allStatuses": "All statuses",
       "statusActive": "Enabled",
       "statusInactive": "Disabled",
-      "statusDraft": "Draft",
+      "statusDraft": "Stop product",
       "statusLowRemaining": "Few left"
     },
     "table": {

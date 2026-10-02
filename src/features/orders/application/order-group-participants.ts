@@ -32,6 +32,7 @@ export type AdminOrderParticipantItemView = {
     name: string;
     unitPriceAmount: number;
   }>;
+  customerNote: string | null;
 };
 
 export type AdminOrderParticipantView = {
@@ -63,6 +64,9 @@ function paymentMethodLabel(methodOrProvider: string): string {
   if (normalized === 'ARCA' || normalized === 'CARD') {
     return 'Card';
   }
+  if (normalized === 'TERMINAL') {
+    return 'Terminal';
+  }
   return methodOrProvider;
 }
 
@@ -87,6 +91,7 @@ export async function loadOrderGroupParticipants(input: {
     unitBaseAmount: number;
     lineTotalAmount: number;
     currency: string;
+    customerNote: string | null;
     modifiers: Array<{
       id: string;
       kind: 'ADDITION' | 'EXCEPTION';
@@ -217,6 +222,7 @@ export async function loadOrderGroupParticipants(input: {
           lineTotalAmount: item.lineTotalAmount,
           currency: item.currency,
           modifiers: item.modifiers,
+          customerNote: item.customerNote?.trim() || null,
         })),
     }));
   }
@@ -293,6 +299,7 @@ export async function loadOrderGroupParticipants(input: {
             name: mod.nameSnapshot,
             unitPriceAmount: mod.priceAmountSnapshot,
           })),
+          customerNote: row.item.customerNote?.trim() || null,
         };
       }),
   }));

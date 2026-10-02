@@ -7,6 +7,7 @@ import {
   groupOrderItemModifiers,
   groupOrderItems,
 } from '@/db/schema';
+import { mergeCustomerNotes } from '@/features/cart/customer-note';
 import { getOrCreateCart } from '@/features/cart/cart';
 import { assertOrganizerAccess } from '@/features/group-orders/application/access';
 import { createId } from '@/lib/id';
@@ -59,7 +60,11 @@ export async function prepareGroupOrderCheckout(
 
   for (const line of lines) {
     const [existing] = await db
-      .select({ id: cartItems.id, quantity: cartItems.quantity })
+      .select({
+        id: cartItems.id,
+        quantity: cartItems.quantity,
+        customerNote: cartItems.customerNote,
+      })
       .from(cartItems)
       .where(
         and(
@@ -75,6 +80,7 @@ export async function prepareGroupOrderCheckout(
         .update(cartItems)
         .set({
           quantity: existing.quantity + line.quantity,
+          customerNote: mergeCustomerNotes(existing.customerNote, line.customerNote),
           updatedAt: new Date(),
         })
         .where(eq(cartItems.id, existing.id));
@@ -87,6 +93,7 @@ export async function prepareGroupOrderCheckout(
       cartId: cart.id,
       productId: line.productId,
       selectionKey: line.selectionKey,
+      customerNote: line.customerNote,
       quantity: line.quantity,
     });
 

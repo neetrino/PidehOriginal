@@ -142,6 +142,8 @@ export const orderItems = pgTable(
     productSkuSnapshot: text('product_sku_snapshot').notNull(),
     productImageKeySnapshot: text('product_image_key_snapshot'),
     quantity: integer('quantity').notNull(),
+    /** Special request the customer wrote for this line. */
+    customerNote: text('customer_note'),
     unitBaseAmount: integer('unit_base_amount').notNull(),
     unitDisplayAmount: integer('unit_display_amount').notNull(),
     compareAtAmount: integer('compare_at_amount'),

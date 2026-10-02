@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
 import {
@@ -23,7 +23,7 @@ import { ProductSpecialRequestsField } from '@/features/products/ui/ProductSpeci
 import { MobileProductHero } from '@/features/products/ui/mobile/MobileProductHero';
 import { MobileProductSheet } from '@/features/products/ui/mobile/MobileProductSheet';
 import { useProductConfigurator } from '@/features/products/ui/use-product-configurator';
-import { WishlistButton } from '@/features/wishlist/ui/WishlistButton';
+import { WISHLIST_RING_BUTTON_CLASS, WishlistButton } from '@/features/wishlist/ui/WishlistButton';
 import type { Locale } from '@/lib/i18n/config';
 import type { Currency } from '@/lib/money/currency';
 
@@ -84,7 +84,6 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
     labels,
   } = props;
   const galleryRef = useRef<HTMLDivElement>(null);
-  const [note, setNote] = useState('');
   const state = useProductConfigurator({
     locale,
     currency,
@@ -99,7 +98,6 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
   });
 
   function handleReset(): void {
-    setNote('');
     state.resetSelection();
   }
 
@@ -136,7 +134,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
             emptyIconSrc={PIDEH_ASSETS.pdpHeart}
             emptyIconWidth={22}
             emptyIconHeight={22}
-            className="size-11 border-2 border-[rgba(255,107,0,0.75)] bg-white text-[#ff6b00] hover:bg-white"
+            className={WISHLIST_RING_BUTTON_CLASS}
           />
         }
         priceRow={
@@ -169,10 +167,10 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
               <ProductSpecialRequestsField
                 label={labels.specialRequests}
                 placeholder={labels.specialRequestsPlaceholder}
-                value={note}
+                value={state.customerNote}
                 disabled={state.disabled}
                 minHeightClassName="min-h-[155px]"
-                onChange={setNote}
+                onChange={state.setCustomerNote}
               />
             </div>
             <button

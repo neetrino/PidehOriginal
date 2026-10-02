@@ -40,6 +40,11 @@ export function OrderDetailsDrawerItems({ detail, copy }: OrderDetailsDrawerItem
                     <ProductThumb title={item.title} imageUrl={item.imageUrl} />
                     <div className="min-w-0">
                       <span className="font-medium text-gray-900">{item.title}</span>
+                      {item.customerNote ? (
+                        <p className="mt-1 text-xs whitespace-pre-wrap text-gray-600">
+                          {item.customerNote}
+                        </p>
+                      ) : null}
                       {item.modifiers.length > 0 ? (
                         <ul className="mt-1 space-y-0.5 text-xs text-gray-600">
                           {item.modifiers.map((modifier) => (

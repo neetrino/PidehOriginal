@@ -32,18 +32,9 @@ export function AboutHero({ copy }: AboutHeroProps) {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[center_40%]"
+          className="object-cover object-center"
         />
       </div>
-      <div
-        data-about-hero-veil
-        aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-r from-[#fff8e7] via-[#fff8e7]/75 to-transparent"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-16 h-24 bg-gradient-to-t from-pideh-cream/80 to-transparent"
-      />
       <div className={`relative z-[1] ${PAGE_CONTAINER}`}>
         <div
           data-about-hero-copy
@@ -55,7 +46,7 @@ export function AboutHero({ copy }: AboutHeroProps) {
             </p>
           </RevealOnView>
           <RevealOnView variants={titleSweep} delay={0.06}>
-            <h1 className="font-display mt-5 max-w-4xl text-[clamp(2.25rem,8vw,6rem)] leading-[0.92] font-black tracking-tight text-pideh-ink">
+            <h1 className="font-display mt-5 max-w-4xl text-[clamp(2.25rem,8vw,6rem)] leading-[0.92] font-black tracking-tight text-pideh-cream">
               {titleWords.map((word, index) => (
                 <span
                   key={`${word}-${index}`}

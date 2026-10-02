@@ -24,7 +24,7 @@ import {
   updateSpendLimitAction,
 } from '@/features/group-orders/actions';
 import type { GroupOrderDetailView } from '@/features/group-orders/application/queries';
-import { alertGroupOrderCancelledOnce } from '@/features/group-orders/ui/alert-group-order-cancelled';
+import { GroupOrderConfirmDialog } from '@/features/group-orders/ui/GroupOrderConfirmDialog';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
 import type { Currency } from '@/lib/money/currency';
@@ -114,6 +114,7 @@ export function GroupOrderPageClient({
     lng: number;
   } | null>(null);
   const cancelledHandledRef = useRef(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
 
   useEffect(() => {
     setView(initialView);
@@ -127,12 +128,17 @@ export function GroupOrderPageClient({
       return;
     }
     cancelledHandledRef.current = true;
-    alertGroupOrderCancelledOnce(inviteToken, labels.cancelledAlert);
+    if (view.currentParticipantRole !== 'ORGANIZER') {
+      window.dispatchEvent(
+        new CustomEvent('pideh-group-order-cancelled', { detail: { inviteToken } }),
+      );
+      return;
+    }
     startTransition(async () => {
       await leaveGroupOrderSessionAction();
       router.refresh();
     });
-  }, [view?.status, labels.cancelledAlert, inviteToken, router]);
+  }, [view?.status, view?.currentParticipantRole, inviteToken, router]);
 
   useEffect(() => {
     const status = view?.status;
@@ -259,8 +265,34 @@ export function GroupOrderPageClient({
     await copyLink();
   }
 
+  function confirmCancel(): void {
+    setError(null);
+    startTransition(async () => {
+      const result = await cancelGroupOrderAction({ inviteToken });
+      if (!result.ok) {
+        setError(result.error ?? labels.errorGeneric);
+        return;
+      }
+      setCancelOpen(false);
+      router.refresh();
+    });
+  }
+
   return (
     <div className={`mx-auto max-w-2xl px-4 py-8 md:py-10 ${pending ? 'opacity-70' : ''}`}>
+      <GroupOrderConfirmDialog
+        open={cancelOpen}
+        title={labels.cancelConfirmTitle}
+        description={labels.cancelConfirmBody}
+        stayLabel={labels.cancelStay}
+        confirmLabel={labels.cancelConfirmAction}
+        closeLabel={labels.close}
+        pending={pending}
+        onClose={() => {
+          if (!pending) setCancelOpen(false);
+        }}
+        onConfirm={confirmCancel}
+      />
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] font-bold tracking-[0.22em] text-pideh-orange uppercase">
@@ -707,13 +739,9 @@ export function GroupOrderPageClient({
         view.status !== 'COMPLETED' &&
         view.status !== 'PAID' &&
         view.status !== 'PREPARING' ? (
-          <button
-            type="button"
-            className="w-full rounded-full border-2 border-red-400/50 bg-white px-6 py-3 text-base font-bold text-red-600 transition hover:bg-red-50"
-            onClick={() => run(async () => cancelGroupOrderAction({ inviteToken }))}
-          >
+          <GhostPillButton className="w-full" disabled={pending} onClick={() => setCancelOpen(true)}>
             {labels.cancelOrder}
-          </button>
+          </GhostPillButton>
         ) : null}
       </div>
     </div>

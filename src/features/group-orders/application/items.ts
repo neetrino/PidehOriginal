@@ -11,6 +11,7 @@ import {
 } from '@/features/group-orders/application/money';
 import { canEditGroupOrderItems } from '@/features/group-orders/domain/status';
 import { checkSpendLimit } from '@/features/group-orders/domain/spend-limit';
+import { mergeCustomerNotes, normalizeCustomerNote } from '@/features/cart/customer-note';
 import { buildModifierSelectionKey } from '@/features/products/domain/modifier-selection';
 import { resolveSelectedModifiersForProduct } from '@/features/products/application/product-modifiers';
 import { createId } from '@/lib/id';
@@ -40,6 +41,7 @@ export async function addGroupOrderItem(input: {
   productId: string;
   quantity: number;
   modifierIds?: string[];
+  customerNote?: string;
 }): Promise<GroupOrderMutationResult> {
   const access = await assertParticipantAccess(input.inviteToken);
   if (!access.ok) return access;
@@ -96,6 +98,7 @@ export async function addGroupOrderItem(input: {
         quantity: nextQty,
         unitAmount: pricing.unitAmount,
         lineTotalAmount: lineTotal,
+        customerNote: mergeCustomerNotes(existing.customerNote, input.customerNote),
         updatedAt: new Date(),
       })
       .where(eq(groupOrderItems.id, existing.id));
@@ -113,6 +116,7 @@ export async function addGroupOrderItem(input: {
       participantId: participant.id,
       productId: input.productId,
       selectionKey,
+      customerNote: normalizeCustomerNote(input.customerNote),
       quantity: input.quantity,
       unitAmount: pricing.unitAmount,
       lineTotalAmount: pricing.lineTotalAmount,

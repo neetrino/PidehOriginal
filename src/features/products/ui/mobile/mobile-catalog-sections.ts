@@ -10,6 +10,7 @@ type BuildMobileCatalogSectionsArgs = {
   filters: CatalogFilters;
   sections: readonly CatalogSection[];
   wishlistIds: ReadonlySet<string>;
+  cartQuantities: Readonly<Record<string, number>>;
   formatPrice: (amount: number) => string;
   /** `catalog.seeAllCategory`, containing a `{category}` placeholder. */
   seeAllTemplate: string;
@@ -26,6 +27,7 @@ export function buildMobileCatalogSections({
   filters,
   sections,
   wishlistIds,
+  cartQuantities,
   formatPrice,
   seeAllTemplate,
   withSeeAll,
@@ -40,6 +42,8 @@ export function buildMobileCatalogSections({
       imageUrl: product.imageUrl,
       inStock: product.stockOnHand > 0,
       inWishlist: wishlistIds.has(product.id),
+      cartQuantity: cartQuantities[product.id] ?? 0,
+      maxQuantity: product.stockOnHand,
     };
   }
 

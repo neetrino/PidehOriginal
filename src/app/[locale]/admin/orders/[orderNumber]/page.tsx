@@ -158,6 +158,20 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
               ) : null}
             </dl>
           ) : null}
+          {items.some((item) => item.customerNote?.trim()) ? (
+            <div className="mt-4">
+              <p className="text-sm text-gray-500">{drawer.customerNote}</p>
+              <ul className="mt-1 space-y-1 text-sm text-gray-900">
+                {items.map((item) =>
+                  item.customerNote?.trim() ? (
+                    <li key={item.id} className="whitespace-pre-wrap">
+                      {item.productTitleSnapshot}: {item.customerNote.trim()}
+                    </li>
+                  ) : null,
+                )}
+              </ul>
+            </div>
+          ) : null}
         </Card>
 
         <Card className="p-6">
