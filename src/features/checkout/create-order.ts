@@ -69,6 +69,7 @@ import {
   listActiveCashChangeDenominations,
 } from '@/features/delivery/domain/cash-change';
 import {
+  ASAP_DELIVERY_ESTIMATE_SNAPSHOT,
   formatDeliverySlotSnapshot,
   isDeliverySlotAvailable,
 } from '@/features/delivery/domain/delivery-schedule';
@@ -166,18 +167,27 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
       };
     }
 
-    const selectedSlot = {
-      date: input.scheduledDeliveryDate ?? '',
-      startTime: input.scheduledDeliveryStart ?? '',
-      endTime: input.scheduledDeliveryEnd ?? '',
-    };
-    if (!isDeliverySlotAvailable(deliverySettings.schedule, selectedSlot)) {
-      return {
-        ok: false,
-        error: 'Selected delivery time is no longer available.',
+    const hasScheduledSlot = Boolean(
+      input.scheduledDeliveryDate &&
+        input.scheduledDeliveryStart &&
+        input.scheduledDeliveryEnd,
+    );
+    if (hasScheduledSlot) {
+      const selectedSlot = {
+        date: input.scheduledDeliveryDate ?? '',
+        startTime: input.scheduledDeliveryStart ?? '',
+        endTime: input.scheduledDeliveryEnd ?? '',
       };
+      if (!isDeliverySlotAvailable(deliverySettings.schedule, selectedSlot)) {
+        return {
+          ok: false,
+          error: 'Selected delivery time is no longer available.',
+        };
+      }
+      deliverySlotSnapshot = formatDeliverySlotSnapshot(selectedSlot);
+    } else {
+      deliverySlotSnapshot = ASAP_DELIVERY_ESTIMATE_SNAPSHOT;
     }
-    deliverySlotSnapshot = formatDeliverySlotSnapshot(selectedSlot);
   }
 
   if (groupCheckout.active && input.paymentMethod === 'cash_on_delivery') {
@@ -286,9 +296,15 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
           ? {
               floor: input.floor?.trim() || undefined,
               intercomCode: input.intercomCode?.trim() || undefined,
-              scheduledDeliveryDate: input.scheduledDeliveryDate,
-              scheduledDeliveryStart: input.scheduledDeliveryStart,
-              scheduledDeliveryEnd: input.scheduledDeliveryEnd,
+              ...(input.scheduledDeliveryDate &&
+              input.scheduledDeliveryStart &&
+              input.scheduledDeliveryEnd
+                ? {
+                    scheduledDeliveryDate: input.scheduledDeliveryDate,
+                    scheduledDeliveryStart: input.scheduledDeliveryStart,
+                    scheduledDeliveryEnd: input.scheduledDeliveryEnd,
+                  }
+                : {}),
               ...(cashChangeAmount != null
                 ? {
                     cashChangeAmount,

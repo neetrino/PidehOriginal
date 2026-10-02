@@ -65,13 +65,16 @@ type CheckoutLabels = {
   mapResolving: string;
   enterDeliveryAddress: string;
   scheduleTitle: string;
+  scheduleDeliverTo: string;
+  scheduleApproximatelyOneHour: string;
+  scheduleChange: string;
+  scheduleUseAsap: string;
   schedulePickDate: string;
   schedulePickTime: string;
   scheduleTimeHint: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;
-  selectDeliverySlot: string;
   selectCashChange: string;
   cashChangeTitle: string;
   cashChangeHint: string;
@@ -432,11 +435,6 @@ export function CheckoutForm({
 
       if (!line1.trim() || line1.trim().length < 3) {
         setError(labels.enterDeliveryAddress);
-        return;
-      }
-
-      if (!deliverySlot) {
-        setError(labels.selectDeliverySlot);
         return;
       }
     }

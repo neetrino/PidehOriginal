@@ -63,15 +63,18 @@ export const checkoutSchema = z
         message: 'Address is required for delivery.',
       });
     }
-    if (
-      !value.scheduledDeliveryDate ||
-      !value.scheduledDeliveryStart ||
-      !value.scheduledDeliveryEnd
-    ) {
+    const scheduledParts = [
+      value.scheduledDeliveryDate,
+      value.scheduledDeliveryStart,
+      value.scheduledDeliveryEnd,
+    ];
+    const scheduledCount = scheduledParts.filter(Boolean).length;
+    // ASAP = all empty; scheduled = all three present. Partial is invalid.
+    if (scheduledCount > 0 && scheduledCount < 3) {
       ctx.addIssue({
         code: 'custom',
         path: ['scheduledDeliveryDate'],
-        message: 'Delivery date and time are required.',
+        message: 'Delivery date and time must be complete.',
       });
     }
   });

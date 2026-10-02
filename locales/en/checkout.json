@@ -37,7 +37,11 @@
     "resolving": "Resolving address…"
   },
   "schedule": {
-    "title": "Delivery date & time",
+    "title": "Date and time",
+    "deliverTo": "Deliver to",
+    "approximatelyOneHour": "approximately 1 hour",
+    "change": "Change",
+    "useAsap": "As soon as possible (~1 hour)",
     "pickDate": "Pick a date",
     "pickTime": "Pick a time",
     "timeHint": "Choose a day on the calendar first. Available times will show up here.",

@@ -57,6 +57,10 @@ type CheckoutDetailsLabels = {
   mapCancel: string;
   mapResolving: string;
   scheduleTitle: string;
+  scheduleDeliverTo: string;
+  scheduleApproximatelyOneHour: string;
+  scheduleChange: string;
+  scheduleUseAsap: string;
   schedulePickDate: string;
   schedulePickTime: string;
   scheduleTimeHint: string;
@@ -293,6 +297,10 @@ export function CheckoutDetailsSections({
                 locale={locale}
                 labels={{
                   title: labels.scheduleTitle,
+                  deliverTo: labels.scheduleDeliverTo,
+                  approximatelyOneHour: labels.scheduleApproximatelyOneHour,
+                  change: labels.scheduleChange,
+                  useAsap: labels.scheduleUseAsap,
                   pickDate: labels.schedulePickDate,
                   pickTime: labels.schedulePickTime,
                   timeHint: labels.scheduleTimeHint,
