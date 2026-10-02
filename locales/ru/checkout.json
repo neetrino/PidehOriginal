@@ -18,8 +18,8 @@
     "floor": "Этаж",
     "intercomCode": "Код домофона",
     "city": "Город",
-    "deliveryLocation": "Место доставки",
-    "selectLocation": "Выберите место"
+    "deliveryLocation": "Община",
+    "selectLocation": "Выберите общину"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
@@ -27,14 +27,6 @@
     "floor": "напр. 3",
     "intercomCode": "напр. 24#",
     "city": "Город"
-  },
-  "map": {
-    "openMap": "Карта",
-    "title": "Выберите адрес на карте",
-    "hint": "Нажмите на карту или перетащите метку, чтобы выбрать точную точку доставки.",
-    "confirm": "Использовать этот адрес",
-    "cancel": "Закрыть",
-    "resolving": "Определяем адрес…"
   },
   "schedule": {
     "title": "Дата и время",
@@ -64,7 +56,7 @@
     "delivery": "Доставка",
     "deliveryDescription": "Мы доставим заказ по вашему адресу. Цена зависит от выбранной зоны доставки.",
     "enterCity": "Укажите город",
-    "selectDeliveryLocation": "Выберите зону доставки",
+    "selectDeliveryLocation": "Выберите общину",
     "enterDeliveryAddress": "Введите адрес доставки",
     "calculatingDelivery": "Расчёт доставки…"
   },
@@ -126,6 +118,8 @@
     "use": "Использовать бонусы",
     "amount": "Количество бонусов",
     "useMax": "Максимум",
-    "applied": "Бонусы"
+    "applied": "Бонусы",
+    "guestWarning": "Из-за отсутствия регистрации вы потеряете {amount} накопительных баллов",
+    "register": "Зарегистрироваться"
   }
 }

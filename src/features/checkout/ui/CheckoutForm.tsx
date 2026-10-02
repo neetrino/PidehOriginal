@@ -21,11 +21,15 @@ import type { PickupBranchOption } from '@/features/checkout/ui/CheckoutShipping
 import { CheckoutOrderSummary } from '@/features/checkout/ui/CheckoutOrderSummary';
 import { CheckoutProductsInOrder } from '@/features/checkout/ui/CheckoutProductsInOrder';
 import {
+  calculateBonusEarnAmount,
   calculateMaxRedeemAmount,
   clampBonusRedeemRequest,
 } from '@/features/bonuses/domain/bonus-rules';
 import { previewGiftCardAction } from '@/features/gift-cards/application/preview-gift-card';
-import type { GiftCardRedeemPreview } from '@/features/gift-cards/domain/gift-card-rules';
+import {
+  bonusEligibleAfterGiftCard,
+  type GiftCardRedeemPreview,
+} from '@/features/gift-cards/domain/gift-card-rules';
 import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delivery-schedule';
 import type { SelectedDeliverySlot } from '@/features/delivery/domain/delivery-schedule';
 import type { CashChangeDenominationView } from '@/features/delivery/domain/cash-change';
@@ -57,12 +61,6 @@ type CheckoutLabels = {
   deliveryLocation: string;
   selectLocation: string;
   selectDeliveryLocation: string;
-  openMap: string;
-  mapTitle: string;
-  mapHint: string;
-  mapConfirm: string;
-  mapCancel: string;
-  mapResolving: string;
   enterDeliveryAddress: string;
   scheduleTitle: string;
   scheduleDeliverTo: string;
@@ -118,6 +116,8 @@ type CheckoutLabels = {
   bonusAmount: string;
   bonusUseMax: string;
   bonusApplied: string;
+  bonusGuestWarning: string;
+  bonusRegister: string;
   storePickup: string;
   storePickupDescription: string;
   deliveryOption: string;
@@ -143,6 +143,7 @@ type CheckoutFormProps = {
   pickupBranches: PickupBranchOption[];
   hasItems: boolean;
   bonusAvailableBalance: number | null;
+  bonusAccrualPercent: number;
   bonusMaxRedeemPercent: number;
   /**
    * SPLIT group checkout: other members prepaid on the group page;
@@ -174,6 +175,7 @@ export function CheckoutForm({
   pickupBranches = [],
   hasItems,
   bonusAvailableBalance,
+  bonusAccrualPercent,
   bonusMaxRedeemPercent,
   groupOrderCheckout = null,
 }: CheckoutFormProps) {
@@ -183,10 +185,6 @@ export function CheckoutForm({
   const [pickupBranchId, setPickupBranchId] = useState(pickupBranches[0]?.id ?? '');
   const [deliveryRuleId, setDeliveryRuleId] = useState('');
   const [line1, setLine1] = useState(defaultLine1);
-  const [deliveryPoint, setDeliveryPoint] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(null);
   const [cashChangeAmount, setCashChangeAmount] = useState<number | null>(null);
   const selectedZone = useMemo(
@@ -311,6 +309,17 @@ export function CheckoutForm({
     ? Math.min(giftCardPreview.redeemAmount, payableBeforeGiftCard)
     : 0;
   const cartComputedTotal = Math.max(0, payableBeforeGiftCard - giftCardRedeem);
+  const isGuest = bonusAvailableBalance == null;
+  const guestEarnPoints = isGuest
+    ? calculateBonusEarnAmount(
+        bonusEligibleAfterGiftCard({
+          subtotalAmount,
+          discountAmount,
+          giftCardAmount: giftCardRedeem,
+        }),
+        bonusAccrualPercent,
+      )
+    : 0;
   const splitPrepaid = Boolean(groupOrderCheckout?.splitOthersPrepaid);
   const othersPrepaidAmount = groupOrderCheckout?.othersPrepaidAmount ?? 0;
   const amountDue = splitPrepaid
@@ -465,8 +474,6 @@ export function CheckoutForm({
             : (pickupBranches.find((branch) => branch.id === pickupBranchId)?.address ??
               storePickupAddress ??
               undefined),
-        deliveryLat: shippingMethod === 'delivery' ? deliveryPoint?.lat : undefined,
-        deliveryLng: shippingMethod === 'delivery' ? deliveryPoint?.lng : undefined,
         floor: shippingMethod === 'delivery' ? String(data.get('floor') ?? '') : undefined,
         intercomCode:
           shippingMethod === 'delivery' ? String(data.get('intercomCode') ?? '') : undefined,
@@ -518,7 +525,6 @@ export function CheckoutForm({
               setGiftCardPreview(null);
               if (method === 'pickup') {
                 setDeliverySlot(null);
-                setDeliveryPoint(null);
                 setDeliveryRuleId('');
               }
             }}
@@ -537,14 +543,7 @@ export function CheckoutForm({
             deliveryRuleId={deliveryRuleId}
             onDeliveryRuleIdChange={setDeliveryRuleId}
             line1={line1}
-            onLine1Change={(value) => {
-              setLine1(value);
-              setDeliveryPoint(null);
-            }}
-            onMapAddressSelected={(address, point) => {
-              setLine1(address);
-              setDeliveryPoint(point);
-            }}
+            onLine1Change={setLine1}
             deliveryFeeHint={deliveryFeeHint}
             paymentMethod={paymentMethod}
             onPaymentMethodChange={(method) => {
@@ -616,9 +615,9 @@ export function CheckoutForm({
             placeOrderLabel={labels.placeOrder}
             processingLabel={labels.processing}
             bonus={
-              bonusAvailableBalance == null
-                ? undefined
-                : {
+              bonusAvailableBalance != null
+                ? {
+                    mode: 'member' as const,
                     enabled: true,
                     availableBalance: bonusAvailableBalance,
                     maxRedeem: maxBonusRedeem,
@@ -651,6 +650,17 @@ export function CheckoutForm({
                     },
                     formatMoney,
                   }
+                : guestEarnPoints > 0
+                  ? {
+                      mode: 'guest' as const,
+                      earnPoints: guestEarnPoints,
+                      registerHref: `/${locale}/register`,
+                      labels: {
+                        warning: labels.bonusGuestWarning,
+                        register: labels.bonusRegister,
+                      },
+                    }
+                  : undefined
             }
           />
         </div>

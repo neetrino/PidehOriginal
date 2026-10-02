@@ -7,7 +7,6 @@ import {
   CHECKOUT_SECTION_TITLE,
 } from '@/features/checkout/ui/checkout-ui-classes';
 import { AddressAutocomplete } from '@/components/ui/AddressAutocomplete';
-import { AddressMapPicker } from '@/components/ui/AddressMapPicker';
 import { SelectDropdown } from '@/components/ui/SelectDropdown';
 import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
 import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
@@ -50,12 +49,6 @@ type CheckoutDetailsLabels = {
   intercomCodePlaceholder: string;
   deliveryLocation: string;
   selectLocation: string;
-  openMap: string;
-  mapTitle: string;
-  mapHint: string;
-  mapConfirm: string;
-  mapCancel: string;
-  mapResolving: string;
   scheduleTitle: string;
   scheduleDeliverTo: string;
   scheduleApproximatelyOneHour: string;
@@ -102,7 +95,6 @@ type CheckoutDetailsSectionsProps = {
   onDeliveryRuleIdChange: (id: string) => void;
   line1: string;
   onLine1Change: (value: string) => void;
-  onMapAddressSelected: (address: string, point: { lat: number; lng: number }) => void;
   deliveryFeeHint: string | null;
   paymentMethod: CheckoutPaymentMethod;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
@@ -135,7 +127,6 @@ export function CheckoutDetailsSections({
   onDeliveryRuleIdChange,
   line1,
   onLine1Change,
-  onMapAddressSelected,
   deliveryFeeHint,
   paymentMethod,
   onPaymentMethodChange,
@@ -241,33 +232,16 @@ export function CheckoutDetailsSections({
               </div>
               <div className="space-y-1.5">
                 <span className="text-sm font-bold text-[#1e1e1e]">{labels.address}</span>
-                <div className="flex items-start gap-2">
-                  <div className="min-w-0 flex-1">
-                    <AddressAutocomplete
-                      name="line1"
-                      required
-                      value={line1}
-                      onValueChange={onLine1Change}
-                      placeholder={labels.addressPlaceholder}
-                      disabled={pending}
-                      className={CHECKOUT_FIELD}
-                      languageCode={locale}
-                    />
-                  </div>
-                  <AddressMapPicker
-                    addressValue={line1}
-                    disabled={pending}
-                    onAddressSelected={onMapAddressSelected}
-                    labels={{
-                      openMap: labels.openMap,
-                      title: labels.mapTitle,
-                      hint: labels.mapHint,
-                      confirm: labels.mapConfirm,
-                      cancel: labels.mapCancel,
-                      resolving: labels.mapResolving,
-                    }}
-                  />
-                </div>
+                <AddressAutocomplete
+                  name="line1"
+                  required
+                  value={line1}
+                  onValueChange={onLine1Change}
+                  placeholder={labels.addressPlaceholder}
+                  disabled={pending}
+                  className={CHECKOUT_FIELD}
+                  languageCode={locale}
+                />
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <label className={CHECKOUT_LABEL}>
