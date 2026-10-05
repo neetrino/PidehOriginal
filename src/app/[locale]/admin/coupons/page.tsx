@@ -58,6 +58,7 @@ export default async function AdminCouponsPage({ params, searchParams }: AdminCo
         locale={locale}
         coupons={rows}
         userOptions={userOptions}
+        listedAt={new Date().toISOString()}
         copy={{
           coupons: dict.admin.coupons,
           common: dict.admin.common,

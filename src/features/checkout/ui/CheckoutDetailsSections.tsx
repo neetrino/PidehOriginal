@@ -211,37 +211,39 @@ export function CheckoutDetailsSections({
       <section className={CHECKOUT_PANEL}>
         <h2 className={CHECKOUT_SECTION_TITLE}>{labels.shippingAddress}</h2>
         <div className="space-y-4">
-              <div className="space-y-1.5">
-                <span className="text-sm font-bold text-[#1e1e1e]">{labels.deliveryLocation}</span>
-                <SelectDropdown
-                  ariaLabel={labels.deliveryLocation}
-                  value={deliveryRuleId}
-                  allLabel={labels.selectLocation}
-                  options={deliveryZones.map((zone) => ({
-                    value: zone.id,
-                    label: zone.label,
-                  }))}
-                  onValueChange={onDeliveryRuleIdChange}
-                  disabled={pending || deliveryZones.length === 0}
-                  tone="brand"
-                  className="w-full"
-                />
-                {deliveryFeeHint ? (
-                  <p className="text-sm text-[#1e1e1e]/65">{deliveryFeeHint}</p>
-                ) : null}
-              </div>
-              <div className="space-y-1.5">
-                <span className="text-sm font-bold text-[#1e1e1e]">{labels.address}</span>
-                <AddressAutocomplete
-                  name="line1"
-                  required
-                  value={line1}
-                  onValueChange={onLine1Change}
-                  placeholder={labels.addressPlaceholder}
-                  disabled={pending}
-                  className={CHECKOUT_FIELD}
-                  languageCode={locale}
-                />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="min-w-0 space-y-1.5">
+                  <span className="text-sm font-bold text-[#1e1e1e]">{labels.deliveryLocation}</span>
+                  <SelectDropdown
+                    ariaLabel={labels.deliveryLocation}
+                    value={deliveryRuleId}
+                    allLabel={labels.selectLocation}
+                    options={deliveryZones.map((zone) => ({
+                      value: zone.id,
+                      label: zone.label,
+                    }))}
+                    onValueChange={onDeliveryRuleIdChange}
+                    disabled={pending || deliveryZones.length === 0}
+                    tone="brand"
+                    className="w-full"
+                  />
+                  {deliveryFeeHint ? (
+                    <p className="text-sm text-[#1e1e1e]/65">{deliveryFeeHint}</p>
+                  ) : null}
+                </div>
+                <div className="min-w-0 space-y-1.5">
+                  <span className="text-sm font-bold text-[#1e1e1e]">{labels.address}</span>
+                  <AddressAutocomplete
+                    name="line1"
+                    required
+                    value={line1}
+                    onValueChange={onLine1Change}
+                    placeholder={labels.addressPlaceholder}
+                    disabled={pending}
+                    className={CHECKOUT_FIELD}
+                    languageCode={locale}
+                  />
+                </div>
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <label className={CHECKOUT_LABEL}>
