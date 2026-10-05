@@ -13,7 +13,9 @@ export const checkoutSchema = z
     paymentMethod: z.enum(CHECKOUT_PAYMENT_METHODS),
     city: z.string().trim().max(80).optional(),
     line1: z.string().trim().max(300).optional(),
-    /** Map pin coordinates — preferred over re-geocoding line1 for distance. */
+    /** Admin delivery zone selected at checkout. */
+    deliveryRuleId: z.string().uuid().optional(),
+    /** Map pin coordinates for courier guidance. */
     deliveryLat: z.number().finite().min(-90).max(90).optional(),
     deliveryLng: z.number().finite().min(-180).max(180).optional(),
     line2: z.string().trim().max(160).optional(),
@@ -47,6 +49,13 @@ export const checkoutSchema = z
       return;
     }
 
+    if (!value.deliveryRuleId) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['deliveryRuleId'],
+        message: 'Delivery location is required.',
+      });
+    }
     if (!value.line1?.trim() || value.line1.trim().length < 3) {
       ctx.addIssue({
         code: 'custom',
@@ -54,15 +63,18 @@ export const checkoutSchema = z
         message: 'Address is required for delivery.',
       });
     }
-    if (
-      !value.scheduledDeliveryDate ||
-      !value.scheduledDeliveryStart ||
-      !value.scheduledDeliveryEnd
-    ) {
+    const scheduledParts = [
+      value.scheduledDeliveryDate,
+      value.scheduledDeliveryStart,
+      value.scheduledDeliveryEnd,
+    ];
+    const scheduledCount = scheduledParts.filter(Boolean).length;
+    // ASAP = all empty; scheduled = all three present. Partial is invalid.
+    if (scheduledCount > 0 && scheduledCount < 3) {
       ctx.addIssue({
         code: 'custom',
         path: ['scheduledDeliveryDate'],
-        message: 'Delivery date and time are required.',
+        message: 'Delivery date and time must be complete.',
       });
     }
   });

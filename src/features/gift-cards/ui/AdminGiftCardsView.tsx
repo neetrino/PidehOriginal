@@ -121,9 +121,11 @@ export function AdminGiftCardsView({ locale, cards, presets, copy }: AdminGiftCa
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       {formatMoneyAmount(card.balanceAmount, 'AMD', locale)}
-                      <span className="block text-xs text-gray-500">
-                        / {formatMoneyAmount(card.initialAmount, 'AMD', locale)}
-                      </span>
+                      {card.balanceAmount !== card.initialAmount ? (
+                        <span className="block text-xs text-gray-500">
+                          / {formatMoneyAmount(card.initialAmount, 'AMD', locale)}
+                        </span>
+                      ) : null}
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       {copy.giftCards.statuses[card.status] ?? card.status}

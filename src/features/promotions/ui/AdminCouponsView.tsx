@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
-import { Check, Copy, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Copy, Pencil, Plus, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -22,6 +22,10 @@ import {
   ADMIN_TABLE_THEAD,
 } from '@/features/admin/ui/admin-table-classes';
 import {
+  ADMIN_BADGE,
+  couponAdminStatusBadgeClass,
+} from '@/features/admin/ui/status-badge';
+import {
   deletePromotionAction,
   duplicatePromotionAction,
 } from '@/features/promotions/application/upsert-promotion';
@@ -29,6 +33,10 @@ import type {
   AdminPromotionListItem,
   CouponUserOption,
 } from '@/features/promotions/application/queries';
+import {
+  resolveCouponAdminStatus,
+  type CouponAdminStatus,
+} from '@/features/promotions/domain/resolve-coupon-admin-status';
 import { CouponDrawer } from '@/features/promotions/ui/CouponDrawer';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
@@ -48,6 +56,17 @@ type AdminCouponsViewProps = {
 function formatValidUntil(endsAt: Date | string | null, locale: string): string {
   if (!endsAt) return '—';
   return new Date(endsAt).toLocaleString(locale);
+}
+
+function formatUsage(usedCount: number, totalUsageLimit: number | null): string {
+  return `${usedCount} / ${totalUsageLimit ?? '—'}`;
+}
+
+function couponStatusLabel(
+  status: CouponAdminStatus,
+  statuses: Dictionary['admin']['coupons']['statuses'],
+): string {
+  return statuses[status];
 }
 
 export function AdminCouponsView({ locale, coupons, userOptions, copy }: AdminCouponsViewProps) {
@@ -136,99 +155,106 @@ export function AdminCouponsView({ locale, coupons, userOptions, copy }: AdminCo
                   <th className={ADMIN_TABLE_TH}>{copy.coupons.table.code}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.type}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.value}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.usageLimit}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.used}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.active}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.status}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.validUntil}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.actions}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
-                {coupons.map((promo) => (
-                  <tr key={promo.id} className={ADMIN_TABLE_ROW}>
-                    <td className={ADMIN_TABLE_TD}>
-                      <span className="font-medium text-gray-900">{promo.code}</span>
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      {promo.discountType === 'PERCENTAGE'
-                        ? copy.coupons.table.percentOff
-                        : copy.coupons.table.fixedAmountAmd}
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      {promo.discountType === 'PERCENTAGE'
-                        ? `${promo.discountValue}%`
-                        : String(promo.discountValue)}
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>{promo.totalUsageLimit ?? '—'}</td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>{promo.usedCount}</td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      {promo.isActive ? (
-                        <Check
-                          className="mx-auto h-4 w-4 text-gray-900"
-                          aria-label={copy.coupons.table.activeAria}
-                        />
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <span className="text-sm text-gray-700">
-                        {formatValidUntil(promo.endsAt, locale)}
-                      </span>
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <div className="inline-flex items-center justify-center gap-1">
-                        <button
-                          type="button"
-                          className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                          aria-label={copy.coupons.table.editAria.replace(
-                            '{code}',
-                            promo.code ?? '',
-                          )}
-                          onClick={() => openEdit(promo)}
+                {coupons.map((promo) => {
+                  const status = resolveCouponAdminStatus(promo);
+                  const statusLabel = couponStatusLabel(status, copy.coupons.statuses);
+                  const isPastEnd =
+                    promo.endsAt !== null && new Date(promo.endsAt).getTime() < Date.now();
+
+                  return (
+                    <tr key={promo.id} className={ADMIN_TABLE_ROW}>
+                      <td className={ADMIN_TABLE_TD}>
+                        <span className="font-medium text-gray-900">{promo.code}</span>
+                      </td>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
+                        {promo.discountType === 'PERCENTAGE'
+                          ? copy.coupons.table.percentOff
+                          : copy.coupons.table.fixedAmountAmd}
+                      </td>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
+                        {promo.discountType === 'PERCENTAGE'
+                          ? `${promo.discountValue}%`
+                          : String(promo.discountValue)}
+                      </td>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
+                        {formatUsage(promo.usedCount, promo.totalUsageLimit)}
+                      </td>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
+                        <span
+                          className={`${ADMIN_BADGE} ${couponAdminStatusBadgeClass(status)}`}
+                          aria-label={statusLabel}
                         >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={isPending}
-                          className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                          aria-label={copy.coupons.table.duplicateAria.replace(
-                            '{code}',
-                            promo.code ?? '',
-                          )}
-                          onClick={() =>
-                            runAction(async () => {
-                              const result = await duplicatePromotionAction(locale, promo.id);
-                              if (!result.ok) {
-                                throw new Error(result.error.message);
-                              }
-                            })
-                          }
+                          {statusLabel}
+                        </span>
+                      </td>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
+                        <span
+                          className={`text-sm ${isPastEnd ? 'font-medium text-red-700' : 'text-gray-700'}`}
                         >
-                          <Copy className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={isPending}
-                          className="rounded p-1.5 text-red-600 hover:bg-red-50"
-                          aria-label={copy.coupons.table.deleteAria.replace(
-                            '{code}',
-                            promo.code ?? '',
-                          )}
-                          onClick={() =>
-                            setPendingDelete({
-                              id: promo.id,
-                              code: promo.code ?? 'promo',
-                            })
-                          }
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          {formatValidUntil(promo.endsAt, locale)}
+                        </span>
+                      </td>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
+                        <div className="inline-flex items-center justify-center gap-1">
+                          <button
+                            type="button"
+                            className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                            aria-label={copy.coupons.table.editAria.replace(
+                              '{code}',
+                              promo.code ?? '',
+                            )}
+                            onClick={() => openEdit(promo)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={isPending}
+                            className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                            aria-label={copy.coupons.table.duplicateAria.replace(
+                              '{code}',
+                              promo.code ?? '',
+                            )}
+                            onClick={() =>
+                              runAction(async () => {
+                                const result = await duplicatePromotionAction(locale, promo.id);
+                                if (!result.ok) {
+                                  throw new Error(result.error.message);
+                                }
+                              })
+                            }
+                          >
+                            <Copy className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={isPending}
+                            className="rounded p-1.5 text-red-600 hover:bg-red-50"
+                            aria-label={copy.coupons.table.deleteAria.replace(
+                              '{code}',
+                              promo.code ?? '',
+                            )}
+                            onClick={() =>
+                              setPendingDelete({
+                                id: promo.id,
+                                code: promo.code ?? 'promo',
+                              })
+                            }
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

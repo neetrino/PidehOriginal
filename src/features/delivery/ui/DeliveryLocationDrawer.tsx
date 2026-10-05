@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+
 import { Button } from '@/components/ui/Button';
 import { SideSheet } from '@/components/ui/SideSheet';
 import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
@@ -10,6 +11,11 @@ import {
   updateDeliveryLocationAction,
 } from '@/features/delivery/application/manage-delivery';
 import type { AdminDeliveryLocation } from '@/features/delivery/application/queries';
+import {
+  EMPTY_DELIVERY_LOCATION_TRANSLATION,
+  type DeliveryLocationTranslation,
+} from '@/features/delivery/domain/delivery-location';
+import { localeLabels, locales, type Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type LocationDrawerCopy = {
@@ -25,6 +31,34 @@ type DeliveryLocationDrawerProps = {
   copy: LocationDrawerCopy;
 };
 
+type LocaleDrafts = Record<Locale, DeliveryLocationTranslation>;
+
+function emptyDrafts(): LocaleDrafts {
+  return {
+    hy: { ...EMPTY_DELIVERY_LOCATION_TRANSLATION },
+    en: { ...EMPTY_DELIVERY_LOCATION_TRANSLATION },
+    ru: { ...EMPTY_DELIVERY_LOCATION_TRANSLATION },
+  };
+}
+
+function draftsFromLocation(location: AdminDeliveryLocation | null): LocaleDrafts {
+  if (!location) return emptyDrafts();
+  const drafts = emptyDrafts();
+  for (const loc of locales) {
+    drafts[loc] = {
+      city: location.translations[loc]?.city?.trim() || '',
+      area: location.translations[loc]?.area?.trim() || '',
+    };
+  }
+  // Legacy rows without translations: seed current UI locale fields from denormalized columns.
+  if (!locales.some((loc) => drafts[loc].city && drafts[loc].area)) {
+    drafts.hy = { city: location.city, area: location.area };
+    drafts.en = { city: location.city, area: location.area };
+    drafts.ru = { city: location.city, area: location.area };
+  }
+  return drafts;
+}
+
 type DeliveryLocationFormProps = {
   locale: string;
   location: AdminDeliveryLocation | null;
@@ -35,14 +69,27 @@ type DeliveryLocationFormProps = {
 function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocationFormProps) {
   const router = useRouter();
   const isEdit = location != null;
-  const [country, setCountry] = useState(location?.country ?? '');
-  const [city, setCity] = useState(location?.city ?? '');
+  const [activeLocale, setActiveLocale] = useState<Locale>('hy');
+  const [drafts, setDrafts] = useState<LocaleDrafts>(() => draftsFromLocation(location));
   const [priceAmount, setPriceAmount] = useState(location ? String(location.priceAmount) : '');
-  const [freeThresholdAmount, setFreeThresholdAmount] = useState(
-    location?.freeThresholdAmount != null ? String(location.freeThresholdAmount) : '',
-  );
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setActiveLocale('hy');
+    setDrafts(draftsFromLocation(location));
+    setPriceAmount(location ? String(location.priceAmount) : '');
+    setError(null);
+  }, [location]);
+
+  const draft = drafts[activeLocale];
+
+  function updateDraft(patch: Partial<DeliveryLocationTranslation>): void {
+    setDrafts((current) => ({
+      ...current,
+      [activeLocale]: { ...current[activeLocale], ...patch },
+    }));
+  }
 
   return (
     <form
@@ -51,11 +98,8 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
         event.preventDefault();
 
         const payload = {
-          country,
-          city,
           priceAmount: Number(priceAmount),
-          freeThresholdAmount:
-            freeThresholdAmount.trim() === '' ? null : Number(freeThresholdAmount),
+          translations: drafts,
         };
 
         startTransition(async () => {
@@ -76,62 +120,69 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
       }}
     >
       <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <label>
-            <span className={ADMIN_LABEL}>{copy.locationDrawer.country}</span>
-            <input
-              value={country}
-              onChange={(event) => setCountry(event.target.value)}
-              placeholder={copy.locationDrawer.countryPlaceholder}
-              required
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
-
-          <label>
-            <span className={ADMIN_LABEL}>{copy.locationDrawer.city}</span>
-            <input
-              value={city}
-              onChange={(event) => setCity(event.target.value)}
-              placeholder={copy.locationDrawer.cityPlaceholder}
-              required
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
+        <div>
+          <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+            {copy.locationDrawer.translations}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {locales.map((loc) => {
+              const selected = loc === activeLocale;
+              return (
+                <button
+                  key={loc}
+                  type="button"
+                  onClick={() => setActiveLocale(loc)}
+                  className={`rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
+                    selected
+                      ? 'bg-gray-900 text-white'
+                      : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {localeLabels[loc]}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <label>
-            <span className={ADMIN_LABEL}>{copy.locationDrawer.priceAmd}</span>
-            <input
-              type="number"
-              min={0}
-              step={1}
-              required
-              value={priceAmount}
-              onChange={(event) => setPriceAmount(event.target.value)}
-              placeholder={copy.locationDrawer.pricePlaceholder}
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
+        <label>
+          <span className={ADMIN_LABEL}>{copy.locationDrawer.city}</span>
+          <input
+            value={draft.city}
+            onChange={(event) => updateDraft({ city: event.target.value })}
+            placeholder={copy.locationDrawer.cityPlaceholder}
+            required={activeLocale === 'hy'}
+            className={ADMIN_INPUT}
+            disabled={isPending}
+          />
+        </label>
 
-          <label>
-            <span className={ADMIN_LABEL}>{copy.locationDrawer.freeDeliveryFrom}</span>
-            <input
-              type="number"
-              min={0}
-              step={1}
-              value={freeThresholdAmount}
-              onChange={(event) => setFreeThresholdAmount(event.target.value)}
-              placeholder={copy.locationDrawer.freeDeliveryPlaceholder}
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
-        </div>
+        <label>
+          <span className={ADMIN_LABEL}>{copy.locationDrawer.area}</span>
+          <input
+            value={draft.area}
+            onChange={(event) => updateDraft({ area: event.target.value })}
+            placeholder={copy.locationDrawer.areaPlaceholder}
+            required={activeLocale === 'hy'}
+            className={ADMIN_INPUT}
+            disabled={isPending}
+          />
+        </label>
+
+        <label>
+          <span className={ADMIN_LABEL}>{copy.locationDrawer.priceAmd}</span>
+          <input
+            type="number"
+            min={0}
+            step={1}
+            required
+            value={priceAmount}
+            onChange={(event) => setPriceAmount(event.target.value)}
+            placeholder={copy.locationDrawer.pricePlaceholder}
+            className={ADMIN_INPUT}
+            disabled={isPending}
+          />
+        </label>
 
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
       </div>

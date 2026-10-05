@@ -30,3 +30,13 @@ export const bulkAnonymizeUsersSchema = z.object({
 });
 
 export type BulkAnonymizeUsersInput = z.infer<typeof bulkAnonymizeUsersSchema>;
+
+/** Max length for internal admin comments on a user profile. */
+export const USER_ADMIN_COMMENT_MAX_LENGTH = 2000;
+
+export const updateUserAdminCommentSchema = z.object({
+  userId: z.string().uuid(),
+  comment: z.string().trim().max(USER_ADMIN_COMMENT_MAX_LENGTH),
+});
+
+export type UpdateUserAdminCommentInput = z.infer<typeof updateUserAdminCommentSchema>;

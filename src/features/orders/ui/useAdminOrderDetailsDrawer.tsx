@@ -2,9 +2,11 @@
 
 import { useState, useTransition } from 'react';
 
+import { markOrderAdminSeenAction } from '@/features/orders/application/admin-order-alerts';
 import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
 import { getAdminOrderDetailAction } from '@/features/orders/application/get-order-detail';
 import { OrderDetailsDrawer } from '@/features/orders/ui/OrderDetailsDrawer';
+import { useAdminOrderAlertsOptional } from '@/features/orders/ui/AdminOrderAlertsProvider';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 export type AdminOrderDetailsDrawerState = {
@@ -18,12 +20,14 @@ export type AdminOrderDetailsDrawerState = {
 
 /**
  * Shared admin order-details drawer state used by list pages and related admin surfaces.
+ * Opening an order marks it as seen (clears "new" badge/filter).
  */
 export function useAdminOrderDetailsDrawer(locale: string): AdminOrderDetailsDrawerState {
   const [open, setOpen] = useState(false);
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const alerts = useAdminOrderAlertsOptional();
 
   function openOrder(orderNumber: string): void {
     setOpen(true);
@@ -37,7 +41,10 @@ export function useAdminOrderDetailsDrawer(locale: string): AdminOrderDetailsDra
         setDetail(null);
         return;
       }
+
       setDetail(result.value);
+      await markOrderAdminSeenAction(locale, orderNumber);
+      alerts?.notifyOrderOpened(orderNumber);
     });
   }
 
@@ -70,3 +77,4 @@ export function AdminOrderDetailsDrawerBind({
     />
   );
 }
+

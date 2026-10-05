@@ -74,8 +74,8 @@ export async function purchaseGiftCardAction(
         settings,
       });
 
-      // Digital gift cards must be ACTIVE to redeem/email. With COD-only checkout,
-      // placing the purchase activates the card immediately.
+      // Digital gift cards must be ACTIVE to redeem/email. Purchase placement
+      // activates immediately (same trust model as checkout payment recording).
       await activateGiftCardRecord({
         tx,
         giftCardId: created.id,

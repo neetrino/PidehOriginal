@@ -7,6 +7,7 @@ import { getGroupOrderCheckoutUiFlags } from '@/features/checkout/application/gr
 import { getCheckoutOrderProducts } from '@/features/checkout/application/get-checkout-order-products';
 import { CheckoutForm } from '@/features/checkout/ui/CheckoutForm';
 import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
+import { listCheckoutDeliveryOptions } from '@/features/delivery/application/queries';
 import { listActiveCashChangeDenominations } from '@/features/delivery/domain/cash-change';
 import { getDefaultShippingAddress } from '@/features/profile/application/address-queries';
 import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
@@ -38,15 +39,23 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliverySettings, bonusSettings, storeIdentity, groupFlags] =
-    await Promise.all([
-      getCurrentUser(),
-      getCartWithItems(),
-      getDeliverySettings(),
-      getStoreBonusSettings(),
-      getStoreIdentity(),
-      getGroupOrderCheckoutUiFlags(),
-    ]);
+  const [
+    user,
+    { items },
+    deliverySettings,
+    deliveryZones,
+    bonusSettings,
+    storeIdentity,
+    groupFlags,
+  ] = await Promise.all([
+    getCurrentUser(),
+    getCartWithItems(),
+    getDeliverySettings(),
+    listCheckoutDeliveryOptions(rawLocale),
+    getStoreBonusSettings(),
+    getStoreIdentity(),
+    getGroupOrderCheckoutUiFlags(),
+  ]);
   const [defaultAddress, prices, orderProducts, bonusAvailableBalance] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
     resolveProductPrices(
@@ -93,10 +102,16 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       defaultLine1={groupFlags.defaultDeliveryAddress ?? defaultAddress?.line1 ?? ''}
       subtotalAmount={subtotal}
       deliverySchedule={deliverySettings.schedule}
+      deliveryZones={deliveryZones.map((zone) => ({
+        id: zone.id,
+        label: zone.label,
+        priceAmount: zone.priceAmount,
+      }))}
       cashChangeOptions={cashChangeOptions}
       storePickupAddress={storePickupAddress}
       pickupBranches={pickupBranches}
       bonusAvailableBalance={bonusAvailableBalance}
+      bonusAccrualPercent={bonusSettings.accrualPercent}
       bonusMaxRedeemPercent={bonusSettings.maxRedeemPercent}
       groupOrderCheckout={
         groupFlags.isGroupOrderCheckout
@@ -130,22 +145,21 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         addressPlaceholder: copy.placeholders.address,
         floorPlaceholder: copy.placeholders.floor,
         intercomCodePlaceholder: copy.placeholders.intercomCode,
-        openMap: copy.map.openMap,
-        mapTitle: copy.map.title,
-        mapHint: copy.map.hint,
-        mapConfirm: copy.map.confirm,
-        mapCancel: copy.map.cancel,
-        mapResolving: copy.map.resolving,
+        deliveryLocation: copy.form.deliveryLocation,
+        selectLocation: copy.form.selectLocation,
+        selectDeliveryLocation: copy.shipping.selectDeliveryLocation,
         enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
-        calculatingDelivery: copy.shipping.calculatingDelivery,
         scheduleTitle: copy.schedule.title,
+        scheduleDeliverTo: copy.schedule.deliverTo,
+        scheduleApproximatelyOneHour: copy.schedule.approximatelyOneHour,
+        scheduleChange: copy.schedule.change,
+        scheduleUseAsap: copy.schedule.useAsap,
         schedulePickDate: copy.schedule.pickDate,
         schedulePickTime: copy.schedule.pickTime,
         scheduleTimeHint: copy.schedule.timeHint,
         scheduleNoSlots: copy.schedule.noSlots,
         schedulePrevMonth: copy.schedule.prevMonth,
         scheduleNextMonth: copy.schedule.nextMonth,
-        selectDeliverySlot: copy.schedule.selectSlot,
         selectCashChange: copy.cashChange.select,
         cashChangeTitle: copy.cashChange.title,
         cashChangeHint: copy.cashChange.hint,
@@ -188,6 +202,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         bonusAmount: copy.bonus.amount,
         bonusUseMax: copy.bonus.useMax,
         bonusApplied: copy.bonus.applied,
+        bonusGuestWarning: copy.bonus.guestWarning,
+        bonusRegister: copy.bonus.register,
         storePickup: copy.shipping.storePickup,
         storePickupDescription: copy.shipping.storePickupDescription,
         deliveryOption: copy.shipping.delivery,

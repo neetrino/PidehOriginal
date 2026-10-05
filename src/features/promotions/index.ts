@@ -48,6 +48,10 @@ export {
   couponDiscountErrorMessage,
 } from '@/features/promotions/domain/evaluate-coupon';
 export {
+  resolveCouponAdminStatus,
+  type CouponAdminStatus,
+} from '@/features/promotions/domain/resolve-coupon-admin-status';
+export {
   adminPromotionsFilterSchema,
   upsertPromotionSchema,
   togglePromotionSchema,

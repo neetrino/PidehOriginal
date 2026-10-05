@@ -5,6 +5,10 @@ import { revalidatePath } from 'next/cache';
 
 import { getDb } from '@/db/client';
 import { deliveryRules } from '@/db/schema';
+import {
+  denormalizedCityRegion,
+  normalizeDeliveryLocationTranslations,
+} from '@/features/delivery/domain/delivery-location';
 import { deliveryLocationSchema, type DeliveryLocationInput } from '@/features/delivery/schemas';
 import { requireAdmin } from '@/lib/auth/policies';
 import { createId } from '@/lib/id';
@@ -17,15 +21,34 @@ function revalidateDelivery(locale: string): void {
   revalidatePath(`/${locale}/cart`);
 }
 
-function normalizeCountry(country: string): string {
-  const trimmed = country.trim();
-  if (/^[a-z]{2}$/i.test(trimmed)) {
-    return trimmed.toUpperCase();
+function parseLocationInput(
+  raw: DeliveryLocationInput,
+): Result<{
+  priceAmount: number;
+  translations: NonNullable<ReturnType<typeof normalizeDeliveryLocationTranslations>>;
+  city: string;
+  region: string;
+}> {
+  const parsed = deliveryLocationSchema.safeParse(raw);
+  if (!parsed.success) {
+    return err('VALIDATION', 'Invalid delivery location.');
   }
-  return trimmed;
+
+  const translations = normalizeDeliveryLocationTranslations(parsed.data.translations);
+  if (!translations) {
+    return err('VALIDATION', 'City and area are required in at least one language.');
+  }
+
+  const { city, region } = denormalizedCityRegion(translations);
+  return ok({
+    priceAmount: parsed.data.priceAmount,
+    translations,
+    city,
+    region,
+  });
 }
 
-/** Creates a delivery location for checkout pricing. */
+/** Creates a delivery zone for checkout pricing. */
 export async function createDeliveryLocationAction(
   locale: string,
   raw: DeliveryLocationInput,
@@ -36,12 +59,9 @@ export async function createDeliveryLocationAction(
 
   await requireAdmin(locale as Locale);
 
-  const parsed = deliveryLocationSchema.safeParse(raw);
-  if (!parsed.success) {
-    return err('VALIDATION', 'Invalid delivery location.');
-  }
+  const prepared = parseLocationInput(raw);
+  if (!prepared.ok) return prepared;
 
-  const data = parsed.data;
   const [maxPriority] = await getDb()
     .select({ value: max(deliveryRules.priority) })
     .from(deliveryRules);
@@ -51,10 +71,12 @@ export async function createDeliveryLocationAction(
     .insert(deliveryRules)
     .values({
       id,
-      countryCode: normalizeCountry(data.country),
-      city: data.city.trim(),
-      priceAmount: data.priceAmount,
-      freeThresholdAmount: data.freeThresholdAmount,
+      countryCode: 'AM',
+      city: prepared.value.city,
+      region: prepared.value.region,
+      translations: prepared.value.translations,
+      priceAmount: prepared.value.priceAmount,
+      freeThresholdAmount: null,
       isActive: true,
       priority: (maxPriority?.value ?? 0) + 1,
     });
@@ -63,7 +85,7 @@ export async function createDeliveryLocationAction(
   return ok({ id });
 }
 
-/** Updates an existing delivery location. */
+/** Updates an existing delivery zone. */
 export async function updateDeliveryLocationAction(
   locale: string,
   id: string,
@@ -75,12 +97,9 @@ export async function updateDeliveryLocationAction(
 
   await requireAdmin(locale as Locale);
 
-  const parsed = deliveryLocationSchema.safeParse(raw);
-  if (!parsed.success) {
-    return err('VALIDATION', 'Invalid delivery location.');
-  }
+  const prepared = parseLocationInput(raw);
+  if (!prepared.ok) return prepared;
 
-  const data = parsed.data;
   const [existing] = await getDb()
     .select({ id: deliveryRules.id })
     .from(deliveryRules)
@@ -94,10 +113,11 @@ export async function updateDeliveryLocationAction(
   await getDb()
     .update(deliveryRules)
     .set({
-      countryCode: normalizeCountry(data.country),
-      city: data.city.trim(),
-      priceAmount: data.priceAmount,
-      freeThresholdAmount: data.freeThresholdAmount,
+      countryCode: 'AM',
+      city: prepared.value.city,
+      region: prepared.value.region,
+      translations: prepared.value.translations,
+      priceAmount: prepared.value.priceAmount,
       updatedAt: new Date(),
     })
     .where(eq(deliveryRules.id, id));
@@ -106,7 +126,7 @@ export async function updateDeliveryLocationAction(
   return ok({ id });
 }
 
-/** Soft-deactivates a delivery location (keeps order history references). */
+/** Soft-deactivates a delivery zone (keeps order history references). */
 export async function deleteDeliveryLocationAction(
   locale: string,
   id: string,

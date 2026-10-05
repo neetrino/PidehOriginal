@@ -20,11 +20,6 @@ export function OrderDetailsDrawerTotals({
     ? d.freeStorePickup
     : formatOrderDrawerMoney(detail.deliveryAmount, detail.baseCurrency);
 
-  const deliveryRowLabel =
-    !detail.isPickup && detail.deliveryLabel
-      ? d.deliveryWithLabel.replace('{label}', detail.deliveryLabel)
-      : d.delivery;
-
   const couponRowLabel = detail.couponCode
     ? d.couponDiscountWithCode.replace('{code}', detail.couponCode)
     : d.couponDiscount;
@@ -45,7 +40,7 @@ export function OrderDetailsDrawerTotals({
         </div>
 
         <div className="flex items-center justify-between gap-4">
-          <span className="text-gray-600">{isGroup ? d.delivery : deliveryRowLabel}</span>
+          <span className="text-gray-600">{d.delivery}</span>
           <span className="font-medium text-gray-900">{shippingLabel}</span>
         </div>
 

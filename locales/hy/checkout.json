@@ -18,8 +18,8 @@
     "floor": "Հարկ",
     "intercomCode": "Դոմոֆոնի կոդ",
     "city": "Քաղաք",
-    "deliveryLocation": "Առաքման վայր",
-    "selectLocation": "Ընտրեք վայրը"
+    "deliveryLocation": "Համայնք",
+    "selectLocation": "Ընտրեք համայնքը"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
@@ -28,16 +28,12 @@
     "intercomCode": "Օր․ 24#",
     "city": "Քաղաք"
   },
-  "map": {
-    "openMap": "Քարտեզ",
-    "title": "Ընտրեք հասցեն քարտեզից",
-    "hint": "Սեղմեք քարտեզին կամ տեղափոխեք նշիչը՝ կոնկրետ կետ ընտրելու համար։",
-    "confirm": "Օգտագործել այս հասցեն",
-    "cancel": "Փակել",
-    "resolving": "Հասցեն որոշվում է…"
-  },
   "schedule": {
-    "title": "Առաքման օր և ժամ",
+    "title": "Ամսաթիվ և ժամ",
+    "deliverTo": "Առաքում",
+    "approximatelyOneHour": "մոտավորապես 1 ժամում",
+    "change": "Փոխել",
+    "useAsap": "Հնարավորինս շուտ (~1 ժամ)",
     "pickDate": "Ընտրեք օրը",
     "pickTime": "Ընտրեք ժամը",
     "timeHint": "Նախ օրացույցից ընտրեք օրը. հասանելի ժամերը կհայտնվեն այստեղ։",
@@ -58,10 +54,10 @@
     "storePickupDescription": "Վերցրեք պատվերը մասնաճյուղից (Անվճար)",
     "pickupStoreHint": "Պատվերը կարող եք վերցնել խանութից։",
     "delivery": "Առաքում",
-    "deliveryDescription": "Կառաքենք ձեր հասցեով։ Գինը հաշվվում է հեռավորությամբ։",
+    "deliveryDescription": "Պատվերը կառաքենք ձեր հասցեով։ Գինը կախված է ընտրված առաքման գոտուց։",
     "enterCity": "Մուտքագրեք քաղաքը",
-    "selectDeliveryLocation": "Ընտրեք առաքման վայրը",
-    "enterDeliveryAddress": "Մուտքագրեք հասցեն՝ առաքման գինը հաշվելու համար",
+    "selectDeliveryLocation": "Ընտրեք համայնքը",
+    "enterDeliveryAddress": "Մուտքագրեք առաքման հասցեն",
     "calculatingDelivery": "Առաքման գինը հաշվվում է…"
   },
   "payment": {
@@ -121,6 +117,8 @@
     "use": "Օգտագործել բոնուսները",
     "amount": "Օգտագործվող բոնուսներ",
     "useMax": "Առավելագույնը",
-    "applied": "Բոնուսներ"
+    "applied": "Բոնուսներ",
+    "guestWarning": "Չգրանցված լինելու պատճառով կկորցնեք {amount} կուտակային միավոր",
+    "register": "Գրանցվել"
   }
 }

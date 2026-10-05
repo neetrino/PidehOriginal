@@ -3,82 +3,89 @@ import 'server-only';
 import { asc, desc, eq } from 'drizzle-orm';
 
 import { getDb } from '@/db/client';
-import { deliveryRules } from '@/db/schema';
+import { deliveryRules, type DeliveryLocationTranslationsJson } from '@/db/schema';
+import {
+  formatDeliveryLocationLabel,
+  resolveDeliveryLocationTranslation,
+} from '@/features/delivery/domain/delivery-location';
+import type { Locale } from '@/lib/i18n/config';
 
 export type AdminDeliveryLocation = {
   id: string;
-  country: string;
   city: string;
+  area: string;
   priceAmount: number;
-  freeThresholdAmount: number | null;
   priority: number;
+  translations: DeliveryLocationTranslationsJson;
 };
 
 export type CheckoutDeliveryOption = {
   id: string;
-  country: string;
   city: string;
+  area: string;
   priceAmount: number;
   freeThresholdAmount: number | null;
   label: string;
 };
 
-function locationLabel(country: string, city: string | null): string {
-  const cityPart = city?.trim();
-  if (cityPart) {
-    return `${cityPart}, ${country}`;
-  }
-  return country;
-}
-
-/** Lists all delivery locations for the admin table. */
-export async function listAdminDeliveryLocations(): Promise<AdminDeliveryLocation[]> {
+/** Lists active delivery zones for the admin table. */
+export async function listAdminDeliveryLocations(
+  locale: Locale,
+): Promise<AdminDeliveryLocation[]> {
   const rows = await getDb()
     .select({
       id: deliveryRules.id,
-      country: deliveryRules.countryCode,
       city: deliveryRules.city,
+      region: deliveryRules.region,
       priceAmount: deliveryRules.priceAmount,
-      freeThresholdAmount: deliveryRules.freeThresholdAmount,
       priority: deliveryRules.priority,
-    })
-    .from(deliveryRules)
-    .where(eq(deliveryRules.isActive, true))
-    .orderBy(desc(deliveryRules.priority), asc(deliveryRules.city));
-
-  return rows.map((row) => ({
-    id: row.id,
-    country: row.country,
-    city: row.city?.trim() || '',
-    priceAmount: row.priceAmount,
-    freeThresholdAmount: row.freeThresholdAmount,
-    priority: row.priority,
-  }));
-}
-
-/** Active delivery locations shown in the checkout location dropdown. */
-export async function listCheckoutDeliveryOptions(): Promise<CheckoutDeliveryOption[]> {
-  const rows = await getDb()
-    .select({
-      id: deliveryRules.id,
-      country: deliveryRules.countryCode,
-      city: deliveryRules.city,
-      priceAmount: deliveryRules.priceAmount,
-      freeThresholdAmount: deliveryRules.freeThresholdAmount,
+      translations: deliveryRules.translations,
     })
     .from(deliveryRules)
     .where(eq(deliveryRules.isActive, true))
     .orderBy(desc(deliveryRules.priority), asc(deliveryRules.city));
 
   return rows.map((row) => {
-    const city = row.city?.trim() || '';
+    const resolved = resolveDeliveryLocationTranslation(row.translations, locale);
     return {
       id: row.id,
-      country: row.country,
+      city: resolved.city || row.city?.trim() || '',
+      area: resolved.area || row.region?.trim() || '',
+      priceAmount: row.priceAmount,
+      priority: row.priority,
+      translations: row.translations ?? {},
+    };
+  });
+}
+
+/** Active delivery zones shown in the checkout location dropdown. */
+export async function listCheckoutDeliveryOptions(
+  locale: Locale,
+): Promise<CheckoutDeliveryOption[]> {
+  const rows = await getDb()
+    .select({
+      id: deliveryRules.id,
+      city: deliveryRules.city,
+      region: deliveryRules.region,
+      priceAmount: deliveryRules.priceAmount,
+      freeThresholdAmount: deliveryRules.freeThresholdAmount,
+      translations: deliveryRules.translations,
+    })
+    .from(deliveryRules)
+    .where(eq(deliveryRules.isActive, true))
+    .orderBy(desc(deliveryRules.priority), asc(deliveryRules.city));
+
+  return rows.map((row) => {
+    const resolved = resolveDeliveryLocationTranslation(row.translations, locale);
+    const city = resolved.city || row.city?.trim() || '';
+    const area = resolved.area || row.region?.trim() || '';
+    return {
+      id: row.id,
       city,
+      area,
       priceAmount: row.priceAmount,
       freeThresholdAmount: row.freeThresholdAmount,
-      label: locationLabel(row.country, city || null),
+      label: formatDeliveryLocationLabel(row.translations, locale, row.city, row.region),
     };
   });
 }

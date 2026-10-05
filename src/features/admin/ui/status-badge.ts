@@ -53,4 +53,22 @@ export function groupOrderStatusBadgeClass(status: string): string {
   return 'bg-[#1e1e1e]/8 text-[#1e1e1e]';
 }
 
+/** Coupon effective-status pills for the admin list. */
+export function couponAdminStatusBadgeClass(status: string): string {
+  const normalized = status.toUpperCase();
+  if (normalized === 'ACTIVE') {
+    return 'bg-emerald-50 text-emerald-800';
+  }
+  if (normalized === 'SCHEDULED') {
+    return 'bg-amber-50 text-amber-800';
+  }
+  if (normalized === 'EXPIRED' || normalized === 'USED_UP') {
+    return 'bg-red-50 text-red-700';
+  }
+  if (normalized === 'INACTIVE') {
+    return 'bg-[#1e1e1e]/8 text-[#1e1e1e]';
+  }
+  return 'bg-[#1e1e1e]/8 text-[#1e1e1e]';
+}
+
 export const ADMIN_BADGE = 'inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold';

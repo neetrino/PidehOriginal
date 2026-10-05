@@ -91,7 +91,7 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
   ]);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  function sortHref(sort: 'title' | 'stock' | 'price' | 'created'): string {
+  function sortHref(sort: 'title' | 'price' | 'created'): string {
     const nextDir = filters.sort === sort && filters.dir === 'asc' ? 'desc' : 'asc';
     const query = buildQuery(filters, {
       sort,
@@ -103,7 +103,6 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
 
   const sortLinks = {
     title: sortHref('title'),
-    stock: sortHref('stock'),
     price: sortHref('price'),
     created: sortHref('created'),
   };
@@ -123,7 +122,6 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
           q: filters.q,
           sku: filters.sku,
           categoryId: filters.categoryId,
-          stock: filters.stock,
           status: filters.status,
           sort: filters.sort,
           dir: filters.dir,

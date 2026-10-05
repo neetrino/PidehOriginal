@@ -11,8 +11,10 @@ import {
   type AdminMenuItem,
 } from '@/features/admin/ui/admin-menu.config';
 import { AdminBrandLogo } from '@/features/admin/ui/AdminBrandLogo';
+import { AdminNavBadge } from '@/features/admin/ui/AdminNavBadge';
 import { AdminSidebarBackdrop } from '@/features/admin/ui/AdminSidebarBackdrop';
 import { useAdminProductsSubnavExpanded } from '@/features/admin/ui/useAdminProductsSubnavExpanded';
+import { useAdminOrderAlertsOptional } from '@/features/orders/ui/AdminOrderAlertsProvider';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminMenuDrawerProps = {
@@ -40,6 +42,8 @@ export function AdminMenuDrawer({ locale, pathname, shell, nav }: AdminMenuDrawe
     pathname,
     locale,
   );
+  const alerts = useAdminOrderAlertsOptional();
+  const unseenCount = alerts?.unseenCount ?? 0;
 
   return (
     <div className="lg:hidden">
@@ -145,7 +149,10 @@ export function AdminMenuDrawer({ locale, pathname, shell, nav }: AdminMenuDrawe
                   } ${isActive ? 'bg-[#ff6b00] text-white' : 'text-white/70 hover:bg-white/10'}`}
                 >
                   <span className="shrink-0">{tab.icon}</span>
-                  <span className="truncate">{tab.label}</span>
+                  <span className="min-w-0 flex-1 truncate">{tab.label}</span>
+                  {tab.id === 'orders' ? (
+                    <AdminNavBadge count={unseenCount} ariaLabel={shell.newOrdersBadgeAria} />
+                  ) : null}
                 </Link>
               );
             })}

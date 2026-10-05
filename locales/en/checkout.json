@@ -18,8 +18,8 @@
     "floor": "Floor",
     "intercomCode": "Intercom code",
     "city": "City",
-    "deliveryLocation": "Delivery location",
-    "selectLocation": "Select location"
+    "deliveryLocation": "Community",
+    "selectLocation": "Select community"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
@@ -28,16 +28,12 @@
     "intercomCode": "e.g. 24#",
     "city": "City"
   },
-  "map": {
-    "openMap": "Map",
-    "title": "Pick address on the map",
-    "hint": "Click the map or drag the pin to choose the exact delivery point.",
-    "confirm": "Use this address",
-    "cancel": "Close",
-    "resolving": "Resolving address…"
-  },
   "schedule": {
-    "title": "Delivery date & time",
+    "title": "Date and time",
+    "deliverTo": "Deliver to",
+    "approximatelyOneHour": "approximately 1 hour",
+    "change": "Change",
+    "useAsap": "As soon as possible (~1 hour)",
     "pickDate": "Pick a date",
     "pickTime": "Pick a time",
     "timeHint": "Choose a day on the calendar first. Available times will show up here.",
@@ -58,10 +54,10 @@
     "storePickupDescription": "Pick up your order at a branch (Free)",
     "pickupStoreHint": "You can pick up your order at our store.",
     "delivery": "Delivery",
-    "deliveryDescription": "We will deliver your order to your address. Price is based on distance.",
+    "deliveryDescription": "We will deliver your order to your address. Price depends on the selected delivery zone.",
     "enterCity": "Enter City",
-    "selectDeliveryLocation": "Select delivery location",
-    "enterDeliveryAddress": "Enter a delivery address to calculate shipping",
+    "selectDeliveryLocation": "Select community",
+    "enterDeliveryAddress": "Enter a delivery address",
     "calculatingDelivery": "Calculating delivery…"
   },
   "payment": {
@@ -121,6 +117,8 @@
     "use": "Use bonuses",
     "amount": "Bonus points to use",
     "useMax": "Use max",
-    "applied": "Bonuses"
+    "applied": "Bonuses",
+    "guestWarning": "Because you are not registered, you will lose {amount} loyalty points",
+    "register": "Register"
   }
 }

@@ -37,7 +37,13 @@ export {
   payments,
   type AddressSnapshot,
 } from '@/db/schema/orders';
-export { deliveryRules, promotionUsers, promotions } from '@/db/schema/pricing';
+export {
+  deliveryRules,
+  promotionUsers,
+  promotions,
+  type DeliveryLocationTranslation,
+  type DeliveryLocationTranslationsJson,
+} from '@/db/schema/pricing';
 export { auditLogs, outboxEvents } from '@/db/schema/system';
 export {
   groupOrderEvents,

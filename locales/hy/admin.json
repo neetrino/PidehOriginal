@@ -24,7 +24,8 @@
     "adminMenuAria": "Ադմինիստրատորի մենյու",
     "expandSidebar": "Բացել կողային վահանակը",
     "collapseSidebar": "Փակել կողային վահանակը",
-    "toggleProductSubpages": "Փոխարկել ապրանքների ենթաէջերը"
+    "toggleProductSubpages": "Փոխարկել ապրանքների ենթաէջերը",
+    "newOrdersBadgeAria": "{count} նոր պատվեր"
   },
   "common": {
     "save": "Պահպանել",
@@ -140,6 +141,26 @@
       "individual": "Անհատական",
       "group": "Խմբային"
     },
+    "newSwitch": {
+      "aria": "Ցույց տալ միայն նոր պատվերները",
+      "new": "Նոր"
+    },
+    "newOrderAlert": {
+      "header": "Նոր պատվեր ({count} սպասում է)",
+      "orderTitle": "Պատվեր #{orderNumber}",
+      "customer": "Հաճախորդ",
+      "total": "Ընդամենը",
+      "payment": "Վճարում",
+      "placed": "Ժամանակ",
+      "heard": "Լսեցի — փակել բոլորը ({count})",
+      "paymentMethods": {
+        "cash": "Cash",
+        "idram": "Idram",
+        "arca": "ArCa",
+        "terminal": "Տերմինալ",
+        "unknown": "—"
+      }
+    },
     "bulk": {
       "deleteSelected": "Ջնջել ընտրվածները",
       "selectAtLeastOne": "Ընտրեք առնվազն մեկ պատվեր։",
@@ -158,7 +179,13 @@
       "bonus": "Բոնուս",
       "bonusEmpty": "—",
       "placed": "Կատարման ամսաթիվ",
-      "archivedBadge": "Արխիվացված"
+      "paymentMethod": "Եղանակ",
+      "archivedBadge": "Արխիվացված",
+      "newBadge": "Նոր"
+    },
+    "customerComment": {
+      "title": "Հաճախորդի մեկնաբանություն",
+      "bellAria": "Դիտել ադմինի մեկնաբանությունը այս հաճախորդի մասին"
     },
     "inlineStatus": {
       "changeOrderAria": "Փոխել պատվերի կարգավիճակը",
@@ -219,7 +246,18 @@
       "emptyParticipantItems": "Այս մասնակցի համար ապրանքներ չկան։",
       "giftCard": "Gift card",
       "grandTotal": "Ընդամենը",
-      "customerNote": "Նշում"
+      "customerNote": "Նշում",
+      "reviewTitle": "Պատվերի գնահատական",
+      "reviewHint": "Գնահատեք այս պատվերը առաքումից հետո։",
+      "reviewRating": "Ձեր գնահատականը",
+      "reviewComment": "Ձեր կարծիքը",
+      "reviewPlaceholder": "Պատմեք ձեր փորձի մասին…",
+      "reviewSubmit": "Ուղարկել",
+      "reviewSubmitting": "Ուղարկվում է…",
+      "deliveryFee": "Առաքման գին՝",
+      "deliveryZone": "Առաքման գոտի՝",
+      "methodDelivery": "Առաքում",
+      "methodPickup": "Ինքնաառաքում"
     },
     "detail": {
       "customer": "Հաճախորդ",
@@ -469,10 +507,10 @@
   },
   "delivery": {
     "title": "Առաքում",
-    "subtitle": "Սահմանեք խանութի հասցեն, մեկ կիլոմետրի համար AMD-ով գինը և առաքման օրացույցը, որից հաճախորդները կարող են ընտրել պատվերի ձևակերպման ժամանակ։",
+    "subtitle": "Սահմանեք խանութի հասցեն, առաքման գոտիները ֆիքսված գներով և օրացույցը, որից հաճախորդները կարող են ընտրել պատվերի ձևակերպման ժամանակ։",
     "saved": "Առաքման կարգավորումները պահպանվել են։",
-    "storeAndPricing": "Խանութ և գնագոյացում",
-    "storeAndPricingHint": "Մեկնարկային հասցեն և մեկ կիլոմետրի առաքման վճարը, որոնք օգտագործվում են պատվերի ձևակերպման ժամանակ։",
+    "storeAndPricing": "Խանութի կարգավորումներ",
+    "storeAndPricingHint": "Խանութի հասցեն pickup-ի և քարտեզի համար։ Առաքման գինը գալիս է ստորևի գոտիներից։",
     "storeAddress": "Խանութի հասցե",
     "storeAddressPlaceholder": "օր.՝ Անդրանիկ 108/10, Երեվան",
     "storeAddressHint": "Սկսեք մուտքագրել փողոցի անունը — ընտրեք Google-ի առաջարկներից, կամ բացեք քարտեզը pin դնելու համար, ապա պահպանեք։",
@@ -489,6 +527,12 @@
     "pricePerKmPlaceholder": "1000",
     "pricePerKmExample": "Օրինակ՝ 1.101 կմ → {amount}",
     "offerDelivery": "Առաջարկել առաքում պատվերի ձևակերպման ժամանակ",
+    "locations": {
+      "title": "Առաքման գոտիներ",
+      "hint": "Ֆիքսված առաքման գներ՝ ըստ քաղաքի և թաղամասի։ Հաճախորդը ընտրում է գոտին checkout-ում։",
+      "add": "Ավելացնել նոր հասցե",
+      "empty": "Առաքման գոտիներ դեռ չկան։ Ավելացրեք քաղաք և թաղամաս՝ գնով։"
+    },
     "cashChange": {
       "title": "Մանրի անվանումներ",
       "hint": "Թղթադրամներ, որոնք հաճախորդը կարող է ընտրել checkout-ում, որպեսզի առաքիչը ճիշտ մանր բերի։",
@@ -524,18 +568,17 @@
       "noClosedDates": "Փակ օրեր չկան։ Ավելացրեք տոներ կամ օրեր, երբ չեք առաքում։"
     },
     "locationDrawer": {
-      "addTitle": "Ավելացնել տեղադրություն",
-      "editTitle": "Խմբագրել տեղադրությունը",
-      "addAria": "Ավելացնել տեղադրություն",
-      "editAria": "Խմբագրել տեղադրությունը",
-      "country": "Երկիր",
-      "countryPlaceholder": "Հայաստան",
+      "addTitle": "Ավելացնել հասցե",
+      "editTitle": "Խմբագրել հասցեն",
+      "addAria": "Ավելացնել առաքման հասցե",
+      "editAria": "Խմբագրել առաքման հասցեն",
+      "translations": "Լեզու",
       "city": "Քաղաք",
-      "cityPlaceholder": "Երեվան",
+      "cityPlaceholder": "Երևան",
+      "area": "Թաղամաս",
+      "areaPlaceholder": "Շենգավիթ",
       "priceAmd": "Գին (AMD)",
-      "pricePlaceholder": "1500",
-      "freeDeliveryFrom": "Անվճար առաքում սկսած (AMD)",
-      "freeDeliveryPlaceholder": "50000"
+      "pricePlaceholder": "600"
     }
   },
   "discounts": {
@@ -621,17 +664,22 @@
       "code": "Կոդ",
       "type": "Տեսակ",
       "value": "Արժեք",
-      "usageLimit": "Օգտագործման սահմանաչափ",
       "used": "Օգտագործված",
-      "active": "Ակտիվ",
+      "status": "Կարգավիճակ",
       "validUntil": "Գործում է մինչև",
       "actions": "Գործողություններ",
       "percentOff": "Տոկոսային զեղչ",
       "fixedAmountAmd": "Ֆիքսված գումար (AMD)",
-      "activeAria": "Ակտիվ",
       "editAria": "Խմբագրել {code}",
       "duplicateAria": "Կրկնօրինակել {code}",
       "deleteAria": "Ջնջել {code}"
+    },
+    "statuses": {
+      "ACTIVE": "Ակտիվ",
+      "SCHEDULED": "Սպասվող",
+      "EXPIRED": "Ժամկետանց",
+      "USED_UP": "Օգտագործված",
+      "INACTIVE": "Ապաակտիվ"
     },
     "drawer": {
       "newTitle": "Նոր կուպոն",
@@ -742,6 +790,14 @@
       "newStatus": "Նոր կարգավիճակ",
       "newStatusAria": "Նոր կարգավիճակ",
       "updateStatus": "Թարմացնել կարգավիճակը"
+    },
+    "commentForm": {
+      "title": "Ադմինի մեկնաբանություն",
+      "hint": "Ներքին նշում այս հաճախորդի մասին։ Պատվերներում կերևա զանգակի նշանով։",
+      "label": "Մեկնաբանություն",
+      "placeholder": "Լավ հաճախորդ, ուշ վճարող, VIP…",
+      "save": "Պահել մեկնաբանությունը",
+      "saved": "Մեկնաբանությունը պահվեց։"
     }
   },
   "analytics": {

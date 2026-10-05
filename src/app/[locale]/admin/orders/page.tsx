@@ -16,6 +16,7 @@ import type { OrderStatus } from '@/features/orders/domain/order-status';
 import { adminOrdersFilterSchema } from '@/features/orders/schemas/change-status';
 import { AdminOrdersFilters } from '@/features/orders/ui/AdminOrdersFilters';
 import { AdminOrdersKindSwitcher } from '@/features/orders/ui/AdminOrdersKindSwitcher';
+import { AdminOrdersNewSwitch } from '@/features/orders/ui/AdminOrdersNewSwitch';
 import { AdminOrdersView } from '@/features/orders/ui/AdminOrdersView';
 import { isLocale, type Locale } from '@/lib/i18n/config';
 import { getDictionary, type Dictionary } from '@/lib/i18n/get-dictionary';
@@ -41,6 +42,7 @@ function buildCheckoutOrdersQuery(
     status?: OrderStatus;
     paymentStatus?: string;
     kind: AdminOrderListKind;
+    onlyNew?: boolean;
   },
   page: number,
 ): string {
@@ -49,6 +51,7 @@ function buildCheckoutOrdersQuery(
   if (filters.status) params.set('status', filters.status);
   if (filters.paymentStatus) params.set('paymentStatus', filters.paymentStatus);
   if (filters.kind === 'individual') params.set('kind', 'individual');
+  if (filters.onlyNew) params.set('new', '1');
   params.set('page', String(page));
   return params.toString();
 }
@@ -73,18 +76,28 @@ function buildGroupOrdersQuery(
 function AdminOrdersPageShell({
   locale,
   kind,
+  onlyNew,
   copy,
   children,
 }: {
   locale: Locale;
   kind: AdminOrderListKind;
+  onlyNew: boolean;
   copy: Dictionary['admin'];
   children: ReactNode;
 }) {
   return (
     <section>
       <AdminPageHeading className="mb-6" title={copy.orders.title} />
-      <AdminOrdersKindSwitcher locale={locale} kind={kind} labels={copy.orders.kindSwitcher} />
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <AdminOrdersKindSwitcher locale={locale} kind={kind} labels={copy.orders.kindSwitcher} />
+        <AdminOrdersNewSwitch
+          locale={locale}
+          kind={kind}
+          onlyNew={onlyNew}
+          labels={copy.orders.newSwitch}
+        />
+      </div>
       {children}
     </section>
   );
@@ -202,6 +215,7 @@ async function AdminCheckoutOrdersSection({
     archived: 'active',
     q: firstParam(raw.q) || undefined,
     kind,
+    onlyNew: firstParam(raw.new) || undefined,
     page: firstParam(raw.page) ?? '1',
   });
   const filters = parsed.success
@@ -215,6 +229,7 @@ async function AdminCheckoutOrdersSection({
         dateTo: undefined,
         q: undefined,
         kind,
+        onlyNew: false,
       };
   const { rows, total, pageSize } = await listAdminOrders(filters);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -227,6 +242,7 @@ async function AdminCheckoutOrdersSection({
         paymentStatus={filters.paymentStatus}
         q={filters.q}
         kind={kind}
+        onlyNew={Boolean(filters.onlyNew)}
         copy={copy}
       />
       <AdminOrdersView locale={locale} orders={rows} copy={copy} />
@@ -234,7 +250,12 @@ async function AdminCheckoutOrdersSection({
         locale={locale}
         page={filters.page}
         totalPages={totalPages}
-        query={(page) => buildCheckoutOrdersQuery({ ...filters, kind }, page)}
+        query={(page) =>
+          buildCheckoutOrdersQuery(
+            { ...filters, kind, onlyNew: Boolean(filters.onlyNew) },
+            page,
+          )
+        }
         previousLabel={copy.common.previous}
         nextLabel={copy.common.next}
         pageOf={copy.common.pageOf}
@@ -253,9 +274,11 @@ export default async function AdminOrdersPage({ params, searchParams }: AdminOrd
   const copy = getDictionary(locale).admin;
   const raw = await searchParams;
   const kind = parseAdminOrderListKind(firstParam(raw.kind));
+  const onlyNew =
+    firstParam(raw.new) === '1' || firstParam(raw.new) === 'true';
 
   return (
-    <AdminOrdersPageShell locale={locale} kind={kind} copy={copy}>
+    <AdminOrdersPageShell locale={locale} kind={kind} onlyNew={onlyNew} copy={copy}>
       {kind === 'group' ? (
         <AdminGroupOrdersSection locale={locale} raw={raw} copy={copy} />
       ) : (

@@ -118,6 +118,13 @@
     "sendDate": "Дата отправки",
     "paymentMethod": "Способ оплаты",
     "cashOnDelivery": "Наличными при доставке",
+    "cashOnDeliveryDescription": "Оплатите наличными при подтверждении покупки",
+    "idram": "Idram",
+    "idramDescription": "Оплата через Idram или картой",
+    "arca": "Картой",
+    "arcaDescription": "Оплатите картой Visa, Mastercard или ArCa",
+    "terminal": "Terminal",
+    "terminalDescription": "Оплата картой через терминал",
     "submit": "Оформить покупку",
     "submitting": "Отправка…",
     "successPending": "Покупка создана. Карта активна, код отправлен получателю на email."

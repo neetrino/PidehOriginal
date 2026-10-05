@@ -6,6 +6,10 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { purchaseGiftCardAction } from '@/features/gift-cards/application/admin-actions';
 import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
+import {
+  CheckoutPaymentMethods,
+  type PaymentOption,
+} from '@/features/checkout/ui/CheckoutPaymentMethods';
 import type { GiftCardSettings } from '@/features/gift-cards/domain/gift-card-rules';
 import type { Locale } from '@/lib/i18n/config';
 import { formatMoneyAmount } from '@/lib/money/format';
@@ -22,6 +26,13 @@ type BuyGiftCardFormCopy = {
   sendDate: string;
   paymentMethod: string;
   cashOnDelivery: string;
+  cashOnDeliveryDescription: string;
+  idram: string;
+  idramDescription: string;
+  arca: string;
+  arcaDescription: string;
+  terminal: string;
+  terminalDescription: string;
   submit: string;
   submitting: string;
   successPending: string;
@@ -47,6 +58,7 @@ export function BuyGiftCardForm({
   const [amount, setAmount] = useState(settings.presets[0] ?? settings.minAmount);
   const [customAmount, setCustomAmount] = useState('');
   const [useCustom, setUseCustom] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>('arca');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -58,6 +70,49 @@ export function BuyGiftCardForm({
     const parsed = Number(customAmount);
     return Number.isInteger(parsed) ? parsed : 0;
   }, [amount, customAmount, useCustom]);
+
+  const paymentOptions = useMemo(
+    (): PaymentOption[] => [
+      {
+        id: 'cash_on_delivery',
+        name: copy.cashOnDelivery,
+        description: copy.cashOnDeliveryDescription,
+        logos: ['/assets/payments/cash-bag.png'],
+      },
+      {
+        id: 'idram',
+        name: copy.idram,
+        description: copy.idramDescription,
+        logos: ['/assets/payments/idram.png'],
+      },
+      {
+        id: 'arca',
+        name: copy.arca,
+        description: copy.arcaDescription,
+        logos: [
+          '/assets/payments/arca.png',
+          '/assets/payments/mastercard.png',
+          '/assets/payments/visa.png',
+        ],
+      },
+      {
+        id: 'terminal',
+        name: copy.terminal,
+        description: copy.terminalDescription,
+        logos: ['/assets/payments/terminal.png'],
+      },
+    ],
+    [
+      copy.arca,
+      copy.arcaDescription,
+      copy.cashOnDelivery,
+      copy.cashOnDeliveryDescription,
+      copy.idram,
+      copy.idramDescription,
+      copy.terminal,
+      copy.terminalDescription,
+    ],
+  );
 
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -77,9 +132,7 @@ export function BuyGiftCardForm({
         scheduledSendAt: String(data.get('scheduledSendAt') ?? '')
           ? new Date(String(data.get('scheduledSendAt'))).toISOString()
           : null,
-        paymentMethod: String(
-          data.get('paymentMethod') ?? 'cash_on_delivery',
-        ) as CheckoutPaymentMethod,
+        paymentMethod,
       });
 
       if (!result.ok) {
@@ -194,16 +247,14 @@ export function BuyGiftCardForm({
           className="h-11 w-full rounded-lg border border-gray-200 px-3"
         />
       </label>
-      <label className="block space-y-1 text-sm">
-        <span className="font-medium text-gray-900">{copy.paymentMethod}</span>
-        <select
-          name="paymentMethod"
-          defaultValue="cash_on_delivery"
-          className="h-11 w-full rounded-lg border border-gray-200 px-3"
-        >
-          <option value="cash_on_delivery">{copy.cashOnDelivery}</option>
-        </select>
-      </label>
+
+      <CheckoutPaymentMethods
+        title={copy.paymentMethod}
+        options={paymentOptions}
+        value={paymentMethod}
+        onChange={setPaymentMethod}
+        disabled={pending}
+      />
 
       {error ? (
         <p className="text-sm text-red-600" role="alert">

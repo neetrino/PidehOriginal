@@ -1,6 +1,6 @@
 'use client';
 
-import { Copy, Pencil, Star, Trash2 } from 'lucide-react';
+import { Pencil, Star, Trash2 } from 'lucide-react';
 
 import {
   ADMIN_TABLE_ROW,
@@ -25,7 +25,6 @@ type AdminProductRowProps = {
   onToggle: () => void;
   onEdit: () => void;
   onFeatured: () => void;
-  onDuplicate: () => void;
   onDelete: () => void;
   onVisibility: () => void;
   copy: RowCopy;
@@ -39,7 +38,6 @@ export function AdminProductRow({
   onToggle,
   onEdit,
   onFeatured,
-  onDuplicate,
   onDelete,
   onVisibility,
   copy,
@@ -75,11 +73,6 @@ export function AdminProductRow({
             <p className="truncate text-xs text-gray-500">{product.slug}</p>
           </div>
         </div>
-      </td>
-      <td className={ADMIN_TABLE_TD}>
-        <span className="text-gray-900">
-          {copy.table.stockPcs.replace('{count}', String(product.stockOnHand))}
-        </span>
       </td>
       <td className={ADMIN_TABLE_TD}>
         <div className="flex flex-col">
@@ -120,15 +113,6 @@ export function AdminProductRow({
             aria-label={copy.table.editAria.replace('{title}', product.title)}
           >
             <Pencil className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={onDuplicate}
-            className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-            aria-label={copy.table.duplicateAria.replace('{title}', product.title)}
-          >
-            <Copy className="h-4 w-4" />
           </button>
           <button
             type="button"

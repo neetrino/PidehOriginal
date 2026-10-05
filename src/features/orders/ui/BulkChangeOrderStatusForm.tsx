@@ -25,6 +25,8 @@ import {
 } from '@/features/admin/ui/admin-table-classes';
 import { bulkArchiveOrdersAction } from '@/features/orders/application/bulk-archive-orders';
 import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
+import { adminPaymentMethodLabel } from '@/features/orders/domain/payment-method-label';
+import { AdminCustomerCommentBell } from '@/features/orders/ui/AdminCustomerCommentBell';
 import { AdminInlineStatusSelect } from '@/features/orders/ui/AdminInlineStatusSelect';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
@@ -33,14 +35,17 @@ type BulkOrderRow = {
   orderNumber: string;
   status: string;
   paymentStatus: string;
+  paymentMethod: string | null;
   contactName: string;
   contactEmail: string;
+  customerAdminComment: string | null;
   totalAmount: number;
   bonusRedeemedAmount: number;
   bonusEarnedAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
   isArchived: boolean;
+  isAdminNew?: boolean;
 };
 
 type BulkChangeOrderStatusFormProps = {
@@ -165,13 +170,16 @@ export function BulkChangeOrderStatusForm({
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.total}</th>
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.bonus}</th>
                 <th className={ADMIN_TABLE_TH}>{copy.orders.table.placed}</th>
+                <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.paymentMethod}</th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
               {orders.map((order) => (
                 <tr
                   key={order.id}
-                  className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+                  className={`${ADMIN_TABLE_ROW} cursor-pointer ${
+                    order.isAdminNew ? 'bg-red-50/70' : ''
+                  }`}
                   onClick={() => onOpenOrder(order.orderNumber)}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
@@ -197,7 +205,16 @@ export function BulkChangeOrderStatusForm({
                     />
                   </td>
                   <td className={ADMIN_TABLE_TD}>
-                    <span className="font-medium text-gray-900">{order.orderNumber}</span>
+                    <span className="inline-flex items-center gap-2 font-medium text-gray-900">
+                      {order.isAdminNew ? (
+                        <span
+                          className="inline-flex h-2 w-2 rounded-full bg-red-500"
+                          aria-label={copy.orders.table.newBadge}
+                          title={copy.orders.table.newBadge}
+                        />
+                      ) : null}
+                      {order.orderNumber}
+                    </span>
                     {order.isArchived ? (
                       <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase text-gray-600">
                         {copy.orders.table.archivedBadge}
@@ -205,8 +222,19 @@ export function BulkChangeOrderStatusForm({
                     ) : null}
                   </td>
                   <td className={ADMIN_TABLE_TD}>
-                    <p className="text-sm text-gray-900">{order.contactName}</p>
-                    <p className="text-xs text-gray-500">{order.contactEmail}</p>
+                    <div className="flex items-start gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-gray-900">{order.contactName}</p>
+                        <p className="text-xs text-gray-500">{order.contactEmail}</p>
+                      </div>
+                      {order.customerAdminComment ? (
+                        <AdminCustomerCommentBell
+                          comment={order.customerAdminComment}
+                          ariaLabel={copy.orders.customerComment.bellAria}
+                          title={copy.orders.customerComment.title}
+                        />
+                      ) : null}
+                    </div>
                   </td>
                   <td
                     className={ADMIN_TABLE_TD_METRIC}
@@ -260,6 +288,14 @@ export function BulkChangeOrderStatusForm({
                   <td className={ADMIN_TABLE_TD}>
                     <span className="text-xs text-gray-500">
                       {formatYerevanDateTime(order.placedAt)}
+                    </span>
+                  </td>
+                  <td className={ADMIN_TABLE_TD_METRIC}>
+                    <span className="text-sm font-medium text-gray-900">
+                      {adminPaymentMethodLabel(
+                        order.paymentMethod,
+                        copy.orders.newOrderAlert.paymentMethods,
+                      )}
                     </span>
                   </td>
                 </tr>

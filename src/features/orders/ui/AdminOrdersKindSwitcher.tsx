@@ -25,7 +25,7 @@ export function AdminOrdersKindSwitcher({ locale, kind, labels }: AdminOrdersKin
   return (
     <nav
       aria-label={labels.aria}
-      className="mb-6 inline-flex items-center rounded-full bg-[#e8edf2] p-1"
+      className="inline-flex items-center rounded-full bg-[#e8edf2] p-1"
     >
       {ADMIN_ORDER_LIST_KINDS.map((value) => {
         const active = kind === value;

@@ -19,6 +19,7 @@ type AdminOrdersFiltersProps = {
   paymentStatus?: string;
   q?: string;
   kind: AdminOrderListKind;
+  onlyNew?: boolean;
   copy: Dictionary['admin'];
 };
 
@@ -28,6 +29,7 @@ export function AdminOrdersFilters({
   paymentStatus,
   q,
   kind,
+  onlyNew = false,
   copy,
 }: AdminOrdersFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -63,6 +65,7 @@ export function AdminOrdersFilters({
     <Card className="mb-6 overflow-visible">
       <form ref={formRef} method="get" className="flex flex-col gap-3 p-4 sm:flex-row sm:flex-wrap sm:items-center">
         {kind === 'individual' ? <input type="hidden" name="kind" value="individual" /> : null}
+        {onlyNew ? <input type="hidden" name="new" value="1" /> : null}
         <SelectDropdown
           name="status"
           ariaLabel={f.orderStatusAria}

@@ -24,7 +24,8 @@
     "adminMenuAria": "Admin menu",
     "expandSidebar": "Expand sidebar",
     "collapseSidebar": "Collapse sidebar",
-    "toggleProductSubpages": "Toggle product subpages"
+    "toggleProductSubpages": "Toggle product subpages",
+    "newOrdersBadgeAria": "{count} new orders"
   },
   "common": {
     "save": "Save",
@@ -140,6 +141,26 @@
       "individual": "Individual",
       "group": "Group"
     },
+    "newSwitch": {
+      "aria": "Show only new orders",
+      "new": "New"
+    },
+    "newOrderAlert": {
+      "header": "New order ({count} waiting)",
+      "orderTitle": "Order #{orderNumber}",
+      "customer": "Customer",
+      "total": "Total",
+      "payment": "Payment",
+      "placed": "Time",
+      "heard": "Heard — close all ({count})",
+      "paymentMethods": {
+        "cash": "Cash",
+        "idram": "Idram",
+        "arca": "ArCa",
+        "terminal": "Terminal",
+        "unknown": "—"
+      }
+    },
     "bulk": {
       "deleteSelected": "Delete selected",
       "selectAtLeastOne": "Select at least one order.",
@@ -158,7 +179,13 @@
       "bonus": "Bonus",
       "bonusEmpty": "—",
       "placed": "Placed",
-      "archivedBadge": "Archived"
+      "paymentMethod": "Method",
+      "archivedBadge": "Archived",
+      "newBadge": "New"
+    },
+    "customerComment": {
+      "title": "Customer comment",
+      "bellAria": "View admin comment about this customer"
     },
     "inlineStatus": {
       "changeOrderAria": "Change order status",
@@ -219,7 +246,18 @@
       "emptyParticipantItems": "This participant has no items.",
       "giftCard": "Gift card",
       "grandTotal": "Total",
-      "customerNote": "Note"
+      "customerNote": "Note",
+      "reviewTitle": "Order review",
+      "reviewHint": "Rate this order after delivery.",
+      "reviewRating": "Your rating",
+      "reviewComment": "Your review",
+      "reviewPlaceholder": "Tell us about your experience…",
+      "reviewSubmit": "Submit review",
+      "reviewSubmitting": "Submitting…",
+      "deliveryFee": "Delivery fee:",
+      "deliveryZone": "Delivery zone:",
+      "methodDelivery": "Delivery",
+      "methodPickup": "Store pickup"
     },
     "detail": {
       "customer": "Customer",
@@ -469,10 +507,10 @@
   },
   "delivery": {
     "title": "Delivery",
-    "subtitle": "Set the store address, AMD price per kilometer, and the delivery calendar customers can book from at checkout.",
+    "subtitle": "Set the store address, delivery zones with fixed prices, and the calendar customers can book from at checkout.",
     "saved": "Delivery settings saved.",
-    "storeAndPricing": "Store & pricing",
-    "storeAndPricingHint": "Origin address and per-kilometer delivery fee used at checkout.",
+    "storeAndPricing": "Store settings",
+    "storeAndPricingHint": "Store address used for pickup and maps. Delivery prices come from zones below.",
     "storeAddress": "Store address",
     "storeAddressPlaceholder": "e.g. Andranik 108/10, Yerevan",
     "storeAddressHint": "Start typing a street name — pick from Google suggestions, or open the map to drop a pin, then Save.",
@@ -489,6 +527,12 @@
     "pricePerKmPlaceholder": "1000",
     "pricePerKmExample": "Example: 1.101 km → {amount}",
     "offerDelivery": "Offer delivery at checkout",
+    "locations": {
+      "title": "Delivery zones",
+      "hint": "Fixed delivery prices by city and district. Customers pick a zone at checkout.",
+      "add": "Add new address",
+      "empty": "No delivery zones yet. Add a city and district with a price."
+    },
     "cashChange": {
       "title": "Cash change denominations",
       "hint": "Banknotes customers can select at checkout so the courier brings the right change.",
@@ -524,18 +568,17 @@
       "noClosedDates": "No closed dates. Add holidays or days you do not deliver."
     },
     "locationDrawer": {
-      "addTitle": "Add location",
-      "editTitle": "Edit location",
-      "addAria": "Add location",
-      "editAria": "Edit location",
-      "country": "Country",
-      "countryPlaceholder": "Armenia",
+      "addTitle": "Add address",
+      "editTitle": "Edit address",
+      "addAria": "Add delivery address",
+      "editAria": "Edit delivery address",
+      "translations": "Language",
       "city": "City",
       "cityPlaceholder": "Yerevan",
+      "area": "District / area",
+      "areaPlaceholder": "Shengavit",
       "priceAmd": "Price (AMD)",
-      "pricePlaceholder": "1500",
-      "freeDeliveryFrom": "Free delivery from (AMD)",
-      "freeDeliveryPlaceholder": "50000"
+      "pricePlaceholder": "600"
     }
   },
   "discounts": {
@@ -621,17 +664,22 @@
       "code": "Code",
       "type": "Type",
       "value": "Value",
-      "usageLimit": "Usage limit",
       "used": "Used",
-      "active": "Active",
+      "status": "Status",
       "validUntil": "Valid until",
       "actions": "Actions",
       "percentOff": "Percent off",
       "fixedAmountAmd": "Fixed amount (AMD)",
-      "activeAria": "Active",
       "editAria": "Edit {code}",
       "duplicateAria": "Duplicate {code}",
       "deleteAria": "Delete {code}"
+    },
+    "statuses": {
+      "ACTIVE": "Active",
+      "SCHEDULED": "Scheduled",
+      "EXPIRED": "Expired",
+      "USED_UP": "Used up",
+      "INACTIVE": "Inactive"
     },
     "drawer": {
       "newTitle": "New coupon",
@@ -742,6 +790,14 @@
       "newStatus": "New status",
       "newStatusAria": "New status",
       "updateStatus": "Update status"
+    },
+    "commentForm": {
+      "title": "Admin comment",
+      "hint": "Internal note about this customer. Visible on their orders as a bell icon.",
+      "label": "Comment",
+      "placeholder": "Good customer, late payer, VIP…",
+      "save": "Save comment",
+      "saved": "Comment saved."
     }
   },
   "analytics": {

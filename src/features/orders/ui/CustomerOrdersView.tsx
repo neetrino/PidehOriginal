@@ -6,6 +6,7 @@ import type { AdminOrderDetailView } from '@/features/orders/application/order-d
 import { getCustomerOrderDetailAction } from '@/features/orders/application/get-customer-order-detail';
 import { CustomerOrdersTable } from '@/features/orders/ui/CustomerOrdersTable';
 import { OrderDetailsDrawer } from '@/features/orders/ui/OrderDetailsDrawer';
+import { isLocale, type Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type CustomerOrdersViewOrder = {
@@ -83,6 +84,8 @@ export function CustomerOrdersView({
     setError(null);
   }
 
+  const reviewLocale: Locale | undefined = isLocale(locale) ? locale : undefined;
+
   return (
     <>
       <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} copy={copy} />
@@ -93,6 +96,8 @@ export function CustomerOrdersView({
         error={error}
         isLoading={isPending}
         copy={copy}
+        locale={reviewLocale}
+        onReviewSubmitted={setDetail}
       />
     </>
   );

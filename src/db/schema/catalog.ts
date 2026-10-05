@@ -33,7 +33,7 @@ export const products = pgTable(
     translations: jsonb('translations').$type<TranslationsJson>().notNull(),
     priceAmount: integer('price_amount').notNull(),
     compareAtAmount: integer('compare_at_amount'),
-    stockOnHand: integer('stock_on_hand').notNull().default(0),
+    stockOnHand: integer('stock_on_hand').notNull().default(100_000),
     lowStockThreshold: integer('low_stock_threshold').notNull().default(5),
     version: integer('version').notNull().default(0),
     status: productStatusEnum('status').notNull().default('DRAFT'),

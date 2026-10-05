@@ -12,14 +12,17 @@ type AdminOrdersViewOrder = {
   orderNumber: string;
   status: string;
   paymentStatus: string;
+  paymentMethod: string | null;
   contactName: string;
   contactEmail: string;
+  customerAdminComment: string | null;
   totalAmount: number;
   bonusRedeemedAmount: number;
   bonusEarnedAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
   isArchived: boolean;
+  isAdminNew?: boolean;
 };
 
 type AdminOrdersViewProps = {

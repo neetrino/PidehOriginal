@@ -7,7 +7,7 @@ import {
   CHECKOUT_SECTION_TITLE,
 } from '@/features/checkout/ui/checkout-ui-classes';
 import { AddressAutocomplete } from '@/components/ui/AddressAutocomplete';
-import { AddressMapPicker } from '@/components/ui/AddressMapPicker';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
 import type { CheckoutPaymentMethod } from '@/features/checkout/domain/payment-methods';
 import type { CheckoutShippingMethod } from '@/features/checkout/domain/shipping-methods';
 import { CashChangePicker } from '@/features/checkout/ui/CashChangePicker';
@@ -25,6 +25,12 @@ import type { DeliveryScheduleSettings } from '@/features/delivery/domain/delive
 import type { SelectedDeliverySlot } from '@/features/delivery/domain/delivery-schedule';
 import type { Locale } from '@/lib/i18n/config';
 
+export type CheckoutDeliveryZoneOption = {
+  id: string;
+  label: string;
+  priceAmount: number;
+};
+
 type CheckoutDetailsLabels = {
   contactInformation: string;
   shippingMethod: string;
@@ -41,14 +47,13 @@ type CheckoutDetailsLabels = {
   addressPlaceholder: string;
   floorPlaceholder: string;
   intercomCodePlaceholder: string;
-  openMap: string;
-  mapTitle: string;
-  mapHint: string;
-  mapConfirm: string;
-  mapCancel: string;
-  mapResolving: string;
-  calculatingDelivery: string;
+  deliveryLocation: string;
+  selectLocation: string;
   scheduleTitle: string;
+  scheduleDeliverTo: string;
+  scheduleApproximatelyOneHour: string;
+  scheduleChange: string;
+  scheduleUseAsap: string;
   schedulePickDate: string;
   schedulePickTime: string;
   scheduleTimeHint: string;
@@ -85,12 +90,12 @@ type CheckoutDetailsSectionsProps = {
   cashChangeOptions: CashChangeDenominationView[];
   cashChangeAmount: number | null;
   onCashChangeAmountChange: (amount: number) => void;
+  deliveryZones: CheckoutDeliveryZoneOption[];
+  deliveryRuleId: string;
+  onDeliveryRuleIdChange: (id: string) => void;
   line1: string;
   onLine1Change: (value: string) => void;
-  onMapAddressSelected: (address: string, point: { lat: number; lng: number }) => void;
-  deliveryQuotePending: boolean;
-  deliveryQuoteError: string | null;
-  deliveryQuoteHint: string | null;
+  deliveryFeeHint: string | null;
   paymentMethod: CheckoutPaymentMethod;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
   paymentOptions: PaymentOption[];
@@ -117,12 +122,12 @@ export function CheckoutDetailsSections({
   cashChangeOptions,
   cashChangeAmount,
   onCashChangeAmountChange,
+  deliveryZones,
+  deliveryRuleId,
+  onDeliveryRuleIdChange,
   line1,
   onLine1Change,
-  onMapAddressSelected,
-  deliveryQuotePending,
-  deliveryQuoteError,
-  deliveryQuoteHint,
+  deliveryFeeHint,
   paymentMethod,
   onPaymentMethodChange,
   paymentOptions,
@@ -207,34 +212,36 @@ export function CheckoutDetailsSections({
         <h2 className={CHECKOUT_SECTION_TITLE}>{labels.shippingAddress}</h2>
         <div className="space-y-4">
               <div className="space-y-1.5">
+                <span className="text-sm font-bold text-[#1e1e1e]">{labels.deliveryLocation}</span>
+                <SelectDropdown
+                  ariaLabel={labels.deliveryLocation}
+                  value={deliveryRuleId}
+                  allLabel={labels.selectLocation}
+                  options={deliveryZones.map((zone) => ({
+                    value: zone.id,
+                    label: zone.label,
+                  }))}
+                  onValueChange={onDeliveryRuleIdChange}
+                  disabled={pending || deliveryZones.length === 0}
+                  tone="brand"
+                  className="w-full"
+                />
+                {deliveryFeeHint ? (
+                  <p className="text-sm text-[#1e1e1e]/65">{deliveryFeeHint}</p>
+                ) : null}
+              </div>
+              <div className="space-y-1.5">
                 <span className="text-sm font-bold text-[#1e1e1e]">{labels.address}</span>
-                <div className="flex items-start gap-2">
-                  <div className="min-w-0 flex-1">
-                    <AddressAutocomplete
-                      name="line1"
-                      required
-                      value={line1}
-                      onValueChange={onLine1Change}
-                      placeholder={labels.addressPlaceholder}
-                      disabled={pending}
-                      className={CHECKOUT_FIELD}
-                      languageCode={locale}
-                    />
-                  </div>
-                  <AddressMapPicker
-                    addressValue={line1}
-                    disabled={pending}
-                    onAddressSelected={onMapAddressSelected}
-                    labels={{
-                      openMap: labels.openMap,
-                      title: labels.mapTitle,
-                      hint: labels.mapHint,
-                      confirm: labels.mapConfirm,
-                      cancel: labels.mapCancel,
-                      resolving: labels.mapResolving,
-                    }}
-                  />
-                </div>
+                <AddressAutocomplete
+                  name="line1"
+                  required
+                  value={line1}
+                  onValueChange={onLine1Change}
+                  placeholder={labels.addressPlaceholder}
+                  disabled={pending}
+                  className={CHECKOUT_FIELD}
+                  languageCode={locale}
+                />
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <label className={CHECKOUT_LABEL}>
@@ -264,6 +271,10 @@ export function CheckoutDetailsSections({
                 locale={locale}
                 labels={{
                   title: labels.scheduleTitle,
+                  deliverTo: labels.scheduleDeliverTo,
+                  approximatelyOneHour: labels.scheduleApproximatelyOneHour,
+                  change: labels.scheduleChange,
+                  useAsap: labels.scheduleUseAsap,
                   pickDate: labels.schedulePickDate,
                   pickTime: labels.schedulePickTime,
                   timeHint: labels.scheduleTimeHint,
@@ -273,15 +284,6 @@ export function CheckoutDetailsSections({
                 }}
               />
         </div>
-        {deliveryQuotePending ? (
-          <p className="mt-2 text-sm text-[#1e1e1e]/55">{labels.calculatingDelivery}</p>
-        ) : null}
-        {deliveryQuoteError ? (
-          <p className="mt-2 text-sm text-red-700">{deliveryQuoteError}</p>
-        ) : null}
-        {!deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
-          <p className="mt-2 text-sm text-[#1e1e1e]/65">{deliveryQuoteHint}</p>
-        ) : null}
       </section>
       ) : pickupBranches.length === 0 ? (
         <section className={CHECKOUT_PANEL}>
