@@ -43,7 +43,7 @@
     "deliveryReturns": "Delivery & Returns",
     "contactInfo": "Contact",
     "followUs": "Follow us",
-    "copyright": "Copyright © {year}. All Rights Reserved. Created by Neetrino IT Company",
-    "copyrightMobile": "© {year}. All Rights Reserved. Created by Neetrino"
+    "copyright": "© {year} | All Rights Reserved | Created by Neetrino",
+    "copyrightMobile": "© {year} | All Rights Reserved | Created by Neetrino"
   }
 }
