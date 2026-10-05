@@ -88,7 +88,7 @@ export function ProfileMobileShell({
   );
 
   const desktopColumn = (
-    <div className="min-w-0 md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
+    <div className="profile-desktop-scroll min-w-0 md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
       {children}
     </div>
   );
@@ -98,7 +98,7 @@ export function ProfileMobileShell({
     return (
       <>
         <div className="profile-mobile-page w-full md:hidden">{hub}</div>
-        <div className="storefront-desktop-tree hidden md:block md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
+        <div className="profile-desktop-scroll storefront-desktop-tree hidden md:block md:min-h-0 md:flex-1 md:overflow-y-auto md:overscroll-contain">
           {children}
         </div>
       </>

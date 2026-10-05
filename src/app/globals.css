@@ -722,6 +722,58 @@ body {
   .storefront-shell:has(.profile-desktop-page) .storefront-footer {
     display: none;
   }
+
+  /*
+   * Group-order banner sits above main and steals height from the locked
+   * viewport. Inner columns stay content-sized and swallow the wheel
+   * (overflow: auto + overscroll-behavior: contain), so the shell clips
+   * the profile. Let the shell scroll instead while the banner is up.
+   */
+  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .storefront-main {
+    display: block;
+    flex: none;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-desktop-page,
+  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner)
+    .profile-desktop-page
+    > .storefront-desktop-tree {
+    height: auto;
+    max-height: none;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-desktop-scroll {
+    height: auto;
+    max-height: none;
+    min-height: auto;
+    flex: 1 1 auto;
+    overflow: visible;
+    overscroll-behavior: auto;
+  }
+
+  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-sidebar-scroll {
+    height: auto;
+    max-height: none;
+    min-height: auto;
+    flex: none;
+    overflow: visible;
+    overscroll-behavior: auto;
+  }
+
+  .storefront-shell:has(.profile-desktop-page):has(.group-order-banner) .profile-desktop-page aside {
+    height: auto;
+    max-height: none;
+    min-height: auto;
+  }
 }
 
 /**

@@ -54,7 +54,7 @@ export function ActiveGroupOrderBanner({
   return (
     <>
       <GroupOrderSessionWatcher labels={labels} inviteToken={inviteToken} mode="poll" />
-      <div className="group-order-banner">
+      <div className="group-order-banner shrink-0">
         <div className={`py-3 ${PAGE_CONTAINER}`}>
           <div className="flex flex-col gap-3 rounded-[26px] border-2 border-pideh-ink/10 bg-white px-3 py-3 shadow-[0_12px_28px_rgba(31,20,8,0.1)] sm:flex-row sm:items-center sm:gap-4 sm:px-4 sm:py-3.5">
             <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-pideh-orange text-white">

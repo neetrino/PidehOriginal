@@ -45,7 +45,7 @@ export function ProfileSidebar({ locale, user, dictionary }: ProfileSidebarProps
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+      <div className="profile-sidebar-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain">
         <ProfileSidebarNav
           locale={locale}
           dictionary={dictionary}
