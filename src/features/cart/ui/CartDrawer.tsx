@@ -237,11 +237,9 @@ export function CartDrawer({
 
         <CartDrawerTotals
           currency={displayCurrency}
-          subtotalLabel={labels.subtotal}
           totalLabel={labels.total}
           checkoutLabel={isGroupSource ? labels.continueGroupOrder : labels.checkout}
           checkoutHref={view?.checkoutHref ?? `/${locale}/checkout`}
-          subtotalAmount={view?.subtotalAmount ?? 0}
           totalAmount={view?.totalAmount ?? 0}
           hasItems={hasItems}
           onCheckout={closeDrawer}
