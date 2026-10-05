@@ -3,9 +3,11 @@
 import { AppLink } from '@/components/ui/AppLink';
 import { fadeUp } from '@/components/motion/presets';
 import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
+import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
+import { orderDrawerStatusLabel } from '@/features/orders/ui/order-drawer-format';
 import { ProfilePageHeading } from '@/features/profile/ui/ProfilePageHeading';
 import { ProfileStatCard } from '@/features/profile/ui/ProfileStatCard';
-import { PROFILE_PANEL } from '@/features/profile/ui/profile-ui-classes';
+import { PROFILE_LIST_CARD, PROFILE_PANEL } from '@/features/profile/ui/profile-ui-classes';
 import type { ProfileRecentOrder } from '@/features/profile/application/dashboard-queries';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
@@ -15,6 +17,7 @@ type ProfileDashboardProps = {
   locale: Locale;
   firstName: string;
   dictionary: Dictionary['profile'];
+  statusLabels: Dictionary['admin']['orders']['statusLabels'];
   stats: {
     totalOrders: number;
     pendingOrders: number;
@@ -28,6 +31,7 @@ export function ProfileDashboard({
   locale,
   firstName,
   dictionary,
+  statusLabels,
   stats,
   recentOrders,
 }: ProfileDashboardProps) {
@@ -71,28 +75,57 @@ export function ProfileDashboard({
             {dictionary.noOrders}
           </p>
         ) : (
-          <ul className="divide-y divide-[#ff6b00]/10">
+          <ul className="flex flex-col gap-3">
             {recentOrders.map((order) => (
-              <li
-                key={order.id}
-                className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div>
-                  <p className="font-bold text-[#1e1e1e]">
-                    {dictionary.orderNumber} {order.orderNumber}
-                  </p>
-                  <p className="text-sm text-[#1e1e1e]/55">
-                    {dictionary.status}: {order.status}
-                  </p>
-                </div>
-                <p className="text-sm font-bold text-[#ff6b00]">
-                  {formatMoneyAmount(order.totalAmount, 'AMD', locale)}
-                </p>
+              <li key={order.id}>
+                <RecentOrderCard
+                  locale={locale}
+                  order={order}
+                  orderNumberLabel={dictionary.orderNumber}
+                  statusLabel={orderDrawerStatusLabel(order.status, statusLabels)}
+                />
               </li>
             ))}
           </ul>
         )}
       </div>
     </section>
+  );
+}
+
+function RecentOrderCard({
+  locale,
+  order,
+  orderNumberLabel,
+  statusLabel,
+}: {
+  locale: Locale;
+  order: ProfileRecentOrder;
+  orderNumberLabel: string;
+  statusLabel: string;
+}) {
+  return (
+    <AppLink
+      href={`/${locale}/profile/orders?order=${encodeURIComponent(order.orderNumber)}`}
+      prefetchPolicy="intent"
+      className={`${PROFILE_LIST_CARD} flex items-center justify-between gap-3 transition hover:bg-[#fff8e7]`}
+    >
+      <span className="min-w-0">
+        <span className="block font-bold text-[#1e1e1e]">
+          {orderNumberLabel} {order.orderNumber}
+        </span>
+        <span className="mt-1 block text-sm text-[#1e1e1e]/55">
+          {formatYerevanDateTime(order.placedAt)}
+        </span>
+      </span>
+      <span className="flex shrink-0 flex-col items-end gap-1.5">
+        <span className="rounded-full bg-[#fff8e7] px-2.5 py-1 text-xs font-bold text-[#ff6b00]">
+          {statusLabel}
+        </span>
+        <span className="text-sm font-bold text-[#1e1e1e]">
+          {formatMoneyAmount(order.totalAmount, 'AMD', locale)}
+        </span>
+      </span>
+    </AppLink>
   );
 }

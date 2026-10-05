@@ -86,6 +86,7 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
         status={filters.status}
         paymentStatus={filters.paymentStatus}
         q={filters.q}
+        labels={dictionary.admin.orders.filters}
       />
 
       <CustomerOrdersView
