@@ -175,7 +175,6 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         discount: copy.summary.discount,
         subtotal: copy.summary.subtotal,
         shipping: copy.summary.shipping,
-        tax: copy.summary.tax,
         total: copy.summary.total,
         participantsPrepaid: copy.summary.participantsPrepaid,
         yourShare: copy.summary.yourShare,

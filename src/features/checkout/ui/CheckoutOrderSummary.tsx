@@ -27,13 +27,11 @@ type CheckoutOrderSummaryProps = {
   discountLabel: string;
   subtotalLabel: string;
   shippingLabel: string;
-  taxLabel: string;
   totalLabel: string;
   participantsPrepaidLabel?: string;
   participantsPrepaidFormatted?: string | null;
   subtotalFormatted: string;
   shippingFormatted: string | null;
-  taxFormatted: string;
   discountFormatted: string | null;
   totalFormatted: string;
   couponDraft: string;
@@ -97,13 +95,11 @@ export function CheckoutOrderSummary({
   discountLabel,
   subtotalLabel,
   shippingLabel,
-  taxLabel,
   totalLabel,
   participantsPrepaidLabel,
   participantsPrepaidFormatted,
   subtotalFormatted,
   shippingFormatted,
-  taxFormatted,
   discountFormatted,
   totalFormatted,
   couponDraft,
@@ -315,10 +311,6 @@ export function CheckoutOrderSummary({
               <span className="text-[#ff6b00]">-{participantsPrepaidFormatted}</span>
             </div>
           ) : null}
-          <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
-            <span>{taxLabel}</span>
-            <span className="font-bold text-[#1e1e1e]">{taxFormatted}</span>
-          </div>
           <div className="mt-1 flex items-end justify-between gap-3 rounded-[18px] bg-[#fff8e7] px-4 py-3">
             <span className="font-display text-xl leading-none text-[#1e1e1e] uppercase">
               {totalLabel}

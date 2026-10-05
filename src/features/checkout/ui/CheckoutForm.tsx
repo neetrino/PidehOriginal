@@ -94,7 +94,6 @@ type CheckoutLabels = {
   discount: string;
   subtotal: string;
   shipping: string;
-  tax: string;
   total: string;
   participantsPrepaid: string;
   yourShare: string;
@@ -556,7 +555,6 @@ export function CheckoutForm({
             discountLabel={labels.discount}
             subtotalLabel={labels.subtotal}
             shippingLabel={labels.shipping}
-            taxLabel={labels.tax}
             totalLabel={splitPrepaid ? labels.yourShare : labels.total}
             participantsPrepaidLabel={splitPrepaid ? labels.participantsPrepaid : undefined}
             participantsPrepaidFormatted={
@@ -564,7 +562,6 @@ export function CheckoutForm({
             }
             subtotalFormatted={formatMoney(subtotalAmount)}
             shippingFormatted={shippingFormatted}
-            taxFormatted={formatMoney(0)}
             discountFormatted={discountAmount > 0 ? formatMoney(discountAmount) : null}
             totalFormatted={formatMoney(amountDue)}
             couponDraft={couponDraft}
