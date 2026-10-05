@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
+import { cashChangeImageSrc } from '@/features/delivery/domain/cash-change';
 import { listAdminDeliveryLocations } from '@/features/delivery/application/queries';
 import { AdminDeliveryView } from '@/features/delivery/ui/AdminDeliveryView';
 import { isLocale } from '@/lib/i18n/config';
@@ -25,8 +26,9 @@ export default async function AdminDeliveryPage({ params }: AdminDeliveryPagePro
 
   const initialImageUrls: Record<string, string> = {};
   for (const item of settings.cashChangeDenominations) {
-    if (item.imageObjectKey) {
-      initialImageUrls[item.id] = mediaPublicUrl(item.imageObjectKey);
+    const imageUrl = cashChangeImageSrc(item.imageObjectKey, mediaPublicUrl);
+    if (imageUrl) {
+      initialImageUrls[item.id] = imageUrl;
     }
   }
 

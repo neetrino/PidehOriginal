@@ -10,6 +10,7 @@ import {
   resolveLinePricing,
 } from '@/features/group-orders/application/money';
 import { canEditGroupOrderItems } from '@/features/group-orders/domain/status';
+import type { Locale } from '@/lib/i18n/config';
 import { checkSpendLimit } from '@/features/group-orders/domain/spend-limit';
 import { mergeCustomerNotes, normalizeCustomerNote } from '@/features/cart/customer-note';
 import { buildModifierSelectionKey } from '@/features/products/domain/modifier-selection';
@@ -242,11 +243,20 @@ export async function markParticipantItemsReady(input: {
   return { ok: true };
 }
 
+async function groupMerchandiseTotal(groupOrderId: string): Promise<number> {
+  const rows = await getDb()
+    .select({ subtotalAmount: groupOrderParticipants.subtotalAmount })
+    .from(groupOrderParticipants)
+    .where(eq(groupOrderParticipants.groupOrderId, groupOrderId));
+  return rows.reduce((sum, row) => sum + row.subtotalAmount, 0);
+}
+
+/** Saves the street address and quotes delivery from the selected community zone. */
 export async function setGroupOrderDeliveryAddress(input: {
   inviteToken: string;
   deliveryAddress: string;
-  deliveryLat?: number;
-  deliveryLng?: number;
+  deliveryRuleId: string;
+  locale: Locale;
 }): Promise<
   { ok: true; deliveryAmount: number; distanceLabel: string } | { ok: false; error: string }
 > {
@@ -259,50 +269,28 @@ export async function setGroupOrderDeliveryAddress(input: {
     return { ok: false, error: 'Delivery address can no longer be changed.' };
   }
 
+  const merchandise = await groupMerchandiseTotal(access.groupOrder.id);
+  const { quoteZoneDelivery } = await import('@/features/delivery/application/quote-zone-delivery');
+  const quoted = await quoteZoneDelivery(input.deliveryRuleId, input.locale, merchandise);
+  if (!quoted.ok) return { ok: false, error: quoted.error };
+
   const address = input.deliveryAddress.trim();
-  if (address.length < 3) {
-    return { ok: false, error: 'Enter a delivery address.' };
-  }
-
-  const { quoteDistanceDelivery } =
-    await import('@/features/delivery/application/quote-distance-delivery');
-  const point =
-    input.deliveryLat != null && input.deliveryLng != null
-      ? { lat: input.deliveryLat, lng: input.deliveryLng }
-      : null;
-  const quoted = await quoteDistanceDelivery(address, point);
-  if (!quoted.ok) {
-    return { ok: false, error: quoted.error };
-  }
-
   const db = getDb();
   await db
     .update(groupOrders)
     .set({
-      deliveryAddress: quoted.quote.destinationFormattedAddress || address,
-      deliveryDistanceLabel: quoted.quote.distanceLabel,
+      deliveryAddress: address.length > 0 ? address : null,
+      deliveryDistanceLabel: quoted.quote.label,
       deliveryAmount: quoted.quote.deliveryAmount,
       updatedAt: new Date(),
     })
     .where(eq(groupOrders.id, access.groupOrder.id));
 
   await recalculateGroupOrderMoney(db, access.groupOrder.id);
-  await appendGroupOrderEvent(db, {
-    groupOrderId: access.groupOrder.id,
-    eventType: 'NOTE',
-    actorParticipantId: access.participant.id,
-    payload: {
-      action: 'delivery_address_set',
-      deliveryAmount: quoted.quote.deliveryAmount,
-      distanceLabel: quoted.quote.distanceLabel,
-      usedMapPin: Boolean(point),
-    },
-  });
-
   return {
     ok: true,
     deliveryAmount: quoted.quote.deliveryAmount,
-    distanceLabel: quoted.quote.distanceLabel,
+    distanceLabel: quoted.quote.label,
   };
 }
 

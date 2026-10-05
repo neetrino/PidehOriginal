@@ -63,6 +63,12 @@ function calendarLocale(locale: string): CalendarLocale {
   return 'en';
 }
 
+/** `5 հոկտեմբեր 2026` — fixed names, same on server and in the browser. */
+export function formatCalendarDate(ymd: string, locale: string): string {
+  const { year, monthIndex, day } = parseYmd(ymd);
+  return `${day} ${monthLabel(year, monthIndex, locale)}`;
+}
+
 export function monthLabel(year: number, monthIndex: number, locale: string): string {
   const months = MONTH_NAMES[calendarLocale(locale)];
   const month = months[monthIndex] ?? months[0];

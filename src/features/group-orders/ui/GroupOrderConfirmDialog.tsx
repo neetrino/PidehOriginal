@@ -58,7 +58,7 @@ function GroupOrderConfirmPanel({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[240] flex items-end justify-center sm:items-center sm:p-4"
+      className="fixed inset-0 z-[240] flex items-center justify-center p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -82,7 +82,7 @@ function GroupOrderConfirmPanel({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
         transition={{ duration: 0.32, ease: PANEL_EASE }}
-        className="relative z-[1] w-full max-w-[min(420px,calc(100%-1.5rem))] overflow-hidden rounded-t-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-[8px_8px_0_#1e1e1e] sm:rounded-[28px]"
+        className="relative z-[1] w-full max-w-[min(420px,calc(100%-1.5rem))] overflow-hidden rounded-[28px] border-2 border-pideh-ink bg-pideh-cream shadow-[8px_8px_0_#1e1e1e]"
       >
         <div className="relative border-b-2 border-pideh-ink/10 bg-pideh-yellow/40 px-6 pt-5 pb-5">
           <button

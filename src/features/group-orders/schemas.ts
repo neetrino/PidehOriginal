@@ -68,10 +68,9 @@ export const setDeliveryAmountSchema = z.object({
 
 export const setDeliveryAddressSchema = z.object({
   inviteToken: z.string().uuid(),
-  deliveryAddress: z.string().trim().min(3).max(300),
-  /** Map pin — used for distance when present (avoids re-geocoding vague labels). */
-  deliveryLat: z.number().finite().min(-90).max(90).optional(),
-  deliveryLng: z.number().finite().min(-180).max(180).optional(),
+  deliveryAddress: z.string().trim().max(300),
+  deliveryRuleId: z.string().uuid(),
+  locale: z.enum(['hy', 'en', 'ru']),
 });
 
 export const adminGroupOrderIdSchema = z.object({

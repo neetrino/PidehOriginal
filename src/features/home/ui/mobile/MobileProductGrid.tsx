@@ -24,7 +24,6 @@ type MobileProductGridProps = {
   isSignedIn: boolean;
   wishlistLabel: string;
   addLabel: string;
-  ratingLabel: string;
   prepTimeLabel: string;
   /** Cards eagerly loaded with a high-priority image. */
   priorityCount?: number;
@@ -40,7 +39,6 @@ export function MobileProductGrid({
   isSignedIn,
   wishlistLabel,
   addLabel,
-  ratingLabel,
   prepTimeLabel,
   priorityCount = 0,
 }: MobileProductGridProps) {
@@ -72,7 +70,6 @@ export function MobileProductGrid({
                 isSignedIn={isSignedIn}
                 wishlistLabel={wishlistLabel}
                 addLabel={addLabel}
-                ratingLabel={ratingLabel}
                 prepTimeLabel={prepTimeLabel}
               />
             </div>

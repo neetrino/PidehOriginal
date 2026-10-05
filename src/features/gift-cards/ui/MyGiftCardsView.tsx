@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 
 import { BuyGiftCardDrawer } from '@/features/gift-cards/ui/BuyGiftCardDrawer';
-import { PROFILE_LIST_CARD } from '@/features/profile/ui/profile-ui-classes';
+import { ProfileGiftCard } from '@/features/gift-cards/ui/ProfileGiftCard';
 import type {
   CustomerGiftCardListItem,
   GiftCardDetail,
@@ -13,17 +13,16 @@ import type {
   GiftCardSettings,
 } from '@/features/gift-cards/domain/gift-card-rules';
 import type { Locale } from '@/lib/i18n/config';
-import { formatMoneyAmount } from '@/lib/money/format';
 
 type MyGiftCardsViewCopy = {
   title: string;
   buy: string;
   empty: string;
   history: string;
-  status: string;
   balance: string;
   initial: string;
   recipient: string;
+  created: string;
   expires: string;
   filters: Record<CustomerGiftCardBucket, string>;
   statuses: Record<string, string>;
@@ -131,61 +130,8 @@ export function MyGiftCardsView({
       ) : (
         <ul className="space-y-4">
           {filteredDetails.map(({ card, detail }) => (
-            <li
-              key={card.id}
-              className={PROFILE_LIST_CARD}
-            >
-              <div className="space-y-2 px-4 py-4 sm:px-5">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-semibold tracking-wide text-[#1e1e1e]">
-                      {card.code}
-                    </p>
-                    <p className="mt-1 text-xs text-[#1e1e1e]/55">
-                      {copy.status}: {copy.statuses[card.status] ?? card.status}
-                    </p>
-                  </div>
-                  <div className="text-right text-sm">
-                    <p className="font-medium text-[#1e1e1e]">
-                      {copy.balance}: {formatMoneyAmount(card.balanceAmount, 'AMD', locale)}
-                    </p>
-                    <p className="text-xs text-[#1e1e1e]/55">
-                      {copy.initial}: {formatMoneyAmount(card.initialAmount, 'AMD', locale)}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-xs text-[#1e1e1e]/55">
-                  {copy.recipient}: {card.recipientName} · {card.recipientEmail}
-                </p>
-                {card.expiresAt ? (
-                  <p className="text-xs text-[#1e1e1e]/55">
-                    {copy.expires}: {card.expiresAt.toISOString().slice(0, 10)}
-                  </p>
-                ) : null}
-              </div>
-              {detail && detail.transactions.length > 0 ? (
-                <div className="border-t border-[#ff6b00]/10 px-4 py-3 sm:px-5">
-                  <p className="mb-2 text-xs font-medium uppercase tracking-wide text-[#1e1e1e]/45">
-                    {copy.history}
-                  </p>
-                  <ul className="space-y-2">
-                    {detail.transactions.map((row) => (
-                      <li
-                        key={row.id}
-                        className="flex items-center justify-between gap-3 text-xs text-[#1e1e1e]/65"
-                      >
-                        <span>
-                          {row.type} · {row.createdAt.toISOString().slice(0, 10)}
-                        </span>
-                        <span className="font-medium text-[#1e1e1e]">
-                          {row.delta > 0 ? '+' : ''}
-                          {formatMoneyAmount(row.delta, 'AMD', locale)}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
+            <li key={card.id}>
+              <ProfileGiftCard locale={locale} card={card} detail={detail} copy={copy} />
             </li>
           ))}
         </ul>

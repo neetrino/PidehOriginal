@@ -68,6 +68,7 @@
     "arca": "Card",
     "arcaDescription": "Pay with a Visa, Mastercard, or ArCa card",
     "terminal": "Terminal",
+    "selectPaymentMethod": "Choose a payment method",
     "terminalDescription": "Pay by card when you receive your order"
   },
   "coupon": {

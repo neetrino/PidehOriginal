@@ -9,6 +9,7 @@
     "cart": "Cart",
     "about": "About",
     "contact": "Contact",
+    "policies": "Policies",
     "wishlist": "Favorites",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
@@ -44,6 +45,6 @@
     "contactInfo": "Contact",
     "followUs": "Follow us",
     "copyright": "© {year} | All Rights Reserved | Created by Neetrino",
-    "copyrightMobile": "© {year} | All Rights Reserved | Created by Neetrino"
+    "copyrightMobile": "© {year} | Created By Neetrino"
   }
 }

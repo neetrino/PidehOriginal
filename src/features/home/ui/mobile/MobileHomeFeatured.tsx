@@ -9,7 +9,6 @@ type MobileHomeFeaturedProps = {
   emptyLabel: string;
   wishlistLabel: string;
   addLabel: string;
-  ratingLabel: string;
   prepTimeLabel: string;
   isSignedIn: boolean;
   products: readonly MobileGridProduct[];
@@ -21,7 +20,6 @@ export function MobileHomeFeatured({
   emptyLabel,
   wishlistLabel,
   addLabel,
-  ratingLabel,
   prepTimeLabel,
   isSignedIn,
   products,
@@ -42,7 +40,6 @@ export function MobileHomeFeatured({
         isSignedIn={isSignedIn}
         wishlistLabel={wishlistLabel}
         addLabel={addLabel}
-        ratingLabel={ratingLabel}
         prepTimeLabel={prepTimeLabel}
         priorityCount={2}
       />

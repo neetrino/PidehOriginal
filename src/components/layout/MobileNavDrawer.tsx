@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { Menu, Phone, Users, X } from 'lucide-react';
 
 import { STOREFRONT_DESKTOP_MEDIA } from '@/components/layout/page-container';
 import { LocaleCurrencySwitcher } from '@/components/layout/LocaleCurrencySwitcher';
@@ -35,10 +35,15 @@ type MobileNavDrawerProps = {
   navItems: readonly NavItem[];
   /** When set, the panel also offers the language/currency switcher. */
   currency?: Currency;
+  isSignedIn: boolean;
+  phoneHref: string;
+  phoneNumber: string;
+  phoneLabel: string;
+  onOpenGroupOrder: () => void;
   /** Optional classes for the open/close trigger button. */
   triggerClassName?: string;
   /** When set, replaces the default Menu/X glyphs inside the trigger. */
-  triggerContent?: ReactNode;
+  triggerContent?: ReactNode | ((open: boolean) => ReactNode);
 };
 
 function isNavItemActive(pathname: string, href: string, locale: Locale): boolean {
@@ -57,6 +62,11 @@ export function MobileNavDrawer({
   dictionary,
   navItems,
   currency,
+  isSignedIn,
+  phoneHref,
+  phoneNumber,
+  phoneLabel,
+  onOpenGroupOrder,
   triggerClassName,
   triggerContent,
 }: MobileNavDrawerProps) {
@@ -187,8 +197,6 @@ export function MobileNavDrawer({
     };
   }, [rendered]);
 
-  const shopHref = `/${locale}/products`;
-
   return (
     <>
       <button
@@ -203,7 +211,7 @@ export function MobileNavDrawer({
         aria-expanded={open}
         aria-controls={menuId}
       >
-        {triggerContent ?? (
+        {(typeof triggerContent === 'function' ? triggerContent(open) : triggerContent) ?? (
           <>
             <Menu
               className="pointer-events-none absolute h-4 w-4 transition-[opacity,transform] duration-[280ms] ease-out sm:h-5 sm:w-5"
@@ -231,11 +239,12 @@ export function MobileNavDrawer({
               <button
                 type="button"
                 aria-label={dictionary.nav.closeMenu}
-                className={`fixed inset-0 z-[60] cursor-pointer border-0 bg-pideh-ink/35 backdrop-blur-[10px] transition-[opacity,visibility] duration-[260ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                className={`fixed inset-x-0 bottom-0 z-[60] cursor-pointer border-0 bg-pideh-ink/35 backdrop-blur-[10px] transition-[opacity,visibility] duration-[260ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
                   expanded
                     ? 'pointer-events-auto visible opacity-100'
                     : 'pointer-events-none invisible opacity-0'
                 }`}
+                style={{ top: panelTopPx }}
                 onClick={() => setOpen(false)}
               />
               <div
@@ -262,6 +271,14 @@ export function MobileNavDrawer({
                   className="flex max-h-inherit flex-col overflow-y-auto pb-[max(0.75rem,env(safe-area-inset-bottom))]"
                 >
                   <div className="flex flex-col py-4">
+                    <a
+                      href={phoneHref}
+                      aria-label={phoneLabel}
+                      className="font-montserrat-arm flex items-center gap-3 rounded-xl px-1 py-3.5 text-[22px] leading-none font-black tracking-tight text-pideh-ink"
+                    >
+                      <Phone className="size-6 shrink-0 text-[#ff6b00]" aria-hidden="true" />
+                      {phoneNumber}
+                    </a>
                     {navItems.map((item) => {
                       const active = isNavItemActive(pathname, item.href, locale);
                       return (
@@ -284,25 +301,39 @@ export function MobileNavDrawer({
                   </div>
 
                   {currency ? (
-                    <div className="border-t border-pideh-ink/10 py-4">
+                    <div className="border-t border-pideh-ink/10 px-1 py-4">
                       <LocaleCurrencySwitcher
                         locale={locale}
                         currency={currency}
                         currencyLabel={dictionary.header.currency}
                         languageLabel={dictionary.header.language}
+                        embedded
                       />
                     </div>
                   ) : null}
 
                   <div className="border-t border-pideh-ink/10 py-5">
-                    <AppLink
-                      href={shopHref}
-                      prefetchPolicy="intent"
-                      className="font-montserrat-arm flex w-full items-center justify-center rounded-full bg-pideh-ink px-6 py-3.5 text-base font-bold text-white transition-colors hover:bg-pideh-orange"
-                      onClick={() => setOpen(false)}
+                    <button
+                      type="button"
+                      className="mb-3 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#ff6b00] px-6 text-sm font-bold text-white"
+                      onClick={() => {
+                        setOpen(false);
+                        onOpenGroupOrder();
+                      }}
                     >
-                      {dictionary.nav.shopNow}
-                    </AppLink>
+                      <Users className="size-4" aria-hidden="true" />
+                      {dictionary.groupOrder.createButton}
+                    </button>
+                    {isSignedIn ? null : (
+                      <AppLink
+                        href={`/${locale}/login`}
+                        prefetchPolicy="intent"
+                        className="font-montserrat-arm flex w-full items-center justify-center rounded-full bg-pideh-ink px-6 py-3.5 text-base font-bold text-white transition-colors hover:bg-pideh-orange"
+                        onClick={() => setOpen(false)}
+                      >
+                        {dictionary.header.login}
+                      </AppLink>
+                    )}
                   </div>
                 </nav>
               </div>

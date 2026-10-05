@@ -61,6 +61,7 @@ type CheckoutLabels = {
   deliveryLocation: string;
   selectLocation: string;
   selectDeliveryLocation: string;
+  selectPaymentMethod: string;
   enterDeliveryAddress: string;
   scheduleTitle: string;
   scheduleDeliverTo: string;
@@ -191,9 +192,7 @@ export function CheckoutForm({
     [deliveryRuleId, deliveryZones],
   );
   const isGroupOrderCheckout = groupOrderCheckout != null;
-  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>(() =>
-    isCashOnDeliveryAllowedForCheckout(isGroupOrderCheckout) ? 'cash_on_delivery' : 'idram',
-  );
+  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [couponDraft, setCouponDraft] = useState('');
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
@@ -445,6 +444,11 @@ export function CheckoutForm({
         setError(labels.enterDeliveryAddress);
         return;
       }
+    }
+
+    if (!paymentMethod) {
+      setError(labels.selectPaymentMethod);
+      return;
     }
 
     if (

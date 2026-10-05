@@ -132,6 +132,7 @@ export function AdminDeliveryView({
           <Card className="p-6">
             <div className="flex flex-col gap-5">
               <AdminDeliveryScheduleEditor
+                locale={locale}
                 value={schedule}
                 onChange={setSchedule}
                 disabled={isPending}

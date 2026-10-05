@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useRef, type ReactNode } from 'react';
 
 import { NAV_DOCK_HEIGHT_PX } from '@/components/layout/NavEllipse3469';
 import {
@@ -52,9 +52,10 @@ type MobileProductDetailProps = {
   wishlistLabel: string;
   backLabel: string;
   labels: MobileLabels;
+  relatedSlot?: ReactNode;
 };
 
-const SHEET_PAD_BOTTOM_PX = NAV_DOCK_HEIGHT_PX + 24;
+const SHEET_PAD_BOTTOM_PX = NAV_DOCK_HEIGHT_PX + 72;
 const MODIFIER_CHIP = 'bg-[rgba(255,107,0,0.09)]';
 
 /**
@@ -82,6 +83,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
     wishlistLabel,
     backLabel,
     labels,
+    relatedSlot,
   } = props;
   const galleryRef = useRef<HTMLDivElement>(null);
   const state = useProductConfigurator({
@@ -109,7 +111,10 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
   const heroImage = images[0] ?? null;
 
   return (
-    <div className={`${MOBILE_STOREFRONT_SHELL} pideh-pdp-mobile overflow-x-clip bg-[#ff6b00]`}>
+    <div
+      className={`${MOBILE_STOREFRONT_SHELL} pideh-pdp-mobile overflow-x-clip bg-[#ff6b00]`}
+      style={{ paddingBottom: SHEET_PAD_BOTTOM_PX }}
+    >
       <div className={MOBILE_STOREFRONT_COLUMN}>
       <MobileProductHero
         title={title}
@@ -123,7 +128,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
 
       <MobileProductSheet
         title={title}
-        paddingBottomPx={SHEET_PAD_BOTTOM_PX}
+        paddingBottomPx={28}
         wishlist={
           <WishlistButton
             locale={locale}
@@ -224,6 +229,7 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
           onToggleException={(id) => state.setExceptionIds((cur) => toggleModifierId(cur, id))}
         />
       </MobileProductSheet>
+      {relatedSlot ? <div className="px-4 pb-6">{relatedSlot}</div> : null}
       </div>
     </div>
   );

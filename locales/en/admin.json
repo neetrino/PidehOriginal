@@ -563,6 +563,9 @@
       "saturday": "Saturday",
       "sunday": "Sunday",
       "closedDates": "Closed dates",
+      "closedDatePlaceholder": "Choose a date",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
       "closeThisDay": "Close this day",
       "removeClosedDateAria": "Remove closed date {date}",
       "noClosedDates": "No closed dates. Add holidays or days you do not deliver."

@@ -16,7 +16,7 @@ function BannerMessage({ template, name }: { template: string; name: string }) {
   const [before, after = ''] = template.split('{name}');
 
   return (
-    <p className="text-sm leading-snug font-semibold text-pideh-ink sm:text-base">
+    <p className="text-[13px] leading-snug font-semibold text-pideh-ink sm:text-sm">
       {before}
       <span className="font-extrabold">{name}</span>
       {after}
@@ -55,34 +55,26 @@ export function ActiveGroupOrderBanner({
     <>
       <GroupOrderSessionWatcher labels={labels} inviteToken={inviteToken} mode="poll" />
       <div className="group-order-banner shrink-0">
-        <div className={`py-3 ${PAGE_CONTAINER}`}>
-          <div className="flex flex-col gap-3 rounded-[26px] border-2 border-pideh-ink/10 bg-white px-3 py-3 shadow-[0_12px_28px_rgba(31,20,8,0.1)] sm:flex-row sm:items-center sm:gap-4 sm:px-4 sm:py-3.5">
-            <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-pideh-orange text-white">
-              <Users className="h-5 w-5" aria-hidden />
+        <div className={`py-2 ${PAGE_CONTAINER}`}>
+          <div className="flex items-center gap-2.5 rounded-[20px] border border-pideh-ink/10 bg-white px-3 py-2.5 shadow-[0_8px_18px_rgba(31,20,8,0.08)]">
+            <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-pideh-orange text-white">
+              <Users className="size-4" aria-hidden />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-bold tracking-[0.16em] text-pideh-orange uppercase">
-                {labels.activeSessionEyebrow}
-              </p>
               <BannerMessage template={labels.activeSessionBanner} name={organizerDisplayName} />
-              {isOrganizer ? (
-                <p className="mt-1 text-xs leading-relaxed text-pideh-muted">
-                  {labels.leaveAsOrganizerHint}
-                </p>
-              ) : null}
             </div>
-            <div className="flex w-full shrink-0 gap-2 sm:w-auto">
+            <div className="flex shrink-0 flex-col gap-1.5">
               <AppLink
                 href={`/${locale}/group-orders/${inviteToken}`}
                 prefetchPolicy="intent"
-                className="inline-flex h-11 flex-1 items-center justify-center rounded-full bg-pideh-orange px-5 text-sm font-bold text-white transition hover:brightness-105 sm:flex-none"
+                className="inline-flex h-8 items-center justify-center rounded-full bg-pideh-orange px-3 text-xs font-bold text-white transition hover:brightness-105"
               >
                 {labels.openGroupOrder}
               </AppLink>
               <button
                 type="button"
                 disabled={pending}
-                className="inline-flex h-11 flex-1 items-center justify-center rounded-full border-2 border-pideh-ink/10 bg-pideh-cream px-4 text-sm font-bold text-pideh-ink transition hover:border-pideh-orange hover:text-pideh-orange disabled:opacity-50 sm:flex-none"
+                className="inline-flex h-8 items-center justify-center rounded-full border border-pideh-ink/10 bg-pideh-cream px-3 text-xs font-bold text-pideh-ink transition hover:border-pideh-orange hover:text-pideh-orange disabled:opacity-50"
                 onClick={() => setConfirmOpen(true)}
               >
                 {labels.leaveSession}

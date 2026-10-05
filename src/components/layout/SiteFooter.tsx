@@ -31,6 +31,7 @@ type SocialItem = {
  * Artwork lives in `public/assets/payments/` — swap the files, not this list.
  */
 const PAYMENT_BADGES: readonly { label: string; src: string }[] = [
+  { label: 'Mastercard', src: '/assets/payments/mastercard.png' },
   { label: 'ArCa', src: '/assets/payments/arca.png' },
   { label: 'Visa', src: '/assets/payments/visa.png' },
 ];

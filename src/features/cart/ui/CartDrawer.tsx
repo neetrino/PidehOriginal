@@ -241,6 +241,8 @@ export function CartDrawer({
           checkoutLabel={isGroupSource ? labels.continueGroupOrder : labels.checkout}
           checkoutHref={view?.checkoutHref ?? `/${locale}/checkout`}
           totalAmount={view?.totalAmount ?? 0}
+          earnPoints={view?.earnPoints ?? 0}
+          earnLabel={labels.futureBonus}
           hasItems={hasItems}
           onCheckout={closeDrawer}
         />

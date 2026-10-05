@@ -163,6 +163,7 @@ export async function saveDeliverySettingsAction(
     const storage = getProviders().storage;
     await Promise.all(
       orphanedKeys.map(async (objectKey) => {
+        if (objectKey.startsWith('/')) return;
         try {
           await storage.deleteObject(objectKey);
         } catch (error) {

@@ -4,6 +4,7 @@ import {
   MOBILE_STOREFRONT_COLUMN,
   MOBILE_STOREFRONT_SHELL,
 } from '@/components/layout/page-container';
+import { getCurrentUser } from '@/lib/auth/session';
 import { toTelHref } from '@/lib/contact/tel-href';
 import type { Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -20,12 +21,13 @@ type MobileStorefrontHeaderProps = {
  * brand row plus the back / search row. Hidden on landscape tablets and
  * desktop, where {@link import("./SiteHeader").SiteHeader} takes over.
  */
-export function MobileStorefrontHeader({
+export async function MobileStorefrontHeader({
   locale,
   currency,
   dictionary,
 }: MobileStorefrontHeaderProps) {
   const contact = dictionary.contact;
+  const user = await getCurrentUser();
 
   return (
     <div className={`${MOBILE_STOREFRONT_SHELL} mobile-storefront-header`}>
@@ -34,6 +36,7 @@ export function MobileStorefrontHeader({
           locale={locale}
           dictionary={dictionary}
           currency={currency}
+          isSignedIn={Boolean(user)}
           phoneHref={toTelHref(contact.storePhone)}
           phoneLabel={contact.callTitle}
           className="flex items-end justify-between gap-4"

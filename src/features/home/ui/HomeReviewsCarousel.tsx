@@ -14,7 +14,7 @@ type HomeReviewsCarouselProps = {
 
 function ReviewCard({ review }: { review: HomeReviewItem }) {
   return (
-    <article className="flex h-[242px] w-[min(434px,85vw)] shrink-0 flex-col overflow-hidden rounded-[24px] bg-white p-6 shadow-[0px_10px_24px_0px_rgba(31,20,8,0.09)]">
+    <article className="flex h-[242px] w-[min(434px,85vw)] shrink-0 flex-col overflow-hidden rounded-[24px] bg-white p-6">
       <div className="flex items-center gap-[14px]">
         <div className="size-12 shrink-0 rounded-full bg-[#ff6b00]" aria-hidden="true" />
         <div className="flex flex-col gap-[3px]">

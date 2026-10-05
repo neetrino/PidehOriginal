@@ -14,7 +14,6 @@ const FILTER_INPUT =
 type AdminProductsFiltersProps = {
   total: number;
   q?: string;
-  sku?: string;
   categoryId?: string;
   status: 'all' | 'active' | 'inactive' | 'draft' | 'low_remaining';
   categories: AdminCategoryOption[];
@@ -27,7 +26,6 @@ type AdminProductsFiltersProps = {
 export function AdminProductsFilters({
   total,
   q,
-  sku,
   categoryId,
   status,
   categories,
@@ -79,16 +77,6 @@ export function AdminProductsFilters({
             placeholder={copy.searchByTitleOrSlugPlaceholder}
             className={`${FILTER_INPUT} mt-1`}
             aria-label={copy.searchByTitleOrSlugAria}
-          />
-        </label>
-        <label>
-          <span className={ADMIN_LABEL}>{copy.searchBySku}</span>
-          <input
-            name="sku"
-            defaultValue={sku ?? ''}
-            placeholder={copy.searchBySkuPlaceholder}
-            className={`${FILTER_INPUT} mt-1`}
-            aria-label={copy.searchBySkuAria}
           />
         </label>
         <div>

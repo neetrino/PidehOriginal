@@ -1,5 +1,6 @@
 'use client';
 
+import { Pencil, Trash2 } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -99,22 +100,24 @@ export function AdminDeliveryLocations({ locale, locations, copy }: AdminDeliver
                       {formatMoneyAmount(location.priceAmount, 'AMD', locale)}
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
-                      <div className="flex flex-wrap items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-1">
                         <button
                           type="button"
                           onClick={() => openEdit(location)}
-                          className="text-sm font-medium text-[#ff6b00] hover:underline"
+                          className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                           disabled={isPending}
+                          aria-label={copy.common.edit}
                         >
-                          {copy.common.edit}
+                          <Pencil className="h-4 w-4" />
                         </button>
                         <button
                           type="button"
                           onClick={() => onDelete(location.id)}
-                          className="text-sm font-medium text-red-700 hover:underline"
+                          className="rounded p-1.5 text-red-600 hover:bg-red-50"
                           disabled={isPending}
+                          aria-label={copy.common.delete}
                         >
-                          {copy.common.delete}
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </td>

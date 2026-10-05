@@ -30,7 +30,6 @@ type HomeFeaturedProductsProps = {
   wishlistLabel: string;
   orderLabel: string;
   outOfStockLabel: string;
-  ratingLabel: string;
   prepTimeLabel: string;
   isSignedIn: boolean;
   products: readonly FeaturedItem[];
@@ -48,7 +47,6 @@ export function HomeFeaturedProducts({
   wishlistLabel,
   orderLabel,
   outOfStockLabel,
-  ratingLabel,
   prepTimeLabel,
   isSignedIn,
   products,
@@ -120,7 +118,6 @@ export function HomeFeaturedProducts({
                   wishlistLabel={wishlistLabel}
                   orderLabel={orderLabel}
                   outOfStockLabel={outOfStockLabel}
-                  ratingLabel={ratingLabel}
                   prepTimeLabel={prepTimeLabel}
                 />
               </StaggerItem>

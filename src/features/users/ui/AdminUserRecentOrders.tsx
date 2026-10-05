@@ -36,6 +36,7 @@ type AdminUserRecentOrdersProps = {
   title: string;
   emptyLabel: string;
   copy: Dictionary['admin'];
+  showHeader?: boolean;
 };
 
 function RecentOrderRow({
@@ -79,12 +80,13 @@ export function AdminUserRecentOrders({
   title,
   emptyLabel,
   copy,
+  showHeader = true,
 }: AdminUserRecentOrdersProps) {
   const drawer = useAdminOrderDetailsDrawer(locale);
 
   return (
     <>
-      <AdminUserLoyaltySectionShell title={title} icon={ClipboardList}>
+      <AdminUserLoyaltySectionShell title={title} icon={ClipboardList} showHeader={showHeader}>
         {orders.length === 0 ? (
           <p className="text-sm text-[#1e1e1e]/50">{emptyLabel}</p>
         ) : (

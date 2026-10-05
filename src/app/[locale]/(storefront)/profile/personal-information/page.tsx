@@ -25,18 +25,21 @@ export default async function PersonalInformationPage({ params }: PersonalInform
         firstName={user.firstName}
         lastName={user.lastName}
         email={user.email}
+        phone={user.phone ?? ''}
         labels={{
           eyebrow: dictionary.profile.loyaltyEyebrow,
           title: dictionary.profile.personal,
           firstName: dictionary.auth.firstName,
           lastName: dictionary.auth.lastName,
           email: dictionary.auth.email,
+          phone: dictionary.auth.phone,
           cancel: dictionary.profile.cancel,
           save: dictionary.profile.save,
           saving: dictionary.profile.saving,
           firstNamePlaceholder: dictionary.auth.firstName,
           lastNamePlaceholder: dictionary.auth.lastName,
           emailPlaceholder: dictionary.auth.email,
+          phonePlaceholder: dictionary.auth.phone,
         }}
       />
     </section>

@@ -91,6 +91,7 @@
     "balance": "Баланс",
     "initial": "Номинал",
     "recipient": "Получатель",
+    "created": "Добавлена",
     "expires": "Срок",
     "filters": {
       "mine": "Мои подарочные карты",

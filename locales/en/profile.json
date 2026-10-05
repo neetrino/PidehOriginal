@@ -91,6 +91,7 @@
     "balance": "Balance",
     "initial": "Initial value",
     "recipient": "Recipient",
+    "created": "Added",
     "expires": "Expires",
     "filters": {
       "mine": "My gift cards",

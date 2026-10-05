@@ -11,31 +11,17 @@ import { listCouponsAssignedToUser } from '@/features/promotions';
 import { getAdminUserById } from '@/features/users/application/queries';
 import {
   getEligibleUserStatuses,
-  isUserRole,
   isUserStatus,
 } from '@/features/users/domain/user-lifecycle';
 import { AdminUserLoyaltySections } from '@/features/users/ui/AdminUserLoyaltySections';
 import { UpdateUserAdminCommentForm } from '@/features/users/ui/UpdateUserAdminCommentForm';
-import { UpdateUserRoleForm } from '@/features/users/ui/UpdateUserRoleForm';
-import { UpdateUserStatusForm } from '@/features/users/ui/UpdateUserStatusForm';
+import { UserStatusControl } from '@/features/users/ui/UserStatusControl';
 import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminUserDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
-
-function userStatusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === 'ACTIVE') return 'bg-green-100 text-green-800';
-  if (normalized === 'PENDING' || normalized === 'INVITED') {
-    return 'bg-yellow-100 text-yellow-800';
-  }
-  if (normalized === 'SUSPENDED' || normalized === 'BANNED' || normalized === 'ANONYMIZED') {
-    return 'bg-red-100 text-red-800';
-  }
-  return 'bg-gray-100 text-gray-800';
-}
 
 function userRoleBadgeClass(role: string): string {
   return role.toUpperCase() === 'ADMIN' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800';
@@ -62,7 +48,6 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
     listCouponsAssignedToUser(user.id),
   ]);
 
-  const role = isUserRole(user.role) ? user.role : null;
   const status = isUserStatus(user.status) ? user.status : null;
   const eligibleStatuses = status ? getEligibleUserStatuses(status) : [];
   const isAnonymized = status === 'ANONYMIZED';
@@ -88,11 +73,19 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
             {d.role}{' '}
             <span className={`${ADMIN_BADGE} ${userRoleBadgeClass(user.role)}`}>{user.role}</span>
           </p>
-          <p className="text-gray-700">
+          <p className="flex flex-wrap items-center gap-2 text-gray-700">
             {d.status}{' '}
-            <span className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}>
-              {user.status}
-            </span>
+            {status ? (
+              <UserStatusControl
+                locale={locale}
+                userId={user.id}
+                currentStatus={status}
+                eligibleStatuses={eligibleStatuses}
+                ariaLabel={t.users.statusForm.newStatusAria}
+              />
+            ) : (
+              <span className="text-sm text-red-700">{d.unknownStatus}</span>
+            )}
           </p>
           <p className="text-gray-700">{d.phone.replace('{phone}', user.phone ?? t.common.none)}</p>
           <p className="text-gray-700">
@@ -116,31 +109,6 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
           </p>
         </div>
       </Card>
-
-      <div className="mb-6 grid gap-4 md:grid-cols-2">
-        {role ? (
-          <UpdateUserRoleForm
-            locale={locale}
-            userId={user.id}
-            currentRole={role}
-            disabled={isAnonymized}
-            copy={t}
-          />
-        ) : (
-          <p className="text-sm text-red-700">{d.unknownRole}</p>
-        )}
-        {status ? (
-          <UpdateUserStatusForm
-            locale={locale}
-            userId={user.id}
-            currentStatus={status}
-            eligibleStatuses={eligibleStatuses}
-            copy={t}
-          />
-        ) : (
-          <p className="text-sm text-red-700">{d.unknownStatus}</p>
-        )}
-      </div>
 
       <div className="mb-6">
         <UpdateUserAdminCommentForm

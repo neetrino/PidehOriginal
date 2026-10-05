@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { PAGE_CONTAINER, STOREFRONT_DESKTOP_ONLY } from '@/components/layout/page-container';
 import { RevealOnView } from '@/components/motion/RevealOnView';
-import { fadeUp, titleSweep } from '@/components/motion/presets';
+import { titleSweep } from '@/components/motion/presets';
 import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
 import {
   catalogHref,
@@ -14,7 +14,6 @@ import {
   type CatalogSection,
 } from '@/features/products/application/list-catalog-sections';
 import { CatalogControls } from '@/features/products/ui/CatalogControls';
-import { ShopBreadcrumb } from '@/features/products/ui/ShopBreadcrumb';
 import { ShopProductGrid } from '@/features/products/ui/ShopProductGrid';
 import { MobileCatalog } from '@/features/products/ui/mobile/MobileCatalog';
 import { buildMobileCatalogSections } from '@/features/products/ui/mobile/mobile-catalog-sections';
@@ -119,14 +118,7 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
       />
 
       <div className={`pt-6 pb-28 md:pt-8 md:pb-32 ${STOREFRONT_DESKTOP_ONLY} ${PAGE_CONTAINER}`}>
-        <RevealOnView variants={fadeUp}>
-          <ShopBreadcrumb
-            backHref={`/${rawLocale}`}
-            backLabel={catalogCopy.back}
-            currentLabel={catalogCopy.title}
-          />
-        </RevealOnView>
-        <RevealOnView variants={titleSweep} delay={0.06}>
+        <RevealOnView variants={titleSweep}>
           <h1 className="font-display mt-5 text-[clamp(3.5rem,8vw,4.875rem)] leading-[0.95] text-[#ff6b00]">
             {catalogCopy.title}
           </h1>
@@ -167,7 +159,6 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
               wishlistLabel={dictionary.nav.wishlist}
               orderLabel={dictionary.home.orderCta}
               outOfStockLabel={dictionary.product.outOfStock}
-              ratingLabel={dictionary.product.cardRating}
               prepTimeLabel={dictionary.product.prepTime}
               paginationLabel={catalogCopy.paginationLabel}
               previousPage={catalogCopy.previousPage}

@@ -11,8 +11,8 @@ import { MobileCatalogSection } from '@/features/products/ui/mobile/MobileCatalo
 import type { Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
-/** Gap between copyright and the fixed nav dock. */
-const COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX - 48;
+/** Gap under the copyright so the raised home button and dock stay fully visible. */
+const COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX + 72;
 
 export type MobileCatalogSectionData = {
   key: string;
@@ -86,7 +86,6 @@ export function MobileCatalog({
             isSignedIn={isSignedIn}
             wishlistLabel={dictionary.nav.wishlist}
             addLabel={dictionary.home.orderCta}
-            ratingLabel={dictionary.product.cardRating}
             prepTimeLabel={dictionary.product.prepTime}
             priorityCount={index === 0 ? 2 : 0}
           />

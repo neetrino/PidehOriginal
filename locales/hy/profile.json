@@ -91,6 +91,7 @@
     "balance": "Մնացորդ",
     "initial": "Սկզբնական արժեք",
     "recipient": "Ստացող",
+    "created": "Ավելացված",
     "expires": "Ավարտ",
     "filters": {
       "mine": "Իմ Gift Card-երը",

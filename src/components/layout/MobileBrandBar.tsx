@@ -1,8 +1,11 @@
 'use client';
 
+import { Users, X } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
 
 import { MobileNavDrawer } from '@/components/layout/MobileNavDrawer';
+import { CreateGroupOrderModal } from '@/features/group-orders/ui/CreateGroupOrderModal';
 import { AppLink } from '@/components/ui/AppLink';
 import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 import type { Locale } from '@/lib/i18n/config';
@@ -16,6 +19,7 @@ type MobileBrandBarProps = {
   phoneLabel: string;
   /** Enables the language/currency switcher inside the nav drawer. */
   currency?: Currency;
+  isSignedIn: boolean;
   /** Positioning classes — the row itself only owns its inner layout. */
   className?: string;
 };
@@ -30,14 +34,17 @@ export function MobileBrandBar({
   phoneHref,
   phoneLabel,
   currency,
+  isSignedIn,
   className = '',
 }: MobileBrandBarProps) {
+  const [groupOpen, setGroupOpen] = useState(false);
   const navItems = [
     { href: `/${locale}`, label: dictionary.nav.home },
     { href: `/${locale}/products`, label: dictionary.nav.menu },
     { href: `/${locale}/about`, label: dictionary.nav.about },
     { href: `/${locale}/contact`, label: dictionary.nav.contact },
     { href: `/${locale}/blog`, label: dictionary.nav.blog },
+    { href: `/${locale}/legal`, label: dictionary.nav.policies },
   ] as const;
 
   return (
@@ -73,16 +80,41 @@ export function MobileBrandBar({
           locale={locale}
           dictionary={dictionary}
           currency={currency}
+          isSignedIn={isSignedIn}
+          phoneHref={phoneHref}
+          phoneNumber={dictionary.contact.storePhone}
+          phoneLabel={phoneLabel}
+          onOpenGroupOrder={() => setGroupOpen(true)}
           navItems={navItems}
           triggerClassName="absolute inset-y-0 left-0 z-10 w-[52%] touch-manipulation bg-transparent"
-          triggerContent={<span className="sr-only">{dictionary.nav.openMenu}</span>}
+          triggerContent={(open) =>
+            open ? (
+              <span className="absolute inset-0 flex items-center justify-center rounded-l-full bg-[#FFD54A]">
+                <X className="size-6 text-[#FF6900]" strokeWidth={2.75} aria-hidden="true" />
+                <span className="sr-only">{dictionary.nav.closeMenu}</span>
+              </span>
+            ) : (
+              <span className="sr-only">{dictionary.nav.openMenu}</span>
+            )
+          }
         />
-        <a
-          href={phoneHref}
-          className="absolute inset-y-0 right-0 z-10 w-[48%] touch-manipulation"
-          aria-label={phoneLabel}
-        />
+        <button
+          type="button"
+          className="absolute inset-y-0 right-0 z-10 flex w-[48%] items-center justify-center touch-manipulation"
+          aria-label={dictionary.groupOrder.createButton}
+          onClick={() => setGroupOpen(true)}
+        >
+          <span className="flex size-[52px] items-center justify-center rounded-full bg-[#FF6900] text-[#FFD54A]">
+            <Users className="size-5" aria-hidden="true" />
+          </span>
+        </button>
       </div>
+      <CreateGroupOrderModal
+        open={groupOpen}
+        onClose={() => setGroupOpen(false)}
+        locale={locale}
+        labels={dictionary.groupOrder}
+      />
     </div>
   );
 }

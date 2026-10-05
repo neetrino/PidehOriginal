@@ -21,18 +21,21 @@ type PersonalInformationFormProps = {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
   labels: {
     eyebrow: string;
     title: string;
     firstName: string;
     lastName: string;
     email: string;
+    phone: string;
     cancel: string;
     save: string;
     saving: string;
     firstNamePlaceholder: string;
     lastNamePlaceholder: string;
     emailPlaceholder: string;
+    phonePlaceholder: string;
   };
 };
 
@@ -43,6 +46,7 @@ export function PersonalInformationForm({
   firstName,
   lastName,
   email,
+  phone,
   labels,
 }: PersonalInformationFormProps) {
   const action = updateProfileAction.bind(null, locale);
@@ -51,14 +55,15 @@ export function PersonalInformationForm({
     firstName,
     lastName,
     email,
+    phone,
   });
 
   useEffect(() => {
-    setValues({ firstName, lastName, email });
-  }, [firstName, lastName, email]);
+    setValues({ firstName, lastName, email, phone });
+  }, [firstName, lastName, email, phone]);
 
   function resetToSaved(): void {
-    setValues({ firstName, lastName, email });
+    setValues({ firstName, lastName, email, phone });
   }
 
   return (
@@ -103,19 +108,34 @@ export function PersonalInformationForm({
             </label>
           </div>
 
-          <label className={PROFILE_LABEL}>
-            {labels.email}
-            <input
-              name="email"
-              type="email"
-              required
-              value={values.email}
-              onChange={(event) => setValues((prev) => ({ ...prev, email: event.target.value }))}
-              placeholder={labels.emailPlaceholder}
-              className={PROFILE_FIELD}
-              autoComplete="email"
-            />
-          </label>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+            <label className={PROFILE_LABEL}>
+              {labels.email}
+              <input
+                name="email"
+                type="email"
+                required
+                value={values.email}
+                onChange={(event) => setValues((prev) => ({ ...prev, email: event.target.value }))}
+                placeholder={labels.emailPlaceholder}
+                className={PROFILE_FIELD}
+                autoComplete="email"
+              />
+            </label>
+            <label className={PROFILE_LABEL}>
+              {labels.phone}
+              <input
+                name="phone"
+                type="tel"
+                required
+                value={values.phone}
+                onChange={(event) => setValues((prev) => ({ ...prev, phone: event.target.value }))}
+                placeholder={labels.phonePlaceholder}
+                className={PROFILE_FIELD}
+                autoComplete="tel"
+              />
+            </label>
+          </div>
 
           {state.error ? (
             <p className="text-sm text-red-700" role="alert">

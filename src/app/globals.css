@@ -361,6 +361,15 @@ body {
 
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
   /* Phone + iPad portrait: Figma mobile header + dock. */
+  .storefront-shell .storefront-main {
+    padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* The group-order actions sit in the page flow so the dock does not cover them. */
+  .group-order-actions {
+    position: static;
+  }
+
   .storefront-shell .site-header {
     display: none !important;
   }
@@ -389,8 +398,8 @@ body {
   .storefront-shell:has(.pideh-login) .storefront-main,
   .storefront-shell:has(.pideh-shop) .storefront-main,
   .storefront-shell:has(.pideh-pdp) .storefront-main {
-    /* Room for fixed Figma nav dock (~240px) + safe area */
-    padding-bottom: 12rem;
+    /* Room for the fixed nav dock and the raised home button. */
+    padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
   }
 
   /* Mobile home: dock clearance lives on .pideh-home-mobile (see MobileHome). */
@@ -779,7 +788,7 @@ body {
 /**
  * MaMarie-style mobile profile page: slightly cooler canvas behind hub cards.
  * Hide the storefront top header — profile hub is the chrome on mobile.
- * Hide the storefront bottom tab bar — profile has its own hub chrome.
+ * Keep the bottom tab bar so people can leave the profile for home, shop, or cart.
  */
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
   .storefront-shell:has(.profile-mobile-page) .site-header {
@@ -788,11 +797,8 @@ body {
 
   .storefront-shell:has(.profile-mobile-page) .storefront-main {
     padding-top: 0.5rem;
-    padding-bottom: 2.5rem;
-  }
-
-  .storefront-shell:has(.profile-mobile-page) .mobile-bottom-nav {
-    display: none !important;
+    /* Clear the fixed orange dock (same band as the rest of the storefront). */
+    padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
   }
 
   .profile-mobile-tab-sheet-scroll {

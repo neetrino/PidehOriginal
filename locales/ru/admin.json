@@ -563,6 +563,9 @@
       "saturday": "Суббота",
       "sunday": "Воскресенье",
       "closedDates": "Закрытые даты",
+      "closedDatePlaceholder": "Выберите дату",
+      "prevMonth": "Предыдущий месяц",
+      "nextMonth": "Следующий месяц",
       "closeThisDay": "Закрыть этот день",
       "removeClosedDateAria": "Удалить закрытую дату {date}",
       "noClosedDates": "Закрытых дат нет. Добавьте праздники или дни без доставки."

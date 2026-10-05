@@ -27,6 +27,8 @@ type LocaleCurrencySwitcherProps = {
   languageLabel: string;
   /** Figma header 1:113 — locale code + chevron, currency stays in the menu. */
   compact?: boolean;
+  /** Always-open columns inside the mobile menu, instead of a floating dropdown. */
+  embedded?: boolean;
 };
 
 function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
@@ -85,12 +87,84 @@ function SwitcherOption({
  * Combined currency + language control matching MaMarie navbar:
  * pill trigger `AMD / Հայ`, two-column dropdown.
  */
+function CurrencyLanguageGrid({
+  locale,
+  currency,
+  currencyLabel,
+  languageLabel,
+  pending,
+  reduceMotion,
+  onCurrency,
+  onLocale,
+  fill,
+}: {
+  locale: Locale;
+  currency: Currency;
+  currencyLabel: string;
+  languageLabel: string;
+  pending: boolean;
+  reduceMotion: boolean;
+  onCurrency: (next: Currency) => void;
+  onLocale: (next: Locale) => void;
+  fill: boolean;
+}) {
+  return (
+    <div
+      className={`flex overflow-hidden rounded-[22px] border-2 border-[#1e1e1e] bg-[#fff8e7] py-2.5 shadow-[6px_6px_0_#1e1e1e] ${
+        fill ? 'w-full shadow-none' : 'w-max'
+      }`}
+    >
+      <div className={`border-r-2 border-[#1e1e1e]/12 ${fill ? 'min-w-0 flex-1' : 'w-max'}`}>
+        <p className="whitespace-nowrap px-3 pb-1.5 text-center text-[10px] font-extrabold tracking-[0.16em] text-[#ff6b00] uppercase">
+          {currencyLabel}
+        </p>
+        <ul role="listbox" aria-label={currencyLabel} className="px-1.5">
+          {currencies.map((code) => (
+            <li key={code} role="option" aria-selected={code === currency}>
+              <SwitcherOption
+                selected={code === currency}
+                disabled={pending}
+                layoutId="pideh-currency-pill"
+                reduceMotion={reduceMotion}
+                onClick={() => onCurrency(code)}
+              >
+                {code}
+              </SwitcherOption>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className={fill ? 'min-w-0 flex-1' : 'w-max'}>
+        <p className="whitespace-nowrap px-3 pb-1.5 text-center text-[10px] font-extrabold tracking-[0.16em] text-[#ff6b00] uppercase">
+          {languageLabel}
+        </p>
+        <ul role="listbox" aria-label={languageLabel} className="px-1.5">
+          {locales.map((code) => (
+            <li key={code} role="option" aria-selected={code === locale}>
+              <SwitcherOption
+                selected={code === locale}
+                layoutId="pideh-locale-pill"
+                reduceMotion={reduceMotion}
+                ariaLabel={`${localeShortLabels[code]}: ${localeLabels[code]}`}
+                onClick={() => onLocale(code)}
+              >
+                {localeLabels[code]}
+              </SwitcherOption>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 export function LocaleCurrencySwitcher({
   locale,
   currency,
   currencyLabel,
   languageLabel,
   compact = false,
+  embedded = false,
 }: LocaleCurrencySwitcherProps) {
   const router = useRouter();
   const pathname = usePathname() ?? `/${locale}`;
@@ -174,6 +248,22 @@ export function LocaleCurrencySwitcher({
     router.push(replaceLocaleInPath(pathname, next));
   }
 
+  if (embedded) {
+    return (
+      <CurrencyLanguageGrid
+        locale={locale}
+        currency={currency}
+        currencyLabel={currencyLabel}
+        languageLabel={languageLabel}
+        pending={pending}
+        reduceMotion={reduceMotion}
+        onCurrency={selectCurrency}
+        onLocale={selectLocale}
+        fill
+      />
+    );
+  }
+
   return (
     <div
       ref={rootRef}
@@ -236,55 +326,17 @@ export function LocaleCurrencySwitcher({
             className="absolute right-0 top-full z-[310] origin-top pt-2"
           >
             <LayoutGroup>
-              <div className="flex w-max overflow-hidden rounded-[22px] border-2 border-[#1e1e1e] bg-[#fff8e7] py-2.5 shadow-[6px_6px_0_#1e1e1e]">
-                <div className="w-max border-r-2 border-[#1e1e1e]/12">
-                  <p className="whitespace-nowrap px-3 pb-1.5 text-center text-[10px] font-extrabold tracking-[0.16em] text-[#ff6b00] uppercase">
-                    {currencyLabel}
-                  </p>
-                  <ul role="listbox" aria-label={currencyLabel} className="px-1.5">
-                    {currencies.map((code) => {
-                      const selected = code === currency;
-                      return (
-                        <li key={code} role="option" aria-selected={selected}>
-                          <SwitcherOption
-                            selected={selected}
-                            disabled={pending}
-                            layoutId="pideh-currency-pill"
-                            reduceMotion={reduceMotion}
-                            onClick={() => selectCurrency(code)}
-                          >
-                            {code}
-                          </SwitcherOption>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-
-                <div className="w-max">
-                  <p className="whitespace-nowrap px-3 pb-1.5 text-center text-[10px] font-extrabold tracking-[0.16em] text-[#ff6b00] uppercase">
-                    {languageLabel}
-                  </p>
-                  <ul role="listbox" aria-label={languageLabel} className="px-1.5">
-                    {locales.map((code) => {
-                      const selected = code === locale;
-                      return (
-                        <li key={code} role="option" aria-selected={selected}>
-                          <SwitcherOption
-                            selected={selected}
-                            layoutId="pideh-locale-pill"
-                            reduceMotion={reduceMotion}
-                            ariaLabel={`${localeShortLabels[code]}: ${localeLabels[code]}`}
-                            onClick={() => selectLocale(code)}
-                          >
-                            {localeLabels[code]}
-                          </SwitcherOption>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              </div>
+              <CurrencyLanguageGrid
+                locale={locale}
+                currency={currency}
+                currencyLabel={currencyLabel}
+                languageLabel={languageLabel}
+                pending={pending}
+                reduceMotion={reduceMotion}
+                onCurrency={selectCurrency}
+                onLocale={selectLocale}
+                fill={false}
+              />
             </LayoutGroup>
           </motion.div>
         ) : null}

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 
 import { ADMIN_CHECKBOX, ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import { formatCalendarDate } from '@/features/checkout/ui/delivery-slot-calendar';
+import { AdminDateField } from '@/features/delivery/ui/AdminDateField';
 import type {
   DayHours,
   DeliveryScheduleSettings,
@@ -14,6 +16,7 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary';
 const WEEKDAYS: IsoWeekday[] = [1, 2, 3, 4, 5, 6, 7];
 
 type AdminDeliveryScheduleEditorProps = {
+  locale: string;
   value: DeliveryScheduleSettings;
   onChange: (value: DeliveryScheduleSettings) => void;
   disabled?: boolean;
@@ -59,6 +62,7 @@ function withValidOpenClose(
 
 /** Admin controls for weekly hours, slot size, and closed dates. */
 export function AdminDeliveryScheduleEditor({
+  locale,
   value,
   onChange,
   disabled = false,
@@ -220,13 +224,15 @@ export function AdminDeliveryScheduleEditor({
 
       <div>
         <span className={ADMIN_LABEL}>{copy.closedDates}</span>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <input
-            type="date"
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <AdminDateField
             value={closedDraft}
             disabled={disabled}
-            className={ADMIN_INPUT}
-            onChange={(event) => setClosedDraft(event.target.value)}
+            locale={locale}
+            placeholder={copy.closedDatePlaceholder}
+            prevMonthLabel={copy.prevMonth}
+            nextMonthLabel={copy.nextMonth}
+            onChange={setClosedDraft}
           />
           <button
             type="button"
@@ -244,7 +250,7 @@ export function AdminDeliveryScheduleEditor({
                 key={date}
                 className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm text-gray-800"
               >
-                {date}
+                {formatCalendarDate(date, locale)}
                 <button
                   type="button"
                   disabled={disabled}

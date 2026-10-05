@@ -8,14 +8,17 @@ import type { Currency } from '@/lib/money/currency';
 export function AdminUserLoyaltySectionShell({
   title,
   icon: Icon,
+  showHeader = true,
   children,
 }: {
   title: string;
   icon: LucideIcon;
+  showHeader?: boolean;
   children: ReactNode;
 }) {
   return (
     <section className={`${ADMIN_CARD} p-5 sm:p-6`}>
+      {showHeader ? (
       <header className="mb-4 flex items-center gap-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#ff6b00]/12 text-[#ff6b00]">
           <Icon className="h-4 w-4" aria-hidden="true" />
@@ -24,6 +27,7 @@ export function AdminUserLoyaltySectionShell({
           {title}
         </h2>
       </header>
+      ) : null}
       {children}
     </section>
   );

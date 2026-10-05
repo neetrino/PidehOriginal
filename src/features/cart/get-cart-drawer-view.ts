@@ -3,6 +3,7 @@ import 'server-only';
 import { and, asc, eq, inArray, or } from 'drizzle-orm';
 
 import { getCartItemCount, getCartWithItems } from '@/features/cart/cart';
+import { previewCartEarnPoints } from '@/features/cart/preview-cart-earn-points';
 import { peekCartOrderMode } from '@/features/cart/order-mode';
 import type { CartOrderMode } from '@/features/cart/order-mode';
 import { getDb } from '@/db/client';
@@ -39,6 +40,8 @@ export type CartDrawerView = {
   subtotalAmount: number;
   shippingAmount: number;
   totalAmount: number;
+  /** Loyalty points credited after delivery. 0 for guests and empty carts. */
+  earnPoints: number;
   currency: Currency;
 };
 
@@ -173,6 +176,7 @@ async function buildPersonalCartDrawerView(
   }
 
   const subtotal = convertDisplayAmount(subtotalBase, quote.rate, currency, locale);
+  const earnPoints = await previewCartEarnPoints(subtotalBase);
 
   return {
     source: 'cart',
@@ -186,6 +190,7 @@ async function buildPersonalCartDrawerView(
     subtotalAmount: subtotal.amount,
     shippingAmount: 0,
     totalAmount: subtotal.amount,
+    earnPoints,
     currency,
   };
 }

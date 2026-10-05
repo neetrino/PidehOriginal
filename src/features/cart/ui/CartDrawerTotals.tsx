@@ -10,6 +10,8 @@ type CartDrawerTotalsProps = {
   checkoutLabel: string;
   checkoutHref: string;
   totalAmount: number;
+  earnPoints: number;
+  earnLabel: string;
   hasItems: boolean;
   onCheckout: () => void;
 };
@@ -20,6 +22,8 @@ export function CartDrawerTotals({
   checkoutLabel,
   checkoutHref,
   totalAmount,
+  earnPoints,
+  earnLabel,
   hasItems,
   onCheckout,
 }: CartDrawerTotalsProps) {
@@ -32,6 +36,12 @@ export function CartDrawerTotals({
             <CartMoneyFlow amount={totalAmount} currency={currency} />
           </dd>
         </div>
+        {earnPoints > 0 ? (
+          <div className="mt-2 flex items-center justify-between font-semibold text-[#1a4d3a]">
+            <dt>{earnLabel}</dt>
+            <dd className="tabular-nums">+{earnPoints}</dd>
+          </div>
+        ) : null}
       </dl>
       {hasItems ? (
         <AppLink

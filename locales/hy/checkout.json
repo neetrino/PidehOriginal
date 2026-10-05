@@ -68,7 +68,8 @@
     "arca": "Քարտով",
     "arcaDescription": "Վճարեք Visa, Mastercard կամ ArCa քարտով",
     "terminal": "Terminal",
-    "terminalDescription": "Վճարեք քարտով՝ պատվերը ստանալիս"
+    "terminalDescription": "Վճարեք քարտով՝ պատվերը ստանալիս",
+    "selectPaymentMethod": "Ընտրեք վճարման եղանակը"
   },
   "coupon": {
     "title": "Ունե՞ք պրոմոկոդ",
