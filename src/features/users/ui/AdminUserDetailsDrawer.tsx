@@ -8,6 +8,7 @@ import {
   isUserStatus,
 } from '@/features/users/domain/user-lifecycle';
 import { AdminUserLoyaltySections } from '@/features/users/ui/AdminUserLoyaltySections';
+import { AdminUserOrderNotes } from '@/features/users/ui/AdminUserOrderNotes';
 import { UpdateUserAdminCommentForm } from '@/features/users/ui/UpdateUserAdminCommentForm';
 import { UserStatusControl } from '@/features/users/ui/UserStatusControl';
 import { isLocale, type Locale } from '@/lib/i18n/config';
@@ -131,6 +132,13 @@ export function AdminUserDetailsDrawer({
               userId={user.id}
               initialComment={user.adminComment}
               disabled={isAnonymized}
+              copy={copy}
+            />
+
+            <AdminUserOrderNotes
+              key={user.id}
+              locale={language}
+              notes={detail.orderNotes}
               copy={copy}
             />
 

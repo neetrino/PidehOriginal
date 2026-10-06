@@ -7,6 +7,7 @@ import { AdminPageHeading } from '@/features/admin/ui/AdminPageHeading';
 import { ADMIN_BADGE } from '@/features/admin/ui/status-badge';
 import { getCustomerBonusSummary } from '@/features/bonuses';
 import { listCustomerGiftCards } from '@/features/gift-cards';
+import { listOrderNotesByUserId } from '@/features/orders';
 import { listCouponsAssignedToUser } from '@/features/promotions';
 import { getAdminUserById } from '@/features/users/application/queries';
 import {
@@ -14,6 +15,7 @@ import {
   isUserStatus,
 } from '@/features/users/domain/user-lifecycle';
 import { AdminUserLoyaltySections } from '@/features/users/ui/AdminUserLoyaltySections';
+import { AdminUserOrderNotes } from '@/features/users/ui/AdminUserOrderNotes';
 import { UpdateUserAdminCommentForm } from '@/features/users/ui/UpdateUserAdminCommentForm';
 import { UserStatusControl } from '@/features/users/ui/UserStatusControl';
 import { isLocale } from '@/lib/i18n/config';
@@ -42,10 +44,11 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
   }
 
   const { user, recentOrders } = detail;
-  const [bonuses, giftCards, coupons] = await Promise.all([
+  const [bonuses, giftCards, coupons, orderNotes] = await Promise.all([
     getCustomerBonusSummary(user.id, { limit: 10 }),
     listCustomerGiftCards(user.id, user.email),
     listCouponsAssignedToUser(user.id),
+    listOrderNotesByUserId(user.id),
   ]);
 
   const status = isUserStatus(user.status) ? user.status : null;
@@ -118,6 +121,10 @@ export default async function AdminUserDetailPage({ params }: AdminUserDetailPag
           disabled={isAnonymized}
           copy={t}
         />
+      </div>
+
+      <div className="mb-6">
+        <AdminUserOrderNotes locale={locale} notes={orderNotes} copy={t} />
       </div>
 
       <AdminUserLoyaltySections

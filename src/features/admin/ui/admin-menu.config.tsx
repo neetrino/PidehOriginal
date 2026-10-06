@@ -12,6 +12,7 @@ import {
   Package,
   Percent,
   Settings,
+  Star,
   Tags,
   TicketPercent,
   UserRound,
@@ -66,6 +67,12 @@ export function getAdminMenuItems(
       isSubCategory: true,
       parentGroupId: 'products',
       icon: navIcon(Tags),
+    },
+    {
+      id: 'reviews',
+      label: nav.reviews,
+      href: `${base}/reviews`,
+      icon: navIcon(Star),
     },
     {
       id: 'delivery',

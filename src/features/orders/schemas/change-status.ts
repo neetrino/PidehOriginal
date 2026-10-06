@@ -36,9 +36,11 @@ export const archiveOrderSchema = z.object({
 
 export type ArchiveOrderInput = z.infer<typeof archiveOrderSchema>;
 
+export const ORDER_NOTE_MAX_LENGTH = 1000;
+
 export const addOrderNoteSchema = z.object({
   orderNumber: z.string().trim().min(1).max(64),
-  note: z.string().trim().min(1).max(1000),
+  note: z.string().trim().min(1).max(ORDER_NOTE_MAX_LENGTH),
 });
 
 export type AddOrderNoteInput = z.infer<typeof addOrderNoteSchema>;
