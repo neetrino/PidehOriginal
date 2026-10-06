@@ -168,9 +168,8 @@ export function BulkChangeOrderStatusForm({
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.status}</th>
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.payment}</th>
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.total}</th>
-                <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.bonus}</th>
-                <th className={ADMIN_TABLE_TH}>{copy.orders.table.placed}</th>
                 <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.paymentMethod}</th>
+                <th className={ADMIN_TABLE_TH}>{copy.orders.table.placed}</th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
@@ -263,32 +262,21 @@ export function BulkChangeOrderStatusForm({
                     />
                   </td>
                   <td className={ADMIN_TABLE_TD_METRIC}>
-                    <span className="font-medium text-gray-900">
-                      {formatMoney(order.totalAmount, order.baseCurrency)}
-                    </span>
-                  </td>
-                  <td className={ADMIN_TABLE_TD_METRIC}>
-                    {order.bonusEarnedAmount > 0 || order.bonusRedeemedAmount > 0 ? (
-                      <div className="flex flex-col gap-0.5 text-xs">
-                        {order.bonusEarnedAmount > 0 ? (
-                          <span className="font-medium text-emerald-700">
-                            +{formatMoney(order.bonusEarnedAmount, order.baseCurrency)}
-                          </span>
-                        ) : null}
-                        {order.bonusRedeemedAmount > 0 ? (
-                          <span className="font-medium text-green-700">
-                            −{formatMoney(order.bonusRedeemedAmount, order.baseCurrency)}
-                          </span>
-                        ) : null}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-gray-400">{copy.orders.table.bonusEmpty}</span>
-                    )}
-                  </td>
-                  <td className={ADMIN_TABLE_TD}>
-                    <span className="text-xs text-gray-500">
-                      {formatYerevanDateTime(order.placedAt)}
-                    </span>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="font-medium text-gray-900">
+                        {formatMoney(order.totalAmount, order.baseCurrency)}
+                      </span>
+                      {order.bonusEarnedAmount > 0 ? (
+                        <span className="text-xs font-medium text-emerald-700">
+                          +{formatMoney(order.bonusEarnedAmount, order.baseCurrency)}
+                        </span>
+                      ) : null}
+                      {order.bonusRedeemedAmount > 0 ? (
+                        <span className="text-xs font-medium text-green-700">
+                          −{formatMoney(order.bonusRedeemedAmount, order.baseCurrency)}
+                        </span>
+                      ) : null}
+                    </div>
                   </td>
                   <td className={ADMIN_TABLE_TD_METRIC}>
                     <span className="text-sm font-medium text-gray-900">
@@ -296,6 +284,11 @@ export function BulkChangeOrderStatusForm({
                         order.paymentMethod,
                         copy.orders.newOrderAlert.paymentMethods,
                       )}
+                    </span>
+                  </td>
+                  <td className={ADMIN_TABLE_TD}>
+                    <span className="text-xs text-gray-500">
+                      {formatYerevanDateTime(order.placedAt)}
                     </span>
                   </td>
                 </tr>
