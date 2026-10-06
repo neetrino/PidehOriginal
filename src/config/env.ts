@@ -24,6 +24,11 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().min(1).optional(),
   /** Server + browser Google Maps Platform key (Geocoding, Routes, Places, Maps JS). */
   GOOGLE_MAPS_API_KEY: z.string().min(1).optional(),
+  /** Tidio live chat public key; widget is not rendered when unset. */
+  TIDIO_PUBLIC_KEY: z
+    .string()
+    .regex(/^[a-z0-9]+$/i)
+    .optional(),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;
@@ -61,6 +66,7 @@ export function getEnv(): AppEnv {
     EMAIL_FROM: optionalEnv(process.env.EMAIL_FROM),
     RESEND_API_KEY: optionalEnv(process.env.RESEND_API_KEY),
     GOOGLE_MAPS_API_KEY: optionalEnv(process.env.GOOGLE_MAPS_API_KEY),
+    TIDIO_PUBLIC_KEY: optionalEnv(process.env.TIDIO_PUBLIC_KEY),
   });
 
   if (!parsed.success) {
