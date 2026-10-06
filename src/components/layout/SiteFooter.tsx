@@ -31,6 +31,7 @@ type SocialItem = {
  * Artwork lives in `public/assets/payments/` — swap the files, not this list.
  */
 const PAYMENT_BADGES: readonly { label: string; src: string }[] = [
+  { label: 'Mastercard', src: '/assets/payments/mastercard.png' },
   { label: 'ArCa', src: '/assets/payments/arca.png' },
   { label: 'Visa', src: '/assets/payments/visa.png' },
 ];
@@ -254,7 +255,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 <p className="px-2 text-center text-sm leading-4 tracking-[0.35px] text-[#1e1e1e] xl:absolute xl:inset-x-0 xl:top-1/2 xl:m-0 xl:-translate-y-1/2">
                 {footer.copyright
                   .replace('{year}', String(year))
-                  .split('Neetrino IT Company')
+                  .split('Neetrino')
                   .map((part, index, parts) =>
                     index < parts.length - 1 ? (
                       <span key={`copy-${index}`}>
@@ -265,7 +266,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                           rel="noopener noreferrer"
                           className="text-[#ff6900] underline-offset-2 hover:underline"
                         >
-                          Neetrino IT Company
+                          Neetrino
                         </a>
                       </span>
                     ) : (

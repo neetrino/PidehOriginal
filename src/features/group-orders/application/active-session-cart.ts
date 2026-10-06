@@ -12,6 +12,7 @@ import {
   products,
 } from '@/db/schema';
 import type { CartDrawerView } from '@/features/cart/get-cart-drawer-view';
+import { previewCartEarnPoints } from '@/features/cart/preview-cart-earn-points';
 import { peekGroupOrderSession } from '@/features/group-orders/session';
 import type { Locale } from '@/lib/i18n/config';
 import { getCheckoutRateSnapshot } from '@/lib/fx/service';
@@ -162,6 +163,7 @@ export async function getActiveGroupSessionCartView(
   });
 
   const subtotal = convertDisplayAmount(subtotalBase, quote.rate, currency, locale);
+  const earnPoints = await previewCartEarnPoints(subtotalBase);
 
   return {
     source: 'group',
@@ -175,6 +177,7 @@ export async function getActiveGroupSessionCartView(
     subtotalAmount: subtotal.amount,
     shippingAmount: 0,
     totalAmount: subtotal.amount,
+    earnPoints,
     currency,
   };
 }

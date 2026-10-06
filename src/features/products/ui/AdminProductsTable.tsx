@@ -141,15 +141,17 @@ export function AdminProductsTable({
     <div className="flex flex-col gap-4">
       <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
         <p className="text-sm text-gray-700">{selectedLabel}</p>
-        <Button
-          type="button"
-          size="sm"
-          variant="danger"
-          disabled={isPending || selected.size === 0}
-          onClick={deleteSelected}
-        >
-          {copy.table.deleteSelected}
-        </Button>
+        {selected.size > 0 ? (
+          <Button
+            type="button"
+            size="sm"
+            variant="danger"
+            disabled={isPending}
+            onClick={deleteSelected}
+          >
+            {copy.table.deleteSelected}
+          </Button>
+        ) : null}
       </Card>
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}

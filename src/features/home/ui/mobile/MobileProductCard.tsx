@@ -23,7 +23,6 @@ type MobileProductCardProps = {
   addLabel: string;
   cartQuantity?: number;
   maxQuantity?: number;
-  ratingLabel?: string;
   prepTimeLabel?: string;
   priority?: boolean;
 };
@@ -49,7 +48,6 @@ export function MobileProductCard({
   addLabel,
   cartQuantity = 0,
   maxQuantity,
-  ratingLabel,
   prepTimeLabel,
   priority = false,
 }: MobileProductCardProps) {
@@ -101,20 +99,6 @@ export function MobileProductCard({
           emptyIconHeight={34}
           className="absolute -top-3 -right-1.5 z-20 size-[34px] bg-transparent text-[#ff6b00] shadow-none"
         />
-      </div>
-
-      <div
-        data-node-id="260:517"
-        className="flex h-[13px] w-full shrink-0 items-start overflow-hidden"
-      >
-        {ratingLabel ? (
-          <b
-            data-node-id="260:518"
-            className="font-montserrat-arm text-[13px] leading-[1.25] font-bold whitespace-nowrap text-[#ff6b00]"
-          >
-            {ratingLabel}
-          </b>
-        ) : null}
       </div>
 
       <div

@@ -8,7 +8,7 @@ import { Copy, Share2, Trash2, Users, X } from 'lucide-react';
 import { PidehPillButton } from '@/components/brand/PidehPillButton';
 import { AppLink } from '@/components/ui/AppLink';
 import { AddressAutocomplete } from '@/components/ui/AddressAutocomplete';
-import { AddressMapPicker } from '@/components/ui/AddressMapPicker';
+import { SelectDropdown } from '@/components/ui/SelectDropdown';
 import {
   cancelGroupOrderAction,
   joinGroupOrderAction,
@@ -29,10 +29,21 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
 import type { Currency } from '@/lib/money/currency';
 
+type GroupOrderDeliveryZone = {
+  id: string;
+  label: string;
+};
+
+function zoneIdForLabel(zones: GroupOrderDeliveryZone[], label: string | null): string {
+  if (!label) return '';
+  return zones.find((zone) => zone.label === label)?.id ?? '';
+}
+
 type GroupOrderPageClientProps = {
   locale: Locale;
   currency: Currency;
   labels: Dictionary['groupOrder'];
+  deliveryZones: GroupOrderDeliveryZone[];
   initialView: GroupOrderDetailView | null;
   inviteToken: string;
   needsJoin: boolean;
@@ -50,19 +61,22 @@ function GhostPillButton({
   children,
   onClick,
   disabled,
+  compact = false,
   className = '',
 }: {
   children: ReactNode;
   onClick: () => void;
   disabled?: boolean;
+  compact?: boolean;
   className?: string;
 }) {
+  const size = compact ? 'gap-1 px-3 py-1.5 text-xs' : 'gap-1.5 px-4 py-2.5 text-sm';
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-full border-2 border-pideh-ink/15 bg-white px-4 py-2.5 text-sm font-bold text-pideh-ink transition hover:border-pideh-orange hover:text-pideh-orange disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`inline-flex items-center justify-center rounded-full border-2 border-pideh-ink/15 bg-white font-bold text-pideh-ink transition hover:border-pideh-orange hover:text-pideh-orange disabled:cursor-not-allowed disabled:opacity-50 ${size} ${className}`}
     >
       {children}
     </button>
@@ -100,6 +114,7 @@ export function GroupOrderPageClient({
   initialView,
   inviteToken,
   needsJoin,
+  deliveryZones,
 }: GroupOrderPageClientProps) {
   const router = useRouter();
   const [view, setView] = useState(initialView);
@@ -109,10 +124,9 @@ export function GroupOrderPageClient({
   const [joinName, setJoinName] = useState('');
   const [spendLimit, setSpendLimit] = useState(initialView?.spendLimitAmount?.toString() ?? '');
   const [deliveryAddress, setDeliveryAddress] = useState(initialView?.deliveryAddress ?? '');
-  const [deliveryPoint, setDeliveryPoint] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const [deliveryRuleId, setDeliveryRuleId] = useState(
+    zoneIdForLabel(deliveryZones, initialView?.deliveryDistanceLabel ?? null),
+  );
   const cancelledHandledRef = useRef(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
@@ -120,8 +134,8 @@ export function GroupOrderPageClient({
     setView(initialView);
     setSpendLimit(initialView?.spendLimitAmount?.toString() ?? '');
     setDeliveryAddress(initialView?.deliveryAddress ?? '');
-    setDeliveryPoint(null);
-  }, [initialView]);
+    setDeliveryRuleId(zoneIdForLabel(deliveryZones, initialView?.deliveryDistanceLabel ?? null));
+  }, [initialView, deliveryZones]);
 
   useEffect(() => {
     if (view?.status !== 'CANCELLED' || cancelledHandledRef.current) {
@@ -265,6 +279,27 @@ export function GroupOrderPageClient({
     await copyLink();
   }
 
+  function saveDelivery(ruleId: string, address: string): void {
+    if (!view || !ruleId) return;
+    const trimmed = address.trim();
+    const selected = deliveryZones.find((zone) => zone.id === ruleId);
+    if (
+      selected &&
+      selected.label === view.deliveryDistanceLabel &&
+      trimmed === (view.deliveryAddress ?? '').trim()
+    ) {
+      return;
+    }
+    run(async () =>
+      setDeliveryAddressAction({
+        inviteToken,
+        deliveryAddress: trimmed,
+        deliveryRuleId: ruleId,
+        locale,
+      }),
+    );
+  }
+
   function confirmCancel(): void {
     setError(null);
     startTransition(async () => {
@@ -314,18 +349,20 @@ export function GroupOrderPageClient({
         </AppLink>
       </div>
 
-      <section className={`mb-5 ${GROUP_CARD}`}>
-        <p className="text-sm font-extrabold text-pideh-ink">{labels.inviteLink}</p>
-        <p className="mt-2 truncate rounded-full bg-pideh-cream px-4 py-2.5 text-xs font-medium text-pideh-muted">
-          {inviteUrl}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <GhostPillButton onClick={() => void copyLink()}>
-            <Copy className="h-4 w-4" />
+      <section className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[22px] border-2 border-pideh-ink/10 bg-white px-4 py-3 shadow-[0px_8px_14px_rgba(31,20,8,0.06)]">
+        <div className="min-w-0">
+          <p className="font-display text-sm leading-none text-pideh-ink uppercase">
+            {labels.inviteLink}
+          </p>
+          <p className="mt-1 truncate text-xs text-pideh-muted">{view.invitePath}</p>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <GhostPillButton compact onClick={() => void copyLink()}>
+            <Copy className="h-3.5 w-3.5" />
             {copied ? labels.copied : labels.copyLink}
           </GhostPillButton>
-          <GhostPillButton onClick={() => void shareLink()}>
-            <Share2 className="h-4 w-4" />
+          <GhostPillButton compact onClick={() => void shareLink()}>
+            <Share2 className="h-3.5 w-3.5" />
             {labels.share}
           </GhostPillButton>
         </div>
@@ -427,63 +464,60 @@ export function GroupOrderPageClient({
                 {labels.deliveryFieldHint}
               </span>
             </label>
-            <div className="flex items-start gap-2">
-              <div className="min-w-0 flex-1">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="min-w-0 space-y-1.5">
+                <span className="text-sm font-bold text-pideh-ink">{labels.deliveryLocation}</span>
+                <SelectDropdown
+                  ariaLabel={labels.deliveryLocation}
+                  value={deliveryRuleId}
+                  allLabel={labels.selectLocation}
+                  options={deliveryZones.map((zone) => ({
+                    value: zone.id,
+                    label: zone.label,
+                  }))}
+                  onValueChange={(next) => {
+                    setDeliveryRuleId(next);
+                    if (next) saveDelivery(next, deliveryAddress);
+                  }}
+                  disabled={pending || deliveryZones.length === 0}
+                  tone="brand"
+                  className="w-full"
+                />
+              </div>
+              <div
+                className="min-w-0 space-y-1.5"
+                onBlur={(event) => {
+                  if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
+                  saveDelivery(deliveryRuleId, deliveryAddress);
+                }}
+              >
+                <span className="text-sm font-bold text-pideh-ink">{labels.deliveryAddressLabel}</span>
                 <AddressAutocomplete
                   value={deliveryAddress}
-                  onValueChange={(value) => {
-                    setDeliveryAddress(value);
-                    setDeliveryPoint(null);
+                  onValueChange={setDeliveryAddress}
+                  onPlaceSelected={(address) => {
+                    setDeliveryAddress(address);
+                    saveDelivery(deliveryRuleId, address);
                   }}
                   placeholder={labels.deliveryAddressPlaceholder}
                   languageCode={locale}
                   className={INPUT_CLASS}
+                  disabled={pending}
                 />
               </div>
-              <AddressMapPicker
-                addressValue={deliveryAddress}
-                disabled={pending}
-                onAddressSelected={(address: string, point: { lat: number; lng: number }) => {
-                  setDeliveryAddress(address);
-                  setDeliveryPoint(point);
-                }}
-                labels={{
-                  openMap: labels.openMap,
-                  title: labels.mapTitle,
-                  hint: labels.mapHint,
-                  confirm: labels.mapConfirm,
-                  cancel: labels.mapCancel,
-                  resolving: labels.mapResolving,
-                }}
-              />
             </div>
             <p className="text-xs leading-relaxed text-pideh-muted">
               {view.paymentMode === 'SPLIT_PER_PARTICIPANT'
                 ? labels.deliverySplitHint
                 : labels.deliveryOrganizerPaysHint}
             </p>
-            {view.deliveryAmount > 0 ? (
+            {deliveryRuleId && view.deliveryDistanceLabel ? (
               <p className="text-sm font-bold text-pideh-orange">
                 {labels.deliveryQuoteReady
                   .replace('{amount}', view.deliveryFormatted)
-                  .replace('{distance}', view.deliveryDistanceLabel ?? '—')}
+                  .replace('{distance}', view.deliveryDistanceLabel)}
               </p>
             ) : null}
-            <GhostPillButton
-              disabled={pending || deliveryAddress.trim().length < 3}
-              onClick={() =>
-                run(async () =>
-                  setDeliveryAddressAction({
-                    inviteToken,
-                    deliveryAddress: deliveryAddress.trim(),
-                    deliveryLat: deliveryPoint?.lat,
-                    deliveryLng: deliveryPoint?.lng,
-                  }),
-                )
-              }
-            >
-              {labels.calculateDelivery}
-            </GhostPillButton>
           </div>
 
           <div className="space-y-2 border-t border-pideh-orange/15 pt-4">
@@ -511,7 +545,7 @@ export function GroupOrderPageClient({
           {view.participants.map((participant) => (
             <li key={participant.id} className={GROUP_CARD}>
               <div className="flex items-start justify-between gap-3">
-                <div>
+                <div className="min-w-0">
                   <p className="font-extrabold text-pideh-ink">
                     {participant.displayName}
                     {participant.role === 'ORGANIZER' ? (
@@ -537,8 +571,10 @@ export function GroupOrderPageClient({
                       {participant.finalAmountFormatted}
                     </p>
                   ) : null}
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
                   <p
-                    className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${
                       participant.itemsReady
                         ? 'bg-pideh-orange/12 text-pideh-orange'
                         : 'bg-pideh-yellow/50 text-pideh-ink'
@@ -546,7 +582,6 @@ export function GroupOrderPageClient({
                   >
                     {participant.itemsReady ? labels.ready : labels.notReady}
                   </p>
-                </div>
                 {isOrganizer && participant.role !== 'ORGANIZER' && canEdit ? (
                   <button
                     type="button"
@@ -564,12 +599,19 @@ export function GroupOrderPageClient({
                     <Trash2 className="h-4 w-4" />
                   </button>
                 ) : null}
+                </div>
               </div>
 
               {participant.items.length === 0 ? (
                 <p className="mt-3 text-sm text-pideh-muted">{labels.emptyItems}</p>
               ) : (
-                <ul className="mt-3 space-y-2">
+                <ul
+                  className={
+                    participant.id === view.currentParticipantId
+                      ? 'mt-3 space-y-2'
+                      : 'mt-3 grid grid-cols-2 gap-2'
+                  }
+                >
                   {participant.items.map((item) => (
                     <li
                       key={item.id}
@@ -626,7 +668,7 @@ export function GroupOrderPageClient({
         </p>
       ) : null}
 
-      <div className="sticky bottom-4 space-y-3">
+      <div className="group-order-actions sticky bottom-4 space-y-3">
         {canEdit && view.currentParticipantId ? (
           iAmReady ? (
             <div

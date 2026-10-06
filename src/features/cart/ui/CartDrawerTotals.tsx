@@ -6,42 +6,42 @@ import type { Currency } from '@/lib/money/currency';
 
 type CartDrawerTotalsProps = {
   currency: Currency;
-  subtotalLabel: string;
   totalLabel: string;
   checkoutLabel: string;
   checkoutHref: string;
-  subtotalAmount: number;
   totalAmount: number;
+  earnPoints: number;
+  earnLabel: string;
   hasItems: boolean;
   onCheckout: () => void;
 };
 
 export function CartDrawerTotals({
   currency,
-  subtotalLabel,
   totalLabel,
   checkoutLabel,
   checkoutHref,
-  subtotalAmount,
   totalAmount,
+  earnPoints,
+  earnLabel,
   hasItems,
   onCheckout,
 }: CartDrawerTotalsProps) {
   return (
     <div className="border-t border-[#ff6b00]/15 bg-[#ffd54a] px-6 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-      <dl className="space-y-2 text-sm">
-        <div className="flex items-center justify-between text-[#1e1e1e]/70">
-          <dt>{subtotalLabel}</dt>
-          <dd className="tabular-nums font-medium text-[#1e1e1e]">
-            <CartMoneyFlow amount={subtotalAmount} currency={currency} />
-          </dd>
-        </div>
-        <div className="flex items-center justify-between pt-1 text-base font-bold text-[#1e1e1e]">
+      <dl className="text-sm">
+        <div className="flex items-center justify-between text-base font-bold text-[#1e1e1e]">
           <dt>{totalLabel}</dt>
           <dd className="tabular-nums">
             <CartMoneyFlow amount={totalAmount} currency={currency} />
           </dd>
         </div>
+        {earnPoints > 0 ? (
+          <div className="mt-2 flex items-center justify-between font-semibold text-[#1a4d3a]">
+            <dt>{earnLabel}</dt>
+            <dd className="tabular-nums">+{earnPoints}</dd>
+          </div>
+        ) : null}
       </dl>
       {hasItems ? (
         <AppLink

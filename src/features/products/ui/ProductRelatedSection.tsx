@@ -74,7 +74,6 @@ export async function ProductRelatedSection({
               wishlistLabel={dictionary.nav.wishlist}
               orderLabel={dictionary.home.orderCta}
               outOfStockLabel={labels.outOfStock}
-              ratingLabel={labels.cardRating}
               prepTimeLabel={labels.prepTime}
               className="max-w-none"
             />

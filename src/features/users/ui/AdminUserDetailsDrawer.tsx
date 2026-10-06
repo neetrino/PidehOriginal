@@ -5,13 +5,11 @@ import { ADMIN_BADGE } from '@/features/admin/ui/status-badge';
 import type { AdminUserDrawerDetail } from '@/features/users/application/get-admin-user-detail';
 import {
   getEligibleUserStatuses,
-  isUserRole,
   isUserStatus,
 } from '@/features/users/domain/user-lifecycle';
 import { AdminUserLoyaltySections } from '@/features/users/ui/AdminUserLoyaltySections';
 import { UpdateUserAdminCommentForm } from '@/features/users/ui/UpdateUserAdminCommentForm';
-import { UpdateUserRoleForm } from '@/features/users/ui/UpdateUserRoleForm';
-import { UpdateUserStatusForm } from '@/features/users/ui/UpdateUserStatusForm';
+import { UserStatusControl } from '@/features/users/ui/UserStatusControl';
 import { isLocale, type Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
@@ -24,18 +22,6 @@ type AdminUserDetailsDrawerProps = {
   isLoading: boolean;
   copy: Dictionary['admin'];
 };
-
-function userStatusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === 'ACTIVE') return 'bg-green-100 text-green-800';
-  if (normalized === 'PENDING' || normalized === 'INVITED') {
-    return 'bg-yellow-100 text-yellow-800';
-  }
-  if (normalized === 'SUSPENDED' || normalized === 'BANNED' || normalized === 'ANONYMIZED') {
-    return 'bg-red-100 text-red-800';
-  }
-  return 'bg-gray-100 text-gray-800';
-}
 
 function userRoleBadgeClass(role: string): string {
   return role.toUpperCase() === 'ADMIN' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800';
@@ -67,7 +53,6 @@ export function AdminUserDetailsDrawer({
   const language: Locale = isLocale(locale) ? locale : 'hy';
   const d = copy.users.detail;
   const user = detail?.user ?? null;
-  const role = user && isUserRole(user.role) ? user.role : null;
   const status = user && isUserStatus(user.status) ? user.status : null;
   const eligibleStatuses = status ? getEligibleUserStatuses(status) : [];
   const isAnonymized = status === 'ANONYMIZED';
@@ -102,11 +87,19 @@ export function AdminUserDetailsDrawer({
                     {user.role}
                   </span>
                 </p>
-                <p className="text-gray-700">
+                <p className="flex flex-wrap items-center gap-2 text-gray-700">
                   {d.status}{' '}
-                  <span className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}>
-                    {user.status}
-                  </span>
+                  {status ? (
+                    <UserStatusControl
+                      locale={locale}
+                      userId={user.id}
+                      currentStatus={status}
+                      eligibleStatuses={eligibleStatuses}
+                      ariaLabel={copy.users.statusForm.newStatusAria}
+                    />
+                  ) : (
+                    <span className="text-sm text-red-700">{d.unknownStatus}</span>
+                  )}
                 </p>
                 <p className="text-gray-700">
                   {d.phone.replace('{phone}', user.phone ?? copy.common.none)}
@@ -131,31 +124,6 @@ export function AdminUserDetailsDrawer({
                 </p>
                 <p className="text-gray-700 md:col-span-2">{user.email}</p>
               </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              {role ? (
-                <UpdateUserRoleForm
-                  locale={locale}
-                  userId={user.id}
-                  currentRole={role}
-                  disabled={isAnonymized}
-                  copy={copy}
-                />
-              ) : (
-                <p className="text-sm text-red-700">{d.unknownRole}</p>
-              )}
-              {status ? (
-                <UpdateUserStatusForm
-                  locale={locale}
-                  userId={user.id}
-                  currentStatus={status}
-                  eligibleStatuses={eligibleStatuses}
-                  copy={copy}
-                />
-              ) : (
-                <p className="text-sm text-red-700">{d.unknownStatus}</p>
-              )}
             </div>
 
             <UpdateUserAdminCommentForm

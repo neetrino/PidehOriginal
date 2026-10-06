@@ -17,6 +17,7 @@ import { MobileHomeHero } from '@/features/home/ui/mobile/MobileHomeHero';
 import { toTelHref } from '@/lib/contact/tel-href';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 import type { Locale } from '@/lib/i18n/config';
+import type { Currency } from '@/lib/money/currency';
 
 /**
  * Figma top band through product grid start (y=588).
@@ -24,8 +25,8 @@ import type { Locale } from '@/lib/i18n/config';
  */
 const MOBILE_TOP_BAND_HEIGHT = 588;
 
-/** Gap between copyright and fixed nav — dock height minus a bit of empty orange. */
-const COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX - 48;
+/** Gap under the copyright so the raised home button and dock stay fully visible. */
+const COPYRIGHT_NAV_CLEARANCE_PX = NAV_DOCK_HEIGHT_PX + 72;
 
 type FeaturedItem = {
   id: string;
@@ -52,8 +53,8 @@ type MobileHomeProps = {
   dictionary: Dictionary;
   categories: readonly CategoryItem[];
   products: readonly FeaturedItem[];
+  currency: Currency;
   isSignedIn: boolean;
-  ratingLabel: string;
   prepTimeLabel: string;
 };
 
@@ -76,8 +77,8 @@ export function MobileHome({
   dictionary,
   categories,
   products,
+  currency,
   isSignedIn,
-  ratingLabel,
   prepTimeLabel,
 }: MobileHomeProps) {
   const home = dictionary.home;
@@ -125,6 +126,8 @@ export function MobileHome({
           dictionary={dictionary}
           phoneHref={phoneHref}
           phoneLabel={contact.callTitle}
+          currency={currency}
+          isSignedIn={isSignedIn}
           className="absolute top-[49px] left-1/2 z-40 flex -translate-x-1/2 items-end justify-center gap-[179px]"
         />
 
@@ -148,7 +151,6 @@ export function MobileHome({
         emptyLabel={home.emptyFeatured}
         wishlistLabel={dictionary.nav.wishlist}
         addLabel={home.orderCta}
-        ratingLabel={ratingLabel}
         prepTimeLabel={prepTimeLabel}
         isSignedIn={isSignedIn}
         products={products}

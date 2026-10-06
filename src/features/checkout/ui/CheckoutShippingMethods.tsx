@@ -52,7 +52,7 @@ export function CheckoutShippingMethods({
   return (
     <section className={CHECKOUT_PANEL}>
       <h2 className={`${CHECKOUT_SECTION_TITLE} !mb-3`}>{title}</h2>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
         {options.map((option) => {
           const selected = value === option.id;
           const Icon = SHIPPING_ICONS[option.id];

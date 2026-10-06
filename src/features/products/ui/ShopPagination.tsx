@@ -111,7 +111,6 @@ function PaginationStep({
     <AppLink
       href={href}
       prefetchPolicy="intent"
-      scroll={false}
       className={`${STEP_CLASS} text-[#ff6b00] hover:bg-[#fff8e7]`}
     >
       {chevron === 'prev' ? chevronImage : null}
@@ -145,7 +144,6 @@ function PaginationPage({
     <AppLink
       href={href}
       prefetchPolicy="intent"
-      scroll={false}
       className={`${PAGE_CLASS} text-[#ff6b00] hover:bg-[#fff8e7]`}
     >
       {page}

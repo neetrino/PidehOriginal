@@ -8,7 +8,10 @@ import { getCheckoutOrderProducts } from '@/features/checkout/application/get-ch
 import { CheckoutForm } from '@/features/checkout/ui/CheckoutForm';
 import { getDeliverySettings } from '@/features/delivery/application/get-delivery-settings';
 import { listCheckoutDeliveryOptions } from '@/features/delivery/application/queries';
-import { listActiveCashChangeDenominations } from '@/features/delivery/domain/cash-change';
+import {
+  cashChangeImageSrc,
+  listActiveCashChangeDenominations,
+} from '@/features/delivery/domain/cash-change';
 import { getDefaultShippingAddress } from '@/features/profile/application/address-queries';
 import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
 import { getStoreBonusSettings, getStoreIdentity } from '@/features/settings/application/queries';
@@ -16,16 +19,6 @@ import { getCurrentUser } from '@/lib/auth/session';
 import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { mediaPublicUrl } from '@/lib/media/public-url';
-
-const CASH_NOTE_FALLBACK: Record<number, string> = {
-  1_000: '/brand/pideh/cash/1000.jpg',
-  2_000: '/brand/pideh/cash/2000.jpg',
-  5_000: '/brand/pideh/cash/5000.jpg',
-  10_000: '/brand/pideh/cash/10000.jpg',
-  20_000: '/brand/pideh/cash/20000.jpg',
-  50_000: '/brand/pideh/cash/50000.jpg',
-  100_000: '/brand/pideh/cash/100000.jpg',
-};
 
 type CheckoutPageProps = {
   params: Promise<{ locale: string }>;
@@ -78,9 +71,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   ).map((item) => ({
     id: item.id,
     amount: item.amount,
-    imageUrl: item.imageObjectKey
-      ? mediaPublicUrl(item.imageObjectKey)
-      : (CASH_NOTE_FALLBACK[item.amount] ?? null),
+    imageUrl: cashChangeImageSrc(item.imageObjectKey, mediaPublicUrl),
   }));
 
   const storePickupAddress = deliverySettings.originAddress.trim() || storeIdentity.name || null;
@@ -148,6 +139,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         deliveryLocation: copy.form.deliveryLocation,
         selectLocation: copy.form.selectLocation,
         selectDeliveryLocation: copy.shipping.selectDeliveryLocation,
+        selectPaymentMethod: copy.payment.selectPaymentMethod,
         enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
         scheduleTitle: copy.schedule.title,
         scheduleDeliverTo: copy.schedule.deliverTo,
@@ -189,7 +181,6 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         discount: copy.summary.discount,
         subtotal: copy.summary.subtotal,
         shipping: copy.summary.shipping,
-        tax: copy.summary.tax,
         total: copy.summary.total,
         participantsPrepaid: copy.summary.participantsPrepaid,
         yourShare: copy.summary.yourShare,

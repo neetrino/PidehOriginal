@@ -68,7 +68,8 @@
     "arca": "Картой",
     "arcaDescription": "Оплатите картой Visa, Mastercard или ArCa",
     "terminal": "Terminal",
-    "terminalDescription": "Оплатите картой при получении заказа"
+    "terminalDescription": "Оплатите картой при получении заказа",
+    "selectPaymentMethod": "Выберите способ оплаты"
   },
   "coupon": {
     "title": "Есть промокод?",
@@ -80,7 +81,6 @@
     "subtotal": "Подытог",
     "discount": "Скидка",
     "shipping": "Доставка",
-    "tax": "Налог",
     "total": "Итого",
     "participantsPrepaid": "Уже оплачено участниками",
     "yourShare": "Ваша доля"

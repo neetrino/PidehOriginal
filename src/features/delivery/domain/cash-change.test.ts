@@ -23,6 +23,12 @@ describe('cash-change denominations', () => {
       1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000,
     ]);
     expect(parsed.find((item) => item.amount === 10_000)?.id).toBe('a');
+    expect(parsed.find((item) => item.amount === 10_000)?.imageObjectKey).toBe(
+      '/brand/pideh/cash/10000.jpg',
+    );
+    expect(parsed.find((item) => item.amount === 1_000)?.imageObjectKey).toBe(
+      '/brand/pideh/cash/1000.jpg',
+    );
   });
 
   it('restores defaults when value is missing', () => {

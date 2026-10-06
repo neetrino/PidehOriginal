@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { listCheckoutDeliveryOptions } from '@/features/delivery/application/queries';
 import { getGroupOrderDetailByInvite } from '@/features/group-orders/application/queries';
 import { GroupOrderPageClient } from '@/features/group-orders/ui/GroupOrderPageClient';
 import { peekGroupOrderSession } from '@/features/group-orders/session';
@@ -18,11 +19,14 @@ export default async function GroupOrderInvitePage({ params }: PageProps) {
 
   const dictionary = getDictionary(locale);
   const currency = await getSelectedCurrency();
-  const view = await getGroupOrderDetailByInvite({
-    inviteToken,
-    locale,
-    currency,
-  });
+  const [view, deliveryZones] = await Promise.all([
+    getGroupOrderDetailByInvite({
+      inviteToken,
+      locale,
+      currency,
+    }),
+    listCheckoutDeliveryOptions(locale),
+  ]);
 
   if (!view) notFound();
 
@@ -37,6 +41,7 @@ export default async function GroupOrderInvitePage({ params }: PageProps) {
       initialView={view}
       inviteToken={inviteToken}
       needsJoin={needsJoin}
+      deliveryZones={deliveryZones.map((zone) => ({ id: zone.id, label: zone.label }))}
     />
   );
 }

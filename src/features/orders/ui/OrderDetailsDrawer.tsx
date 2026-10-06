@@ -1,11 +1,8 @@
 'use client';
 
+import { CreditCard, Package, type LucideIcon } from 'lucide-react';
+
 import { SideSheet } from '@/components/ui/SideSheet';
-import {
-  ADMIN_BADGE,
-  orderStatusBadgeClass,
-  paymentStatusBadgeClass,
-} from '@/features/admin/ui/status-badge';
 import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
 import { OrderDetailsDrawerItems } from '@/features/orders/ui/OrderDetailsDrawerItems';
 import { OrderDetailsDrawerParticipants } from '@/features/orders/ui/OrderDetailsDrawerParticipants';
@@ -41,6 +38,8 @@ export function OrderDetailsDrawer({
 }: OrderDetailsDrawerProps) {
   const isGroup = detail?.participants != null && detail.participants.length > 0;
   const labels = copy.orders.statusLabels;
+  const statusLabel = detail ? orderDrawerStatusLabel(detail.status, labels) : '';
+  const paymentLabel = detail ? orderDrawerStatusLabel(detail.paymentStatus, labels) : '';
 
   return (
     <SideSheet
@@ -50,33 +49,38 @@ export function OrderDetailsDrawer({
       variant="admin"
       zIndexClassName="z-[200]"
     >
-      <div
-        className={
-          isGroup
-            ? 'shrink-0 px-5 py-4 sm:px-6'
-            : 'shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6'
-        }
-      >
-        <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
-          {copy.orders.drawer.title}
-        </h2>
-        {detail && isGroup ? (
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-gray-500">#{detail.orderNumber}</span>
-            <span className="inline-flex rounded-full bg-[#1a4d3a] px-2.5 py-0.5 text-xs font-bold text-white">
-              {copy.orders.kindSwitcher.group}
-            </span>
-            <span className={`${ADMIN_BADGE} ${orderStatusBadgeClass(detail.status)}`}>
-              {orderDrawerStatusLabel(detail.status, labels)}
-            </span>
-            <span className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(detail.paymentStatus)}`}>
-              {orderDrawerStatusLabel(detail.paymentStatus, labels)}
-            </span>
+      <div className="shrink-0 border-b-2 border-[#1e1e1e]/10 px-5 py-4 sm:px-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h2 className="font-display text-2xl leading-[0.95] text-[#1e1e1e] uppercase sm:text-3xl">
+              {copy.orders.drawer.title}
+            </h2>
+            {detail ? (
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <p className="text-sm text-gray-500">#{detail.orderNumber}</p>
+                {isGroup ? (
+                  <span className="inline-flex rounded-full bg-[#1a4d3a] px-2.5 py-0.5 text-xs font-bold text-white">
+                    {copy.orders.kindSwitcher.group}
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
           </div>
-        ) : null}
-        {detail && !isGroup ? (
-          <p className="mt-1 text-sm text-gray-500">#{detail.orderNumber}</p>
-        ) : null}
+          {detail ? (
+            <div className="flex shrink-0 flex-wrap justify-end gap-2">
+              <OrderMetaPill
+                icon={Package}
+                label={statusLabel}
+                ariaLabel={`${copy.orders.drawer.status} ${statusLabel}`}
+              />
+              <OrderMetaPill
+                icon={CreditCard}
+                label={paymentLabel}
+                ariaLabel={`${copy.orders.drawer.payment} ${paymentLabel}`}
+              />
+            </div>
+          ) : null}
+        </div>
       </div>
 
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-5">
@@ -86,6 +90,16 @@ export function OrderDetailsDrawer({
         {error ? <p className="py-4 text-sm text-red-700">{error}</p> : null}
         {!isLoading && !error && detail ? (
           <>
+            {detail.customerNote ? (
+              <section className="rounded-2xl border border-[#ff6b00]/30 bg-[#fff8e7] px-5 py-4">
+                <h3 className="mb-2 text-base font-semibold text-[#ff6b00]">
+                  {copy.orders.drawer.customerNote}
+                </h3>
+                <p className="text-sm font-medium whitespace-pre-wrap text-[#1e1e1e]">
+                  {detail.customerNote}
+                </p>
+              </section>
+            ) : null}
             <OrderDetailsDrawerSummary detail={detail} copy={copy} variant={isGroup ? 'customer' : 'full'} />
             <OrderDetailsDrawerShipping
               detail={detail}
@@ -106,14 +120,6 @@ export function OrderDetailsDrawer({
               copy={copy}
               variant={isGroup ? 'group' : 'full'}
             />
-            {detail.customerNote ? (
-              <section className="rounded-2xl border border-gray-200 px-5 py-4">
-                <h3 className="mb-2 text-base font-semibold text-gray-900">
-                  {copy.orders.drawer.customerNote}
-                </h3>
-                <p className="text-sm whitespace-pre-wrap text-gray-800">{detail.customerNote}</p>
-              </section>
-            ) : null}
             <OrderDetailsDrawerReview
               detail={detail}
               copy={copy.orders.drawer}
@@ -124,5 +130,25 @@ export function OrderDetailsDrawer({
         ) : null}
       </div>
     </SideSheet>
+  );
+}
+
+function OrderMetaPill({
+  icon: Icon,
+  label,
+  ariaLabel,
+}: {
+  icon: LucideIcon;
+  label: string;
+  ariaLabel: string;
+}) {
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full bg-[#fff4cc] px-3 py-1.5 text-sm font-bold text-[#8a5a20]"
+      aria-label={ariaLabel}
+    >
+      <Icon className="size-4 shrink-0" aria-hidden />
+      {label}
+    </span>
   );
 }

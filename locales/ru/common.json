@@ -9,6 +9,7 @@
     "cart": "Корзина",
     "about": "О нас",
     "contact": "Контакты",
+    "policies": "Политика",
     "wishlist": "Избранное",
     "openMenu": "Открыть меню",
     "closeMenu": "Закрыть меню",
@@ -43,7 +44,7 @@
     "deliveryReturns": "Доставка и возврат",
     "contactInfo": "Контакты",
     "followUs": "Мы в соцсетях",
-    "copyright": "Copyright © {year}. All Rights Reserved. Created by Neetrino IT Company",
-    "copyrightMobile": "© {year}. All Rights Reserved. Created by Neetrino"
+    "copyright": "© {year} | All Rights Reserved | Created by Neetrino",
+    "copyrightMobile": "© {year} | Created By Neetrino"
   }
 }

@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { STORE_PICKUP_LABEL } from '@/features/checkout/domain/shipping-methods';
+import { cashChangeImageSrc } from '@/features/delivery/domain/cash-change';
 import {
   loadOrderGroupParticipants,
   type AdminOrderParticipantView,
@@ -184,9 +185,10 @@ export function toAdminOrderDetailView(
       typeof order.shippingAddress.cashChangeAmount === 'number'
         ? order.shippingAddress.cashChangeAmount
         : null,
-    cashChangeImageUrl: order.shippingAddress.cashChangeImageKey
-      ? mediaPublicUrl(order.shippingAddress.cashChangeImageKey)
-      : null,
+    cashChangeImageUrl: cashChangeImageSrc(
+      order.shippingAddress.cashChangeImageKey ?? null,
+      mediaPublicUrl,
+    ),
     customerNote: formatOrderCustomerNotes(items),
     customerReview,
     canSubmitReview: false,

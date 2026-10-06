@@ -25,6 +25,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       locale={locale}
       firstName={user.firstName}
       dictionary={dictionary.profile}
+      statusLabels={dictionary.admin.orders.statusLabels}
       stats={stats}
       recentOrders={recentOrders}
     />

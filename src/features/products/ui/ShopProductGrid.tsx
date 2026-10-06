@@ -22,7 +22,6 @@ type ShopProductGridProps = {
   wishlistLabel: string;
   orderLabel: string;
   outOfStockLabel: string;
-  ratingLabel: string;
   prepTimeLabel: string;
   paginationLabel: string;
   previousPage: string;
@@ -44,7 +43,6 @@ export function ShopProductGrid({
   wishlistLabel,
   orderLabel,
   outOfStockLabel,
-  ratingLabel,
   prepTimeLabel,
   paginationLabel,
   previousPage,
@@ -96,7 +94,6 @@ export function ShopProductGrid({
               wishlistLabel={wishlistLabel}
               orderLabel={orderLabel}
               outOfStockLabel={outOfStockLabel}
-              ratingLabel={ratingLabel}
               prepTimeLabel={prepTimeLabel}
               className="max-w-none"
             />

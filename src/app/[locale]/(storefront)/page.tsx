@@ -112,8 +112,8 @@ export default async function HomePage({ params }: HomePageProps) {
         dictionary={dictionary}
         categories={categoryCards}
         products={featuredCards}
+        currency={currency}
         isSignedIn={Boolean(user)}
-        ratingLabel={dictionary.product.cardRating}
         prepTimeLabel={dictionary.product.prepTime}
       />
 
@@ -145,7 +145,6 @@ export default async function HomePage({ params }: HomePageProps) {
           wishlistLabel={dictionary.nav.wishlist}
           orderLabel={dictionary.home.orderCta}
           outOfStockLabel={dictionary.product.outOfStock}
-          ratingLabel={dictionary.product.cardRating}
           prepTimeLabel={dictionary.product.prepTime}
           isSignedIn={Boolean(user)}
           products={featuredCards}

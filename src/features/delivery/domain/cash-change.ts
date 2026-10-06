@@ -18,6 +18,24 @@ export type CashChangeDenominationView = {
 
 const STANDARD_CASH_AMOUNTS = [1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000] as const;
 
+/** Site-hosted banknote art. Stored on the denomination so checkout does not hardcode it. */
+const BUNDLED_CASH_NOTE_PATHS: Record<(typeof STANDARD_CASH_AMOUNTS)[number], string> = {
+  1_000: '/brand/pideh/cash/1000.jpg',
+  2_000: '/brand/pideh/cash/2000.jpg',
+  5_000: '/brand/pideh/cash/5000.jpg',
+  10_000: '/brand/pideh/cash/10000.jpg',
+  20_000: '/brand/pideh/cash/20000.jpg',
+  50_000: '/brand/pideh/cash/50000.jpg',
+  100_000: '/brand/pideh/cash/100000.jpg',
+};
+
+function bundledCashNotePath(amount: number): string | null {
+  if (!STANDARD_CASH_AMOUNTS.includes(amount as (typeof STANDARD_CASH_AMOUNTS)[number])) {
+    return null;
+  }
+  return BUNDLED_CASH_NOTE_PATHS[amount as (typeof STANDARD_CASH_AMOUNTS)[number]];
+}
+
 /** Checkout sentinel: the customer does not need change. */
 export const CASH_CHANGE_NOT_NEEDED = 0;
 
@@ -25,7 +43,7 @@ function standardDenomination(amount: number, sortOrder: number): CashChangeDeno
   return {
     id: `cash-change-${amount}`,
     amount,
-    imageObjectKey: null,
+    imageObjectKey: bundledCashNotePath(amount),
     isActive: true,
     sortOrder,
   };
@@ -44,7 +62,24 @@ function withStandardAmounts(items: CashChangeDenomination[]): CashChangeDenomin
   );
   return [...items, ...missing]
     .sort((left, right) => left.amount - right.amount)
-    .map((item, index) => ({ ...item, sortOrder: index }));
+    .map((item, index) => ({
+      ...item,
+      imageObjectKey: item.imageObjectKey ?? bundledCashNotePath(item.amount),
+      sortOrder: index,
+    }));
+}
+
+/**
+ * Public URL for a cash-note image.
+ * Bundled notes are site paths (`/brand/...`). Uploads go through storage.
+ */
+export function cashChangeImageSrc(
+  imageObjectKey: string | null,
+  storageUrl: (objectKey: string) => string,
+): string | null {
+  if (!imageObjectKey) return null;
+  if (imageObjectKey.startsWith('/')) return imageObjectKey;
+  return storageUrl(imageObjectKey);
 }
 
 function isFiniteNumber(value: unknown): value is number {

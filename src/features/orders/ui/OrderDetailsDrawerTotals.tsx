@@ -24,10 +24,7 @@ export function OrderDetailsDrawerTotals({
     ? d.couponDiscountWithCode.replace('{code}', detail.couponCode)
     : d.couponDiscount;
 
-  const discountLabel =
-    detail.discountAmount > 0
-      ? `−${formatOrderDrawerMoney(detail.discountAmount, detail.baseCurrency)}`
-      : formatOrderDrawerMoney(0, detail.baseCurrency);
+  const discountLabel = `−${formatOrderDrawerMoney(detail.discountAmount, detail.baseCurrency)}`;
 
   return (
     <div className={isGroup ? 'px-1 py-2' : 'rounded-2xl border border-gray-200 px-5 py-4'}>
@@ -44,18 +41,12 @@ export function OrderDetailsDrawerTotals({
           <span className="font-medium text-gray-900">{shippingLabel}</span>
         </div>
 
-        {isGroup ? null : (
+        {!isGroup && detail.discountAmount > 0 ? (
           <div className="flex items-center justify-between gap-4">
             <span className="text-gray-600">{couponRowLabel}</span>
-            <span
-              className={`font-medium ${
-                detail.discountAmount > 0 ? 'text-green-700' : 'text-gray-900'
-              }`}
-            >
-              {discountLabel}
-            </span>
+            <span className="font-medium text-green-700">{discountLabel}</span>
           </div>
-        )}
+        ) : null}
 
         {!isGroup && detail.bonusRedeemedAmount > 0 ? (
           <div className="flex items-center justify-between gap-4">

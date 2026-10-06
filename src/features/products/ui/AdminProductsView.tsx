@@ -36,7 +36,6 @@ type AdminProductsViewProps = {
   filters: {
     total: number;
     q?: string;
-    sku?: string;
     categoryId?: string;
     status: 'all' | 'active' | 'inactive' | 'draft' | 'low_remaining';
     sort: string;
@@ -76,7 +75,6 @@ export function AdminProductsView({
       <AdminProductsFilters
         total={filters.total}
         q={filters.q}
-        sku={filters.sku}
         categoryId={filters.categoryId}
         status={filters.status}
         categories={categories}

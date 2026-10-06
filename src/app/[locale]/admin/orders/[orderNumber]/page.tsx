@@ -21,6 +21,7 @@ import {
 } from '@/features/admin/ui/status-badge';
 import { getAdminOrderDetailView } from '@/features/orders/application/order-detail-view';
 import { getAdminOrderByNumber } from '@/features/orders/application/queries';
+import { cashChangeImageSrc } from '@/features/delivery/domain/cash-change';
 import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
 import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
@@ -53,6 +54,10 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
 
   const { order, items, events } = detail;
   const address = order.shippingAddress;
+  const cashChangeImageUrl = cashChangeImageSrc(
+    address.cashChangeImageKey ?? null,
+    mediaPublicUrl,
+  );
 
   const d = copy.orders.detail;
   const drawer = copy.orders.drawer;
@@ -98,6 +103,20 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
       <div className="mb-6 grid gap-6 md:grid-cols-2">
         <Card className="p-6">
           <h2 className={`mb-3 ${ADMIN_SECTION_TITLE}`}>{d.customer}</h2>
+          {items.some((item) => item.customerNote?.trim()) ? (
+            <div className="mb-4 rounded-2xl border border-[#ff6b00]/30 bg-[#fff8e7] px-4 py-3">
+              <p className="text-sm font-semibold text-[#ff6b00]">{drawer.customerNote}</p>
+              <ul className="mt-1 space-y-1 text-sm font-medium text-[#1e1e1e]">
+                {items.map((item) =>
+                  item.customerNote?.trim() ? (
+                    <li key={item.id} className="whitespace-pre-wrap">
+                      {item.productTitleSnapshot}: {item.customerNote.trim()}
+                    </li>
+                  ) : null,
+                )}
+              </ul>
+            </div>
+          ) : null}
           <p className="text-sm font-medium text-gray-900">{order.contactName}</p>
           <p className="text-sm text-gray-600">{order.contactEmail}</p>
           <p className="text-sm text-gray-600">{order.contactPhone}</p>
@@ -143,10 +162,10 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 <div className="flex items-center gap-2">
                   <dt className="text-gray-500">{d.cashChange}</dt>
                   <dd className="flex items-center gap-2 font-medium text-gray-900">
-                    {address.cashChangeImageKey ? (
+                    {cashChangeImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element -- CDN/local media URL
                       <img
-                        src={mediaPublicUrl(address.cashChangeImageKey)}
+                        src={cashChangeImageUrl}
                         alt=""
                         className="h-8 w-12 rounded object-contain"
                       />
@@ -156,20 +175,6 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 </div>
               ) : null}
             </dl>
-          ) : null}
-          {items.some((item) => item.customerNote?.trim()) ? (
-            <div className="mt-4">
-              <p className="text-sm text-gray-500">{drawer.customerNote}</p>
-              <ul className="mt-1 space-y-1 text-sm text-gray-900">
-                {items.map((item) =>
-                  item.customerNote?.trim() ? (
-                    <li key={item.id} className="whitespace-pre-wrap">
-                      {item.productTitleSnapshot}: {item.customerNote.trim()}
-                    </li>
-                  ) : null,
-                )}
-              </ul>
-            </div>
           ) : null}
           {view?.customerReview ? (
             <div className="mt-4">
@@ -193,7 +198,9 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
             {d.subtotal.replace('{amount}', formatMoney(order.subtotalAmount, order.baseCurrency))}
           </p>
           <p className="text-sm text-gray-700">{deliveryLabel}</p>
-          <p className="text-sm text-gray-700">{couponLabel}</p>
+          {order.discountAmount > 0 ? (
+            <p className="text-sm text-gray-700">{couponLabel}</p>
+          ) : null}
           {order.bonusRedeemedAmount > 0 ? (
             <p className="text-sm text-green-700">
               {d.bonusRedeemed.replace(

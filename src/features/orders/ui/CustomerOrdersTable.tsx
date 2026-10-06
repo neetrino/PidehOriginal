@@ -19,7 +19,7 @@ import {
 } from '@/features/admin/ui/admin-table-classes';
 import {
   formatOrderDrawerMoney,
-  formatOrderStatusLabel,
+  orderDrawerStatusLabel,
 } from '@/features/orders/ui/order-drawer-format';
 import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -80,14 +80,14 @@ export function CustomerOrdersTable({ orders, onOpenOrder, copy }: CustomerOrder
                 </td>
                 <td className={ADMIN_TABLE_TD}>
                   <span className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}>
-                    {formatOrderStatusLabel(order.status)}
+                    {orderDrawerStatusLabel(order.status, copy.orders.statusLabels)}
                   </span>
                 </td>
                 <td className={ADMIN_TABLE_TD}>
                   <span
                     className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
                   >
-                    {formatOrderStatusLabel(order.paymentStatus)}
+                    {orderDrawerStatusLabel(order.paymentStatus, copy.orders.statusLabels)}
                   </span>
                 </td>
                 <td className={ADMIN_TABLE_TD}>

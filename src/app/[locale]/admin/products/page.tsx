@@ -120,7 +120,6 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
         filters={{
           total,
           q: filters.q,
-          sku: filters.sku,
           categoryId: filters.categoryId,
           status: filters.status,
           sort: filters.sort,

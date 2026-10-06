@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useState } from 'react';
 import { Coins, Gift, TicketPercent } from 'lucide-react';
 
 import { ADMIN_BADGE } from '@/features/admin/ui/status-badge';
@@ -47,6 +50,8 @@ type RecentOrder = {
   baseCurrency: string;
   placedAt: Date | string;
 };
+
+type LoyaltyTab = 'orders' | 'bonuses' | 'gifts' | 'coupons';
 
 type AdminUserLoyaltySectionsProps = {
   locale: Locale;
@@ -112,6 +117,13 @@ export function AdminUserLoyaltySections({
   copy,
   adminCopy,
 }: AdminUserLoyaltySectionsProps) {
+  const [tab, setTab] = useState<LoyaltyTab>('orders');
+  const tabs: Array<{ id: LoyaltyTab; label: string }> = [
+    { id: 'orders', label: copy.recentOrders },
+    { id: 'bonuses', label: copy.bonusesTitle },
+    { id: 'gifts', label: copy.giftCardsTitle },
+    { id: 'coupons', label: copy.couponsTitle },
+  ];
   const stats = [
     { label: copy.availableBalance, value: bonuses.availableBalance },
     { label: copy.totalEarned, value: bonuses.totalEarned },
@@ -119,8 +131,31 @@ export function AdminUserLoyaltySections({
   ] as const;
 
   return (
-    <div className="space-y-4">
-      <AdminUserLoyaltySectionShell title={copy.bonusesTitle} icon={Coins}>
+    <div>
+      <div className="mb-4 flex gap-6 overflow-x-auto border-b border-[#1e1e1e]/10" role="tablist">
+        {tabs.map((item) => {
+          const selected = tab === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setTab(item.id)}
+              className={`shrink-0 border-b-2 pb-2 text-sm font-semibold transition-colors ${
+                selected
+                  ? 'border-[#1a4d3a] text-[#1a4d3a]'
+                  : 'border-transparent text-[#1e1e1e]/45 hover:text-[#1e1e1e]'
+              }`}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {tab === 'bonuses' ? (
+      <AdminUserLoyaltySectionShell title={copy.bonusesTitle} icon={Coins} showHeader={false}>
         <div className="mb-4 grid gap-3 sm:grid-cols-3">
           {stats.map((stat) => (
             <div key={stat.label} className="rounded-[18px] bg-[#fff8e7] px-4 py-3">
@@ -143,8 +178,10 @@ export function AdminUserLoyaltySections({
           </ul>
         )}
       </AdminUserLoyaltySectionShell>
+      ) : null}
 
-      <AdminUserLoyaltySectionShell title={copy.giftCardsTitle} icon={Gift}>
+      {tab === 'gifts' ? (
+      <AdminUserLoyaltySectionShell title={copy.giftCardsTitle} icon={Gift} showHeader={false}>
         {giftCards.length === 0 ? (
           <p className="text-sm text-[#1e1e1e]/50">{copy.noGiftCards}</p>
         ) : (
@@ -170,8 +207,10 @@ export function AdminUserLoyaltySections({
           </ul>
         )}
       </AdminUserLoyaltySectionShell>
+      ) : null}
 
-      <AdminUserLoyaltySectionShell title={copy.couponsTitle} icon={TicketPercent}>
+      {tab === 'coupons' ? (
+      <AdminUserLoyaltySectionShell title={copy.couponsTitle} icon={TicketPercent} showHeader={false}>
         {coupons.length === 0 ? (
           <p className="text-sm text-[#1e1e1e]/50">{copy.noCoupons}</p>
         ) : (
@@ -211,14 +250,18 @@ export function AdminUserLoyaltySections({
           </ul>
         )}
       </AdminUserLoyaltySectionShell>
+      ) : null}
 
+      {tab === 'orders' ? (
       <AdminUserRecentOrders
         locale={locale}
         orders={recentOrders}
         title={copy.recentOrders}
         emptyLabel={copy.noOrders}
         copy={adminCopy}
+        showHeader={false}
       />
+      ) : null}
     </div>
   );
 }

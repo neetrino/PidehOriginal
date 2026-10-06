@@ -60,13 +60,11 @@ type CheckoutOrderSummaryProps = {
   discountLabel: string;
   subtotalLabel: string;
   shippingLabel: string;
-  taxLabel: string;
   totalLabel: string;
   participantsPrepaidLabel?: string;
   participantsPrepaidFormatted?: string | null;
   subtotalFormatted: string;
   shippingFormatted: string | null;
-  taxFormatted: string;
   discountFormatted: string | null;
   totalFormatted: string;
   couponDraft: string;
@@ -112,13 +110,11 @@ export function CheckoutOrderSummary({
   discountLabel,
   subtotalLabel,
   shippingLabel,
-  taxLabel,
   totalLabel,
   participantsPrepaidLabel,
   participantsPrepaidFormatted,
   subtotalFormatted,
   shippingFormatted,
-  taxFormatted,
   discountFormatted,
   totalFormatted,
   couponDraft,
@@ -260,13 +256,7 @@ export function CheckoutOrderSummary({
 
         {bonus?.mode === 'member' && bonus.enabled ? (
           <div className={`mb-6 ${CHECKOUT_INSET}`}>
-            <p className="font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
-              {bonus.labels.title}
-            </p>
-            <p className="mt-2 text-xs text-[#1e1e1e]/55">
-              {bonus.labels.available.replace('{amount}', bonus.formatMoney(bonus.availableBalance))}
-            </p>
-            <label className="mt-3 flex cursor-pointer items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-bold text-[#1e1e1e]">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-[#1e1e1e]">
               <input
                 type="checkbox"
                 checked={bonus.useBonuses}
@@ -277,7 +267,7 @@ export function CheckoutOrderSummary({
               {bonus.labels.useBonuses}
             </label>
             {bonus.useBonuses ? (
-              <div className="flex gap-2">
+              <div className="mt-3 flex gap-2">
                 <input
                   type="number"
                   min={0}
@@ -296,11 +286,14 @@ export function CheckoutOrderSummary({
                   type="button"
                   variant="secondary"
                   size="md"
-                  className={CHECKOUT_APPLY_BTN}
+                  className={`${CHECKOUT_APPLY_BTN} !whitespace-nowrap`}
                   disabled={isSubmitting || bonus.maxRedeem <= 0}
                   onClick={bonus.onUseMax}
                 >
-                  {bonus.labels.useMax}
+                  {bonus.labels.available.replace(
+                    '{amount}',
+                    bonus.formatMoney(bonus.availableBalance),
+                  )}
                 </Button>
               </div>
             ) : null}
@@ -308,20 +301,21 @@ export function CheckoutOrderSummary({
         ) : null}
 
         <div className="mb-5 space-y-2.5 text-sm">
-          <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
+          <div className="flex items-center justify-between gap-3 text-[#1e1e1e]/70">
             <span>{subtotalLabel}</span>
-            <span className="font-bold text-[#1e1e1e]">{subtotalFormatted}</span>
+            <span className="flex items-center gap-2">
+              <span className="font-bold text-[#1e1e1e]">{subtotalFormatted}</span>
+              {bonus?.mode === 'member' && bonus.useBonuses && bonus.redeemAmount > 0 ? (
+                <span className="rounded-full border border-red-200 bg-white px-2 py-0.5 text-xs font-bold text-red-600">
+                  -{bonus.formatMoney(bonus.redeemAmount)}
+                </span>
+              ) : null}
+            </span>
           </div>
           {discountFormatted ? (
             <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
               <span>{discountLabel}</span>
               <span className="text-[#ff6b00]">-{discountFormatted}</span>
-            </div>
-          ) : null}
-          {bonus?.mode === 'member' && bonus.useBonuses && bonus.redeemAmount > 0 ? (
-            <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
-              <span>{bonus.labels.applied}</span>
-              <span className="text-[#ff6b00]">-{bonus.formatMoney(bonus.redeemAmount)}</span>
             </div>
           ) : null}
           {giftCardPreview && giftCardPreview.redeemAmount > 0 ? (
@@ -344,10 +338,6 @@ export function CheckoutOrderSummary({
               <span className="text-[#ff6b00]">-{participantsPrepaidFormatted}</span>
             </div>
           ) : null}
-          <div className="flex items-baseline justify-between gap-3 text-[#1e1e1e]/70">
-            <span>{taxLabel}</span>
-            <span className="font-bold text-[#1e1e1e]">{taxFormatted}</span>
-          </div>
           <div className="mt-1 flex items-end justify-between gap-3 rounded-[18px] bg-[#fff8e7] px-4 py-3">
             <span className="font-display text-xl leading-none text-[#1e1e1e] uppercase">
               {totalLabel}

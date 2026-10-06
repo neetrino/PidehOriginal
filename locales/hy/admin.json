@@ -563,6 +563,9 @@
       "saturday": "Շաբաթ",
       "sunday": "Կիրակի",
       "closedDates": "Փակ օրեր",
+      "closedDatePlaceholder": "Ընտրեք օրը",
+      "prevMonth": "Նախորդ ամիս",
+      "nextMonth": "Հաջորդ ամիս",
       "closeThisDay": "Փակել այս օրը",
       "removeClosedDateAria": "Հեռացնել {date} փակ օրը",
       "noClosedDates": "Փակ օրեր չկան։ Ավելացրեք տոներ կամ օրեր, երբ չեք առաքում։"

@@ -61,6 +61,7 @@ type CheckoutLabels = {
   deliveryLocation: string;
   selectLocation: string;
   selectDeliveryLocation: string;
+  selectPaymentMethod: string;
   enterDeliveryAddress: string;
   scheduleTitle: string;
   scheduleDeliverTo: string;
@@ -102,7 +103,6 @@ type CheckoutLabels = {
   discount: string;
   subtotal: string;
   shipping: string;
-  tax: string;
   total: string;
   participantsPrepaid: string;
   yourShare: string;
@@ -192,9 +192,7 @@ export function CheckoutForm({
     [deliveryRuleId, deliveryZones],
   );
   const isGroupOrderCheckout = groupOrderCheckout != null;
-  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>(() =>
-    isCashOnDeliveryAllowedForCheckout(isGroupOrderCheckout) ? 'cash_on_delivery' : 'idram',
-  );
+  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [couponDraft, setCouponDraft] = useState('');
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
@@ -448,6 +446,11 @@ export function CheckoutForm({
       }
     }
 
+    if (!paymentMethod) {
+      setError(labels.selectPaymentMethod);
+      return;
+    }
+
     if (
       paymentMethod === 'cash_on_delivery' &&
       cashChangeOptions.length > 0 &&
@@ -577,7 +580,6 @@ export function CheckoutForm({
             discountLabel={labels.discount}
             subtotalLabel={labels.subtotal}
             shippingLabel={labels.shipping}
-            taxLabel={labels.tax}
             totalLabel={splitPrepaid ? labels.yourShare : labels.total}
             participantsPrepaidLabel={splitPrepaid ? labels.participantsPrepaid : undefined}
             participantsPrepaidFormatted={
@@ -585,7 +587,6 @@ export function CheckoutForm({
             }
             subtotalFormatted={formatMoney(subtotalAmount)}
             shippingFormatted={shippingFormatted}
-            taxFormatted={formatMoney(0)}
             discountFormatted={discountAmount > 0 ? formatMoney(discountAmount) : null}
             totalFormatted={formatMoney(amountDue)}
             couponDraft={couponDraft}

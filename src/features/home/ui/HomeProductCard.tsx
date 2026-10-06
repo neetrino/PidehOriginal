@@ -36,7 +36,6 @@ type HomeProductCardProps = {
   cartQuantity?: number;
   maxQuantity?: number;
   outOfStockLabel?: string;
-  ratingLabel?: string;
   prepTimeLabel?: string;
   className?: string;
 };
@@ -59,7 +58,6 @@ export function HomeProductCard({
   cartQuantity = 0,
   maxQuantity,
   outOfStockLabel,
-  ratingLabel,
   prepTimeLabel,
   className = "",
 }: HomeProductCardProps) {
@@ -102,12 +100,6 @@ export function HomeProductCard({
             />
           </span>
         </div>
-
-        {ratingLabel ? (
-          <p className="h-[22px] text-[13px] leading-[1.25] font-bold whitespace-nowrap text-[#ff6b00]">
-            {ratingLabel}
-          </p>
-        ) : null}
 
         <h3 className="relative z-[2] h-[50px] w-full shrink-0 overflow-hidden text-[20px] leading-[1.25] font-extrabold text-[#1e1e1e]">
           <AppLink href={href} prefetchPolicy="auto" className="line-clamp-2 block">

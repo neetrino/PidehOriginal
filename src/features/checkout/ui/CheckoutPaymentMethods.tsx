@@ -20,7 +20,7 @@ export type PaymentOption = {
 type CheckoutPaymentMethodsProps = {
   title: string;
   options: PaymentOption[];
-  value: CheckoutPaymentMethod;
+  value: CheckoutPaymentMethod | null;
   onChange: (method: CheckoutPaymentMethod) => void;
   disabled: boolean;
   /** Shown under the cash option while cash on delivery is selected. */
@@ -40,7 +40,7 @@ export function CheckoutPaymentMethods({
   return (
     <section className={CHECKOUT_PANEL}>
       <h2 className={CHECKOUT_SECTION_TITLE}>{title}</h2>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {options.map((option) => {
           const selected = value === option.id;
           const logos = option.logos.filter((src) => !logoErrors[src]);
@@ -49,7 +49,7 @@ export function CheckoutPaymentMethods({
           return (
             <div key={option.id} className="space-y-3">
               <label
-                className={`flex cursor-pointer items-center rounded-[18px] border-2 p-4 transition-colors ${
+                className={`flex cursor-pointer items-center rounded-[18px] border-2 px-3 py-2.5 transition-colors ${
                   selected ? CHECKOUT_RADIO_ON : CHECKOUT_RADIO_OFF
                 }`}
               >
@@ -59,10 +59,10 @@ export function CheckoutPaymentMethods({
                 value={option.id}
                 checked={selected}
                 onChange={() => onChange(option.id)}
-                className="mr-4 accent-[#ff6b00]"
+                className="mr-3 accent-[#ff6b00]"
                 disabled={disabled}
               />
-              <div className="flex flex-1 items-center gap-4">
+              <div className="flex flex-1 items-center gap-3">
                 {showFallback ? (
                   <div className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#ff6b00]/15 bg-white">
                     <svg
@@ -99,9 +99,13 @@ export function CheckoutPaymentMethods({
                     ))}
                   </div>
                 )}
-                <div className="flex-1">
-                  <div className="font-bold text-[#1e1e1e]">{option.name}</div>
-                  <div className="text-sm text-[#1e1e1e]/60">{option.description}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold leading-tight text-[#1e1e1e]">{option.name}</div>
+                  {option.id === 'terminal' ? (
+                    <div className="mt-0.5 text-sm leading-snug text-[#1e1e1e]/60">
+                      {option.description}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </label>

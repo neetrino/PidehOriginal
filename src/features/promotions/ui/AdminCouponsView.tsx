@@ -51,6 +51,8 @@ type AdminCouponsViewProps = {
   coupons: AdminPromotionListItem[];
   userOptions: CouponUserOption[];
   copy: AdminCouponsViewCopy;
+  /** Server time when the list was rendered, so expiry checks stay pure. */
+  listedAt: string;
 };
 
 function formatValidUntil(endsAt: Date | string | null, locale: string): string {
@@ -69,7 +71,13 @@ function couponStatusLabel(
   return statuses[status];
 }
 
-export function AdminCouponsView({ locale, coupons, userOptions, copy }: AdminCouponsViewProps) {
+export function AdminCouponsView({
+  locale,
+  coupons,
+  userOptions,
+  copy,
+  listedAt,
+}: AdminCouponsViewProps) {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<AdminPromotionListItem | null>(null);
@@ -163,10 +171,11 @@ export function AdminCouponsView({ locale, coupons, userOptions, copy }: AdminCo
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
                 {coupons.map((promo) => {
-                  const status = resolveCouponAdminStatus(promo);
+                  const listedAtDate = new Date(listedAt);
+                  const status = resolveCouponAdminStatus(promo, listedAtDate);
                   const statusLabel = couponStatusLabel(status, copy.coupons.statuses);
                   const isPastEnd =
-                    promo.endsAt !== null && new Date(promo.endsAt).getTime() < Date.now();
+                    promo.endsAt !== null && new Date(promo.endsAt).getTime() < listedAtDate.getTime();
 
                   return (
                     <tr key={promo.id} className={ADMIN_TABLE_ROW}>

@@ -9,6 +9,7 @@
     "cart": "Զամբյուղ",
     "about": "Մեր մասին",
     "contact": "Կապ",
+    "policies": "Քաղաքականություն",
     "wishlist": "Նախընտրածներ",
     "openMenu": "Բացել մենյուն",
     "closeMenu": "Փակել մենյուն",
@@ -43,7 +44,7 @@
     "deliveryReturns": "Առաքում և Վերադարձ",
     "contactInfo": "Կապ",
     "followUs": "Հետևեք մեզ",
-    "copyright": "Copyright © {year}. All Rights Reserved. Created by Neetrino IT Company",
-    "copyrightMobile": "© {year}. All Rights Reserved. Created by Neetrino"
+    "copyright": "© {year} | All Rights Reserved | Created by Neetrino",
+    "copyrightMobile": "© {year} | Created By Neetrino"
   }
 }
