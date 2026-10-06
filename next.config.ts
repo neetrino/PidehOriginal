@@ -16,12 +16,13 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      // Google Maps JS loads from maps.googleapis.com / maps.gstatic.com
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      // Google Maps JS loads from maps.googleapis.com / maps.gstatic.com; Tidio chat from *.tidio.co
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com https://*.tidio.co",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.tidio.co",
       "img-src 'self' data: blob: https:",
-      "font-src 'self' data: https://fonts.gstatic.com",
-      "connect-src 'self' https:",
+      "font-src 'self' data: https://fonts.gstatic.com https://*.tidio.co",
+      "connect-src 'self' https: wss://*.tidio.co",
+      "media-src 'self' https://*.tidio.co",
       "worker-src 'self' blob:",
       "frame-src 'self' https://www.google.com https://maps.google.com https://maps.googleapis.com",
       "frame-ancestors 'none'",

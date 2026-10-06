@@ -7,6 +7,7 @@ import { PAGE_CONTAINER } from '@/components/layout/page-container';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { MaintenanceGate } from '@/components/layout/MaintenanceGate';
+import { TidioChat } from '@/components/layout/TidioChat';
 import { resolveActiveGroupOrderSession } from '@/features/group-orders/application/active-banner';
 import { ActiveGroupOrderBanner } from '@/features/group-orders/ui/ActiveGroupOrderBanner';
 import { GroupOrderSessionWatcher } from '@/features/group-orders/ui/GroupOrderSessionWatcher';
@@ -62,6 +63,7 @@ export default async function StorefrontLayout({ children, params }: StorefrontL
       <SiteFooter dictionary={dictionary} locale={locale} />
       <MobileBottomNavIsland locale={locale} currency={currency} dictionary={dictionary} />
       <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />
+      <TidioChat />
     </div>
   );
 }
