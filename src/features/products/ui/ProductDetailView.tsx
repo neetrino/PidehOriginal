@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 
 import { PAGE_CONTAINER, STOREFRONT_DESKTOP_FLEX } from '@/components/layout/page-container';
-import { ProductDetailBreadcrumb } from '@/features/products/ui/ProductDetailBreadcrumb';
 import { ProductDetailConfigurator } from '@/features/products/ui/ProductDetailConfigurator';
 import { ProductRelatedSection } from '@/features/products/ui/ProductRelatedSection';
 import type { ProductDetail } from '@/features/products/types';
@@ -90,13 +89,6 @@ export function ProductDetailView({
       <article className={`${STOREFRONT_DESKTOP_FLEX} flex-col`}>
         <div className="pt-6 pb-20 md:pt-8 md:pb-28">
           <div className={PAGE_CONTAINER}>
-            <ProductDetailBreadcrumb
-              catalogHref={`/${locale}/products`}
-              backLabel={dictionary.catalog.back}
-              catalogLabel={dictionary.catalog.title}
-              productTitle={product.translation.title}
-            />
-
             <ProductDetailConfigurator {...configurator} />
 
             {relatedSlot}

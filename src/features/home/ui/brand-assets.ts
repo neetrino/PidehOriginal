@@ -48,7 +48,6 @@ export const PIDEH_ASSETS = {
   shopCatSauces: '/brand/pideh/shop-cat-sauces.svg',
   shopCatDrinks: '/brand/pideh/shop-cat-drinks.svg',
   shopFilter: '/brand/pideh/shop-filter.svg',
-  shopBack: '/brand/pideh/shop-back.svg',
   shopChevron: '/brand/pideh/shop-chevron.svg',
   shopHeart: '/brand/pideh/shop-heart.svg',
   /** Figma ProductPage (180:882) chrome icons. */
