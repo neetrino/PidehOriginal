@@ -20,6 +20,13 @@ const localeShortLabels: Record<Locale, string> = {
   ru: 'RU',
 };
 
+/** Compact codes inside the mobile menu tracks. */
+const embeddedLocaleLabels: Record<Locale, string> = {
+  hy: 'ՀԱՅ',
+  en: 'EN',
+  ru: 'РУС',
+};
+
 type LocaleCurrencySwitcherProps = {
   locale: Locale;
   currency: Currency;
@@ -80,6 +87,52 @@ function SwitcherOption({
       ) : null}
       <span className="relative z-[1]">{children}</span>
     </button>
+  );
+}
+
+function EmbeddedChoice({
+  selected,
+  disabled,
+  onClick,
+  children,
+  ariaLabel,
+}: {
+  selected: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  ariaLabel?: string;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      aria-pressed={selected}
+      aria-label={ariaLabel}
+      onClick={onClick}
+      className={`flex min-w-0 flex-1 items-center justify-center rounded-full px-1 py-1.5 text-[11px] leading-none tracking-wide transition-colors ${
+        selected
+          ? 'bg-white font-bold text-[#1e1e1e] shadow-[0_1px_3px_rgba(30,30,30,0.14)]'
+          : 'font-semibold text-[#1e1e1e]/40'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function EmbeddedTrack({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="min-w-0 flex-1">
+      <p className="mb-1.5 px-1 text-xs font-medium text-[#1e1e1e]/45">{label}</p>
+      <div className="flex items-center rounded-full bg-[#f1f1f1] p-1">{children}</div>
+    </div>
   );
 }
 
@@ -250,17 +303,32 @@ export function LocaleCurrencySwitcher({
 
   if (embedded) {
     return (
-      <CurrencyLanguageGrid
-        locale={locale}
-        currency={currency}
-        currencyLabel={currencyLabel}
-        languageLabel={languageLabel}
-        pending={pending}
-        reduceMotion={reduceMotion}
-        onCurrency={selectCurrency}
-        onLocale={selectLocale}
-        fill
-      />
+      <div className="flex items-start gap-4">
+        <EmbeddedTrack label={languageLabel}>
+          {locales.map((code) => (
+            <EmbeddedChoice
+              key={code}
+              selected={code === locale}
+              ariaLabel={`${embeddedLocaleLabels[code]}: ${localeLabels[code]}`}
+              onClick={() => selectLocale(code)}
+            >
+              {embeddedLocaleLabels[code]}
+            </EmbeddedChoice>
+          ))}
+        </EmbeddedTrack>
+        <EmbeddedTrack label={currencyLabel}>
+          {currencies.map((code) => (
+            <EmbeddedChoice
+              key={code}
+              selected={code === currency}
+              disabled={pending}
+              onClick={() => selectCurrency(code)}
+            >
+              {code}
+            </EmbeddedChoice>
+          ))}
+        </EmbeddedTrack>
+      </div>
     );
   }
 
