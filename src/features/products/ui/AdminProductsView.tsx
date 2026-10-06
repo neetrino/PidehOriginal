@@ -82,7 +82,7 @@ export function AdminProductsView({
         dir={filters.dir}
         copy={copy.products.filters}
         action={
-          <button type="button" onClick={openCreate} className={`${ADMIN_PRIMARY_BTN} h-11 w-full`}>
+          <button type="button" onClick={openCreate} className={`${ADMIN_PRIMARY_BTN} h-11 w-full sm:w-auto`}>
             <Plus className="h-4 w-4" aria-hidden />
             {copy.products.addNewProduct}
           </button>
