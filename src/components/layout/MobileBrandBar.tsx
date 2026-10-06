@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, X } from 'lucide-react';
+import { Users } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -38,6 +38,7 @@ export function MobileBrandBar({
   className = '',
 }: MobileBrandBarProps) {
   const [groupOpen, setGroupOpen] = useState(false);
+  const [menuPresent, setMenuPresent] = useState(false);
   const navItems = [
     { href: `/${locale}`, label: dictionary.nav.home },
     { href: `/${locale}/products`, label: dictionary.nav.menu },
@@ -66,14 +67,14 @@ export function MobileBrandBar({
         />
       </AppLink>
 
-      <div className="relative h-14 w-[113px] shrink-0">
+      <div data-mobile-menu-pill className="relative h-14 w-[113px] shrink-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={MOBILE_HOME_ASSETS.menuUser}
           alt=""
           width={113}
           height={56}
-          className="pointer-events-none absolute inset-0 size-full"
+          className={`pointer-events-none absolute inset-0 size-full ${menuPresent ? 'invisible' : ''}`}
           aria-hidden="true"
         />
         <MobileNavDrawer
@@ -85,22 +86,18 @@ export function MobileBrandBar({
           phoneNumber={dictionary.contact.storePhone}
           phoneLabel={phoneLabel}
           onOpenGroupOrder={() => setGroupOpen(true)}
+          onPresenceChange={setMenuPresent}
           navItems={navItems}
           triggerClassName="absolute inset-y-0 left-0 z-10 w-[52%] touch-manipulation bg-transparent"
-          triggerContent={(open) =>
-            open ? (
-              <span className="absolute inset-0 flex items-center justify-center rounded-l-full bg-[#FFD54A]">
-                <X className="size-6 text-[#FF6900]" strokeWidth={2.75} aria-hidden="true" />
-                <span className="sr-only">{dictionary.nav.closeMenu}</span>
-              </span>
-            ) : (
-              <span className="sr-only">{dictionary.nav.openMenu}</span>
-            )
-          }
+          triggerContent={(open) => (
+            <span className="sr-only">
+              {open ? dictionary.nav.closeMenu : dictionary.nav.openMenu}
+            </span>
+          )}
         />
         <button
           type="button"
-          className="absolute inset-y-0 right-0 z-10 flex w-[48%] items-center justify-center touch-manipulation"
+          className={`absolute inset-y-0 right-0 z-10 flex w-[48%] items-center justify-center touch-manipulation ${menuPresent ? 'invisible' : ''}`}
           aria-label={dictionary.groupOrder.createButton}
           onClick={() => setGroupOpen(true)}
         >
