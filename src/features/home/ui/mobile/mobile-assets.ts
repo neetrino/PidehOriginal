@@ -1,6 +1,5 @@
 /** Figma Mobile home (node 259:369) committed assets. */
 export const MOBILE_HOME_ASSETS = {
-  logo: '/brand/pideh/mobile/logo.png',
   menuUser: '/brand/pideh/mobile/menu-user.svg',
   headerDrip: '/brand/pideh/mobile/header-drip.svg',
   headerDripPng: '/brand/pideh/mobile/header-drip.png',

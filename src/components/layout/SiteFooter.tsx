@@ -66,39 +66,14 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             >
               <StaggerItem variants={footerColumn}>
                 <Image
-                  src={PIDEH_ASSETS.footerLogo}
+                  src={PIDEH_ASSETS.logo}
                   alt={dictionary.brand}
-                  width={99}
-                  height={77}
-                  className="mt-[21px] h-[77px] w-[99px]"
+                  width={2024}
+                  height={1720}
+                  quality={100}
+                  sizes="640px"
+                  className="mt-[21px] h-[180px] w-auto"
                 />
-                <p className="mt-6 max-w-[436px] text-base leading-[17px] text-[#1e1e1e]">
-                  {footer.description}
-                </p>
-                <div className="mt-[19px] flex items-center gap-4">
-                  {socials.map((item) => (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={
-                        item.inner
-                          ? 'relative flex size-10 items-center justify-center rounded-full bg-[#ff6b00] transition hover:brightness-105'
-                          : 'size-10 shrink-0 transition hover:brightness-105'
-                      }
-                      aria-label={item.label}
-                    >
-                      <Image
-                        src={item.src}
-                        alt=""
-                        width={item.inner ? 20 : 40}
-                        height={item.inner ? 22 : 40}
-                        className={item.inner ? 'h-[22px] w-5' : 'size-10'}
-                      />
-                    </a>
-                  ))}
-                </div>
               </StaggerItem>
 
               <StaggerItem className="lg:pl-10" variants={footerColumn}>
@@ -234,7 +209,31 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             </StaggerGroup>
 
             <RevealOnView className="relative mt-10 lg:mt-12" variants={footerColumn} delay={0.2}>
-              <div className="flex flex-col items-center gap-4 xl:block">
+              <div className="flex flex-col items-center gap-4 xl:flex-row xl:items-center xl:justify-between">
+                <div className="flex items-center gap-4">
+                  {socials.map((item) => (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={
+                        item.inner
+                          ? 'relative flex size-10 items-center justify-center rounded-full bg-[#ff6b00] transition hover:brightness-105'
+                          : 'size-10 shrink-0 transition hover:brightness-105'
+                      }
+                      aria-label={item.label}
+                    >
+                      <Image
+                        src={item.src}
+                        alt=""
+                        width={item.inner ? 20 : 40}
+                        height={item.inner ? 22 : 40}
+                        className={item.inner ? 'h-[22px] w-5' : 'size-10'}
+                      />
+                    </a>
+                  ))}
+                </div>
                 <div className="flex flex-wrap items-center justify-center gap-3 xl:justify-end">
                   {PAYMENT_BADGES.map((badge) => (
                     <span
@@ -252,7 +251,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                   ))}
                 </div>
 
-                <p className="px-2 text-center text-sm leading-4 tracking-[0.35px] text-[#1e1e1e] xl:absolute xl:inset-x-0 xl:top-1/2 xl:m-0 xl:-translate-y-1/2">
+                <p className="px-2 text-center text-sm leading-4 tracking-[0.35px] text-[#1e1e1e] xl:absolute xl:top-1/2 xl:left-1/2 xl:m-0 xl:-translate-x-1/2 xl:-translate-y-1/2">
                 {footer.copyright
                   .replace('{year}', String(year))
                   .split('Neetrino')

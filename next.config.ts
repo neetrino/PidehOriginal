@@ -86,7 +86,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: buildImageRemotePatterns(),
-    qualities: [75, 90],
+    qualities: [75, 90, 100],
   },
   async headers() {
     const heroMediaCache = {

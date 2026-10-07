@@ -103,7 +103,8 @@ export function SiteHeaderMainNav({
               src={PIDEH_ASSETS.logo}
               alt={dictionary.brand}
               fill
-              sizes="75px"
+              sizes="225px"
+              quality={100}
               className="object-contain"
               priority
             />

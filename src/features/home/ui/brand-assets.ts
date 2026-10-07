@@ -2,8 +2,8 @@ import { pidehRasterUrl } from '@/lib/media/r2-public-asset-url';
 
 /** Static brand assets exported from Figma Pideh-Dev (node 1:76). */
 export const PIDEH_ASSETS = {
-  logo: pidehRasterUrl('logo'),
-  footerLogo: '/brand/pideh/footer-logo.svg',
+  /** 8× master of the navbar wordmark, so retina layouts downscale instead of stretching the small source. */
+  logo: '/brand/pideh/logo.png',
   foodPide: pidehRasterUrl('food-pide'),
   ctaPide: pidehRasterUrl('cta-pide'),
   ctaDotA: '/brand/pideh/cta-dot-a.svg',
