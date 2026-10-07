@@ -153,7 +153,6 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
               wishlistLabel={dictionary.nav.wishlist}
               orderLabel={dictionary.home.orderCta}
               outOfStockLabel={dictionary.product.outOfStock}
-              prepTimeLabel={dictionary.product.prepTime}
             />
           </CatalogControls>
         </div>

@@ -19,7 +19,6 @@ type ShopInfiniteGridProps = {
   wishlistLabel: string;
   orderLabel: string;
   outOfStockLabel: string;
-  prepTimeLabel: string;
 };
 
 function ShopGridCards({
@@ -29,7 +28,6 @@ function ShopGridCards({
   wishlistLabel,
   orderLabel,
   outOfStockLabel,
-  prepTimeLabel,
 }: {
   locale: Locale;
   items: readonly ShopGridItem[];
@@ -37,7 +35,6 @@ function ShopGridCards({
   wishlistLabel: string;
   orderLabel: string;
   outOfStockLabel: string;
-  prepTimeLabel: string;
 }) {
   return (
     <StaggerGroup
@@ -70,7 +67,6 @@ function ShopGridCards({
             wishlistLabel={wishlistLabel}
             orderLabel={orderLabel}
             outOfStockLabel={outOfStockLabel}
-            prepTimeLabel={prepTimeLabel}
             className="max-w-none"
           />
         </StaggerItem>
@@ -100,7 +96,6 @@ export function ShopInfiniteGrid({
   wishlistLabel,
   orderLabel,
   outOfStockLabel,
-  prepTimeLabel,
 }: ShopInfiniteGridProps) {
   const [items, setItems] = useState<ShopGridItem[]>(() => [...initialItems]);
   const [total, setTotal] = useState(initialTotal);
@@ -157,7 +152,6 @@ export function ShopInfiniteGrid({
         wishlistLabel={wishlistLabel}
         orderLabel={orderLabel}
         outOfStockLabel={outOfStockLabel}
-        prepTimeLabel={prepTimeLabel}
       />
       {hasMore ? <div ref={sentinelRef} className="h-px w-full" aria-hidden="true" /> : null}
     </>

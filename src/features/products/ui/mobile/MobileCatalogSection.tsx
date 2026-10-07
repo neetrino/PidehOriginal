@@ -18,7 +18,6 @@ type MobileCatalogSectionProps = {
   isSignedIn: boolean;
   wishlistLabel: string;
   addLabel: string;
-  prepTimeLabel: string;
   priorityCount?: number;
 };
 
@@ -32,7 +31,6 @@ export function MobileCatalogSection({
   isSignedIn,
   wishlistLabel,
   addLabel,
-  prepTimeLabel,
   priorityCount = 0,
 }: MobileCatalogSectionProps) {
   return (
@@ -66,7 +64,6 @@ export function MobileCatalogSection({
           isSignedIn={isSignedIn}
           wishlistLabel={wishlistLabel}
           addLabel={addLabel}
-          prepTimeLabel={prepTimeLabel}
           priorityCount={priorityCount}
         />
       </div>

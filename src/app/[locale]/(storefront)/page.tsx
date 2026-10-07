@@ -114,7 +114,6 @@ export default async function HomePage({ params }: HomePageProps) {
         products={featuredCards}
         currency={currency}
         isSignedIn={Boolean(user)}
-        prepTimeLabel={dictionary.product.prepTime}
       />
 
       <div className={STOREFRONT_DESKTOP_ONLY}>
@@ -145,7 +144,6 @@ export default async function HomePage({ params }: HomePageProps) {
           wishlistLabel={dictionary.nav.wishlist}
           orderLabel={dictionary.home.orderCta}
           outOfStockLabel={dictionary.product.outOfStock}
-          prepTimeLabel={dictionary.product.prepTime}
           isSignedIn={Boolean(user)}
           products={featuredCards}
         />

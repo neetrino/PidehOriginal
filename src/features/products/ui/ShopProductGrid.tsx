@@ -23,7 +23,6 @@ type ShopProductGridProps = {
   wishlistLabel: string;
   orderLabel: string;
   outOfStockLabel: string;
-  prepTimeLabel: string;
 };
 
 function toGridItems(
@@ -53,7 +52,6 @@ export function ShopProductGrid({
   wishlistLabel,
   orderLabel,
   outOfStockLabel,
-  prepTimeLabel,
 }: ShopProductGridProps) {
   if (products.length === 0) {
     return (
@@ -85,7 +83,6 @@ export function ShopProductGrid({
       wishlistLabel={wishlistLabel}
       orderLabel={orderLabel}
       outOfStockLabel={outOfStockLabel}
-      prepTimeLabel={prepTimeLabel}
     />
   );
 }

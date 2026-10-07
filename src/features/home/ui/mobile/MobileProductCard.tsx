@@ -23,7 +23,6 @@ type MobileProductCardProps = {
   addLabel: string;
   cartQuantity?: number;
   maxQuantity?: number;
-  prepTimeLabel?: string;
   priority?: boolean;
 };
 
@@ -48,9 +47,10 @@ export function MobileProductCard({
   addLabel,
   cartQuantity = 0,
   maxQuantity,
-  prepTimeLabel,
   priority = false,
 }: MobileProductCardProps) {
+  const summary = description?.trim() ?? "";
+
   return (
     <article
       data-node-id="260:512"
@@ -112,16 +112,9 @@ export function MobileProductCard({
 
       <p
         data-node-id="260:520"
-        className="font-noto-armenian line-clamp-3 min-h-[48px] w-full shrink-0 overflow-hidden text-sm leading-[1.14] text-[#6b6b6b]"
+        className="font-noto-armenian line-clamp-3 h-12 w-full shrink-0 overflow-hidden text-sm leading-[1.14] text-[#6b6b6b]"
       >
-        {description ?? '\u00A0'}
-      </p>
-
-      <p
-        data-node-id="260:521"
-        className="font-noto-armenian h-4 w-full shrink-0 text-[13px] leading-[1.25] text-[#6b6b6b]"
-      >
-        {prepTimeLabel ?? '\u00A0'}
+        {summary || '\u00A0'}
       </p>
 
       <div

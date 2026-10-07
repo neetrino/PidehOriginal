@@ -86,7 +86,6 @@ export function MobileCatalog({
             isSignedIn={isSignedIn}
             wishlistLabel={dictionary.nav.wishlist}
             addLabel={dictionary.home.orderCta}
-            prepTimeLabel={dictionary.product.prepTime}
             priorityCount={index === 0 ? 2 : 0}
           />
         ))

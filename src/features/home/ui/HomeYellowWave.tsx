@@ -17,7 +17,7 @@ export function HomeYellowWave({ className = '' }: HomeYellowWaveProps) {
       className={`pointer-events-none relative w-full ${className}`}
       style={{ aspectRatio: '1507.5 / 1225' }}
     >
-      <div className="absolute inset-0 [filter:drop-shadow(0_-4px_17px_rgba(199,89,15,0.21))]">
+      <div className="absolute inset-0">
         <SwimDripWave spec={YELLOW_DRIP} />
       </div>
     </div>

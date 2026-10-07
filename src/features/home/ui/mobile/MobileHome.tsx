@@ -55,7 +55,6 @@ type MobileHomeProps = {
   products: readonly FeaturedItem[];
   currency: Currency;
   isSignedIn: boolean;
-  prepTimeLabel: string;
 };
 
 function splitFeaturedTitle(title: string): { line1: string; line2: string } {
@@ -79,7 +78,6 @@ export function MobileHome({
   products,
   currency,
   isSignedIn,
-  prepTimeLabel,
 }: MobileHomeProps) {
   const home = dictionary.home;
   const contact = dictionary.contact;
@@ -151,7 +149,6 @@ export function MobileHome({
         emptyLabel={home.emptyFeatured}
         wishlistLabel={dictionary.nav.wishlist}
         addLabel={home.orderCta}
-        prepTimeLabel={prepTimeLabel}
         isSignedIn={isSignedIn}
         products={products}
       />

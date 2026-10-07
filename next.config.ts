@@ -100,11 +100,11 @@ const nextConfig: NextConfig = {
         headers: securityHeaders,
       },
       {
-        source: '/brand/pideh/hero-pide.mp4',
+        source: '/brand/pideh/hero-food.mp4',
         headers: [heroMediaCache],
       },
       {
-        source: '/brand/pideh/hero-pide-poster.jpg',
+        source: '/brand/pideh/hero-food-poster.jpg',
         headers: [heroMediaCache],
       },
     ];

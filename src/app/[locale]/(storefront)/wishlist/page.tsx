@@ -138,7 +138,6 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                   wishlistLabel={title}
                   orderLabel={dictionary.home.orderCta}
                   outOfStockLabel={dictionary.product.outOfStock}
-                  prepTimeLabel={dictionary.product.prepTime}
                   className="max-w-none"
                 />
               </StaggerItem>
