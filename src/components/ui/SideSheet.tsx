@@ -58,9 +58,16 @@ export function SideSheet({
   const [mounted, setMounted] = useState(false);
   const [rendered, setRendered] = useState(false);
   const [exiting, setExiting] = useState(false);
-  const [displayChildren, setDisplayChildren] = useState(children);
-  const [displayAriaLabel, setDisplayAriaLabel] = useState(ariaLabel);
   const exitDoneRef = useRef(false);
+  const snapshotChildrenRef = useRef(children);
+  const snapshotAriaLabelRef = useRef(ariaLabel);
+
+  // Keep the last open content for the close animation. Updating it in an
+  // effect would paint stale field values first and jump the text caret to the end.
+  if (open) {
+    snapshotChildrenRef.current = children;
+    snapshotAriaLabelRef.current = ariaLabel;
+  }
 
   const isAdmin = variant === 'admin';
   const resolvedPanelClassName =
@@ -75,12 +82,6 @@ export function SideSheet({
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (!open) return;
-    setDisplayChildren(children);
-    setDisplayAriaLabel(ariaLabel);
-  }, [open, children, ariaLabel]);
 
   useEffect(() => {
     if (open) {
@@ -167,7 +168,7 @@ export function SideSheet({
       className={`fixed inset-0 ${zIndexClassName}`}
       role="dialog"
       aria-modal="true"
-      aria-label={displayAriaLabel}
+      aria-label={open ? ariaLabel : snapshotAriaLabelRef.current}
     >
       <button
         type="button"
@@ -208,7 +209,7 @@ export function SideSheet({
           className={`flex h-full min-h-0 w-full flex-col overflow-hidden shadow-2xl ${resolvedPanelInnerClassName}`}
           onClick={(event) => event.stopPropagation()}
         >
-          {displayChildren}
+          {open ? children : snapshotChildrenRef.current}
         </div>
       </div>
     </div>,

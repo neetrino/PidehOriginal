@@ -36,39 +36,57 @@ export function AdminProductsFilters({
 }: AdminProductsFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [categoryValue, setCategoryValue] = useState(categoryId ?? '');
-  const [statusValue, setStatusValue] = useState(status);
+  const [stopList, setStopList] = useState(status === 'draft');
 
   const categoryOptions = categories.map((category) => ({
     label: category.title,
     value: category.id,
   }));
 
-  const statusOptions = [
-    { label: copy.allStatuses, value: 'all' as const },
-    { label: copy.statusActive, value: 'active' as const },
-    { label: copy.statusInactive, value: 'inactive' as const },
-    { label: copy.statusDraft, value: 'draft' as const },
-    { label: copy.statusLowRemaining, value: 'low_remaining' as const },
-  ];
-
   function applyCategory(next: string): void {
     flushSync(() => setCategoryValue(next));
     formRef.current?.requestSubmit();
   }
 
-  function applyStatus(next: string): void {
-    flushSync(() => setStatusValue(next as AdminProductsFiltersProps['status']));
+  function toggleStopList(): void {
+    flushSync(() => setStopList((current) => !current));
     formRef.current?.requestSubmit();
   }
 
   return (
     <div className="mb-4">
-      <p className="mb-3 text-sm text-gray-600">
-        {copy.totalProducts.replace('{total}', String(total))}
-      </p>
-      <form ref={formRef} method="get" className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <form ref={formRef} method="get">
         <input type="hidden" name="sort" value={sort} />
         <input type="hidden" name="dir" value={dir} />
+        <input type="hidden" name="status" value={stopList ? 'draft' : 'all'} />
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={stopList}
+            aria-label={copy.statusDraft}
+            onClick={toggleStopList}
+            className="inline-flex items-center gap-3 text-sm font-semibold text-[#1e1e1e]"
+          >
+            <span
+              className={`relative h-6 w-11 rounded-full transition-colors ${
+                stopList ? 'bg-[#ff6b00]' : 'bg-gray-300'
+              }`}
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
+                  stopList ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </span>
+            {copy.statusDraft}
+          </button>
+          {action ? <div className="w-full sm:w-auto">{action}</div> : null}
+        </div>
+        <p className="mb-3 text-sm text-gray-600">
+          {copy.totalProducts.replace('{total}', String(total))}
+        </p>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <label>
           <span className={ADMIN_LABEL}>{copy.searchByTitleOrSlug}</span>
           <input
@@ -91,19 +109,6 @@ export function AdminProductsFilters({
             onValueChange={applyCategory}
           />
         </div>
-        <div className="md:col-span-2 flex flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="min-w-0 sm:flex-1">
-            <span className={ADMIN_LABEL}>{copy.filterByStatus}</span>
-            <SelectDropdown
-              name="status"
-              ariaLabel={copy.filterByStatusAria}
-              value={statusValue}
-              options={statusOptions}
-              className="mt-1"
-              onValueChange={applyStatus}
-            />
-          </div>
-          {action ? <div className="sm:flex-1">{action}</div> : null}
         </div>
       </form>
     </div>

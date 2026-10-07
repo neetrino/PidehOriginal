@@ -9,5 +9,5 @@ export const HERO_DESKTOP_MEDIA = STOREFRONT_DESKTOP_MEDIA;
  */
 export const HERO_VIDEO_PRELOAD_MEDIA = `${HERO_DESKTOP_MEDIA} and (prefers-reduced-motion: no-preference)`;
 
-export const HERO_VIDEO_WIDTH = 2096;
-export const HERO_VIDEO_HEIGHT = 988;
+export const HERO_VIDEO_WIDTH = 1920;
+export const HERO_VIDEO_HEIGHT = 1440;

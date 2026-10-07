@@ -4,11 +4,9 @@ import { PAGE_CONTAINER, STOREFRONT_DESKTOP_ONLY } from '@/components/layout/pag
 import { RevealOnView } from '@/components/motion/RevealOnView';
 import { titleSweep } from '@/components/motion/presets';
 import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
-import {
-  catalogHref,
-  parseCatalogSearchParams,
-} from '@/features/products/application/catalog-search-params';
+import { parseCatalogSearchParams } from '@/features/products/application/catalog-search-params';
 import { listCatalogProducts } from '@/features/products/application/list-catalog-products';
+import { compareShopCategories } from '@/features/products/domain/shop-category-order';
 import {
   listCatalogSections,
   type CatalogSection,
@@ -37,28 +35,22 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
     notFound();
   }
 
-  let filters = parseCatalogSearchParams(raw);
+  const filters = { ...parseCatalogSearchParams(raw), page: 1 };
   const dictionary = getDictionary(rawLocale);
   const catalogCopy = dictionary.catalog;
   const currency = await getSelectedCurrency();
-  const [user, categoryOptions, firstCatalog] = await Promise.all([
+  const [user, categoryOptions, catalog] = await Promise.all([
     getCurrentUser(),
     listStorefrontCategories(rawLocale),
     listCatalogProducts(rawLocale, filters, currency),
   ]);
 
-  const categories = categoryOptions.map((category) => ({
-    slug: category.slug,
-    title: category.title,
-  }));
-
-  let catalog = firstCatalog;
-  const totalPages = Math.max(1, Math.ceil(catalog.total / catalog.pageSize));
-
-  if (filters.page > totalPages) {
-    filters = { ...filters, page: totalPages };
-    catalog = await listCatalogProducts(rawLocale, filters, currency);
-  }
+  const categories = categoryOptions
+    .map((category) => ({
+      slug: category.slug,
+      title: category.title,
+    }))
+    .sort(compareShopCategories);
 
   const activeCategory = categories.find((category) => category.slug === filters.category);
   const sections: CatalogSection[] = filters.category
@@ -150,7 +142,9 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
           >
             <ShopProductGrid
               locale={rawLocale}
+              filters={filters}
               products={priced}
+              total={catalog.total}
               wishlistIds={wishlistIds}
               cartQuantities={cartQuantities}
               isSignedIn={Boolean(user)}
@@ -159,14 +153,6 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
               wishlistLabel={dictionary.nav.wishlist}
               orderLabel={dictionary.home.orderCta}
               outOfStockLabel={dictionary.product.outOfStock}
-              prepTimeLabel={dictionary.product.prepTime}
-              paginationLabel={catalogCopy.paginationLabel}
-              previousPage={catalogCopy.previousPage}
-              nextPage={catalogCopy.nextPage}
-              pageStatus={catalogCopy.pageStatus}
-              page={filters.page}
-              totalPages={totalPages}
-              pageHref={(targetPage) => catalogHref(rawLocale, filters, { page: targetPage })}
             />
           </CatalogControls>
         </div>

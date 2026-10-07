@@ -12,7 +12,7 @@ import {
 
 type HomeHeroMediaProps = {
   imageSrc: string;
-  /** Optional Figma Kling export — place at public/brand/pideh/hero-pide.mp4 */
+  /** Desktop hero loop at public/brand/pideh/hero-food.mp4 */
   videoSrc?: string | null;
   posterSrc?: string | null;
   onBackdropColor?: (color: string) => void;
@@ -62,11 +62,11 @@ export function HomeHeroMedia({
 
   return (
     <div className="pointer-events-none relative z-0" data-home-hero-media-root>
-      <div className="relative w-full pt-52 md:pt-60" data-home-hero-media>
+      <div className="relative w-full" data-home-hero-media>
         {isDesktop ? (
           showVideo ? (
             <video
-              className="pideh-hero-video-fade block h-auto w-full max-w-none bg-transparent"
+              className="pideh-hero-video-fade pideh-hero-video-frame block h-auto max-w-none bg-transparent"
               autoPlay
               muted
               loop
@@ -89,18 +89,18 @@ export function HomeHeroMedia({
               height={HERO_VIDEO_HEIGHT}
               priority
               sizes="100vw"
-              className="pideh-hero-video-fade block h-auto w-full max-w-none"
+              className="pideh-hero-video-fade pideh-hero-video-frame block h-auto max-w-none"
             />
           )
         ) : (
           <div
-            className="w-full"
+            className="pideh-hero-video-frame"
             style={{ aspectRatio: `${HERO_VIDEO_WIDTH} / ${HERO_VIDEO_HEIGHT}` }}
           />
         )}
       </div>
       <div
-        className="pideh-hero-video-seam absolute inset-x-0 top-52 z-[1] h-12 md:top-60 md:h-14"
+        className="pideh-hero-video-seam absolute inset-x-0 z-[1] h-12 md:h-14"
         aria-hidden
       />
     </div>

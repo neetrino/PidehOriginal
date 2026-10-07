@@ -4,12 +4,11 @@ import { RevealOnView } from '@/components/motion/RevealOnView';
 import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
 import { cardShelf, fadeUp, titleSweep } from '@/components/motion/presets';
 import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
-import { ShopBreadcrumb } from '@/features/products/ui/ShopBreadcrumb';
 import { getActivePlainCartQuantities } from '@/features/cart/get-active-plain-quantities';
 import { listWishlistProducts } from '@/features/wishlist/queries';
 import { WishlistEmptyState } from '@/features/wishlist/ui/WishlistEmptyState';
 import { getCurrentUser } from '@/lib/auth/session';
-import { isLocale, type Locale } from '@/lib/i18n/config';
+import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { createDisplayPriceFormatter, getSelectedCurrency } from '@/lib/money/display-price';
 
@@ -18,22 +17,15 @@ type WishlistPageProps = {
 };
 
 function WishlistHeading({
-  locale,
-  backLabel,
   title,
   subtitle,
 }: {
-  locale: Locale;
-  backLabel: string;
   title: string;
   subtitle?: string;
 }) {
   return (
     <>
-      <RevealOnView variants={fadeUp}>
-        <ShopBreadcrumb backHref={`/${locale}`} backLabel={backLabel} currentLabel={title} />
-      </RevealOnView>
-      <RevealOnView variants={titleSweep} delay={0.06}>
+      <RevealOnView variants={titleSweep}>
         <h1 className="font-display mt-5 text-[clamp(2.75rem,7vw,4.25rem)] leading-[0.95] text-[#ff6b00]">
           {title}
         </h1>
@@ -68,7 +60,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
 
     return (
       <section>
-        <WishlistHeading locale={rawLocale} backLabel={dictionary.catalog.back} title={title} />
+        <WishlistHeading title={title} />
         <RevealOnView variants={fadeUp} delay={0.12} className="mt-8">
           <WishlistEmptyState
             title={copy.signInTitle}
@@ -102,8 +94,6 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   return (
     <section>
       <WishlistHeading
-        locale={rawLocale}
-        backLabel={dictionary.catalog.back}
         title={title}
         subtitle={priced.length > 0 ? countLabel : undefined}
       />
@@ -148,7 +138,6 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                   wishlistLabel={title}
                   orderLabel={dictionary.home.orderCta}
                   outOfStockLabel={dictionary.product.outOfStock}
-                  prepTimeLabel={dictionary.product.prepTime}
                   className="max-w-none"
                 />
               </StaggerItem>

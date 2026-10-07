@@ -86,7 +86,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: buildImageRemotePatterns(),
-    qualities: [75, 90],
+    qualities: [75, 90, 100],
   },
   async headers() {
     const heroMediaCache = {
@@ -100,11 +100,11 @@ const nextConfig: NextConfig = {
         headers: securityHeaders,
       },
       {
-        source: '/brand/pideh/hero-pide.mp4',
+        source: '/brand/pideh/hero-food.mp4',
         headers: [heroMediaCache],
       },
       {
-        source: '/brand/pideh/hero-pide-poster.jpg',
+        source: '/brand/pideh/hero-food-poster.jpg',
         headers: [heroMediaCache],
       },
     ];

@@ -36,7 +36,6 @@ type HomeProductCardProps = {
   cartQuantity?: number;
   maxQuantity?: number;
   outOfStockLabel?: string;
-  prepTimeLabel?: string;
   className?: string;
 };
 
@@ -58,10 +57,10 @@ export function HomeProductCard({
   cartQuantity = 0,
   maxQuantity,
   outOfStockLabel,
-  prepTimeLabel,
   className = "",
 }: HomeProductCardProps) {
   const reduceMotion = useReducedMotion();
+  const summary = description?.trim() ?? "";
 
   return (
     <motion.div
@@ -108,38 +107,36 @@ export function HomeProductCard({
         </h3>
 
         <p className="line-clamp-2 h-[35px] w-full min-w-0 shrink-0 overflow-hidden text-sm leading-[1.25] text-[#6b6b6b]">
-          {description || '\u00A0'}
+          {summary || "\u00A0"}
         </p>
 
-        <p className="h-4 w-full shrink-0 overflow-hidden text-[13px] leading-[1.25] font-medium text-[#6b6b6b]">
-          {prepTimeLabel || '\u00A0'}
-        </p>
-
-        <div className="flex h-[26px] w-full shrink-0 items-baseline gap-2 overflow-hidden">
-          <p className="text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]">
-            {priceFormatted}
-          </p>
-          {compareAtFormatted ? (
-            <p className="text-sm text-[#6b6b6b] line-through">
-              {compareAtFormatted}
+        <div className="relative z-10 mt-auto flex w-full flex-col gap-[11px]">
+          <div className="flex h-[26px] w-full shrink-0 items-baseline gap-2 overflow-hidden">
+            <p className="text-[21px] leading-[1.25] font-extrabold text-[#1e1e1e]">
+              {priceFormatted}
             </p>
+            {compareAtFormatted ? (
+              <p className="text-sm text-[#6b6b6b] line-through">
+                {compareAtFormatted}
+              </p>
+            ) : null}
+          </div>
+
+          {!inStock && outOfStockLabel ? (
+            <p className="text-sm font-semibold text-red-600">{outOfStockLabel}</p>
           ) : null}
-        </div>
 
-        {!inStock && outOfStockLabel ? (
-          <p className="text-sm font-semibold text-red-600">{outOfStockLabel}</p>
-        ) : null}
-
-        <div className="relative z-10 mt-auto w-full" onPointerDown={stopCardPress}>
-          <ProductCardCartControl
-            productId={productId}
-            locale={locale}
-            orderLabel={orderLabel}
-            initialQuantity={cartQuantity}
-            maxQuantity={maxQuantity}
-            inStock={inStock}
-            variant="pill"
-          />
+          <div className="w-full" onPointerDown={stopCardPress}>
+            <ProductCardCartControl
+              productId={productId}
+              locale={locale}
+              orderLabel={orderLabel}
+              initialQuantity={cartQuantity}
+              maxQuantity={maxQuantity}
+              inStock={inStock}
+              variant="pill"
+            />
+          </div>
         </div>
       </article>
     </motion.div>

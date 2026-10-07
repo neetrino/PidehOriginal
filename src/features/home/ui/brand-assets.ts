@@ -2,8 +2,8 @@ import { pidehRasterUrl } from '@/lib/media/r2-public-asset-url';
 
 /** Static brand assets exported from Figma Pideh-Dev (node 1:76). */
 export const PIDEH_ASSETS = {
-  logo: pidehRasterUrl('logo'),
-  footerLogo: '/brand/pideh/footer-logo.svg',
+  /** 8× master of the navbar wordmark, so retina layouts downscale instead of stretching the small source. */
+  logo: '/brand/pideh/logo.png',
   foodPide: pidehRasterUrl('food-pide'),
   ctaPide: pidehRasterUrl('cta-pide'),
   ctaDotA: '/brand/pideh/cta-dot-a.svg',
@@ -15,9 +15,9 @@ export const PIDEH_ASSETS = {
   /** Figma desktop hero pide video still (436:582). */
   heroPide: '/brand/pideh/hero-pide.png',
   /** Compact JPEG still for video poster / reduced-motion fallback. */
-  heroVideoPoster: '/brand/pideh/hero-pide-poster.jpg',
-  /** Optional Figma Kling export. Missing file → static hero pide. */
-  heroVideoMp4: '/brand/pideh/hero-pide.mp4',
+  heroVideoPoster: '/brand/pideh/hero-food-poster.jpg',
+  /** Desktop hero loop. Missing file → static hero pide. */
+  heroVideoMp4: '/brand/pideh/hero-food.mp4',
   heroVideoWebm: '/brand/pideh/hero-pide.webm',
   categoryPide: pidehRasterUrl('category-pide'),
   categoryArc: '/brand/pideh/category-arc.svg',
@@ -48,7 +48,6 @@ export const PIDEH_ASSETS = {
   shopCatSauces: '/brand/pideh/shop-cat-sauces.svg',
   shopCatDrinks: '/brand/pideh/shop-cat-drinks.svg',
   shopFilter: '/brand/pideh/shop-filter.svg',
-  shopBack: '/brand/pideh/shop-back.svg',
   shopChevron: '/brand/pideh/shop-chevron.svg',
   shopHeart: '/brand/pideh/shop-heart.svg',
   /** Figma ProductPage (180:882) chrome icons. */

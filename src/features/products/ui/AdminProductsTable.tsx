@@ -139,9 +139,9 @@ export function AdminProductsTable({
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">{selectedLabel}</p>
-        {selected.size > 0 ? (
+      {selected.size > 0 ? (
+        <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-gray-700">{selectedLabel}</p>
           <Button
             type="button"
             size="sm"
@@ -151,8 +151,8 @@ export function AdminProductsTable({
           >
             {copy.table.deleteSelected}
           </Button>
-        ) : null}
-      </Card>
+        </Card>
+      ) : null}
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
 

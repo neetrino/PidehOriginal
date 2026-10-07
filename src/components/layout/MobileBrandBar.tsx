@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { MobileNavDrawer } from '@/components/layout/MobileNavDrawer';
 import { CreateGroupOrderModal } from '@/features/group-orders/ui/CreateGroupOrderModal';
 import { AppLink } from '@/components/ui/AppLink';
+import { PIDEH_ASSETS } from '@/features/home/ui/brand-assets';
 import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 import type { Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -54,15 +55,16 @@ export function MobileBrandBar({
       <AppLink
         href={`/${locale}`}
         prefetchPolicy="intent"
-        className="relative h-[75px] w-[92px] shrink-0 overflow-hidden"
+        className="relative h-[75px] w-[88px] shrink-0"
         aria-label={dictionary.brand}
       >
         <Image
-          src={MOBILE_HOME_ASSETS.logo}
+          src={PIDEH_ASSETS.logo}
           alt={dictionary.brand}
           fill
-          sizes="92px"
-          className="object-cover object-top"
+          sizes="264px"
+          quality={100}
+          className="object-contain"
           priority
         />
       </AppLink>

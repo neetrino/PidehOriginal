@@ -24,7 +24,8 @@ export function AdminBrandLogo({ alt, size }: AdminBrandLogoProps) {
         src={PIDEH_ASSETS.logo}
         alt={alt}
         fill
-        sizes="92px"
+        sizes="276px"
+        quality={100}
         className="object-contain object-center"
         priority={size !== 'mobile'}
       />

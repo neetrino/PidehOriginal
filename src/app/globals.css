@@ -154,10 +154,22 @@ body {
   animation: pideh-hero-cta-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
 }
 
-/* Soften the hard line where the lowered hero video meets the page orange. */
+/* Soften the video into the page orange so its rectangle does not cut the yellow wave. */
 .pideh-hero-video-fade {
-  mask-image: linear-gradient(to bottom, transparent, #000 3.5rem);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 3.5rem);
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 3.5rem,
+    #000 calc(100% - 7rem),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 3.5rem,
+    #000 calc(100% - 7rem),
+    transparent 100%
+  );
 }
 
 .pideh-hero-video-seam {
@@ -233,11 +245,38 @@ body {
 }
 
 /*
- * Desktop home seam: yellow drip overlaps the 2096×988 hero frame so it
- * sits on the pide at every width (video bottom orange scales with width).
+ * Desktop home seam: yellow drip overlaps the 1920×1440 hero frame so it
+ * sits on the video at every width (bottom of the frame scales with width).
  */
 .storefront-shell .pideh-home {
-  --home-drip-overlap: calc(100vw * 988 / 2096 * 0.3);
+  --home-hero-video-scale: 1;
+  /* Raises only the video. Bottom pad keeps the hero box, so Փիդեներ stays put. */
+  --home-hero-video-lift: 11rem;
+  --home-drip-overlap: calc(100vw * var(--home-hero-video-scale) * 1440 / 1920 * 0.3);
+}
+
+.storefront-shell .pideh-home [data-home-hero-media] {
+  padding-top: calc(13rem - var(--home-hero-video-lift));
+  padding-bottom: var(--home-hero-video-lift);
+}
+
+.storefront-shell .pideh-home .pideh-hero-video-seam {
+  top: calc(13rem - var(--home-hero-video-lift));
+}
+
+@media (min-width: 768px) {
+  .storefront-shell .pideh-home [data-home-hero-media] {
+    padding-top: calc(15rem - var(--home-hero-video-lift));
+  }
+
+  .storefront-shell .pideh-home .pideh-hero-video-seam {
+    top: calc(15rem - var(--home-hero-video-lift));
+  }
+}
+
+.pideh-hero-video-frame {
+  width: calc(100% * var(--home-hero-video-scale, 1));
+  margin-inline: auto;
 }
 
 .storefront-shell .pideh-home [data-home-hero] {
@@ -250,7 +289,8 @@ body {
 
 .storefront-shell .pideh-home [data-home-categories] {
   margin-top: calc(-1 * var(--home-drip-overlap));
-  padding-top: calc(var(--home-drip-overlap) + 1.5rem);
+  /* Pull the title and orbit up into the empty yellow, clear of the wave crest. */
+  padding-top: calc(var(--home-drip-overlap) + 1.5rem - 9rem);
 }
 
 .storefront-shell:has(.pideh-about) {
