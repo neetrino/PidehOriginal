@@ -15,6 +15,7 @@
     "popups": "Popups",
     "blog": "Blog",
     "messages": "Messages",
+    "reviews": "Reviews",
     "settings": "Settings"
   },
   "shell": {
@@ -308,9 +309,13 @@
       "restoreOrder": "Restore order"
     },
     "notes": {
-      "title": "Add internal note",
+      "title": "Internal notes",
+      "hint": "Visible only to admins. Also shown on the customer's profile.",
       "note": "Note",
-      "addNote": "Add note"
+      "placeholder": "Write a note about this order…",
+      "addNote": "Add note",
+      "saving": "Saving…",
+      "empty": "No notes yet."
     }
   },
   "groupOrders": {
@@ -779,7 +784,9 @@
       "percentOff": "{value}% off",
       "fixedAmount": "{value}",
       "recentOrders": "Recent orders",
-      "noOrders": "No orders."
+      "noOrders": "No orders.",
+      "orderNotesTitle": "Order notes",
+      "noOrderNotes": "No order notes."
     },
     "roleForm": {
       "title": "Role",
@@ -1014,6 +1021,25 @@
       "newStatus": "New status",
       "newStatusAria": "New status",
       "updateStatus": "Update status"
+    }
+  },
+  "reviews": {
+    "title": "Reviews",
+    "count": "Total: {total}",
+    "breadcrumb": "Reviews",
+    "empty": "No products have reviews yet.",
+    "table": {
+      "product": "Product",
+      "reviews": "Reviews",
+      "pending": "Pending",
+      "rating": "Avg. rating",
+      "lastReview": "Last review"
+    },
+    "detail": {
+      "empty": "This product has no reviews.",
+      "noComment": "No comment",
+      "verifiedPurchase": "Verified purchase",
+      "orderReview": "Order review · {orderNumber}"
     }
   },
   "settings": {

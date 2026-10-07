@@ -1,6 +1,7 @@
 'use client';
 
 import { CreditCard, Package, type LucideIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 import { SideSheet } from '@/components/ui/SideSheet';
 import type { AdminOrderDetailView } from '@/features/orders/application/order-detail-view';
@@ -24,6 +25,8 @@ type OrderDetailsDrawerProps = {
   /** Required when the customer review form can be shown. */
   locale?: Locale;
   onReviewSubmitted?: (detail: AdminOrderDetailView) => void;
+  /** Admin-only content (internal notes); never pass from customer surfaces. */
+  adminNotesSlot?: ReactNode;
 };
 
 export function OrderDetailsDrawer({
@@ -35,6 +38,7 @@ export function OrderDetailsDrawer({
   copy,
   locale,
   onReviewSubmitted,
+  adminNotesSlot,
 }: OrderDetailsDrawerProps) {
   const isGroup = detail?.participants != null && detail.participants.length > 0;
   const labels = copy.orders.statusLabels;
@@ -100,6 +104,7 @@ export function OrderDetailsDrawer({
                 </p>
               </section>
             ) : null}
+            {adminNotesSlot}
             <OrderDetailsDrawerSummary detail={detail} copy={copy} variant={isGroup ? 'customer' : 'full'} />
             <OrderDetailsDrawerShipping
               detail={detail}

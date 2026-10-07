@@ -3,6 +3,12 @@ export {
   markOrderAdminSeenAction,
 } from '@/features/orders/application/admin-order-alerts';
 export { addOrderNoteAction } from '@/features/orders/application/add-order-note';
+export {
+  listOrderNotesByOrderNumber,
+  listOrderNotesByUserId,
+  type AdminOrderNote,
+} from '@/features/orders/application/admin-order-notes';
+export { getAdminOrderNotesAction } from '@/features/orders/application/get-order-notes';
 export { archiveOrderAction } from '@/features/orders/application/archive-order';
 export { bulkArchiveOrdersAction } from '@/features/orders/application/bulk-archive-orders';
 export { bulkChangeOrderStatusAction } from '@/features/orders/application/bulk-change-status';

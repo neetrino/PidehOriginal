@@ -2,6 +2,7 @@
 
 import { getCustomerBonusSummary } from '@/features/bonuses';
 import { listCustomerGiftCards } from '@/features/gift-cards';
+import { listOrderNotesByUserId, type AdminOrderNote } from '@/features/orders';
 import { listCouponsAssignedToUser } from '@/features/promotions';
 import { getAdminUserById } from '@/features/users/application/queries';
 import type { AdminUserDetail } from '@/features/users/application/queries';
@@ -18,6 +19,7 @@ export type AdminUserDrawerDetail = {
   bonuses: CustomerBonusSummary;
   giftCards: CustomerGiftCardListItem[];
   coupons: UserAssignedCoupon[];
+  orderNotes: AdminOrderNote[];
 };
 
 /**
@@ -43,10 +45,11 @@ export async function getAdminUserDetailAction(
     return err('NOT_FOUND', 'User not found.');
   }
 
-  const [bonuses, giftCards, coupons] = await Promise.all([
+  const [bonuses, giftCards, coupons, orderNotes] = await Promise.all([
     getCustomerBonusSummary(detail.user.id, { limit: 10 }),
     listCustomerGiftCards(detail.user.id, detail.user.email),
     listCouponsAssignedToUser(detail.user.id),
+    listOrderNotesByUserId(detail.user.id),
   ]);
 
   return ok({
@@ -55,5 +58,6 @@ export async function getAdminUserDetailAction(
     bonuses,
     giftCards,
     coupons,
+    orderNotes,
   });
 }

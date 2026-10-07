@@ -15,6 +15,7 @@
     "popups": "Popup",
     "blog": "Блог",
     "messages": "Сообщения",
+    "reviews": "Отзывы",
     "settings": "Настройки"
   },
   "shell": {
@@ -308,9 +309,13 @@
       "restoreOrder": "Восстановить заказ"
     },
     "notes": {
-      "title": "Добавить внутреннее примечание",
-      "note": "Примечание",
-      "addNote": "Добавить примечание"
+      "title": "Внутренние заметки",
+      "hint": "Видны только администраторам. Также отображаются в профиле клиента.",
+      "note": "Заметка",
+      "placeholder": "Напишите заметку об этом заказе…",
+      "addNote": "Добавить заметку",
+      "saving": "Сохранение…",
+      "empty": "Заметок пока нет."
     }
   },
   "groupOrders": {
@@ -779,7 +784,9 @@
       "percentOff": "{value}% скидка",
       "fixedAmount": "{value}",
       "recentOrders": "Последние заказы",
-      "noOrders": "Заказов нет."
+      "noOrders": "Заказов нет.",
+      "orderNotesTitle": "Заметки к заказам",
+      "noOrderNotes": "Заметок к заказам нет."
     },
     "roleForm": {
       "title": "Роль",
@@ -1014,6 +1021,25 @@
       "newStatus": "Новый статус",
       "newStatusAria": "Новый статус",
       "updateStatus": "Обновить статус"
+    }
+  },
+  "reviews": {
+    "title": "Отзывы",
+    "count": "Всего: {total}",
+    "breadcrumb": "Отзывы",
+    "empty": "Пока нет товаров с отзывами.",
+    "table": {
+      "product": "Товар",
+      "reviews": "Отзывы",
+      "pending": "На модерации",
+      "rating": "Средняя оценка",
+      "lastReview": "Последний отзыв"
+    },
+    "detail": {
+      "empty": "У этого товара нет отзывов.",
+      "noComment": "Без комментария",
+      "verifiedPurchase": "Подтверждённая покупка",
+      "orderReview": "Отзыв о заказе · {orderNumber}"
     }
   },
   "settings": {
