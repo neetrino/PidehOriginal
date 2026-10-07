@@ -1,7 +1,6 @@
-import { StaggerGroup, StaggerItem } from '@/components/motion/StaggerGroup';
-import { cardShelf } from '@/components/motion/presets';
-import { HomeProductCard } from '@/features/home/ui/HomeProductCard';
-import { ShopPagination } from '@/features/products/ui/ShopPagination';
+import { ShopInfiniteGrid } from '@/features/products/ui/ShopInfiniteGrid';
+import type { ShopGridItem } from '@/features/products/ui/shop-grid-item';
+import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
 import type { CatalogProduct } from '@/features/products/types';
 import type { Locale } from '@/lib/i18n/config';
 
@@ -13,7 +12,9 @@ type PricedProduct = {
 
 type ShopProductGridProps = {
   locale: Locale;
+  filters: CatalogFilters;
   products: readonly PricedProduct[];
+  total: number;
   wishlistIds: ReadonlySet<string>;
   cartQuantities: Readonly<Record<string, number>>;
   isSignedIn: boolean;
@@ -23,18 +24,27 @@ type ShopProductGridProps = {
   orderLabel: string;
   outOfStockLabel: string;
   prepTimeLabel: string;
-  paginationLabel: string;
-  previousPage: string;
-  nextPage: string;
-  pageStatus: string;
-  page: number;
-  totalPages: number;
-  pageHref: (page: number) => string;
 };
+
+function toGridItems(
+  products: readonly PricedProduct[],
+  wishlistIds: ReadonlySet<string>,
+  cartQuantities: Readonly<Record<string, number>>,
+): ShopGridItem[] {
+  return products.map((item) => ({
+    product: item.product,
+    priceFormatted: item.priceFormatted,
+    compareAtFormatted: item.compareAtFormatted,
+    inWishlist: wishlistIds.has(item.product.id),
+    cartQuantity: cartQuantities[item.product.id] ?? 0,
+  }));
+}
 
 export function ShopProductGrid({
   locale,
+  filters,
   products,
+  total,
   wishlistIds,
   cartQuantities,
   isSignedIn,
@@ -44,13 +54,6 @@ export function ShopProductGrid({
   orderLabel,
   outOfStockLabel,
   prepTimeLabel,
-  paginationLabel,
-  previousPage,
-  nextPage,
-  pageStatus,
-  page,
-  totalPages,
-  pageHref,
 }: ShopProductGridProps) {
   if (products.length === 0) {
     return (
@@ -61,56 +64,28 @@ export function ShopProductGrid({
     );
   }
 
+  const listKey = [
+    filters.q ?? '',
+    filters.category ?? '',
+    filters.sort,
+    filters.minPrice ?? '',
+    filters.maxPrice ?? '',
+    filters.inStock ? '1' : '0',
+    filters.onSale ? '1' : '0',
+  ].join('|');
+
   return (
-    <>
-      <StaggerGroup
-        key={products.map((item) => item.product.id).join()}
-        play="mount"
-        className="grid grid-cols-2 items-stretch justify-items-stretch gap-[13px] overflow-visible lg:grid-cols-3 xl:grid-cols-4"
-        stagger={0.08}
-        delayChildren={0.04}
-      >
-        {products.map((item, index) => (
-          <StaggerItem
-            key={item.product.id}
-            variants={cardShelf}
-            className="relative z-0 h-full w-full min-w-0 overflow-visible hover:z-50"
-          >
-            <HomeProductCard
-              href={`/${locale}/products/${item.product.translation.slug}`}
-              title={item.product.translation.title}
-              description={item.product.translation.description ?? null}
-              priceFormatted={item.priceFormatted}
-              compareAtFormatted={item.compareAtFormatted}
-              imageUrl={item.product.imageUrl}
-              inStock={item.product.stockOnHand > 0}
-              priority={index < 4}
-              locale={locale}
-              productId={item.product.id}
-              inWishlist={wishlistIds.has(item.product.id)}
-              cartQuantity={cartQuantities[item.product.id] ?? 0}
-              maxQuantity={item.product.stockOnHand}
-              isSignedIn={isSignedIn}
-              wishlistLabel={wishlistLabel}
-              orderLabel={orderLabel}
-              outOfStockLabel={outOfStockLabel}
-              prepTimeLabel={prepTimeLabel}
-              className="max-w-none"
-            />
-          </StaggerItem>
-        ))}
-      </StaggerGroup>
-      {totalPages > 1 ? (
-        <ShopPagination
-          paginationLabel={paginationLabel}
-          previousPage={previousPage}
-          nextPage={nextPage}
-          pageStatus={pageStatus}
-          page={page}
-          totalPages={totalPages}
-          pageHref={pageHref}
-        />
-      ) : null}
-    </>
+    <ShopInfiniteGrid
+      key={listKey}
+      locale={locale}
+      filters={{ ...filters, page: 1 }}
+      initialItems={toGridItems(products, wishlistIds, cartQuantities)}
+      total={total}
+      isSignedIn={isSignedIn}
+      wishlistLabel={wishlistLabel}
+      orderLabel={orderLabel}
+      outOfStockLabel={outOfStockLabel}
+      prepTimeLabel={prepTimeLabel}
+    />
   );
 }

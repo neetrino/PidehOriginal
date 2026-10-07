@@ -19,6 +19,10 @@ import { unstable_cache } from 'next/cache';
 import { getDb } from '@/db/client';
 import { categories, orderItems, productCategories, products } from '@/db/schema';
 import { enrichCatalogProducts } from '@/features/products/application/catalog-product-enrichment';
+import {
+  SHOP_ALL_CATEGORY_RANKS,
+  UNKNOWN_CATEGORY_RANK,
+} from '@/features/products/domain/shop-category-order';
 import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
 import type { CatalogProduct } from '@/features/products/types';
 import { CACHE_TAGS, PUBLIC_CACHE_REVALIDATE_SECONDS } from '@/lib/cache/tags';
@@ -127,6 +131,26 @@ async function buildWhere(
   return and(...conditions);
 }
 
+/** Lowest matching category rank, so the All view groups pide → snack → sauce → drinks → combo. */
+function allViewCategoryRank(): SQL {
+  const whenClauses = SHOP_ALL_CATEGORY_RANKS.flatMap((group) =>
+    group.slugs.map((slug) => sql`when ${slug} then ${group.rank}`),
+  );
+
+  return sql`coalesce((
+    select min(
+      case lower(${categories.translations}->'hy'->>'slug')
+        ${sql.join(whenClauses, sql` `)}
+        else ${UNKNOWN_CATEGORY_RANK} end
+    )
+    from ${productCategories}
+    inner join ${categories} on ${categories.id} = ${productCategories.categoryId}
+    where ${productCategories.productId} = ${products.id}
+      and ${categories.deletedAt} is null
+      and ${categories.status} = 'ACTIVE'
+  ), ${UNKNOWN_CATEGORY_RANK})`;
+}
+
 function orderByClause(sort: CatalogFilters['sort'], soldExpr: SQL) {
   switch (sort) {
     case 'price_asc':
@@ -170,7 +194,8 @@ async function loadCatalogProductsPage(
     .as('popularity');
 
   const soldExpr = sql`coalesce(${popularity.sold}, 0)`;
-  const orderBy = orderByClause(filters.sort, soldExpr);
+  const sortOrder = orderByClause(filters.sort, soldExpr);
+  const orderBy = filters.category ? sortOrder : [asc(allViewCategoryRank()), ...sortOrder];
 
   const [[countRow], rows] = await Promise.all([
     getDb()
@@ -215,7 +240,7 @@ export async function listCatalogProducts(
   displayCurrency: Currency,
 ): Promise<CatalogListResult> {
   const cacheKey = [
-    'catalog-products-page-v4',
+    'catalog-products-page-v5',
     locale,
     displayCurrency,
     filters.q ?? '',
