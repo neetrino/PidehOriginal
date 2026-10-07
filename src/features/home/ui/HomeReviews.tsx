@@ -9,18 +9,25 @@ type HomeReviewsProps = {
   reviews: readonly HomeReviewItem[];
 };
 
+/** How far the yellow drip hangs into the orange section above. */
+const WAVE_OVERHANG_PX = 81;
+/**
+ * Deepest crest in the 1507.5×1225 yellow wave. Safari treats
+ * `overflow-x: clip` as clipping the top too, so the title must clear this
+ * in normal flow instead of relying on a negative clip-path.
+ */
+const WAVE_CREST_RATIO = 168.425 / 1507.5;
+
 /**
  * Figma Reviews (1:431) on Rectangle 5 yellow drip. Copy stays i18n.
  */
 export function HomeReviews({ title, reviews }: HomeReviewsProps) {
   return (
-    <section
-      className="relative z-[15] overflow-x-clip bg-[#ff6b00] pb-32 lg:pb-44"
-      style={{ clipPath: 'inset(-81px 0 0 0)' }}
-    >
+    <section className="relative z-[15] bg-[#ff6b00] pb-32 lg:pb-44">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-[-81px] z-0 w-full"
+        className="pointer-events-none absolute inset-x-0 z-0 w-full"
+        style={{ top: -WAVE_OVERHANG_PX }}
       >
         <HomeYellowWave />
       </div>
@@ -29,7 +36,12 @@ export function HomeReviews({ title, reviews }: HomeReviewsProps) {
         className="pointer-events-none absolute inset-x-0 top-[22%] bottom-0 z-0 bg-[#ffcf48]"
       />
 
-      <div className={`relative z-10 pt-12 lg:pt-16 ${PAGE_CONTAINER}`}>
+      <div
+        className={`relative z-10 ${PAGE_CONTAINER}`}
+        style={{
+          paddingTop: `calc(100vw * ${WAVE_CREST_RATIO} - ${WAVE_OVERHANG_PX}px + 1.25rem)`,
+        }}
+      >
         <RevealOnView className="mb-8 lg:mb-10" variants={titleSweep}>
           <h2
             className="font-display text-[#ff6b00]"
