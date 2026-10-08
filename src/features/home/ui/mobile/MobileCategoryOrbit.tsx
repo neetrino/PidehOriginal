@@ -39,6 +39,7 @@ type CategoryItem = {
   id: string;
   title: string;
   href: string;
+  iconSrc?: string;
 };
 
 export type OrbitCategoryItem = CategoryItem;
@@ -233,7 +234,7 @@ export function MobileCategoryOrbit({
         key: `mobile-orbit-${riderIndex}`,
         poseIndex,
         pose,
-        src: home.src,
+        src: category?.iconSrc || home.src,
         nodeId: home.nodeId,
         href: category?.href ?? productsHref,
         title: category?.title ?? '',

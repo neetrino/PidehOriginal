@@ -411,6 +411,11 @@ body {
     font-size: 16px;
   }
 
+  /* Keep the chat bubble just above the mobile dock. */
+  #tidio-chat-iframe {
+    bottom: 5.25rem !important;
+  }
+
   /* Tidio's bubble sits on popup actions. Hide it while a modal is open. */
   body:has([role='dialog'][aria-modal='true']) #tidio-chat,
   body:has([role='dialog'][aria-modal='true']) #tidio-chat-iframe {

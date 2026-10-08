@@ -102,7 +102,7 @@ function OrderCard({
           {formatOrderDrawerMoney(order.totalAmount, order.baseCurrency)}
         </p>
         {order.bonusEarnedAmount > 0 ? (
-          <span className="rounded-full bg-[#1f7a45] px-2.5 py-1 text-sm font-bold text-white">
+          <span className="rounded-full bg-[#ff6b00] px-2.5 py-1 text-sm font-bold text-white">
             +{formatOrderDrawerMoney(order.bonusEarnedAmount, order.baseCurrency)}
           </span>
         ) : null}
