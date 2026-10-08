@@ -7,12 +7,11 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } fro
 import { AppLink } from '@/components/ui/AppLink';
 import {
   MOBILE_ORBIT_MOVE_MS,
-  MOBILE_SLOT_COUNT,
   MobileCategoryOrbit,
   mobileActiveCategoryTitle,
-  type OrbitCategoryItem,
 } from '@/features/home/ui/mobile/MobileCategoryOrbit';
 import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
+import { buildMobileOrbitCategories } from '@/features/home/ui/mobile/mobile-orbit-categories';
 import { useOrbitSwipe } from '@/features/home/ui/mobile/use-orbit-swipe';
 import { catalogHref } from '@/features/products/application/catalog-search-params';
 import { DEFAULT_CATALOG_PAGE_SIZE } from '@/features/products/schemas/catalog-list';
@@ -22,6 +21,7 @@ type CategoryItem = {
   id: string;
   title: string;
   href: string;
+  slug?: string;
   imageUrl: string | null;
 };
 
@@ -39,26 +39,6 @@ type MobileHomeHeroProps = {
   viewAllHref: string;
   viewAllLabel: string;
 };
-
-/**
- * Merge API categories onto the 5 arc slots; fill gaps with arcTitles.
- */
-function buildOrbitCategories(
-  categories: readonly CategoryItem[],
-  arcTitles: readonly string[],
-  pideLabel: string,
-  productsHref: string,
-): OrbitCategoryItem[] {
-  return Array.from({ length: MOBILE_SLOT_COUNT }, (_, index) => {
-    const fromApi = categories[index];
-    const fallbackTitle = arcTitles[index] ?? pideLabel;
-    return {
-      id: fromApi?.id ?? `arc-slot-${index}`,
-      title: fromApi?.title?.trim() || fallbackTitle,
-      href: fromApi?.href ?? productsHref,
-    };
-  });
-}
 
 function activeCategoryLabelClass(label: string): string {
   const length = label.trim().length;
@@ -99,7 +79,7 @@ export function MobileHomeHero({
   orbitBusyRef.current = orbitBusy;
 
   const orbitCategories = useMemo(
-    () => buildOrbitCategories(categories, arcTitles, pideLabel, productsHref),
+    () => buildMobileOrbitCategories(categories, arcTitles, pideLabel, productsHref),
     [arcTitles, categories, pideLabel, productsHref],
   );
 

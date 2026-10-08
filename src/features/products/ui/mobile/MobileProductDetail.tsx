@@ -156,14 +156,16 @@ export function MobileProductDetail(props: MobileProductDetailProps) {
                 </span>
               ) : null}
             </div>
-            <ProductQtyStepper
-              quantity={state.quantity}
-              maxQty={state.maxQty}
-              disabled={state.disabled}
-              labels={labels}
-              onQuantityChange={state.changeQuantity}
-              onReset={handleReset}
-            />
+            <div className="shrink-0">
+              <ProductQtyStepper
+                quantity={state.quantity}
+                maxQty={state.maxQty}
+                disabled={state.disabled}
+                labels={labels}
+                onQuantityChange={state.changeQuantity}
+                onReset={handleReset}
+              />
+            </div>
           </>
         }
         footer={

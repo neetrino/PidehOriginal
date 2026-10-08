@@ -6,11 +6,13 @@ import { redirect } from 'next/navigation';
 import { getProviders } from '@/config/providers';
 import { getDb } from '@/db/client';
 import { users } from '@/db/schema';
+import { translatePasswordError } from '@/features/auth/password-errors';
 import { resetPasswordSchema } from '@/features/auth/schemas';
 import { hashPassword } from '@/lib/auth/password';
 import { consumePasswordResetToken } from '@/lib/auth/password-reset-tokens';
 import { destroySession, revokeAllSessions } from '@/lib/auth/session';
 import { defaultLocale, isLocale, type Locale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { logger } from '@/lib/observability/logger';
 
 export type ResetPasswordActionState = {
@@ -31,7 +33,11 @@ export async function resetPasswordAction(
 
   if (!parsed.success) {
     return {
-      error: parsed.error.issues[0]?.message ?? 'Please check the password fields and try again.',
+      error: translatePasswordError(
+        locale,
+        parsed.error.issues[0]?.message,
+        getDictionary(locale).auth.passwordInvalid,
+      ),
     };
   }
 

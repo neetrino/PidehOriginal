@@ -400,6 +400,33 @@ body {
 }
 
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
+  html {
+    touch-action: manipulation;
+  }
+
+  /* iOS zooms the page when a focused field is under 16px. */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='button']):not([type='submit']):not([type='reset']):not([type='file']):not([type='image']):not([type='hidden']),
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  /*
+   * Dock frame is 176px tall inside the 440px mobile frame, then scaled to
+   * the viewport. Sit the chat bubble just above that orange band.
+   */
+  #tidio-chat-iframe {
+    bottom: calc(176px * 100vw / 440 + env(safe-area-inset-bottom, 0px) + 1.25rem) !important;
+  }
+
+  /* Tidio's bubble sits on popup actions. Hide it while a modal is open. */
+  body:has([role='dialog'][aria-modal='true']) #tidio-chat,
+  body:has([role='dialog'][aria-modal='true']) #tidio-chat-iframe {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   /* Phone + iPad portrait: Figma mobile header + dock. */
   .storefront-shell .storefront-main {
     padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
@@ -485,6 +512,12 @@ body {
   .storefront-shell:has(.pideh-pdp-mobile) .storefront-main {
     max-width: none;
     padding: 0;
+  }
+
+  /* Orange photo band. Leave the title and price above the dock on open. */
+  .pideh-pdp-mobile-hero {
+    height: 20rem;
+    height: clamp(12rem, calc(100svh - 28rem), 24rem);
   }
 
   .storefront-shell:has(.pideh-pdp-mobile) .storefront-footer {

@@ -45,6 +45,7 @@ type CategoryItem = {
   id: string;
   title: string;
   href: string;
+  slug?: string;
   imageUrl: string | null;
 };
 

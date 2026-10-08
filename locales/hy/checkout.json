@@ -9,6 +9,10 @@
   "shippingAddress": "Առաքման հասցե",
   "paymentMethod": "Վճարման եղանակ",
   "orderSummary": "Պատվերի ամփոփում",
+  "orderNote": {
+    "title": "Հավելյալ նշումներ",
+    "placeholder": "Օրինակ՝ առանց սոխ, զանգել հասնելուց առաջ"
+  },
   "form": {
     "firstName": "Անուն",
     "lastName": "Ազգանուն",

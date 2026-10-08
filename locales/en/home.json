@@ -23,7 +23,7 @@
   "branchContact": "Contact",
   "searchPlaceholder": "Search",
   "categoryPideLabel": "Pide",
-  "categoryArcTitles": ["Drinks", "Snacks", "Pide", "Burgers", "Sauce"],
+  "categoryArcTitles": ["Drinks", "Snacks", "Pide", "Combo", "Sauce"],
   "categoryPrev": "Previous category",
   "categoryNext": "Next category",
   "reviewsTitle": "What customers say",

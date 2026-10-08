@@ -39,7 +39,7 @@ export function MobileProductSheet({
         {children}
       </div>
 
-      <div className="flex items-center justify-between gap-2">{priceRow}</div>
+      <div className="flex min-w-0 items-center justify-between gap-2">{priceRow}</div>
       {footer}
     </div>
   );

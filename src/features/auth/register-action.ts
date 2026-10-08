@@ -6,11 +6,13 @@ import { redirect } from 'next/navigation';
 import { getDb } from '@/db/client';
 import { users } from '@/db/schema';
 import { type AuthActionState } from '@/features/auth/login-action';
+import { translatePasswordError } from '@/features/auth/password-errors';
 import { registerSchema } from '@/features/auth/schemas';
 import { createSession } from '@/lib/auth/session';
 import { hashPassword } from '@/lib/auth/password';
 import { createId } from '@/lib/id';
 import { defaultLocale, isLocale, type Locale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 export async function registerAction(
   localeInput: string,
@@ -21,7 +23,13 @@ export async function registerAction(
   const locale: Locale = isLocale(localeInput) ? localeInput : defaultLocale;
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? 'Invalid registration details.' };
+    return {
+      error: translatePasswordError(
+        locale,
+        parsed.error.issues[0]?.message,
+        getDictionary(locale).auth.passwordInvalid,
+      ),
+    };
   }
 
   const [existingUser] = await getDb()

@@ -8,6 +8,7 @@ import {
   gte,
   ilike,
   inArray,
+  isNotNull,
   isNull,
   lte,
   or,
@@ -57,6 +58,11 @@ export type AdminOrderListItem = {
   isAdminNew: boolean;
 };
 
+export type CustomerOrderListItem = AdminOrderListItem & {
+  isGroup: boolean;
+  itemCount: number;
+};
+
 export type AdminUnseenOrderAlert = {
   id: string;
   orderNumber: string;
@@ -103,6 +109,10 @@ function buildOrderFilters(filters: AdminOrdersFilter): SQL | undefined {
 
   if (filters.kind === 'individual') {
     conditions.push(isNull(orders.groupOrderId));
+  }
+
+  if (filters.kind === 'group') {
+    conditions.push(isNotNull(orders.groupOrderId));
   }
 
   if (filters.status) {
@@ -194,7 +204,7 @@ export async function listAdminOrders(
 export async function listCustomerOrders(
   userId: string,
   filters: AdminOrdersFilter,
-): Promise<{ rows: AdminOrderListItem[]; total: number; pageSize: number }> {
+): Promise<{ rows: CustomerOrderListItem[]; total: number; pageSize: number }> {
   const baseWhere = buildOrderFilters(filters);
   const visibility = customerVisibleOrdersWhere(userId);
   const where = baseWhere ? and(visibility, baseWhere) : visibility;
@@ -220,6 +230,12 @@ export async function listCustomerOrders(
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
         isAdminNew: sql<boolean>`false`.mapWith(Boolean),
+        isGroup: sql<boolean>`(${orders.groupOrderId} is not null)`.mapWith(Boolean),
+        itemCount: sql<number>`coalesce((
+          select sum(${orderItems.quantity})
+          from ${orderItems}
+          where ${orderItems.orderId} = ${orders.id}
+        ), 0)`.mapWith(Number),
       })
       .from(orders)
       .leftJoin(

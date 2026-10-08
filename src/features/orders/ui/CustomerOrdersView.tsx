@@ -19,12 +19,20 @@ type CustomerOrdersViewOrder = {
   bonusEarnedAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
+  itemCount: number;
 };
 
 type CustomerOrdersViewProps = {
   locale: string;
   orders: CustomerOrdersViewOrder[];
   copy: Dictionary['admin'];
+  labels: {
+    orderNumber: string;
+    noOrders: string;
+    orderPlaced: string;
+    orderItemsOne: string;
+    orderItemsMany: string;
+  };
   /** When set (e.g. from bonuses history), open this order on mount. */
   initialOrderNumber?: string;
 };
@@ -33,6 +41,7 @@ export function CustomerOrdersView({
   locale,
   orders,
   copy,
+  labels,
   initialOrderNumber,
 }: CustomerOrdersViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -88,7 +97,13 @@ export function CustomerOrdersView({
 
   return (
     <>
-      <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} copy={copy} />
+      <CustomerOrdersTable
+        orders={orders}
+        locale={locale}
+        onOpenOrder={openOrder}
+        copy={copy}
+        labels={labels}
+      />
       <OrderDetailsDrawer
         open={drawerOpen}
         onClose={closeDrawer}
