@@ -111,6 +111,16 @@ function formatOrderCustomerNotes(
   return lines.length > 0 ? lines.join('\n') : null;
 }
 
+function formatCombinedCustomerNote(
+  orderNote: string | null | undefined,
+  items: ReadonlyArray<{ productTitleSnapshot: string; customerNote: string | null }>,
+): string | null {
+  const parts = [orderNote?.trim(), formatOrderCustomerNotes(items)].filter(
+    (part): part is string => Boolean(part),
+  );
+  return parts.length > 0 ? parts.join('\n') : null;
+}
+
 function paymentMethodLabel(method: string): string {
   const normalized = method.toUpperCase();
   if (normalized === 'COD' || normalized === 'CASH') {
@@ -189,7 +199,7 @@ export function toAdminOrderDetailView(
       order.shippingAddress.cashChangeImageKey ?? null,
       mediaPublicUrl,
     ),
-    customerNote: formatOrderCustomerNotes(items),
+    customerNote: formatCombinedCustomerNote(order.shippingAddress.orderNote, items),
     customerReview,
     canSubmitReview: false,
     paymentMethod: latestPayment ? paymentMethodLabel(latestPayment.method) : '—',

@@ -57,6 +57,10 @@ type CheckoutOrderSummaryProps = {
   giftCardRemainingLabel: string;
   giftCardPayableLabel: string;
   giftCardAppliedLabel: string;
+  orderNoteLabel: string;
+  orderNotePlaceholder: string;
+  orderNote: string;
+  onOrderNoteChange: (value: string) => void;
   discountLabel: string;
   subtotalLabel: string;
   shippingLabel: string;
@@ -107,6 +111,10 @@ export function CheckoutOrderSummary({
   giftCardRemainingLabel,
   giftCardPayableLabel,
   giftCardAppliedLabel,
+  orderNoteLabel,
+  orderNotePlaceholder,
+  orderNote,
+  onOrderNoteChange,
   discountLabel,
   subtotalLabel,
   shippingLabel,
@@ -239,6 +247,22 @@ export function CheckoutOrderSummary({
             </dl>
           ) : null}
         </div>
+
+        <label className={`mb-6 block lg:hidden ${CHECKOUT_INSET}`}>
+          <span className="mb-3 block font-display text-sm leading-none tracking-wide text-[#ff6b00] uppercase">
+            {orderNoteLabel}
+          </span>
+          <textarea
+            name="orderNote"
+            value={orderNote}
+            onChange={(event) => onOrderNoteChange(event.target.value)}
+            rows={3}
+            maxLength={500}
+            placeholder={orderNotePlaceholder}
+            disabled={isSubmitting}
+            className={`${CHECKOUT_FIELD} h-auto min-h-24 resize-none py-3 !bg-white`}
+          />
+        </label>
 
         {bonus?.mode === 'guest' ? (
           <div className={`mb-6 ${CHECKOUT_INSET}`}>

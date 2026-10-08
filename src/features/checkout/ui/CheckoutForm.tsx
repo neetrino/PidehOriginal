@@ -100,6 +100,8 @@ type CheckoutLabels = {
   giftCardRemaining: string;
   giftCardPayable: string;
   giftCardApplied: string;
+  orderNoteTitle: string;
+  orderNotePlaceholder: string;
   discount: string;
   subtotal: string;
   shipping: string;
@@ -203,6 +205,7 @@ export function CheckoutForm({
   const [giftCardDraft, setGiftCardDraft] = useState('');
   const [giftCardPreview, setGiftCardPreview] = useState<GiftCardRedeemPreview | null>(null);
   const [giftCardError, setGiftCardError] = useState<string | null>(null);
+  const [orderNote, setOrderNote] = useState('');
   const [pending, startTransition] = useTransition();
   const [applyingCoupon, startApplyCoupon] = useTransition();
   const [applyingGiftCard, startApplyGiftCard] = useTransition();
@@ -488,6 +491,7 @@ export function CheckoutForm({
         couponCode: appliedCouponCode ?? undefined,
         bonusRedeemAmount: useBonuses ? appliedBonus : undefined,
         giftCardCode: giftCardPreview?.code,
+        orderNote: orderNote.trim() || undefined,
       });
 
       if (!result.ok) {
@@ -577,6 +581,10 @@ export function CheckoutForm({
             giftCardRemainingLabel={labels.giftCardRemaining}
             giftCardPayableLabel={labels.giftCardPayable}
             giftCardAppliedLabel={labels.giftCardApplied}
+            orderNoteLabel={labels.orderNoteTitle}
+            orderNotePlaceholder={labels.orderNotePlaceholder}
+            orderNote={orderNote}
+            onOrderNoteChange={setOrderNote}
             discountLabel={labels.discount}
             subtotalLabel={labels.subtotal}
             shippingLabel={labels.shipping}

@@ -9,6 +9,10 @@
   "shippingAddress": "Shipping Address",
   "paymentMethod": "Payment Method",
   "orderSummary": "Order Summary",
+  "orderNote": {
+    "title": "Additional notes",
+    "placeholder": "For example: no onion, call on arrival"
+  },
   "form": {
     "firstName": "First Name",
     "lastName": "Last Name",

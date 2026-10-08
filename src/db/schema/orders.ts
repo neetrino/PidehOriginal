@@ -33,6 +33,8 @@ export type AddressSnapshot = {
   floor?: string;
   /** Intercom / door code for delivery. */
   intercomCode?: string;
+  /** Free-text note the customer added at checkout. */
+  orderNote?: string;
   /** Scheduled delivery date `YYYY-MM-DD` (Asia/Yerevan). */
   scheduledDeliveryDate?: string;
   /** Scheduled slot start `HH:mm`. */

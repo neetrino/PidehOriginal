@@ -43,6 +43,8 @@ export const checkoutSchema = z
     bonusRedeemAmount: z.coerce.number().int().min(0).max(100_000_000).optional(),
     /** Gift card code to redeem at checkout. */
     giftCardCode: z.string().trim().max(64).optional(),
+    /** Optional note for the kitchen or courier. */
+    orderNote: z.string().trim().max(500).optional(),
   })
   .superRefine((value, ctx) => {
     if (value.shippingMethod !== 'delivery') {

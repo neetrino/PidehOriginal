@@ -292,6 +292,7 @@ export async function createOrderAction(raw: CheckoutInput): Promise<CreateOrder
             : deliveryQuote?.destinationFormattedAddress || input.line1?.trim() || '',
         line2: input.line2,
         postalCode: input.postalCode,
+        ...(input.orderNote?.trim() ? { orderNote: input.orderNote.trim() } : {}),
         ...(input.shippingMethod === 'delivery'
           ? {
               floor: input.floor?.trim() || undefined,

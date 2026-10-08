@@ -178,6 +178,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         giftCardRemaining: copy.giftCard.remaining,
         giftCardPayable: copy.giftCard.payable,
         giftCardApplied: copy.giftCard.applied,
+        orderNoteTitle: copy.orderNote.title,
+        orderNotePlaceholder: copy.orderNote.placeholder,
         discount: copy.summary.discount,
         subtotal: copy.summary.subtotal,
         shipping: copy.summary.shipping,

@@ -9,6 +9,10 @@
   "shippingAddress": "Адрес доставки",
   "paymentMethod": "Способ оплаты",
   "orderSummary": "Итог заказа",
+  "orderNote": {
+    "title": "Дополнительные заметки",
+    "placeholder": "Например: без лука, позвонить по прибытии"
+  },
   "form": {
     "firstName": "Имя",
     "lastName": "Фамилия",
