@@ -60,7 +60,7 @@ export function CashChangePicker({
           className={`flex h-full items-center justify-center rounded-xl border-2 px-2 text-center text-xs font-bold leading-tight transition-colors ${
             notNeededSelected
               ? 'border-[#ff6b00] bg-[#fff1e6] text-[#ff6b00]'
-              : 'border-[#ff6b00]/35 bg-white text-[#1e1e1e] hover:border-[#ff6b00]/70'
+              : 'border-[#1e1e1e]/10 bg-white text-[#1e1e1e] hover:border-[#ff6b00]/45'
           } disabled:cursor-not-allowed disabled:opacity-50`}
         >
           {labels.notNeeded}
