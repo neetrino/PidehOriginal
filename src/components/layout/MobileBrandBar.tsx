@@ -45,7 +45,6 @@ export function MobileBrandBar({
     { href: `/${locale}/products`, label: dictionary.nav.menu },
     { href: `/${locale}/about`, label: dictionary.nav.about },
     { href: `/${locale}/contact`, label: dictionary.nav.contact },
-    { href: `/${locale}/blog`, label: dictionary.nav.blog },
     { href: `/${locale}/legal`, label: dictionary.nav.policies },
   ] as const;
 
