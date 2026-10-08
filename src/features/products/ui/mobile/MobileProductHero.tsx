@@ -18,11 +18,10 @@ type MobileProductHeroProps = {
   backLabel: string;
 };
 
-/** Visible orange band above the white sheet (Figma 414:598 sheet at y=576). */
-const HERO_HEIGHT_PX = 576;
-
 /**
- * Figma 414:598 hero — overflowing product cutout (268:594) plus yellow back pill.
+ * Figma 414:598 hero — product photo plus yellow back pill.
+ * Height tracks the small viewport so the white sheet (title and price)
+ * stays above the bottom dock when the page opens.
  */
 export function MobileProductHero({
   title,
@@ -36,7 +35,7 @@ export function MobileProductHero({
   const router = useRouter();
 
   return (
-    <div className="relative" style={{ height: HERO_HEIGHT_PX }}>
+    <div className="pideh-pdp-mobile-hero relative overflow-hidden">
       {image ? (
         <MobileProductImage
           src={image.url}
