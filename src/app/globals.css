@@ -400,6 +400,14 @@ body {
 }
 
 @media (max-width: 767px), (orientation: portrait) and (max-width: 1199px) {
+  /* Tidio's bubble sits on popup actions. Hide it while a modal is open. */
+  body:has([role='dialog'][aria-modal='true']) #tidio-chat,
+  body:has([role='dialog'][aria-modal='true']) #tidio-chat-iframe {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   /* Phone + iPad portrait: Figma mobile header + dock. */
   .storefront-shell .storefront-main {
     padding-bottom: calc(16rem + env(safe-area-inset-bottom, 0px));
