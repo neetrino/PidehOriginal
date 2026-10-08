@@ -5,11 +5,13 @@ import { revalidatePath } from 'next/cache';
 
 import { getDb } from '@/db/client';
 import { users } from '@/db/schema';
+import { translatePasswordError } from '@/features/auth/password-errors';
 import { changePasswordSchema } from '@/features/auth/schemas';
 import { requireUser } from '@/lib/auth/policies';
 import { hashPassword, verifyPassword } from '@/lib/auth/password';
 import { revokeOtherSessions } from '@/lib/auth/session';
 import { isLocale, type Locale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 export type ChangePasswordActionState = {
   error?: string;
@@ -37,9 +39,12 @@ export async function changePasswordAction(
   });
 
   if (!parsed.success) {
-    const firstIssue = parsed.error.issues[0]?.message;
     return {
-      error: firstIssue ?? 'Please check the password fields and try again.',
+      error: translatePasswordError(
+        locale,
+        parsed.error.issues[0]?.message,
+        getDictionary(locale).auth.passwordInvalid,
+      ),
     };
   }
 

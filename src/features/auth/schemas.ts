@@ -2,11 +2,11 @@ import { z } from 'zod';
 
 export const passwordSchema = z
   .string()
-  .min(8, 'Password must be at least 8 characters.')
-  .regex(/[a-z]/, 'Password must contain a lowercase letter.')
-  .regex(/[A-Z]/, 'Password must contain an uppercase letter.')
-  .regex(/[0-9]/, 'Password must contain a digit.')
-  .regex(/[^A-Za-z0-9]/, 'Password must contain a special character.');
+  .min(8, 'passwordMin')
+  .regex(/[a-z]/, 'passwordLower')
+  .regex(/[A-Z]/, 'passwordUpper')
+  .regex(/[0-9]/, 'passwordDigit')
+  .regex(/[^A-Za-z0-9]/, 'passwordSpecial');
 
 export const loginSchema = z.object({
   email: z
@@ -31,7 +31,7 @@ export const registerSchema = z
     confirmPassword: z.string().min(1),
   })
   .refine((value) => value.password === value.confirmPassword, {
-    message: 'Passwords do not match.',
+    message: 'passwordMismatch',
     path: ['confirmPassword'],
   });
 
@@ -42,7 +42,7 @@ export const changePasswordSchema = z
     confirmPassword: z.string().min(1),
   })
   .refine((value) => value.newPassword === value.confirmPassword, {
-    message: 'Passwords do not match.',
+    message: 'passwordMismatch',
     path: ['confirmPassword'],
   });
 
@@ -61,6 +61,6 @@ export const resetPasswordSchema = z
     confirmPassword: z.string().min(1),
   })
   .refine((value) => value.password === value.confirmPassword, {
-    message: 'Passwords do not match.',
+    message: 'passwordMismatch',
     path: ['confirmPassword'],
   });
