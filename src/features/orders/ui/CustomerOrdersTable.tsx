@@ -1,160 +1,132 @@
 'use client';
 
-import { PROFILE_PANEL } from '@/features/profile/ui/profile-ui-classes';
-import {
-  ADMIN_BADGE,
-  orderStatusBadgeClass,
-  paymentStatusBadgeClass,
-} from '@/features/admin/ui/status-badge';
-import {
-  ADMIN_TABLE,
-  ADMIN_TABLE_FOOTER_ROUNDED_B,
-  ADMIN_TABLE_OUTER_SCROLL,
-  ADMIN_TABLE_ROW,
-  ADMIN_TABLE_STATE_INSET,
-  ADMIN_TABLE_TBODY,
-  ADMIN_TABLE_TD,
-  ADMIN_TABLE_TH,
-  ADMIN_TABLE_THEAD,
-} from '@/features/admin/ui/admin-table-classes';
+import { Calendar } from 'lucide-react';
+
+import { orderStatusBadgeClass } from '@/features/admin/ui/status-badge';
 import {
   formatOrderDrawerMoney,
   orderDrawerStatusLabel,
 } from '@/features/orders/ui/order-drawer-format';
-import { formatYerevanDateTime } from '@/features/delivery/domain/delivery-schedule';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type CustomerOrderRow = {
   id: string;
   orderNumber: string;
   status: string;
-  paymentStatus: string;
   totalAmount: number;
-  bonusRedeemedAmount: number;
   bonusEarnedAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
+  itemCount: number;
 };
 
 type CustomerOrdersTableProps = {
   orders: CustomerOrderRow[];
+  locale: string;
   onOpenOrder: (orderNumber: string) => void;
   copy: Dictionary['admin'];
+  labels: {
+    orderNumber: string;
+    noOrders: string;
+    orderPlaced: string;
+    orderItemsOne: string;
+    orderItemsMany: string;
+  };
 };
 
-export function CustomerOrdersTable({ orders, onOpenOrder, copy }: CustomerOrdersTableProps) {
-  const table = copy.orders.table;
-
-  return (
-    <div className={`${PROFILE_PANEL} overflow-hidden p-0`}>
-      <div className={ADMIN_TABLE_OUTER_SCROLL}>
-        <table className={ADMIN_TABLE}>
-          <thead className={ADMIN_TABLE_THEAD}>
-            <tr>
-              <th className={ADMIN_TABLE_TH}>{table.order}</th>
-              <th className={ADMIN_TABLE_TH}>{table.status}</th>
-              <th className={ADMIN_TABLE_TH}>{table.payment}</th>
-              <th className={ADMIN_TABLE_TH}>{table.total}</th>
-              <th className={ADMIN_TABLE_TH}>{table.bonus}</th>
-              <th className={ADMIN_TABLE_TH}>{table.placed}</th>
-            </tr>
-          </thead>
-          <tbody className={ADMIN_TABLE_TBODY}>
-            {orders.map((order) => (
-              <tr
-                key={order.id}
-                className={`${ADMIN_TABLE_ROW} cursor-pointer`}
-                onClick={() => onOpenOrder(order.orderNumber)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    onOpenOrder(order.orderNumber);
-                  }
-                }}
-                tabIndex={0}
-                role="link"
-                aria-label={order.orderNumber}
-              >
-                <td className={ADMIN_TABLE_TD}>
-                  <span className="font-bold text-[#ff6b00]">{order.orderNumber}</span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}>
-                    {orderDrawerStatusLabel(order.status, copy.orders.statusLabels)}
-                  </span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span
-                    className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-                  >
-                    {orderDrawerStatusLabel(order.paymentStatus, copy.orders.statusLabels)}
-                  </span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span className="font-medium text-gray-900">
-                    {formatOrderDrawerMoney(order.totalAmount, order.baseCurrency)}
-                  </span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <OrderBonusCell
-                    earned={order.bonusEarnedAmount}
-                    redeemed={order.bonusRedeemedAmount}
-                    currency={order.baseCurrency}
-                    emptyLabel={table.bonusEmpty}
-                  />
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span className="text-xs text-gray-500">
-                    {formatYerevanDateTime(order.placedAt)}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {orders.length === 0 ? (
-        <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-[#1e1e1e]/65`}>
-          No orders match these filters.
-        </p>
-      ) : (
-        <div className={ADMIN_TABLE_FOOTER_ROUNDED_B}>
-          <p className="text-sm text-[#1e1e1e]/65">
-            Showing {orders.length} order{orders.length === 1 ? '' : 's'}
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function OrderBonusCell({
-  earned,
-  redeemed,
-  currency,
-  emptyLabel,
-}: {
-  earned: number;
-  redeemed: number;
-  currency: string;
-  emptyLabel: string;
-}) {
-  if (earned <= 0 && redeemed <= 0) {
-    return <span className="text-xs text-gray-400">{emptyLabel}</span>;
+export function CustomerOrdersTable({
+  orders,
+  locale,
+  onOpenOrder,
+  copy,
+  labels,
+}: CustomerOrdersTableProps) {
+  if (orders.length === 0) {
+    return <p className="px-1 text-sm text-[#1e1e1e]/65">{labels.noOrders}</p>;
   }
 
   return (
-    <div className="flex flex-col gap-0.5 text-xs">
-      {earned > 0 ? (
-        <span className="font-medium text-emerald-700">
-          +{formatOrderDrawerMoney(earned, currency)}
-        </span>
-      ) : null}
-      {redeemed > 0 ? (
-        <span className="font-medium text-green-700">
-          −{formatOrderDrawerMoney(redeemed, currency)}
-        </span>
-      ) : null}
-    </div>
+    <ul className="flex flex-col gap-3">
+      {orders.map((order) => (
+        <li key={order.id}>
+          <OrderCard
+            order={order}
+            locale={locale}
+            labels={labels}
+            statusLabel={orderDrawerStatusLabel(order.status, copy.orders.statusLabels)}
+            onOpen={() => onOpenOrder(order.orderNumber)}
+          />
+        </li>
+      ))}
+    </ul>
   );
+}
+
+function OrderCard({
+  order,
+  locale,
+  labels,
+  statusLabel,
+  onOpen,
+}: {
+  order: CustomerOrderRow;
+  locale: string;
+  labels: CustomerOrdersTableProps['labels'];
+  statusLabel: string;
+  onOpen: () => void;
+}) {
+  const itemsLabel =
+    order.itemCount === 1
+      ? labels.orderItemsOne
+      : labels.orderItemsMany.replace('{count}', String(order.itemCount));
+  const placed = labels.orderPlaced.replace('{date}', formatPlacedDate(order.placedAt, locale));
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="w-full rounded-[22px] border border-[#1e1e1e]/10 bg-white p-4 text-left shadow-[0_8px_24px_rgba(31,20,8,0.06)]"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <p className="font-display min-w-0 text-[1.35rem] leading-none text-[#1e1e1e] uppercase">
+          {labels.orderNumber} {order.orderNumber}
+        </p>
+        <span
+          className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${orderStatusBadgeClass(order.status)}`}
+        >
+          {statusLabel}
+        </span>
+      </div>
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <p className="text-[1.65rem] leading-none font-extrabold text-[#1e1e1e]">
+          {formatOrderDrawerMoney(order.totalAmount, order.baseCurrency)}
+        </p>
+        {order.bonusEarnedAmount > 0 ? (
+          <span className="rounded-full bg-[#1f7a45] px-2.5 py-1 text-sm font-bold text-white">
+            +{formatOrderDrawerMoney(order.bonusEarnedAmount, order.baseCurrency)}
+          </span>
+        ) : null}
+      </div>
+      <div className="mt-4 flex items-center gap-3">
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#1e1e1e] text-white">
+          <Calendar className="size-5" aria-hidden="true" />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-sm font-bold text-[#1e1e1e]">{itemsLabel}</span>
+          <span className="block text-sm text-[#1e1e1e]/55">{placed}</span>
+        </span>
+      </div>
+    </button>
+  );
+}
+
+function formatPlacedDate(value: string | Date, locale: string): string {
+  const date = value instanceof Date ? value : new Date(value);
+  const tag = locale === 'hy' ? 'hy-AM' : locale === 'ru' ? 'ru-RU' : 'en-US';
+  return new Intl.DateTimeFormat(tag, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'Asia/Yerevan',
+  }).format(date);
 }

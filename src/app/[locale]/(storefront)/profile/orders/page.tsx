@@ -2,9 +2,8 @@ import { notFound } from 'next/navigation';
 
 import { AppLink } from '@/components/ui/AppLink';
 import { listCustomerOrders } from '@/features/orders/application/queries';
-import type { OrderStatus } from '@/features/orders/domain/order-status';
+import { parseAdminOrderListKind } from '@/features/orders/domain/admin-order-list-kind';
 import { adminOrdersFilterSchema } from '@/features/orders/schemas/change-status';
-import { CustomerOrdersFilters } from '@/features/orders/ui/CustomerOrdersFilters';
 import { CustomerOrdersView } from '@/features/orders/ui/CustomerOrdersView';
 import { ProfilePageHeading } from '@/features/profile/ui/ProfilePageHeading';
 import { requireUser } from '@/lib/auth/policies';
@@ -23,21 +22,12 @@ function firstParam(value: string | string[] | undefined): string | undefined {
   return value;
 }
 
-function buildOrdersQuery(
-  filters: {
-    q?: string;
-    status?: OrderStatus;
-    paymentStatus?: string;
-    page: number;
-  },
-  page: number,
-): string {
+function buildOrdersQuery(kind: 'all' | 'individual' | 'group', page: number): string {
   const params = new URLSearchParams();
-  if (filters.q) params.set('q', filters.q);
-  if (filters.status) params.set('status', filters.status);
-  if (filters.paymentStatus) params.set('paymentStatus', filters.paymentStatus);
-  params.set('page', String(page));
-  return params.toString();
+  if (kind !== 'all') params.set('kind', kind);
+  if (page > 1) params.set('page', String(page));
+  const query = params.toString();
+  return query ? `?${query}` : '';
 }
 
 export default async function OrdersPage({ params, searchParams }: OrdersPageProps) {
@@ -50,11 +40,10 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
   const dictionary = getDictionary(locale);
 
   const raw = await searchParams;
+  const kind = parseAdminOrderListKind(firstParam(raw.kind));
   const parsed = adminOrdersFilterSchema.safeParse({
-    status: firstParam(raw.status) || undefined,
-    paymentStatus: firstParam(raw.paymentStatus) || undefined,
     archived: 'active',
-    q: firstParam(raw.q) || undefined,
+    kind,
     page: firstParam(raw.page) ?? '1',
   });
 
@@ -69,6 +58,7 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
         dateTo: undefined,
         q: undefined,
         onlyNew: false,
+        kind: 'all' as const,
       };
 
   const { rows, total, pageSize } = await listCustomerOrders(user.id, filters);
@@ -81,18 +71,28 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
         title={dictionary.profile.orders}
       />
 
-      <CustomerOrdersFilters
-        total={total}
-        status={filters.status}
-        paymentStatus={filters.paymentStatus}
-        q={filters.q}
-        labels={dictionary.admin.orders.filters}
+      <OrderKindTabs
+        locale={locale}
+        kind={filters.kind ?? 'all'}
+        ariaLabel={dictionary.profile.orderTabsAria}
+        labels={{
+          all: dictionary.profile.orderTabAll,
+          individual: dictionary.profile.orderTabPersonal,
+          group: dictionary.profile.orderTabGroup,
+        }}
       />
 
       <CustomerOrdersView
         locale={locale}
         orders={rows}
         copy={dictionary.admin}
+        labels={{
+          orderNumber: dictionary.profile.orderNumber,
+          noOrders: dictionary.profile.noOrders,
+          orderPlaced: dictionary.profile.orderPlaced,
+          orderItemsOne: dictionary.profile.orderItemsOne,
+          orderItemsMany: dictionary.profile.orderItemsMany,
+        }}
         initialOrderNumber={firstParam(raw.order)}
       />
 
@@ -100,7 +100,7 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
         <nav className="flex items-center gap-3 text-sm font-medium text-[#1e1e1e]/70">
           {filters.page > 1 ? (
             <AppLink
-              href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
+              href={`/${locale}/profile/orders${buildOrdersQuery(filters.kind ?? 'all', filters.page - 1)}`}
               prefetchPolicy="intent"
               className="text-[#ff6b00] hover:underline"
             >
@@ -114,7 +114,7 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
           </span>
           {filters.page < totalPages ? (
             <AppLink
-              href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
+              href={`/${locale}/profile/orders${buildOrdersQuery(filters.kind ?? 'all', filters.page + 1)}`}
               prefetchPolicy="intent"
               className="text-[#ff6b00] hover:underline"
             >
@@ -124,5 +124,49 @@ export default async function OrdersPage({ params, searchParams }: OrdersPagePro
         </nav>
       ) : null}
     </section>
+  );
+}
+
+function OrderKindTabs({
+  locale,
+  kind,
+  ariaLabel,
+  labels,
+}: {
+  locale: string;
+  kind: 'all' | 'individual' | 'group';
+  ariaLabel: string;
+  labels: { all: string; individual: string; group: string };
+}) {
+  const tabs = [
+    { id: 'all' as const, label: labels.all },
+    { id: 'individual' as const, label: labels.individual },
+    { id: 'group' as const, label: labels.group },
+  ];
+
+  return (
+    <nav
+      aria-label={ariaLabel}
+      className="flex w-fit max-w-full gap-1 overflow-x-auto rounded-full border border-[#1e1e1e]/10 bg-white p-1"
+    >
+      {tabs.map((tab) => {
+        const active = kind === tab.id;
+        return (
+          <AppLink
+            key={tab.id}
+            href={`/${locale}/profile/orders${buildOrdersQuery(tab.id, 1)}`}
+            prefetchPolicy="intent"
+            aria-current={active ? 'page' : undefined}
+            className={`rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap ${
+              active
+                ? 'border border-[#ff6b00] text-[#1e1e1e]'
+                : 'border border-transparent text-[#1e1e1e]/45'
+            }`}
+          >
+            {tab.label}
+          </AppLink>
+        );
+      })}
+    </nav>
   );
 }
