@@ -4,7 +4,7 @@ import { and, asc, eq, isNotNull, isNull, or } from 'drizzle-orm';
 
 import { getDb } from '@/db/client';
 import { categories, mediaAssets, type LocaleTranslation } from '@/db/schema';
-import type { Locale } from '@/lib/i18n/config';
+import { locales, type Locale } from '@/lib/i18n/config';
 import { mediaPublicUrl } from '@/lib/media/public-url';
 
 export type AdminCategoryListItem = {
@@ -17,6 +17,7 @@ export type AdminCategoryListItem = {
   sortOrder: number;
   imageUrl: string | null;
   childCount: number;
+  translations: Partial<Record<Locale, { title: string; slug: string }>>;
 };
 
 function translationFor(
@@ -75,6 +76,13 @@ export async function listAdminCategories(locale: Locale): Promise<AdminCategory
       ? (translationFor(parent.translations, locale)?.title ?? null)
       : null;
 
+    const stored: AdminCategoryListItem['translations'] = {};
+    for (const loc of locales) {
+      const copy = row.translations[loc];
+      if (!copy?.title) continue;
+      stored[loc] = { title: copy.title, slug: copy.slug };
+    }
+
     return {
       id: row.id,
       title: translation?.title ?? 'Untitled',
@@ -85,6 +93,7 @@ export async function listAdminCategories(locale: Locale): Promise<AdminCategory
       sortOrder: row.sortOrder,
       imageUrl: images.get(row.id) ?? null,
       childCount: childCount.get(row.id) ?? 0,
+      translations: stored,
     };
   });
 }

@@ -44,7 +44,7 @@ function buildQuery(
   if (merged.categoryId) params.set('categoryId', merged.categoryId);
   if (merged.stock !== 'all') params.set('stock', merged.stock);
   if (merged.status !== 'all') params.set('status', merged.status);
-  if (merged.sort !== 'created') params.set('sort', merged.sort);
+  if (merged.sort !== 'shop') params.set('sort', merged.sort);
   if (merged.dir !== 'desc') params.set('dir', merged.dir);
   if (merged.page > 1) params.set('page', String(merged.page));
   return params.toString();
@@ -66,7 +66,7 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
     categoryId: firstParam(raw.categoryId) || undefined,
     stock: firstParam(raw.stock) ?? 'all',
     status: firstParam(raw.status) ?? 'all',
-    sort: firstParam(raw.sort) ?? 'created',
+    sort: firstParam(raw.sort) ?? 'shop',
     dir: firstParam(raw.dir) ?? 'desc',
     page: firstParam(raw.page) ?? '1',
   });
@@ -77,7 +77,7 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
         page: 1 as const,
         stock: 'all' as const,
         status: 'all' as const,
-        sort: 'created' as const,
+        sort: 'shop' as const,
         dir: 'desc' as const,
         q: undefined,
         sku: undefined,
@@ -106,6 +106,10 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
     price: sortHref('price'),
     created: sortHref('created'),
   };
+  const shopOrderQuery = buildQuery(filters, { sort: 'shop', dir: 'desc', page: 1 });
+  const shopOrderHref = shopOrderQuery
+    ? `/${locale}/admin/products?${shopOrderQuery}`
+    : `/${locale}/admin/products`;
 
   return (
     <section>
@@ -115,6 +119,8 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
         locale={locale}
         products={rows}
         sortLinks={sortLinks}
+        shopOrderHref={shopOrderHref}
+        sortedByShop={filters.sort === 'shop'}
         categories={categories}
         modifierLibrary={modifierLibrary}
         filters={{
@@ -123,6 +129,7 @@ export default async function AdminProductsPage({ params, searchParams }: AdminP
           categoryId: filters.categoryId,
           status: filters.status,
           sort: filters.sort,
+          canReorder: true,
           dir: filters.dir,
         }}
         copy={{

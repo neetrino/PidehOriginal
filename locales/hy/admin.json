@@ -68,7 +68,10 @@
       "user": "օգտատեր",
       "users": "օգտատեր"
     },
-    "requiredMark": "*"
+    "requiredMark": "*",
+    "languages": "Լեզու",
+    "atLeastOneLanguage": "Լրացրեք առնվազն մեկ լեզու։",
+    "englishSlugRequired": "Slug-ը պետք է լինի լատինատառ և նույնը բոլոր լեզուների համար։"
   },
   "confirm": {
     "deleteTitle": "Ջնջել",
@@ -388,6 +391,10 @@
       "deleteSelected": "Ջնջել ընտրվածները",
       "empty": "Այս զտիչներին համապատասխան ապրանքներ չկան։",
       "selectAllAria": "Ընտրել բոլոր ապրանքները",
+      "reorderAria": "Վերադասավորել",
+      "reorderItemAria": "Վերադասավորել {title}",
+      "clearFiltersToReorder": "Խանութի հերթականությունը փոխելու համար մաքրեք զտիչներն ու սյունակի տեսակավորումը։",
+      "shopOrderLink": "Խանութի հերթականություն",
       "selectOneAria": "Ընտրել {title}",
       "product": "Ապրանք",
       "stock": "Պահեստ",
@@ -414,6 +421,7 @@
       "titlePlaceholder": "Ապրանքի վերնագիր",
       "slug": "Slug",
       "slugPlaceholder": "product-slug",
+      "slugHint": "Մեկ անգլերեն slug բոլոր լեզուների համար։ Ստեղծվում է անգլերեն վերնագրից։",
       "description": "Նկարագրություն",
       "descriptionPlaceholder": "Ապրանքի նկարագրություն",
       "price": "Գին",
@@ -432,6 +440,7 @@
       "categoryTitle": "Կատեգորիայի վերնագիր",
       "categoryTitlePlaceholder": "Մուտքագրեք կատեգորիայի վերնագիրը",
       "categoryTitleRequired": "Կատեգորիայի վերնագիրը պարտադիր է։",
+      "englishSlugRequired": "Slug-ը պետք է լինի լատինատառ։",
       "add": "Ավելացնել",
       "adding": "Ավելացվում է…"
     },
@@ -495,7 +504,7 @@
       "categoryTitlePlaceholder": "Մուտքագրեք կատեգորիայի վերնագիրը",
       "slug": "Slug",
       "slugPlaceholder": "---",
-      "slugHint": "Ստեղծվում է ավտոմատ՝ վերնագրից, և օգտագործվում է /products-ում։",
+      "slugHint": "Մեկ անգլերեն slug բոլոր լեզուների համար։ Ստեղծվում է անգլերեն վերնագրից։",
       "parentCategory": "Վերադաս կատեգորիա",
       "parentCategoryAria": "Վերադաս կատեգորիա",
       "noneRootCategory": "Ոչ մեկը (արմատային կատեգորիա)",

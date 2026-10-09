@@ -7,7 +7,7 @@ import { getDb } from '@/db/client';
 import { heroSlides, mediaAssets } from '@/db/schema';
 import { resolveHeroTranslation, type HeroLocaleCopy } from '@/features/hero/domain/hero-rules';
 import { CACHE_TAGS, PUBLIC_CACHE_REVALIDATE_SECONDS } from '@/lib/cache/tags';
-import type { Locale } from '@/lib/i18n/config';
+import { locales, type Locale } from '@/lib/i18n/config';
 import { mediaPublicUrl } from '@/lib/media/public-url';
 
 export type AdminHeroSlide = typeof heroSlides.$inferSelect;
@@ -19,6 +19,7 @@ export type AdminHeroSlideListItem = {
   title: string;
   subtitle: string | undefined;
   imageUrl: string | null;
+  translations: Partial<Record<Locale, { title: string; subtitle?: string }>>;
 };
 
 export type StorefrontHeroSlide = {
@@ -87,6 +88,16 @@ export async function listAdminHeroSlides(): Promise<AdminHeroSlideListItem[]> {
     const copy = row.translations.en ?? row.translations.hy ?? row.translations.ru ?? { title: '' };
     const media = mediaBySlide.get(row.id);
 
+    const stored: AdminHeroSlideListItem['translations'] = {};
+    for (const loc of locales) {
+      const localeCopy = row.translations[loc];
+      if (!localeCopy?.title) continue;
+      stored[loc] = {
+        title: localeCopy.title,
+        ...(localeCopy.subtitle ? { subtitle: localeCopy.subtitle } : {}),
+      };
+    }
+
     return {
       id: row.id,
       sortOrder: row.sortOrder,
@@ -94,6 +105,7 @@ export async function listAdminHeroSlides(): Promise<AdminHeroSlideListItem[]> {
       title: copy.title || 'Untitled',
       subtitle: copy.subtitle,
       imageUrl: media?.desktop ?? media?.mobile ?? null,
+      translations: stored,
     };
   });
 }

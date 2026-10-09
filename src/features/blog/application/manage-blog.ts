@@ -70,16 +70,25 @@ function buildLocaleCopy(data: UpsertBlogPostInput) {
   };
 }
 
-function mergeTranslations(
+function translationsForSave(
   existing: BlogTranslationsJson | null | undefined,
-  editingLocale: Locale,
   data: UpsertBlogPostInput,
 ): BlogTranslationsJson {
-  const copy = buildLocaleCopy(data);
-  return {
-    ...(existing ?? {}),
-    [editingLocale]: copy,
+  const next: BlogTranslationsJson = {
+    [data.editingLocale]: buildLocaleCopy(data),
   };
+  for (const copy of data.copies ?? []) {
+    next[copy.locale] = {
+      title: copy.title.trim(),
+      slug: normalizeBlogSlug(copy.slug),
+      excerpt: copy.excerpt?.trim() || undefined,
+      content: sanitizeBlogHtml(copy.content),
+    };
+  }
+  if (!data.syncLocales) {
+    return { ...(existing ?? {}), ...next };
+  }
+  return next;
 }
 
 function parsePublishedAt(value: string | null | undefined, status: BlogPostStatus): Date | null {
@@ -135,7 +144,7 @@ export async function createBlogPostAction(
   }
 
   const editingLocale = parsed.data.editingLocale;
-  const translations = mergeTranslations(null, editingLocale, parsed.data);
+  const translations = translationsForSave(null, parsed.data);
   const ruleError = validateBlogTranslations(translations);
   if (ruleError) {
     return err(ruleError, blogRuleErrorMessage(ruleError));
@@ -220,7 +229,7 @@ export async function updateBlogPostAction(
         throw new Error('NOT_FOUND');
       }
 
-      const translations = mergeTranslations(existing.translations, editingLocale, parsed.data);
+      const translations = translationsForSave(existing.translations, parsed.data);
       const ruleError = validateBlogTranslations(translations);
       if (ruleError) {
         throw new Error(ruleError);

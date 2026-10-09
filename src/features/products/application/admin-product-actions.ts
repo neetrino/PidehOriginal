@@ -1,11 +1,16 @@
 'use server';
 
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, asc, desc, eq, isNull } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 import { getDb } from '@/db/client';
 import { products, type TranslationsJson } from '@/db/schema';
-import { productIdsSchema, type ProductIdsInput } from '@/features/products/schemas/admin-list';
+import {
+  productIdsSchema,
+  reorderProductsSchema,
+  type ProductIdsInput,
+  type ReorderProductsInput,
+} from '@/features/products/schemas/admin-list';
 import { DEFAULT_PRODUCT_STOCK_ON_HAND } from '@/features/products/domain/stock-levels';
 import { requireAdmin } from '@/lib/auth/policies';
 import { invalidateProductsCache } from '@/lib/cache/invalidate-public';
@@ -203,4 +208,59 @@ export async function duplicateProductAction(
     translations: withCopySuffix(existing.translations),
   });
   return ok({ id });
+}
+
+/** Persists the admin product table order as the shop display order. */
+export async function reorderProductsAction(
+  locale: string,
+  raw: ReorderProductsInput,
+): Promise<Result<{ updated: number }>> {
+  if (!isLocale(locale)) {
+    return err('INVALID_LOCALE', 'Invalid locale.');
+  }
+
+  const parsed = reorderProductsSchema.safeParse(raw);
+  if (!parsed.success) {
+    return err('VALIDATION_ERROR', 'Invalid product order.');
+  }
+
+  await requireAdmin(locale as Locale);
+
+  const uniqueIds = [...new Set(parsed.data.orderedIds)];
+  if (uniqueIds.length !== parsed.data.orderedIds.length) {
+    return err('VALIDATION_ERROR', 'Duplicate product ids in order.');
+  }
+
+  const existing = await getDb()
+    .select({ id: products.id })
+    .from(products)
+    .where(isNull(products.deletedAt))
+    .orderBy(asc(products.sortOrder), desc(products.createdAt));
+
+  const existingSet = new Set(existing.map((row) => row.id));
+  for (const id of uniqueIds) {
+    if (!existingSet.has(id)) {
+      return err('NOT_FOUND', 'Product not found.');
+    }
+  }
+
+  const queue = [...uniqueIds];
+  const moved = new Set(uniqueIds);
+  const nextOrder = existing.map((row) => {
+    if (!moved.has(row.id)) return row.id;
+    return queue.shift() ?? row.id;
+  });
+
+  const now = new Date();
+  await Promise.all(
+    nextOrder.map((id, index) =>
+      getDb()
+        .update(products)
+        .set({ sortOrder: index + 1, updatedAt: now })
+        .where(eq(products.id, id)),
+    ),
+  );
+
+  revalidateProducts(locale);
+  return ok({ updated: uniqueIds.length });
 }

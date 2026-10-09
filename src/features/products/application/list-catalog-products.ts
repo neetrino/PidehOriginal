@@ -19,10 +19,6 @@ import { unstable_cache } from 'next/cache';
 import { getDb } from '@/db/client';
 import { categories, orderItems, productCategories, products } from '@/db/schema';
 import { enrichCatalogProducts } from '@/features/products/application/catalog-product-enrichment';
-import {
-  SHOP_ALL_CATEGORY_RANKS,
-  UNKNOWN_CATEGORY_RANK,
-} from '@/features/products/domain/shop-category-order';
 import type { CatalogFilters } from '@/features/products/schemas/catalog-list';
 import type { CatalogProduct } from '@/features/products/types';
 import { CACHE_TAGS, PUBLIC_CACHE_REVALIDATE_SECONDS } from '@/lib/cache/tags';
@@ -131,24 +127,19 @@ async function buildWhere(
   return and(...conditions);
 }
 
-/** Lowest matching category rank, so the All view groups pide → snack → sauce → drinks → combo. */
-function allViewCategoryRank(): SQL {
-  const whenClauses = SHOP_ALL_CATEGORY_RANKS.flatMap((group) =>
-    group.slugs.map((slug) => sql`when ${slug} then ${group.rank}`),
-  );
+/** Products with no active category stay after every grouped category. */
+const UNGROUPED_CATEGORY_RANK = 2_147_483_647;
 
+/** Lowest admin category sortOrder, so the All view follows the category list. */
+function allViewCategoryRank(): SQL {
   return sql`coalesce((
-    select min(
-      case lower(${categories.translations}->'hy'->>'slug')
-        ${sql.join(whenClauses, sql` `)}
-        else ${UNKNOWN_CATEGORY_RANK} end
-    )
+    select min(${categories.sortOrder})
     from ${productCategories}
     inner join ${categories} on ${categories.id} = ${productCategories.categoryId}
     where ${productCategories.productId} = ${products.id}
       and ${categories.deletedAt} is null
       and ${categories.status} = 'ACTIVE'
-  ), ${UNKNOWN_CATEGORY_RANK})`;
+  ), ${UNGROUPED_CATEGORY_RANK})`;
 }
 
 function orderByClause(sort: CatalogFilters['sort'], soldExpr: SQL) {
@@ -160,8 +151,10 @@ function orderByClause(sort: CatalogFilters['sort'], soldExpr: SQL) {
     case 'popular':
       return [desc(soldExpr), desc(products.createdAt), desc(products.id)] as const;
     case 'newest':
-    default:
       return [desc(products.createdAt), desc(products.id)] as const;
+    case 'manual':
+    default:
+      return [asc(products.sortOrder), desc(products.createdAt), desc(products.id)] as const;
   }
 }
 

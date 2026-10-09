@@ -5,12 +5,24 @@ import { useId, useState, useTransition } from 'react';
 
 import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import { createCategoryAction } from '@/features/categories/actions';
-import { slugifyCategoryTitle } from '@/features/categories/domain/slugify';
+import { slugifyEnglish } from '@/features/categories/domain/slugify';
 import type { AdminCategoryOption } from '@/features/products/application/list-admin-products';
+import type { Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
+
+function categoryTitle(category: AdminCategoryOption, active: Locale): string {
+  return (
+    category.titles[active] ||
+    category.titles.hy ||
+    category.titles.en ||
+    category.titles.ru ||
+    category.title
+  );
+}
 
 type ProductDrawerCategoriesProps = {
   locale: string;
+  activeLocale: Locale;
   categories: AdminCategoryOption[];
   selectedIds: string[];
   disabled: boolean;
@@ -21,6 +33,7 @@ type ProductDrawerCategoriesProps = {
 
 export function ProductDrawerCategories({
   locale,
+  activeLocale,
   categories,
   selectedIds,
   disabled,
@@ -37,7 +50,7 @@ export function ProductDrawerCategories({
 
   const selectedTitles = categories
     .filter((category) => selectedIds.includes(category.id))
-    .map((category) => category.title);
+    .map((category) => categoryTitle(category, activeLocale));
   const triggerLabel =
     selectedTitles.length === 0 ? copy.selectCategories : selectedTitles.join(', ');
 
@@ -51,16 +64,25 @@ export function ProductDrawerCategories({
 
   function createCategory(): void {
     const title = newTitle.trim();
+    const slug = slugifyEnglish(title);
     if (!title) {
       setError(copy.categoryTitleRequired);
+      return;
+    }
+    if (!slug) {
+      setError(copy.englishSlugRequired);
       return;
     }
 
     startTransition(async () => {
       setError(null);
       const result = await createCategoryAction(locale, {
-        title,
-        slug: slugifyCategoryTitle(title),
+        translations: {
+          [activeLocale]: {
+            title,
+            slug,
+          },
+        },
         parentId: null,
         status: 'ACTIVE',
       });
@@ -70,7 +92,11 @@ export function ProductDrawerCategories({
         return;
       }
 
-      const created = { id: result.value.id, title };
+      const created = {
+        id: result.value.id,
+        title,
+        titles: { [activeLocale]: title },
+      };
       onCategoriesChange([...categories, created]);
       onSelectedChange([...selectedIds, created.id]);
       setNewTitle('');
@@ -152,7 +178,7 @@ export function ProductDrawerCategories({
                           </svg>
                         ) : null}
                       </span>
-                      <span className="min-w-0 truncate">{category.title}</span>
+                      <span className="min-w-0 truncate">{categoryTitle(category, activeLocale)}</span>
                     </button>
                   );
                 })

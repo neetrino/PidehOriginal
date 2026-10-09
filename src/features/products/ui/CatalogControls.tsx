@@ -13,6 +13,7 @@ import { ShopSortButton } from '@/features/products/ui/ShopSortButton';
 export type CatalogLabels = CatalogChipLabels & {
   allChip: string;
   sortAction: string;
+  sortManual: string;
   sortNewest: string;
   sortPriceAsc: string;
   sortPriceDesc: string;

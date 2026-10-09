@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
 import { SideSheet } from '@/components/ui/SideSheet';
+import { AdminLocaleTabs } from '@/features/admin/ui/AdminLocaleTabs';
 import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import {
   createDeliveryLocationAction,
@@ -15,8 +16,8 @@ import {
   EMPTY_DELIVERY_LOCATION_TRANSLATION,
   type DeliveryLocationTranslation,
 } from '@/features/delivery/domain/delivery-location';
-import { localeLabels, locales, type Locale } from '@/lib/i18n/config';
-import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import { locales, type Locale } from '@/lib/i18n/config';
+import { getDictionary, type Dictionary } from '@/lib/i18n/get-dictionary';
 
 type LocationDrawerCopy = {
   locationDrawer: Dictionary['admin']['delivery']['locationDrawer'];
@@ -83,6 +84,7 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
   }, [location]);
 
   const draft = drafts[activeLocale];
+  const tabFields = getDictionary(activeLocale).admin.delivery.locationDrawer;
 
   function updateDraft(patch: Partial<DeliveryLocationTranslation>): void {
     setDrafts((current) => ({
@@ -120,37 +122,18 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
       }}
     >
       <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-        <div>
-          <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-            {copy.locationDrawer.translations}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {locales.map((loc) => {
-              const selected = loc === activeLocale;
-              return (
-                <button
-                  key={loc}
-                  type="button"
-                  onClick={() => setActiveLocale(loc)}
-                  className={`rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
-                    selected
-                      ? 'bg-gray-900 text-white'
-                      : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  {localeLabels[loc]}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <AdminLocaleTabs
+          label={tabFields.translations}
+          active={activeLocale}
+          onChange={setActiveLocale}
+        />
 
         <label>
-          <span className={ADMIN_LABEL}>{copy.locationDrawer.city}</span>
+          <span className={ADMIN_LABEL}>{tabFields.city}</span>
           <input
             value={draft.city}
             onChange={(event) => updateDraft({ city: event.target.value })}
-            placeholder={copy.locationDrawer.cityPlaceholder}
+            placeholder={tabFields.cityPlaceholder}
             required={activeLocale === 'hy'}
             className={ADMIN_INPUT}
             disabled={isPending}
@@ -158,11 +141,11 @@ function DeliveryLocationForm({ locale, location, onClose, copy }: DeliveryLocat
         </label>
 
         <label>
-          <span className={ADMIN_LABEL}>{copy.locationDrawer.area}</span>
+          <span className={ADMIN_LABEL}>{tabFields.area}</span>
           <input
             value={draft.area}
             onChange={(event) => updateDraft({ area: event.target.value })}
-            placeholder={copy.locationDrawer.areaPlaceholder}
+            placeholder={tabFields.areaPlaceholder}
             required={activeLocale === 'hy'}
             className={ADMIN_INPUT}
             disabled={isPending}

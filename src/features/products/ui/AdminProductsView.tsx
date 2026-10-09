@@ -30,6 +30,8 @@ type AdminProductsViewProps = {
   locale: string;
   products: AdminProductListItem[];
   sortLinks: AdminProductsSortLinks;
+  shopOrderHref: string;
+  sortedByShop: boolean;
   categories: AdminCategoryOption[];
   modifierLibrary: ProductModifierOption[];
   copy: ViewCopy;
@@ -40,6 +42,7 @@ type AdminProductsViewProps = {
     status: 'all' | 'active' | 'inactive' | 'draft' | 'low_remaining';
     sort: string;
     dir: string;
+    canReorder: boolean;
   };
 };
 
@@ -47,6 +50,8 @@ export function AdminProductsView({
   locale,
   products,
   sortLinks,
+  shopOrderHref,
+  sortedByShop,
   categories,
   modifierLibrary,
   copy,
@@ -93,7 +98,10 @@ export function AdminProductsView({
         locale={locale}
         products={products}
         sortLinks={sortLinks}
+        shopOrderHref={shopOrderHref}
+        sortedByShop={sortedByShop}
         onEdit={openEdit}
+        canReorder={filters.canReorder}
         copy={{ table: copy.products.table, common: copy.common, confirm: copy.confirm }}
       />
 

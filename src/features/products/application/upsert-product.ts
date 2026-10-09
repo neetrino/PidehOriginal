@@ -21,11 +21,21 @@ import { createId } from '@/lib/id';
 import { isLocale, locales, type Locale } from '@/lib/i18n/config';
 import { err, ok, type Result } from '@/lib/result';
 
-const productUpsertSchema = z.object({
-  sku: z.string().trim().min(1).max(120),
+const productLocaleSchema = z.object({
   title: z.string().trim().min(1).max(200),
   slug: z.string().trim().min(1).max(200),
   description: z.string().trim().max(5000).optional(),
+});
+
+const productUpsertSchema = z.object({
+  sku: z.string().trim().min(1).max(120),
+  translations: z
+    .object({
+      hy: productLocaleSchema.optional(),
+      en: productLocaleSchema.optional(),
+      ru: productLocaleSchema.optional(),
+    })
+    .refine((value) => value.hy != null || value.en != null || value.ru != null),
   priceAmount: z.number().int().nonnegative(),
   stockOnHand: z.number().int().nonnegative(),
   categoryIds: z.array(z.string().uuid()),
@@ -47,12 +57,21 @@ const productUpsertSchema = z.object({
 export type ProductUpsertInput = z.infer<typeof productUpsertSchema>;
 
 function buildTranslations(data: ProductUpsertInput): TranslationsJson {
-  const entry = {
-    title: data.title,
-    slug: data.slug,
-    description: data.description || undefined,
-  };
-  return { hy: entry, en: entry, ru: entry };
+  const translations: TranslationsJson = {};
+  for (const loc of locales) {
+    const copy = data.translations[loc];
+    if (!copy) continue;
+    translations[loc] = {
+      title: copy.title,
+      slug: copy.slug,
+      description: copy.description || undefined,
+    };
+  }
+  return translations;
+}
+
+function primarySlug(translations: TranslationsJson): string {
+  return translations.hy?.slug ?? translations.en?.slug ?? translations.ru?.slug ?? '';
 }
 
 function revalidateProducts(
@@ -197,7 +216,7 @@ export async function createProductFromDrawerAction(
     return err('VALIDATION_ERROR', mediaResult.error);
   }
 
-  revalidateProducts(locale, { id, slug: data.slug });
+  revalidateProducts(locale, { id, slug: primarySlug(buildTranslations(data)) });
   return ok({ id });
 }
 
@@ -298,7 +317,7 @@ export async function updateProductFromDrawerAction(
 
   revalidateProducts(locale, {
     id: existing.id,
-    slug: data.slug,
+    slug: primarySlug(buildTranslations(data)),
     previousSlug,
   });
   return ok({ id: existing.id });

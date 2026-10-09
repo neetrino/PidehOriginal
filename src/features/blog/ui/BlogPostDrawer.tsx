@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useTransition } from 'react';
 import { Button } from '@/components/ui/Button';
 import { SelectDropdown } from '@/components/ui/SelectDropdown';
 import { SideSheet } from '@/components/ui/SideSheet';
+import { AdminLocaleTabs } from '@/features/admin/ui/AdminLocaleTabs';
 import { ADMIN_INPUT, ADMIN_LABEL, ADMIN_TEXTAREA } from '@/features/admin/ui/admin-form-classes';
 import {
   createBlogPostAction,
@@ -16,8 +17,8 @@ import {
   type BlogPostStatus,
   type BlogTranslations,
 } from '@/features/blog/domain/blog-rules';
-import { localeLabels, locales, type Locale } from '@/lib/i18n/config';
-import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import { locales, type Locale } from '@/lib/i18n/config';
+import { getDictionary, type Dictionary } from '@/lib/i18n/get-dictionary';
 
 type LocaleDraft = {
   title: string;
@@ -69,12 +70,32 @@ function draftsFromTranslations(
   return next;
 }
 
-function resolvedSlug(draft: LocaleDraft): string {
-  if (draft.slugTouched && draft.slug.trim()) {
-    return normalizeBlogSlug(draft.slug);
+function sharedBlogSlug(drafts: Record<Locale, LocaleDraft>): string {
+  return (
+    normalizeBlogSlug(drafts.en.slug) ||
+    normalizeBlogSlug(drafts.en.title) ||
+    `post-${Date.now().toString(36)}`
+  );
+}
+
+function readyBlogLocales(
+  drafts: Record<Locale, LocaleDraft>,
+):
+  | { ok: true; items: Array<{ locale: Locale; draft: LocaleDraft; slug: string }> }
+  | { ok: false; locale: Locale } {
+  const items: Array<{ locale: Locale; draft: LocaleDraft; slug: string }> = [];
+  const slug = sharedBlogSlug(drafts);
+  for (const loc of locales) {
+    const draft = drafts[loc];
+    const title = draft.title.trim();
+    const content = draft.content.trim();
+    if (!title && !content && !draft.excerpt.trim()) continue;
+    if (!title || !content) return { ok: false, locale: loc };
+    items.push({ locale: loc, draft, slug });
   }
-  const fromTitle = normalizeBlogSlug(draft.title);
-  return fromTitle || `post-${Date.now().toString(36)}`;
+  const first = items[0];
+  if (!first) return { ok: false, locale: 'hy' };
+  return { ok: true, items };
 }
 
 export function BlogPostDrawer({ locale, open, onClose, post = null, copy }: BlogPostDrawerProps) {
@@ -127,6 +148,7 @@ export function BlogPostDrawer({ locale, open, onClose, post = null, copy }: Blo
   }, [open, post]);
 
   const draft = drafts[activeLocale];
+  const tabCopy = getDictionary(activeLocale).admin;
 
   function updateDraft(patch: Partial<LocaleDraft>): void {
     setDrafts((current) => ({
@@ -152,24 +174,34 @@ export function BlogPostDrawer({ locale, open, onClose, post = null, copy }: Blo
         className="flex min-h-0 flex-1 flex-col"
         onSubmit={(event) => {
           event.preventDefault();
-          const current = drafts[activeLocale];
-          const slug = resolvedSlug(current);
-          if (!current.title.trim() || !current.content.trim()) {
+          const ready = readyBlogLocales(drafts);
+          if (!ready.ok) {
+            setActiveLocale(ready.locale);
             setError(copy.blog.drawer.titleAndFullTextRequired);
             return;
           }
+          const [primary, ...rest] = ready.items;
+          if (!primary) return;
 
           startTransition(async () => {
             setError(null);
             const payload = {
-              editingLocale: activeLocale,
-              title: current.title,
-              slug,
-              excerpt: current.excerpt || undefined,
-              content: current.content,
+              editingLocale: primary.locale,
+              title: primary.draft.title,
+              slug: primary.slug,
+              excerpt: primary.draft.excerpt || undefined,
+              content: primary.draft.content,
               status,
               publishedAt: publishedAt || null,
               tags: post?.tags.join(', ') ?? '',
+              copies: rest.map((item) => ({
+                locale: item.locale,
+                title: item.draft.title,
+                slug: item.slug,
+                excerpt: item.draft.excerpt || undefined,
+                content: item.draft.content,
+              })),
+              syncLocales: true,
             };
             const mediaForm = new FormData();
             if (imageFile) {
@@ -195,35 +227,16 @@ export function BlogPostDrawer({ locale, open, onClose, post = null, copy }: Blo
         }}
       >
         <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5">
-          <div>
-            <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-              {copy.blog.drawer.translations}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {locales.map((loc) => {
-                const selected = loc === activeLocale;
-                return (
-                  <button
-                    key={loc}
-                    type="button"
-                    onClick={() => setActiveLocale(loc)}
-                    className={`rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
-                      selected
-                        ? 'bg-gray-900 text-white'
-                        : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    {localeLabels[loc]}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <AdminLocaleTabs
+            label={tabCopy.blog.drawer.translations}
+            active={activeLocale}
+            onChange={setActiveLocale}
+          />
 
           <label className="block">
             <span className={ADMIN_LABEL}>
-              {copy.blog.drawer.title}{' '}
-              <span className="text-red-600">{copy.common.requiredMark}</span>
+              {tabCopy.blog.drawer.title}{' '}
+              <span className="text-red-600">{tabCopy.common.requiredMark}</span>
             </span>
             <input
               required
@@ -235,7 +248,7 @@ export function BlogPostDrawer({ locale, open, onClose, post = null, copy }: Blo
           </label>
 
           <label className="block">
-            <span className={ADMIN_LABEL}>{copy.blog.drawer.shortExcerpt}</span>
+            <span className={ADMIN_LABEL}>{tabCopy.blog.drawer.shortExcerpt}</span>
             <input
               value={draft.excerpt}
               onChange={(event) => updateDraft({ excerpt: event.target.value })}
@@ -246,8 +259,8 @@ export function BlogPostDrawer({ locale, open, onClose, post = null, copy }: Blo
 
           <label className="block">
             <span className={ADMIN_LABEL}>
-              {copy.blog.drawer.fullText}{' '}
-              <span className="text-red-600">{copy.common.requiredMark}</span>
+              {tabCopy.blog.drawer.fullText}{' '}
+              <span className="text-red-600">{tabCopy.common.requiredMark}</span>
             </span>
             <textarea
               required
@@ -258,7 +271,7 @@ export function BlogPostDrawer({ locale, open, onClose, post = null, copy }: Blo
               disabled={isPending}
             />
             <span className="mt-1 block text-xs text-gray-500">
-              {copy.blog.drawer.fullTextHint}
+              {tabCopy.blog.drawer.fullTextHint}
             </span>
           </label>
 

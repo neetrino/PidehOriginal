@@ -1,6 +1,7 @@
 'use client';
 
-import { Pencil, Star, Trash2 } from 'lucide-react';
+import { GripVertical, Pencil, Star, Trash2 } from 'lucide-react';
+import type { DragEvent } from 'react';
 
 import {
   ADMIN_TABLE_ROW,
@@ -27,6 +28,12 @@ type AdminProductRowProps = {
   onFeatured: () => void;
   onDelete: () => void;
   onVisibility: () => void;
+  isDragging: boolean;
+  reorderLabel: string;
+  onRowDragOver: (event: DragEvent<HTMLTableRowElement>) => void;
+  onRowDrop: (event: DragEvent<HTMLTableRowElement>) => void;
+  onGripDragStart: (event: DragEvent<HTMLButtonElement>) => void;
+  onGripDragEnd: () => void;
   copy: RowCopy;
 };
 
@@ -40,6 +47,12 @@ export function AdminProductRow({
   onFeatured,
   onDelete,
   onVisibility,
+  isDragging,
+  reorderLabel,
+  onRowDragOver,
+  onRowDrop,
+  onGripDragStart,
+  onGripDragEnd,
   copy,
 }: AdminProductRowProps) {
   const isActive = product.status === 'ACTIVE';
@@ -47,7 +60,23 @@ export function AdminProductRow({
   const createdLabel = `${created.getDate()}/${created.getMonth() + 1}/${created.getFullYear()}`;
 
   return (
-    <tr className={ADMIN_TABLE_ROW}>
+    <tr
+      className={`${ADMIN_TABLE_ROW} ${isDragging ? 'bg-gray-50 opacity-50' : ''}`}
+      onDragOver={onRowDragOver}
+      onDrop={onRowDrop}
+    >
+      <td className={ADMIN_TABLE_TD}>
+        <button
+          type="button"
+          draggable={!disabled}
+          onDragStart={onGripDragStart}
+          onDragEnd={onGripDragEnd}
+          className="inline-flex cursor-grab touch-none text-gray-400 active:cursor-grabbing"
+          aria-label={reorderLabel}
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
+      </td>
       <td className={ADMIN_TABLE_TD_CHECK}>
         <input
           type="checkbox"
