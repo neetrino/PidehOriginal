@@ -34,6 +34,9 @@
   "save": "Сохранить",
   "saving": "Сохранение…",
   "cancel": "Отмена",
+  "personalSaved": "Личные данные сохранены.",
+  "personalValidationError": "Проверьте поля и попробуйте снова.",
+  "personalEmailInUse": "Этот email уже используется.",
   "comingSoon": "UI секции готов. Backend пока не меняем.",
   "addressBook": {
     "addNew": "Добавить адрес",
@@ -45,12 +48,21 @@
     "noAddresses": "Адресов пока нет.",
     "formAddTitle": "Добавить адрес",
     "formEditTitle": "Изменить адрес",
+    "community": "Община",
+    "selectCommunity": "Выберите общину",
     "line1": "Адрес",
     "phone": "Телефон",
     "phonePlaceholder": "+374XXXXXXXX",
     "isDefault": "Сделать адресом доставки по умолчанию",
     "add": "Добавить",
-    "update": "Обновить"
+    "update": "Обновить",
+    "added": "Адрес добавлен.",
+    "updated": "Адрес обновлён.",
+    "deleted": "Адрес удалён.",
+    "defaultUpdated": "Основной адрес обновлён.",
+    "saveFailed": "Не удалось сохранить адрес.",
+    "notFound": "Адрес не найден.",
+    "validationError": "Проверьте поля адреса."
   },
   "passwordForm": {
     "currentPassword": "Текущий пароль",
@@ -60,7 +72,11 @@
     "newPasswordPlaceholder": "Введите новый пароль",
     "confirmPasswordPlaceholder": "Повторите новый пароль",
     "change": "Сменить пароль",
-    "changing": "Смена…"
+    "changing": "Смена…",
+    "success": "Пароль успешно изменён.",
+    "sameAsCurrent": "Новый пароль должен отличаться от текущего.",
+    "currentIncorrect": "Текущий пароль неверен.",
+    "changeFailed": "Не удалось изменить пароль."
   },
   "deleteAccountForm": {
     "description": "Удаление аккаунта необратимо. Вы сразу потеряете доступ к профилю.",

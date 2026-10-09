@@ -23,6 +23,10 @@ export type CheckoutDeliveryOption = {
   id: string;
   city: string;
   area: string;
+  /** Canonical DB city used for address book sync across locales. */
+  sourceCity: string;
+  /** Canonical DB region (community) used for address book sync across locales. */
+  sourceRegion: string;
   priceAmount: number;
   freeThresholdAmount: number | null;
   label: string;
@@ -77,12 +81,16 @@ export async function listCheckoutDeliveryOptions(
 
   return rows.map((row) => {
     const resolved = resolveDeliveryLocationTranslation(row.translations, locale);
-    const city = resolved.city || row.city?.trim() || '';
-    const area = resolved.area || row.region?.trim() || '';
+    const sourceCity = row.city?.trim() || '';
+    const sourceRegion = row.region?.trim() || '';
+    const city = resolved.city || sourceCity;
+    const area = resolved.area || sourceRegion;
     return {
       id: row.id,
       city,
       area,
+      sourceCity,
+      sourceRegion,
       priceAmount: row.priceAmount,
       freeThresholdAmount: row.freeThresholdAmount,
       label: formatDeliveryLocationLabel(row.translations, locale, row.city, row.region),

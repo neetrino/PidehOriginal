@@ -6,6 +6,7 @@ import type { CustomerAddressListItem } from '@/features/profile/application/add
 
 type ProfileAddressCardProps = {
   address: CustomerAddressListItem;
+  communityLabel: string | null;
   disabled: boolean;
   labels: {
     defaultBadge: string;
@@ -20,6 +21,7 @@ type ProfileAddressCardProps = {
 
 export function ProfileAddressCard({
   address,
+  communityLabel,
   disabled,
   labels,
   onSetDefault,
@@ -36,11 +38,13 @@ export function ProfileAddressCard({
                 {labels.defaultBadge}
               </span>
             ) : null}
+            {communityLabel ? (
+              <span className="rounded-full bg-[#fff8e7] px-2.5 py-1 text-xs font-bold text-[#1e1e1e]/80">
+                {communityLabel}
+              </span>
+            ) : null}
           </div>
           <p className="text-sm text-[#1e1e1e] sm:text-base">{address.line1}</p>
-          {address.phone ? (
-            <p className="text-sm text-[#1e1e1e]/65 sm:text-base">{address.phone}</p>
-          ) : null}
         </div>
         <div className="flex flex-wrap gap-2 border-t border-[#ff6b00]/10 pt-4 lg:border-0 lg:pt-0">
           {!address.isDefaultShipping ? (

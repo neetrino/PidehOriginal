@@ -4,7 +4,7 @@ import { and, eq, isNull } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 import { getDb } from '@/db/client';
-import { addresses } from '@/db/schema';
+import { addresses, deliveryRules } from '@/db/schema';
 import { withTransaction } from '@/db/transaction';
 import { DEFAULT_DELIVERY_CITY } from '@/features/delivery/domain/service-area';
 import { addressFormSchema, addressIdSchema } from '@/features/profile/schemas/address';
@@ -14,6 +14,11 @@ import { isLocale, type Locale } from '@/lib/i18n/config';
 import { err, ok, type Result } from '@/lib/result';
 
 type AddressMutationOk = { addressId: string };
+
+type ResolvedCommunity = {
+  city: string;
+  region: string;
+};
 
 function revalidateAddressPaths(locale: Locale): void {
   revalidatePath(`/${locale}/profile/addresses`);
@@ -34,8 +39,31 @@ async function clearDefaultFlags(
     .where(and(eq(addresses.userId, userId), isNull(addresses.archivedAt)));
 }
 
+/** Loads an active delivery zone and returns canonical city/region for the address book. */
+async function resolveCommunity(
+  tx: Parameters<Parameters<typeof withTransaction>[0]>[0],
+  deliveryRuleId: string,
+): Promise<ResolvedCommunity | null> {
+  const [row] = await tx
+    .select({
+      city: deliveryRules.city,
+      region: deliveryRules.region,
+    })
+    .from(deliveryRules)
+    .where(and(eq(deliveryRules.id, deliveryRuleId), eq(deliveryRules.isActive, true)))
+    .limit(1);
+
+  if (!row) return null;
+
+  return {
+    city: row.city?.trim() || DEFAULT_DELIVERY_CITY,
+    region: row.region?.trim() || '',
+  };
+}
+
 /**
- * Creates a customer address. Recipient name comes from the profile; phone from the form.
+ * Creates a customer address. Recipient name and phone come from the profile;
+ * community (city/region) comes from the selected delivery zone.
  * First address (or explicit default) becomes the default shipping/billing address.
  */
 export async function createCustomerAddressAction(
@@ -55,6 +83,11 @@ export async function createCustomerAddressAction(
 
   try {
     const addressId = await withTransaction(async (tx) => {
+      const community = await resolveCommunity(tx, parsed.data.deliveryRuleId);
+      if (!community || !community.region) {
+        return null;
+      }
+
       const existing = await tx
         .select({ id: addresses.id })
         .from(addresses)
@@ -72,9 +105,10 @@ export async function createCustomerAddressAction(
         userId: user.id,
         recipientFirstName: user.firstName,
         recipientLastName: user.lastName,
-        phone: parsed.data.phone,
+        phone: user.phone ?? '',
         countryCode: 'AM',
-        city: DEFAULT_DELIVERY_CITY,
+        city: community.city,
+        region: community.region,
         line1: parsed.data.line1,
         isDefaultShipping: makeDefault,
         isDefaultBilling: makeDefault,
@@ -82,6 +116,10 @@ export async function createCustomerAddressAction(
 
       return id;
     });
+
+    if (!addressId) {
+      return err('VALIDATION_ERROR', 'Select a community.');
+    }
 
     revalidateAddressPaths(locale);
     return ok({ addressId });
@@ -91,7 +129,8 @@ export async function createCustomerAddressAction(
 }
 
 /**
- * Updates an owned address. Keeps recipient name synced from the profile; phone from the form.
+ * Updates an owned address. Keeps recipient name and phone synced from the profile;
+ * community (city/region) comes from the selected delivery zone.
  */
 export async function updateCustomerAddressAction(
   locale: string,
@@ -112,6 +151,11 @@ export async function updateCustomerAddressAction(
 
   try {
     const result = await withTransaction(async (tx) => {
+      const community = await resolveCommunity(tx, parsed.data.deliveryRuleId);
+      if (!community || !community.region) {
+        return 'invalid_community' as const;
+      }
+
       const [owned] = await tx
         .select({ id: addresses.id })
         .from(addresses)
@@ -137,7 +181,9 @@ export async function updateCustomerAddressAction(
         .set({
           recipientFirstName: user.firstName,
           recipientLastName: user.lastName,
-          phone: parsed.data.phone,
+          phone: user.phone ?? '',
+          city: community.city,
+          region: community.region,
           line1: parsed.data.line1,
           isDefaultShipping: parsed.data.isDefault,
           isDefaultBilling: parsed.data.isDefault,
@@ -147,6 +193,10 @@ export async function updateCustomerAddressAction(
 
       return owned.id;
     });
+
+    if (result === 'invalid_community') {
+      return err('VALIDATION_ERROR', 'Select a community.');
+    }
 
     if (!result) {
       return err('NOT_FOUND', 'Address not found.');

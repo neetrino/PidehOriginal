@@ -34,6 +34,9 @@
   "save": "Save",
   "saving": "Saving…",
   "cancel": "Cancel",
+  "personalSaved": "Personal information saved.",
+  "personalValidationError": "Please check the form fields and try again.",
+  "personalEmailInUse": "That email is already in use.",
   "comingSoon": "This section UI is ready. Backend wiring stays unchanged for now.",
   "addressBook": {
     "addNew": "Add New Address",
@@ -45,12 +48,21 @@
     "noAddresses": "No addresses yet.",
     "formAddTitle": "Add address",
     "formEditTitle": "Edit address",
+    "community": "Community",
+    "selectCommunity": "Select community",
     "line1": "Address",
     "phone": "Phone",
     "phonePlaceholder": "+374XXXXXXXX",
     "isDefault": "Set as default shipping address",
     "add": "Add",
-    "update": "Update"
+    "update": "Update",
+    "added": "Address added.",
+    "updated": "Address updated.",
+    "deleted": "Address deleted.",
+    "defaultUpdated": "Default address updated.",
+    "saveFailed": "Unable to save address.",
+    "notFound": "Address not found.",
+    "validationError": "Please check the address fields."
   },
   "passwordForm": {
     "currentPassword": "Current password",
@@ -60,7 +72,11 @@
     "newPasswordPlaceholder": "Enter new password",
     "confirmPasswordPlaceholder": "Confirm new password",
     "change": "Change password",
-    "changing": "Changing…"
+    "changing": "Changing…",
+    "success": "Password changed successfully.",
+    "sameAsCurrent": "New password must be different from the current password.",
+    "currentIncorrect": "Current password is incorrect.",
+    "changeFailed": "Unable to change password."
   },
   "deleteAccountForm": {
     "description": "Deleting your account is permanent. You will lose access to your profile immediately.",

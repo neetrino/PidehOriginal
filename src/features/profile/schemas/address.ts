@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const addressFormSchema = z.object({
   line1: z.string().trim().min(1).max(200),
-  phone: z.string().trim().min(5).max(40),
+  deliveryRuleId: z.string().uuid(),
   isDefault: z.boolean().default(false),
 });
 

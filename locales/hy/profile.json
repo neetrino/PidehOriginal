@@ -34,6 +34,9 @@
   "save": "Պահպանել",
   "saving": "Պահպանվում է…",
   "cancel": "Չեղարկել",
+  "personalSaved": "Անձնական տվյալները պահպանվել են։",
+  "personalValidationError": "Ստուգեք դաշտերը և կրկին փորձեք։",
+  "personalEmailInUse": "Այս email-ն արդեն օգտագործվում է։",
   "comingSoon": "Այս բաժնի UI-ն պատրաստ է։ Backend-ը չենք փոխում։",
   "addressBook": {
     "addNew": "Ավելացնել հասցե",
@@ -45,12 +48,21 @@
     "noAddresses": "Հասցեներ դեռ չկան։",
     "formAddTitle": "Ավելացնել հասցե",
     "formEditTitle": "Խմբագրել հասցեն",
+    "community": "Համայնք",
+    "selectCommunity": "Ընտրեք համայնքը",
     "line1": "Հասցե",
     "phone": "Հեռախոս",
     "phonePlaceholder": "+374XXXXXXXX",
     "isDefault": "Դարձնել հիմնական առաքման հասցե",
     "add": "Ավելացնել",
-    "update": "Թարմացնել"
+    "update": "Թարմացնել",
+    "added": "Հասցեն ավելացվել է։",
+    "updated": "Հասցեն թարմացվել է։",
+    "deleted": "Հասցեն ջնջվել է։",
+    "defaultUpdated": "Հիմնական հասցեն թարմացվել է։",
+    "saveFailed": "Չհաջողվեց պահպանել հասցեն։",
+    "notFound": "Հասցեն չի գտնվել։",
+    "validationError": "Ստուգեք հասցեի դաշտերը։"
   },
   "passwordForm": {
     "currentPassword": "Ընթացիկ գաղտնաբառ",
@@ -60,7 +72,11 @@
     "newPasswordPlaceholder": "Մուտքագրեք նոր գաղտնաբառը",
     "confirmPasswordPlaceholder": "Կրկնեք նոր գաղտնաբառը",
     "change": "Փոխել գաղտնաբառը",
-    "changing": "Փոխվում է…"
+    "changing": "Փոխվում է…",
+    "success": "Գաղտնաբառը հաջողությամբ փոխվել է։",
+    "sameAsCurrent": "Նոր գաղտնաբառը պետք է տարբերվի ընթացիկից։",
+    "currentIncorrect": "Ընթացիկ գաղտնաբառը սխալ է։",
+    "changeFailed": "Չհաջողվեց փոխել գաղտնաբառը։"
   },
   "deleteAccountForm": {
     "description": "Հաշվի ջնջումը վերջնական է։ Դուք անմիջապես կկորցնեք մուտքը դեպի պրոֆիլ։",
