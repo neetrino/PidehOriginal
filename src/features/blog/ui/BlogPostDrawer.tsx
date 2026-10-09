@@ -70,12 +70,12 @@ function draftsFromTranslations(
   return next;
 }
 
-function resolvedSlug(draft: LocaleDraft, loc: Locale): string {
-  if (draft.slugTouched && draft.slug.trim()) {
-    return normalizeBlogSlug(draft.slug);
-  }
-  const fromTitle = normalizeBlogSlug(draft.title);
-  return fromTitle || `post-${Date.now().toString(36)}-${loc}`;
+function sharedBlogSlug(drafts: Record<Locale, LocaleDraft>): string {
+  return (
+    normalizeBlogSlug(drafts.en.slug) ||
+    normalizeBlogSlug(drafts.en.title) ||
+    `post-${Date.now().toString(36)}`
+  );
 }
 
 function readyBlogLocales(
@@ -84,13 +84,14 @@ function readyBlogLocales(
   | { ok: true; items: Array<{ locale: Locale; draft: LocaleDraft; slug: string }> }
   | { ok: false; locale: Locale } {
   const items: Array<{ locale: Locale; draft: LocaleDraft; slug: string }> = [];
+  const slug = sharedBlogSlug(drafts);
   for (const loc of locales) {
     const draft = drafts[loc];
     const title = draft.title.trim();
     const content = draft.content.trim();
     if (!title && !content && !draft.excerpt.trim()) continue;
     if (!title || !content) return { ok: false, locale: loc };
-    items.push({ locale: loc, draft, slug: resolvedSlug(draft, loc) });
+    items.push({ locale: loc, draft, slug });
   }
   const first = items[0];
   if (!first) return { ok: false, locale: 'hy' };

@@ -70,7 +70,8 @@
     },
     "requiredMark": "*",
     "languages": "Լեզու",
-    "atLeastOneLanguage": "Լրացրեք առնվազն մեկ լեզու։"
+    "atLeastOneLanguage": "Լրացրեք առնվազն մեկ լեզու։",
+    "englishSlugRequired": "Slug-ը պետք է լինի լատինատառ և նույնը բոլոր լեզուների համար։"
   },
   "confirm": {
     "deleteTitle": "Ջնջել",
@@ -420,6 +421,7 @@
       "titlePlaceholder": "Ապրանքի վերնագիր",
       "slug": "Slug",
       "slugPlaceholder": "product-slug",
+      "slugHint": "Մեկ անգլերեն slug բոլոր լեզուների համար։ Ստեղծվում է անգլերեն վերնագրից։",
       "description": "Նկարագրություն",
       "descriptionPlaceholder": "Ապրանքի նկարագրություն",
       "price": "Գին",
@@ -438,6 +440,7 @@
       "categoryTitle": "Կատեգորիայի վերնագիր",
       "categoryTitlePlaceholder": "Մուտքագրեք կատեգորիայի վերնագիրը",
       "categoryTitleRequired": "Կատեգորիայի վերնագիրը պարտադիր է։",
+      "englishSlugRequired": "Slug-ը պետք է լինի լատինատառ։",
       "add": "Ավելացնել",
       "adding": "Ավելացվում է…"
     },
@@ -501,7 +504,7 @@
       "categoryTitlePlaceholder": "Մուտքագրեք կատեգորիայի վերնագիրը",
       "slug": "Slug",
       "slugPlaceholder": "---",
-      "slugHint": "Ստեղծվում է ավտոմատ՝ վերնագրից, և օգտագործվում է /products-ում։",
+      "slugHint": "Մեկ անգլերեն slug բոլոր լեզուների համար։ Ստեղծվում է անգլերեն վերնագրից։",
       "parentCategory": "Վերադաս կատեգորիա",
       "parentCategoryAria": "Վերադաս կատեգորիա",
       "noneRootCategory": "Ոչ մեկը (արմատային կատեգորիա)",

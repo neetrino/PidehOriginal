@@ -70,7 +70,8 @@
     },
     "requiredMark": "*",
     "languages": "Язык",
-    "atLeastOneLanguage": "Заполните хотя бы один язык."
+    "atLeastOneLanguage": "Заполните хотя бы один язык.",
+    "englishSlugRequired": "Slug должен быть латиницей и одинаковым для всех языков."
   },
   "confirm": {
     "deleteTitle": "Удалить",
@@ -420,6 +421,7 @@
       "titlePlaceholder": "Название товара",
       "slug": "Slug",
       "slugPlaceholder": "product-slug",
+      "slugHint": "Один английский slug для всех языков. Создаётся из английского названия.",
       "description": "Описание",
       "descriptionPlaceholder": "Описание товара",
       "price": "Цена",
@@ -438,6 +440,7 @@
       "categoryTitle": "Название категории",
       "categoryTitlePlaceholder": "Введите название категории",
       "categoryTitleRequired": "Название категории обязательно.",
+      "englishSlugRequired": "Slug должен быть латиницей.",
       "add": "Добавить",
       "adding": "Добавление…"
     },
@@ -501,7 +504,7 @@
       "categoryTitlePlaceholder": "Введите название категории",
       "slug": "Slug",
       "slugPlaceholder": "---",
-      "slugHint": "Создаётся автоматически из названия и используется в /products.",
+      "slugHint": "Один английский slug для всех языков. Создаётся из английского названия.",
       "parentCategory": "Родительская категория",
       "parentCategoryAria": "Родительская категория",
       "noneRootCategory": "Нет (корневая категория)",

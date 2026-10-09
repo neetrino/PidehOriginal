@@ -70,7 +70,8 @@
     },
     "requiredMark": "*",
     "languages": "Language",
-    "atLeastOneLanguage": "Fill in at least one language."
+    "atLeastOneLanguage": "Fill in at least one language.",
+    "englishSlugRequired": "The slug must use Latin letters and is the same for every language."
   },
   "confirm": {
     "deleteTitle": "Delete",
@@ -420,6 +421,7 @@
       "titlePlaceholder": "Product title",
       "slug": "Slug",
       "slugPlaceholder": "product-slug",
+      "slugHint": "One English slug for every language. Generated from the English title.",
       "description": "Description",
       "descriptionPlaceholder": "Product description",
       "price": "Price",
@@ -438,6 +440,7 @@
       "categoryTitle": "Category title",
       "categoryTitlePlaceholder": "Enter category title",
       "categoryTitleRequired": "Category title is required.",
+      "englishSlugRequired": "The slug must use Latin letters.",
       "add": "Add",
       "adding": "Adding…"
     },
@@ -501,7 +504,7 @@
       "categoryTitlePlaceholder": "Enter category title",
       "slug": "Slug",
       "slugPlaceholder": "---",
-      "slugHint": "Generated automatically from the title and used on /products.",
+      "slugHint": "One English slug for every language. Generated from the English title.",
       "parentCategory": "Parent Category",
       "parentCategoryAria": "Parent Category",
       "noneRootCategory": "None (Root Category)",

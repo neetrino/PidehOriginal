@@ -2,14 +2,12 @@
 
 import { AdminLocaleTabs } from '@/features/admin/ui/AdminLocaleTabs';
 import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
-import { slugifyCategoryTitle } from '@/features/categories/domain/slugify';
+import { resolveSharedSlug } from '@/features/categories/domain/slugify';
 import { locales, type Locale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 export type CategoryLocaleDraft = {
   title: string;
-  slug: string;
-  slugTouched: boolean;
 };
 
 export type CategoryTranslationInput = Partial<
@@ -20,15 +18,18 @@ type CategoryDrawerLocaleFieldsProps = {
   active: Locale;
   drafts: Record<Locale, CategoryLocaleDraft>;
   disabled: boolean;
+  slug: string;
+  slugTouched: boolean;
   onActiveChange: (locale: Locale) => void;
   onDraftChange: (locale: Locale, patch: Partial<CategoryLocaleDraft>) => void;
+  onSlugChange: (slug: string) => void;
 };
 
 export function emptyCategoryDrafts(): Record<Locale, CategoryLocaleDraft> {
   return {
-    hy: { title: '', slug: '', slugTouched: false },
-    en: { title: '', slug: '', slugTouched: false },
-    ru: { title: '', slug: '', slugTouched: false },
+    hy: { title: '' },
+    en: { title: '' },
+    ru: { title: '' },
   };
 }
 
@@ -39,7 +40,7 @@ export function categoryDraftsFrom(
   for (const loc of locales) {
     const copy = translations?.[loc];
     if (!copy?.title) continue;
-    drafts[loc] = { title: copy.title, slug: copy.slug, slugTouched: true };
+    drafts[loc] = { title: copy.title };
   }
   return drafts;
 }
@@ -48,19 +49,18 @@ export function categoryHasTitle(drafts: Record<Locale, CategoryLocaleDraft>): b
   return locales.some((loc) => drafts[loc].title.trim().length > 0);
 }
 
-/** Keeps only locales that have a title, with a slug derived from that title when untouched. */
+/** Keeps locales that have a title and stores the same English slug on each. */
 export function collectCategoryTranslations(
   drafts: Record<Locale, CategoryLocaleDraft>,
+  slug: string,
 ): CategoryTranslationInput | null {
+  const sharedSlug = slug.trim();
+  if (!sharedSlug) return null;
   const translations: CategoryTranslationInput = {};
   for (const loc of locales) {
     const title = drafts[loc].title.trim();
     if (!title) continue;
-    const typedSlug = drafts[loc].slugTouched ? drafts[loc].slug.trim() : '';
-    translations[loc] = {
-      title,
-      slug: slugifyCategoryTitle(typedSlug || title),
-    };
+    translations[loc] = { title, slug: sharedSlug };
   }
   return Object.keys(translations).length > 0 ? translations : null;
 }
@@ -69,11 +69,14 @@ export function CategoryDrawerLocaleFields({
   active,
   drafts,
   disabled,
+  slug,
+  slugTouched,
   onActiveChange,
   onDraftChange,
+  onSlugChange,
 }: CategoryDrawerLocaleFieldsProps) {
   const draft = drafts[active];
-  const displaySlug = draft.slugTouched ? draft.slug : slugifyCategoryTitle(draft.title);
+  const displaySlug = resolveSharedSlug(drafts.en.title, slug, slugTouched);
   const copy = getDictionary(active).admin;
   const fields = copy.categories.drawer;
 
@@ -95,10 +98,8 @@ export function CategoryDrawerLocaleFields({
       <label className="block">
         <span className={ADMIN_LABEL}>{fields.slug}</span>
         <input
-          value={displaySlug === 'category' && !draft.title.trim() ? '' : displaySlug}
-          onChange={(event) =>
-            onDraftChange(active, { slug: event.target.value, slugTouched: true })
-          }
+          value={displaySlug}
+          onChange={(event) => onSlugChange(event.target.value)}
           placeholder={fields.slugPlaceholder}
           className={ADMIN_INPUT}
           disabled={disabled}

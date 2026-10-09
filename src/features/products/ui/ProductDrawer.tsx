@@ -30,8 +30,9 @@ import {
   productDraftsFrom,
   type ProductLocaleDraft,
 } from '@/features/products/ui/ProductDrawerLocaleFields';
+import { firstLatinSlug, resolveSharedSlug } from '@/features/categories/domain/slugify';
 import { isLocale, type Locale } from '@/lib/i18n/config';
-import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import { getDictionary, type Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ProductDrawerProduct = Pick<
   AdminProductListItem,
@@ -92,6 +93,8 @@ export function ProductDrawer({
   const isEdit = product != null;
   const [activeLocale, setActiveLocale] = useState<Locale>(isLocale(locale) ? locale : 'hy');
   const [drafts, setDrafts] = useState(emptyProductDrafts);
+  const [slug, setSlug] = useState('');
+  const [slugTouched, setSlugTouched] = useState(false);
   const [images, setImages] = useState<ProductDraftImage[]>([]);
   const [removedImageIds, setRemovedImageIds] = useState<string[]>([]);
   const [categories, setCategories] = useState<AdminCategoryOption[]>(initialCategories);
@@ -113,6 +116,13 @@ export function ProductDrawer({
     if (product) {
       setActiveLocale(isLocale(locale) ? locale : 'hy');
       setDrafts(productDraftsFrom(product.translations));
+      const existingSlug = firstLatinSlug([
+        product.translations.en?.slug,
+        product.translations.hy?.slug,
+        product.translations.ru?.slug,
+      ]);
+      setSlug(existingSlug);
+      setSlugTouched(existingSlug.length > 0);
       setImages(imagesFromProduct(product));
       setRemovedImageIds([]);
       setCategoryIds(product.categoryIds);
@@ -137,6 +147,8 @@ export function ProductDrawer({
     } else {
       setActiveLocale(isLocale(locale) ? locale : 'hy');
       setDrafts(emptyProductDrafts());
+      setSlug('');
+      setSlugTouched(false);
       setImages([]);
       setRemovedImageIds([]);
       setCategoryIds([]);
@@ -168,6 +180,8 @@ export function ProductDrawer({
     setDrafts((current) => ({ ...current, [loc]: { ...current[loc], ...patch } }));
   }
 
+  const formCopy = getDictionary(activeLocale).admin;
+
   return (
     <SideSheet
       open={open}
@@ -191,9 +205,15 @@ export function ProductDrawer({
             ? newImages.findIndex((image) => image.key === primaryImage.key)
             : null;
 
-          const translations = collectProductTranslations(drafts);
+          const sharedSlug = resolveSharedSlug(drafts.en.title, slug, slugTouched);
+          const translations = collectProductTranslations(drafts, sharedSlug);
           if (!translations) {
-            setError(copy.common.atLeastOneLanguage);
+            const hasTitle = Object.values(drafts).some((item) => item.title.trim());
+            setError(
+              hasTitle
+                ? formCopy.common.englishSlugRequired
+                : formCopy.common.atLeastOneLanguage,
+            );
             return;
           }
 
@@ -238,9 +258,9 @@ export function ProductDrawer({
               onClose();
               router.refresh();
             } catch (caught) {
-              const message = caught instanceof Error ? caught.message : copy.common.saveFailed;
+              const message = caught instanceof Error ? caught.message : formCopy.common.saveFailed;
               if (/body exceeded|413|too large/i.test(message)) {
-                setError(copy.drawer.imagesTooLarge);
+                setError(formCopy.products.drawer.imagesTooLarge);
                 return;
               }
               setError(message);
@@ -253,15 +273,21 @@ export function ProductDrawer({
             active={activeLocale}
             drafts={drafts}
             disabled={isPending}
+            slug={slug}
+            slugTouched={slugTouched}
             onActiveChange={setActiveLocale}
             onDraftChange={updateDraft}
+            onSlugChange={(value) => {
+              setSlugTouched(true);
+              setSlug(value);
+            }}
           />
 
           <ProductDrawerImages
             images={images}
             disabled={isPending}
             onChange={handleImagesChange}
-            copy={copy.images}
+            copy={formCopy.products.images}
           />
 
           <ProductDrawerCategories
@@ -271,7 +297,7 @@ export function ProductDrawer({
             disabled={isPending}
             onCategoriesChange={setCategories}
             onSelectedChange={setCategoryIds}
-            copy={copy.categories}
+            copy={formCopy.products.categories}
           />
 
           <ProductDrawerModifiers
@@ -281,13 +307,14 @@ export function ProductDrawer({
             disabled={isPending}
             onLibraryChange={setModifierLibrary}
             onSelectedChange={setModifierIds}
-            copy={copy.modifiers}
+            copy={formCopy.products.modifiers}
           />
 
           <div className="grid gap-4 sm:grid-cols-2">
             <label>
               <span className={ADMIN_LABEL}>
-                {copy.drawer.price} <span className="text-red-600">{copy.common.requiredMark}</span>
+                {formCopy.products.drawer.price}{' '}
+                <span className="text-red-600">{formCopy.common.requiredMark}</span>
               </span>
               <input
                 required
@@ -295,7 +322,7 @@ export function ProductDrawer({
                 type="number"
                 value={priceAmount}
                 onChange={(event) => setPriceAmount(event.target.value)}
-                placeholder={copy.drawer.pricePlaceholder}
+                placeholder={formCopy.products.drawer.pricePlaceholder}
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
@@ -304,19 +331,20 @@ export function ProductDrawer({
               value={discount}
               disabled={isPending}
               onChange={setDiscount}
-              copy={copy.discount}
+              copy={formCopy.products.discount}
             />
           </div>
 
           <label>
             <span className={ADMIN_LABEL}>
-              {copy.drawer.sku} <span className="text-red-600">{copy.common.requiredMark}</span>
+              {formCopy.products.drawer.sku}{' '}
+              <span className="text-red-600">{formCopy.common.requiredMark}</span>
             </span>
             <input
               required
               value={sku}
               onChange={(event) => setSku(event.target.value)}
-              placeholder={copy.drawer.skuPlaceholder}
+              placeholder={formCopy.products.drawer.skuPlaceholder}
               className={ADMIN_INPUT}
               disabled={isPending}
             />
@@ -329,18 +357,18 @@ export function ProductDrawer({
           <Button type="submit" disabled={isPending}>
             {isPending
               ? isEdit
-                ? copy.common.saving
-                : copy.common.creating
+                ? formCopy.common.saving
+                : formCopy.common.creating
               : isEdit
-                ? copy.common.save
-                : copy.common.create}
+                ? formCopy.common.save
+                : formCopy.common.create}
           </Button>
           <button
             type="button"
             onClick={onClose}
             className="text-sm font-medium text-gray-600 hover:text-gray-900"
           >
-            {copy.common.cancel}
+            {formCopy.common.cancel}
           </button>
         </div>
       </form>

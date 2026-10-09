@@ -5,7 +5,7 @@ import { useId, useState, useTransition } from 'react';
 
 import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import { createCategoryAction } from '@/features/categories/actions';
-import { slugifyCategoryTitle } from '@/features/categories/domain/slugify';
+import { slugifyEnglish } from '@/features/categories/domain/slugify';
 import type { AdminCategoryOption } from '@/features/products/application/list-admin-products';
 import { isLocale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
@@ -52,8 +52,13 @@ export function ProductDrawerCategories({
 
   function createCategory(): void {
     const title = newTitle.trim();
+    const slug = slugifyEnglish(title);
     if (!title) {
       setError(copy.categoryTitleRequired);
+      return;
+    }
+    if (!slug) {
+      setError(copy.englishSlugRequired);
       return;
     }
 
@@ -63,7 +68,7 @@ export function ProductDrawerCategories({
         translations: {
           [isLocale(locale) ? locale : 'hy']: {
             title,
-            slug: slugifyCategoryTitle(title),
+            slug,
           },
         },
         parentId: null,

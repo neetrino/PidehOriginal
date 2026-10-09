@@ -19,8 +19,9 @@ import {
   emptyCategoryDrafts,
   type CategoryLocaleDraft,
 } from '@/features/categories/ui/CategoryDrawerLocaleFields';
+import { firstLatinSlug, resolveSharedSlug } from '@/features/categories/domain/slugify';
 import { isLocale, type Locale } from '@/lib/i18n/config';
-import type { Dictionary } from '@/lib/i18n/get-dictionary';
+import { getDictionary, type Dictionary } from '@/lib/i18n/get-dictionary';
 
 type DrawerCopy = {
   drawer: Dictionary['admin']['categories']['drawer'];
@@ -49,6 +50,8 @@ export function AddCategoryDrawer({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeLocale, setActiveLocale] = useState<Locale>(isLocale(locale) ? locale : 'hy');
   const [drafts, setDrafts] = useState(emptyCategoryDrafts);
+  const [slug, setSlug] = useState('');
+  const [slugTouched, setSlugTouched] = useState(false);
   const [parentId, setParentId] = useState('');
   const [status, setStatus] = useState<'ACTIVE' | 'ARCHIVED'>('ACTIVE');
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -63,6 +66,13 @@ export function AddCategoryDrawer({
     if (category) {
       setActiveLocale(isLocale(locale) ? locale : 'hy');
       setDrafts(categoryDraftsFrom(category.translations));
+      const existingSlug = firstLatinSlug([
+        category.translations.en?.slug,
+        category.translations.hy?.slug,
+        category.translations.ru?.slug,
+      ]);
+      setSlug(existingSlug);
+      setSlugTouched(existingSlug.length > 0);
       setParentId(category.parentId ?? '');
       setStatus(category.status === 'ARCHIVED' ? 'ARCHIVED' : 'ACTIVE');
       setImageFile(null);
@@ -72,6 +82,8 @@ export function AddCategoryDrawer({
     } else {
       setActiveLocale(isLocale(locale) ? locale : 'hy');
       setDrafts(emptyCategoryDrafts());
+      setSlug('');
+      setSlugTouched(false);
       setParentId('');
       setStatus('ACTIVE');
       setImageFile(null);
@@ -104,9 +116,14 @@ export function AddCategoryDrawer({
         className="flex min-h-0 flex-1 flex-col"
         onSubmit={(event) => {
           event.preventDefault();
-          const translations = collectCategoryTranslations(drafts);
-          if (!translations) {
+          if (!categoryHasTitle(drafts)) {
             setError(copy.common.atLeastOneLanguage);
+            return;
+          }
+          const sharedSlug = resolveSharedSlug(drafts.en.title, slug, slugTouched);
+          const translations = collectCategoryTranslations(drafts, sharedSlug);
+          if (!translations) {
+            setError(getDictionary(activeLocale).admin.common.englishSlugRequired);
             return;
           }
 
@@ -143,8 +160,14 @@ export function AddCategoryDrawer({
             active={activeLocale}
             drafts={drafts}
             disabled={isPending}
+            slug={slug}
+            slugTouched={slugTouched}
             onActiveChange={setActiveLocale}
             onDraftChange={updateDraft}
+            onSlugChange={(value) => {
+              setSlugTouched(true);
+              setSlug(value);
+            }}
           />
 
           <div>
@@ -247,7 +270,14 @@ export function AddCategoryDrawer({
         </div>
 
         <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
-          <Button type="submit" disabled={isPending || !categoryHasTitle(drafts)}>
+          <Button
+            type="submit"
+            disabled={
+              isPending ||
+              !categoryHasTitle(drafts) ||
+              !resolveSharedSlug(drafts.en.title, slug, slugTouched)
+            }
+          >
             {isPending
               ? isEdit
                 ? copy.common.saving
