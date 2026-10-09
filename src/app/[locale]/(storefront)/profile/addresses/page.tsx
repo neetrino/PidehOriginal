@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { listCheckoutDeliveryOptions } from '@/features/delivery/application/queries';
 import { listCustomerAddresses } from '@/features/profile/application/address-queries';
 import { ProfileAddressesView } from '@/features/profile/ui/ProfileAddressesView';
 import { requireUser } from '@/lib/auth/policies';
@@ -18,13 +19,22 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
 
   const user = await requireUser(locale);
   const dictionary = getDictionary(locale);
-  const addressRows = await listCustomerAddresses(user.id);
+  const [addressRows, communities] = await Promise.all([
+    listCustomerAddresses(user.id),
+    listCheckoutDeliveryOptions(locale),
+  ]);
   const copy = dictionary.profile.addressBook;
 
   return (
     <ProfileAddressesView
       locale={locale}
       addresses={addressRows}
+      communities={communities.map((community) => ({
+        id: community.id,
+        label: community.label,
+        sourceCity: community.sourceCity,
+        sourceRegion: community.sourceRegion,
+      }))}
       labels={{
         eyebrow: dictionary.profile.loyaltyEyebrow,
         title: dictionary.profile.addresses,
@@ -37,14 +47,21 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
         noAddresses: copy.noAddresses,
         formAddTitle: copy.formAddTitle,
         formEditTitle: copy.formEditTitle,
+        community: copy.community,
+        selectCommunity: copy.selectCommunity,
         line1: copy.line1,
-        phone: copy.phone,
-        phonePlaceholder: copy.phonePlaceholder,
         isDefault: copy.isDefault,
         cancel: dictionary.profile.cancel,
         add: copy.add,
         update: copy.update,
         saving: dictionary.profile.saving,
+        added: copy.added,
+        updated: copy.updated,
+        deleted: copy.deleted,
+        defaultUpdated: copy.defaultUpdated,
+        saveFailed: copy.saveFailed,
+        notFound: copy.notFound,
+        validationError: copy.validationError,
       }}
     />
   );

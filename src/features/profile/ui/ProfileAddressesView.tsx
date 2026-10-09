@@ -5,13 +5,8 @@ import { useState, useTransition, type FormEvent } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import {
-  PROFILE_FIELD,
-  PROFILE_LABEL,
-  PROFILE_OUTLINE_BTN,
-  PROFILE_PANEL,
-  PROFILE_PRIMARY_BTN,
-} from '@/features/profile/ui/profile-ui-classes';
+import { findDeliveryZoneIdByAddress } from '@/features/delivery/domain/delivery-location';
+import { PROFILE_PANEL, PROFILE_PRIMARY_BTN } from '@/features/profile/ui/profile-ui-classes';
 import { ProfilePageHeading } from '@/features/profile/ui/ProfilePageHeading';
 import {
   createCustomerAddressAction,
@@ -20,17 +15,19 @@ import {
   updateCustomerAddressAction,
 } from '@/features/profile/application/manage-addresses';
 import type { CustomerAddressListItem } from '@/features/profile/application/address-queries';
+import {
+  ProfileAddressForm,
+  type ProfileAddressFormState,
+  type ProfileDeliveryCommunityOption,
+} from '@/features/profile/ui/ProfileAddressForm';
 import { ProfileAddressCard } from '@/features/profile/ui/ProfileAddressCard';
 
-type AddressFormState = {
-  line1: string;
-  phone: string;
-  isDefault: boolean;
-};
+export type { ProfileDeliveryCommunityOption };
 
 type ProfileAddressesViewProps = {
   locale: string;
   addresses: CustomerAddressListItem[];
+  communities: ProfileDeliveryCommunityOption[];
   labels: {
     eyebrow: string;
     title: string;
@@ -43,42 +40,74 @@ type ProfileAddressesViewProps = {
     noAddresses: string;
     formAddTitle: string;
     formEditTitle: string;
+    community: string;
+    selectCommunity: string;
     line1: string;
-    phone: string;
-    phonePlaceholder: string;
     isDefault: string;
     cancel: string;
     add: string;
     update: string;
     saving: string;
+    added: string;
+    updated: string;
+    deleted: string;
+    defaultUpdated: string;
+    saveFailed: string;
+    notFound: string;
+    validationError: string;
   };
 };
 
-const emptyForm: AddressFormState = {
+const emptyForm: ProfileAddressFormState = {
   line1: '',
-  phone: '',
+  deliveryRuleId: '',
   isDefault: false,
 };
 
-export function ProfileAddressesView({ locale, addresses, labels }: ProfileAddressesViewProps) {
+function resolveAddressError(
+  code: string,
+  labels: ProfileAddressesViewProps['labels'],
+  fallback: string,
+): string {
+  if (code === 'VALIDATION_ERROR') return labels.validationError;
+  if (code === 'NOT_FOUND') return labels.notFound;
+  if (code === 'SAVE_FAILED') return labels.saveFailed;
+  return fallback;
+}
+
+export function ProfileAddressesView({
+  locale,
+  addresses,
+  communities,
+  labels,
+}: ProfileAddressesViewProps) {
   const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<AddressFormState>(emptyForm);
+  const [form, setForm] = useState<ProfileAddressFormState>(emptyForm);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
+  function communityLabelFor(address: CustomerAddressListItem): string | null {
+    const zoneId = findDeliveryZoneIdByAddress(communities, address);
+    return communities.find((item) => item.id === zoneId)?.label ?? address.region;
+  }
 
   function resetForm(): void {
     setForm(emptyForm);
     setEditingId(null);
   }
 
+  function closeForm(): void {
+    setShowForm(false);
+    resetForm();
+  }
+
   function toggleForm(): void {
     if (showForm) {
-      setShowForm(false);
-      resetForm();
+      closeForm();
       return;
     }
     resetForm();
@@ -89,7 +118,7 @@ export function ProfileAddressesView({ locale, addresses, labels }: ProfileAddre
     setEditingId(address.id);
     setForm({
       line1: address.line1,
-      phone: address.phone,
+      deliveryRuleId: findDeliveryZoneIdByAddress(communities, address),
       isDefault: address.isDefaultShipping,
     });
     setShowForm(true);
@@ -102,25 +131,25 @@ export function ProfileAddressesView({ locale, addresses, labels }: ProfileAddre
     setError(null);
     setMessage(null);
 
+    if (!form.deliveryRuleId) {
+      setError(labels.selectCommunity);
+      return;
+    }
+
     startTransition(async () => {
       const result = editingId
         ? await updateCustomerAddressAction(locale, editingId, form)
         : await createCustomerAddressAction(locale, form);
 
       if (!result.ok) {
-        setError(result.error.message);
+        setError(resolveAddressError(result.error.code, labels, result.error.message));
         return;
       }
 
-      setMessage(editingId ? 'Address updated.' : 'Address added.');
-      setShowForm(false);
-      resetForm();
+      setMessage(editingId ? labels.updated : labels.added);
+      closeForm();
       router.refresh();
     });
-  }
-
-  function onDelete(addressId: string): void {
-    setPendingDeleteId(addressId);
   }
 
   function confirmDelete(): void {
@@ -132,15 +161,12 @@ export function ProfileAddressesView({ locale, addresses, labels }: ProfileAddre
     startTransition(async () => {
       const result = await deleteCustomerAddressAction(locale, addressId);
       if (!result.ok) {
-        setError(result.error.message);
+        setError(resolveAddressError(result.error.code, labels, result.error.message));
         return;
       }
-      setMessage('Address deleted.');
+      setMessage(labels.deleted);
       setPendingDeleteId(null);
-      if (editingId === addressId) {
-        setShowForm(false);
-        resetForm();
-      }
+      if (editingId === addressId) closeForm();
       router.refresh();
     });
   }
@@ -151,10 +177,10 @@ export function ProfileAddressesView({ locale, addresses, labels }: ProfileAddre
     startTransition(async () => {
       const result = await setDefaultCustomerAddressAction(locale, addressId);
       if (!result.ok) {
-        setError(result.error.message);
+        setError(resolveAddressError(result.error.code, labels, result.error.message));
         return;
       }
-      setMessage('Default address updated.');
+      setMessage(labels.defaultUpdated);
       router.refresh();
     });
   }
@@ -175,74 +201,16 @@ export function ProfileAddressesView({ locale, addresses, labels }: ProfileAddre
       </div>
       <div className={PROFILE_PANEL}>
         {showForm ? (
-          <form
+          <ProfileAddressForm
+            editing={editingId !== null}
+            form={form}
+            communities={communities}
+            labels={labels}
+            isPending={isPending}
+            onFormChange={setForm}
+            onCancel={closeForm}
             onSubmit={onSave}
-            className="mb-8 space-y-5 rounded-2xl border border-dashed border-[#ff6b00]/30 bg-[#fff8e7] p-4 sm:mb-10 sm:p-6"
-          >
-            <h2 className="text-base font-semibold text-[#1e1e1e]">
-              {editingId ? labels.formEditTitle : labels.formAddTitle}
-            </h2>
-            <div className="space-y-5 sm:space-y-6">
-              <label className={PROFILE_LABEL}>
-                {labels.line1}
-                <input
-                  required
-                  value={form.line1}
-                  onChange={(event) => setForm((prev) => ({ ...prev, line1: event.target.value }))}
-                  className={PROFILE_FIELD}
-                  autoComplete="street-address"
-                />
-              </label>
-              <label className={PROFILE_LABEL}>
-                {labels.phone}
-                <input
-                  required
-                  type="tel"
-                  value={form.phone}
-                  onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
-                  placeholder={labels.phonePlaceholder}
-                  className={PROFILE_FIELD}
-                  autoComplete="tel"
-                />
-              </label>
-            </div>
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                checked={form.isDefault}
-                onChange={(event) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    isDefault: event.target.checked,
-                  }))
-                }
-                className="h-4 w-4 rounded border-gray-300 text-[#ff6b00] focus:ring-[#ff6b00]"
-              />
-              <span className="text-sm text-[#1e1e1e]">{labels.isDefault}</span>
-            </label>
-            <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className={`h-11 w-full sm:w-auto ${PROFILE_OUTLINE_BTN}`}
-                onClick={() => {
-                  setShowForm(false);
-                  resetForm();
-                }}
-                disabled={isPending}
-              >
-                {labels.cancel}
-              </Button>
-              <Button
-                type="submit"
-                variant="primary"
-                className={`h-11 w-full sm:w-auto ${PROFILE_PRIMARY_BTN}`}
-                disabled={isPending}
-              >
-                {isPending ? labels.saving : editingId ? labels.update : labels.add}
-              </Button>
-            </div>
-          </form>
+          />
         ) : null}
 
         {error ? (
@@ -262,6 +230,7 @@ export function ProfileAddressesView({ locale, addresses, labels }: ProfileAddre
               <ProfileAddressCard
                 key={address.id}
                 address={address}
+                communityLabel={communityLabelFor(address)}
                 disabled={isPending}
                 labels={{
                   defaultBadge: labels.defaultBadge,
@@ -271,7 +240,7 @@ export function ProfileAddressesView({ locale, addresses, labels }: ProfileAddre
                 }}
                 onSetDefault={onSetDefault}
                 onEdit={startEdit}
-                onDelete={onDelete}
+                onDelete={setPendingDeleteId}
               />
             ))
           ) : (

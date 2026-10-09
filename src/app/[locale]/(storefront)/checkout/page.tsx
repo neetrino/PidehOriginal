@@ -12,6 +12,7 @@ import {
   cashChangeImageSrc,
   listActiveCashChangeDenominations,
 } from '@/features/delivery/domain/cash-change';
+import { findDeliveryZoneIdByAddress } from '@/features/delivery/domain/delivery-location';
 import { getDefaultShippingAddress } from '@/features/profile/application/address-queries';
 import { resolveProductPrices } from '@/features/promotions/application/resolve-product-prices';
 import { getStoreBonusSettings, getStoreIdentity } from '@/features/settings/application/queries';
@@ -91,6 +92,11 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       defaultEmail={user?.email ?? ''}
       defaultPhone={defaultAddress?.phone ?? user?.phone ?? ''}
       defaultLine1={groupFlags.defaultDeliveryAddress ?? defaultAddress?.line1 ?? ''}
+      defaultDeliveryRuleId={
+        defaultAddress
+          ? findDeliveryZoneIdByAddress(deliveryZones, defaultAddress)
+          : ''
+      }
       subtotalAmount={subtotal}
       deliverySchedule={deliverySettings.schedule}
       deliveryZones={deliveryZones.map((zone) => ({

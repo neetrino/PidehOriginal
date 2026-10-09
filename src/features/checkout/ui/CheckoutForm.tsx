@@ -137,6 +137,7 @@ type CheckoutFormProps = {
   defaultEmail: string;
   defaultPhone: string;
   defaultLine1: string;
+  defaultDeliveryRuleId?: string;
   subtotalAmount: number;
   deliverySchedule: DeliveryScheduleSettings;
   deliveryZones: CheckoutDeliveryZoneOption[];
@@ -169,6 +170,7 @@ export function CheckoutForm({
   defaultEmail,
   defaultPhone,
   defaultLine1,
+  defaultDeliveryRuleId = '',
   subtotalAmount,
   deliverySchedule,
   deliveryZones,
@@ -185,7 +187,7 @@ export function CheckoutForm({
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
   const [shippingMethod, setShippingMethod] = useState<CheckoutShippingMethod>('delivery');
   const [pickupBranchId, setPickupBranchId] = useState(pickupBranches[0]?.id ?? '');
-  const [deliveryRuleId, setDeliveryRuleId] = useState('');
+  const [deliveryRuleId, setDeliveryRuleId] = useState(defaultDeliveryRuleId);
   const [line1, setLine1] = useState(defaultLine1);
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(null);
   const [cashChangeAmount, setCashChangeAmount] = useState<number | null>(null);

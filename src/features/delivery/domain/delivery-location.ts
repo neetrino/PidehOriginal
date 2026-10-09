@@ -78,3 +78,36 @@ export function denormalizedCityRegion(translations: DeliveryLocationTranslation
   const hy = resolveDeliveryLocationTranslation(translations, 'hy');
   return { city: hy.city, region: hy.area };
 }
+
+type DeliveryZoneMatchInput = {
+  id: string;
+  sourceCity: string;
+  sourceRegion: string;
+  city?: string;
+  area?: string;
+  label?: string;
+};
+
+/**
+ * Resolves a saved address city/region back to a delivery zone id.
+ * Prefers canonical DB keys, then locale-resolved area/city/label.
+ */
+export function findDeliveryZoneIdByAddress(
+  zones: ReadonlyArray<DeliveryZoneMatchInput>,
+  address: { city: string; region: string | null },
+): string {
+  const region = address.region?.trim() ?? '';
+  if (!region) return '';
+
+  const city = address.city.trim();
+  const byCanonical =
+    zones.find((zone) => zone.sourceRegion === region && (!city || zone.sourceCity === city)) ??
+    zones.find((zone) => zone.sourceRegion === region);
+  if (byCanonical) return byCanonical.id;
+
+  const byLocalized =
+    zones.find((zone) => zone.area === region && (!city || zone.city === city)) ??
+    zones.find((zone) => zone.area === region) ??
+    zones.find((zone) => zone.label === region);
+  return byLocalized?.id ?? '';
+}

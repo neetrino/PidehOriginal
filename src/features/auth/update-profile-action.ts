@@ -8,6 +8,7 @@ import { getDb } from '@/db/client';
 import { users } from '@/db/schema';
 import { requireUser } from '@/lib/auth/policies';
 import { isLocale, type Locale } from '@/lib/i18n/config';
+import { getDictionary } from '@/lib/i18n/get-dictionary';
 
 const profileSchema = z.object({
   firstName: z.string().trim().min(1).max(100),
@@ -37,6 +38,7 @@ export async function updateProfileAction(
     return { error: 'Invalid locale.' };
   }
 
+  const copy = getDictionary(locale).profile;
   const user = await requireUser(locale as Locale);
   const parsed = profileSchema.safeParse({
     firstName: formData.get('firstName'),
@@ -46,7 +48,7 @@ export async function updateProfileAction(
   });
 
   if (!parsed.success) {
-    return { error: 'Please check the form fields and try again.' };
+    return { error: copy.personalValidationError };
   }
 
   if (parsed.data.email !== user.email) {
@@ -57,7 +59,7 @@ export async function updateProfileAction(
       .limit(1);
 
     if (existing) {
-      return { error: 'That email is already in use.' };
+      return { error: copy.personalEmailInUse };
     }
   }
 
@@ -76,5 +78,5 @@ export async function updateProfileAction(
   revalidatePath(`/${locale}/profile/personal-information`);
   revalidatePath(`/${locale}/checkout`);
 
-  return { success: 'Personal information saved.' };
+  return { success: copy.personalSaved };
 }

@@ -48,10 +48,10 @@ export async function changePasswordAction(
     };
   }
 
+  const copy = getDictionary(locale).profile.passwordForm;
+
   if (parsed.data.currentPassword === parsed.data.newPassword) {
-    return {
-      error: 'New password must be different from the current password.',
-    };
+    return { error: copy.sameAsCurrent };
   }
 
   const [row] = await getDb()
@@ -61,12 +61,12 @@ export async function changePasswordAction(
     .limit(1);
 
   if (!row) {
-    return { error: 'Unable to change password.' };
+    return { error: copy.changeFailed };
   }
 
   const currentMatches = await verifyPassword(parsed.data.currentPassword, row.passwordHash);
   if (!currentMatches) {
-    return { error: 'Current password is incorrect.' };
+    return { error: copy.currentIncorrect };
   }
 
   const passwordHash = await hashPassword(parsed.data.newPassword);
@@ -85,5 +85,5 @@ export async function changePasswordAction(
 
   revalidatePath(`/${locale}/profile/password`);
 
-  return { success: 'Password changed successfully.' };
+  return { success: copy.success };
 }
