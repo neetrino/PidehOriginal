@@ -273,15 +273,29 @@ export function ProductDrawer({
             active={activeLocale}
             drafts={drafts}
             disabled={isPending}
-            slug={slug}
-            slugTouched={slugTouched}
             onActiveChange={setActiveLocale}
             onDraftChange={updateDraft}
-            onSlugChange={(value) => {
-              setSlugTouched(true);
-              setSlug(value);
-            }}
           />
+
+          <label className="block">
+            <span className={ADMIN_LABEL}>
+              {formCopy.products.drawer.slug}{' '}
+              <span className="text-red-600">{formCopy.common.requiredMark}</span>
+            </span>
+            <input
+              value={resolveSharedSlug(drafts.en.title, slug, slugTouched)}
+              onChange={(event) => {
+                setSlugTouched(true);
+                setSlug(event.target.value);
+              }}
+              placeholder={formCopy.products.drawer.slugPlaceholder}
+              className={ADMIN_INPUT}
+              disabled={isPending}
+            />
+            <span className="mt-1 block text-xs text-gray-500">
+              {formCopy.products.drawer.slugHint}
+            </span>
+          </label>
 
           <ProductDrawerImages
             images={images}
@@ -292,6 +306,7 @@ export function ProductDrawer({
 
           <ProductDrawerCategories
             locale={locale}
+            activeLocale={activeLocale}
             categories={categories}
             selectedIds={categoryIds}
             disabled={isPending}

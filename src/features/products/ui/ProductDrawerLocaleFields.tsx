@@ -2,7 +2,6 @@
 
 import { AdminLocaleTabs } from '@/features/admin/ui/AdminLocaleTabs';
 import { ADMIN_INPUT, ADMIN_LABEL, ADMIN_TEXTAREA } from '@/features/admin/ui/admin-form-classes';
-import { resolveSharedSlug } from '@/features/categories/domain/slugify';
 import { locales, type Locale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 
@@ -19,11 +18,8 @@ type ProductDrawerLocaleFieldsProps = {
   active: Locale;
   drafts: Record<Locale, ProductLocaleDraft>;
   disabled: boolean;
-  slug: string;
-  slugTouched: boolean;
   onActiveChange: (locale: Locale) => void;
   onDraftChange: (locale: Locale, patch: Partial<ProductLocaleDraft>) => void;
-  onSlugChange: (slug: string) => void;
 };
 
 export function emptyProductDrafts(): Record<Locale, ProductLocaleDraft> {
@@ -74,14 +70,10 @@ export function ProductDrawerLocaleFields({
   active,
   drafts,
   disabled,
-  slug,
-  slugTouched,
   onActiveChange,
   onDraftChange,
-  onSlugChange,
 }: ProductDrawerLocaleFieldsProps) {
   const draft = drafts[active];
-  const displaySlug = resolveSharedSlug(drafts.en.title, slug, slugTouched);
   const copy = getDictionary(active).admin;
   const fields = copy.products.drawer;
 
@@ -109,19 +101,6 @@ export function ProductDrawerLocaleFields({
           className={ADMIN_TEXTAREA}
           disabled={disabled}
         />
-      </label>
-      <label className="block">
-        <span className={ADMIN_LABEL}>
-          {fields.slug} <span className="text-red-600">{copy.common.requiredMark}</span>
-        </span>
-        <input
-          value={displaySlug}
-          onChange={(event) => onSlugChange(event.target.value)}
-          placeholder={fields.slugPlaceholder}
-          className={ADMIN_INPUT}
-          disabled={disabled}
-        />
-        <span className="mt-1 block text-xs text-gray-500">{fields.slugHint}</span>
       </label>
     </>
   );

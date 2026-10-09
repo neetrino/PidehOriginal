@@ -68,6 +68,7 @@ export type AdminProductListItem = {
 export type AdminCategoryOption = {
   id: string;
   title: string;
+  titles: Partial<Record<Locale, string>>;
 };
 
 function translationFor(
@@ -320,8 +321,16 @@ export async function listAdminCategoryOptions(locale: Locale): Promise<AdminCat
     .where(and(eq(categories.status, 'ACTIVE'), isNull(categories.deletedAt)))
     .orderBy(asc(categories.sortOrder));
 
-  return rows.map((row) => ({
-    id: row.id,
-    title: translationFor(row.translations, locale)?.title ?? 'Category',
-  }));
+  return rows.map((row) => {
+    const titles: AdminCategoryOption['titles'] = {};
+    for (const loc of locales) {
+      const title = row.translations[loc]?.title?.trim();
+      if (title) titles[loc] = title;
+    }
+    return {
+      id: row.id,
+      title: translationFor(row.translations, locale)?.title ?? 'Category',
+      titles,
+    };
+  });
 }
