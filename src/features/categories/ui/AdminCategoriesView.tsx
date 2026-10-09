@@ -227,8 +227,7 @@ export function AdminCategoriesView({ locale, categories, copy }: AdminCategorie
                       <td className={ADMIN_TABLE_TD}>
                         <button
                           type="button"
-                          draggable={!isFiltering && !isPending}
-                          disabled={isFiltering || isPending}
+                          draggable={!isPending}
                           onDragStart={(event) => {
                             if (isFiltering) {
                               event.preventDefault();
@@ -244,7 +243,7 @@ export function AdminCategoriesView({ locale, categories, copy }: AdminCategorie
                             persistCurrentOrder();
                             setDraggingId(null);
                           }}
-                          className="inline-flex cursor-grab touch-none text-gray-400 active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-40"
+                          className="inline-flex cursor-grab touch-none text-gray-400 active:cursor-grabbing"
                           aria-label={copy.categories.reorderItemAria.replace(
                             '{title}',
                             category.title,

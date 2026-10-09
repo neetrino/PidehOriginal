@@ -12,6 +12,7 @@ import { CATALOG_SORT_VALUES, type CatalogSort } from '@/features/products/schem
 
 type ShopSortLabels = {
   sortAction: string;
+  sortManual: string;
   sortNewest: string;
   sortPriceAsc: string;
   sortPriceDesc: string;
@@ -33,8 +34,10 @@ function sortOptionLabel(sort: CatalogSort, labels: ShopSortLabels): string {
     case 'popular':
       return labels.sortPopular;
     case 'newest':
-    default:
       return labels.sortNewest;
+    case 'manual':
+    default:
+      return labels.sortManual;
   }
 }
 

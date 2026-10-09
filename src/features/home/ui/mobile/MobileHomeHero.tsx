@@ -14,7 +14,7 @@ import { MOBILE_HOME_ASSETS } from '@/features/home/ui/mobile/mobile-assets';
 import { buildMobileOrbitCategories } from '@/features/home/ui/mobile/mobile-orbit-categories';
 import { useOrbitSwipe } from '@/features/home/ui/mobile/use-orbit-swipe';
 import { catalogHref } from '@/features/products/application/catalog-search-params';
-import { DEFAULT_CATALOG_PAGE_SIZE } from '@/features/products/schemas/catalog-list';
+import { DEFAULT_CATALOG_PAGE_SIZE, DEFAULT_CATALOG_SORT } from '@/features/products/schemas/catalog-list';
 import type { Locale } from '@/lib/i18n/config';
 
 type CategoryItem = {
@@ -118,7 +118,7 @@ export function MobileHomeHero({
     router.push(
       catalogHref(locale, {
         q: trimmed || undefined,
-        sort: 'newest',
+        sort: DEFAULT_CATALOG_SORT,
         page: 1,
         pageSize: DEFAULT_CATALOG_PAGE_SIZE,
       }),

@@ -6,7 +6,6 @@ import { titleSweep } from '@/components/motion/presets';
 import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
 import { parseCatalogSearchParams } from '@/features/products/application/catalog-search-params';
 import { listCatalogProducts } from '@/features/products/application/list-catalog-products';
-import { compareShopCategories } from '@/features/products/domain/shop-category-order';
 import {
   listCatalogSections,
   type CatalogSection,
@@ -45,12 +44,10 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
     listCatalogProducts(rawLocale, filters, currency),
   ]);
 
-  const categories = categoryOptions
-    .map((category) => ({
-      slug: category.slug,
-      title: category.title,
-    }))
-    .sort(compareShopCategories);
+  const categories = categoryOptions.map((category) => ({
+    slug: category.slug,
+    title: category.title,
+  }));
 
   const activeCategory = categories.find((category) => category.slug === filters.category);
   const sections: CatalogSection[] = filters.category
@@ -124,6 +121,7 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
             labels={{
               allChip: catalogCopy.allChip,
               sortAction: catalogCopy.sortAction,
+              sortManual: catalogCopy.sortManual,
               sortNewest: catalogCopy.sortNewest,
               sortPriceAsc: catalogCopy.sortPriceAsc,
               sortPriceDesc: catalogCopy.sortPriceDesc,

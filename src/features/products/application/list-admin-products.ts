@@ -140,8 +140,10 @@ function orderByClause(filters: AdminProductsFilter, locale: Locale): SQL[] {
     case 'title':
       return [draftsLast, direction(sql`${products.translations}->${locale}->>'title'`)];
     case 'created':
-    default:
       return [draftsLast, direction(products.createdAt)];
+    case 'shop':
+    default:
+      return [asc(products.sortOrder), desc(products.createdAt)];
   }
 }
 
@@ -223,6 +225,17 @@ async function loadCategoryMeta(
   return map;
 }
 
+/** Shop-order view lists every matching product so a drag saves one sequence. */
+function isFullShopOrder(filters: AdminProductsFilter): boolean {
+  return (
+    filters.sort === 'shop' &&
+    !filters.q &&
+    !filters.sku &&
+    filters.stock === 'all' &&
+    filters.status === 'all'
+  );
+}
+
 /** Lists products for the admin catalog table with filters and sort. */
 export async function listAdminProducts(
   locale: Locale,
@@ -230,19 +243,20 @@ export async function listAdminProducts(
 ): Promise<{ rows: AdminProductListItem[]; total: number; pageSize: number }> {
   const where = buildWhere(filters, locale);
   const db = getDb();
+  const shopOrder = isFullShopOrder(filters);
 
   const [totalRow] = await db.select({ value: count() }).from(products).where(where);
 
   const total = totalRow?.value ?? 0;
   const offset = (filters.page - 1) * PAGE_SIZE;
-
-  const rows = await db
+  const ordered = db
     .select()
     .from(products)
     .where(where)
-    .orderBy(...orderByClause(filters, locale))
-    .limit(PAGE_SIZE)
-    .offset(offset);
+    .orderBy(...orderByClause(filters, locale));
+  const rows = shopOrder
+    ? await ordered
+    : await ordered.limit(PAGE_SIZE).offset(offset);
 
   const ids = rows.map((row) => row.id);
   const [primaryImages, categoryMap, modifierMap, discountMap, galleryImages] = await Promise.all([
@@ -255,7 +269,7 @@ export async function listAdminProducts(
 
   return {
     total,
-    pageSize: PAGE_SIZE,
+    pageSize: shopOrder ? Math.max(total, 1) : PAGE_SIZE,
     rows: rows.map((product) => {
       const translation = translationFor(product.translations, locale);
       const categoryMeta = categoryMap.get(product.id);

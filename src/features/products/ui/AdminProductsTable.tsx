@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useState, useTransition, type DragEvent } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -25,6 +25,7 @@ import {
 } from '@/features/products/application/admin-product-actions';
 import type { AdminProductListItem } from '@/features/products/application/list-admin-products';
 import { AdminProductRow } from '@/features/products/ui/AdminProductRow';
+import { useAdminProductOrder } from '@/features/products/ui/use-admin-product-order';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type AdminProductsSortLinks = {
@@ -43,6 +44,9 @@ type AdminProductsTableProps = {
   locale: string;
   products: AdminProductListItem[];
   sortLinks: AdminProductsSortLinks;
+  shopOrderHref: string;
+  sortedByShop: boolean;
+  canReorder: boolean;
   onEdit: (product: AdminProductListItem) => void;
   copy: TableCopy;
 };
@@ -51,6 +55,9 @@ export function AdminProductsTable({
   locale,
   products,
   sortLinks,
+  shopOrderHref,
+  sortedByShop,
+  canReorder,
   onEdit,
   copy,
 }: AdminProductsTableProps) {
@@ -58,13 +65,28 @@ export function AdminProductsTable({
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { ordered, draggingId, reorderToward, beginDrag, endDrag } =
+    useAdminProductOrder({
+      locale,
+      products,
+      canReorder,
+      startTransition,
+      onError: setError,
+      onSaved: () => {
+        if (sortedByShop) {
+          router.refresh();
+          return;
+        }
+        router.replace(shopOrderHref);
+      },
+    });
   const [pendingDelete, setPendingDelete] = useState<{
     kind: 'single' | 'bulk';
     productIds: string[];
     label: string;
   } | null>(null);
 
-  const allIds = products.map((product) => product.id);
+  const allIds = ordered.map((product) => product.id);
   const allSelected = allIds.length > 0 && allIds.every((id) => selected.has(id));
 
   function toggleOne(id: string): void {
@@ -157,13 +179,14 @@ export function AdminProductsTable({
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
 
       <Card className={ADMIN_TABLE_CARD}>
-        {products.length === 0 ? (
+        {ordered.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>{copy.table.empty}</p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
               <thead className={ADMIN_TABLE_THEAD}>
                 <tr>
+                  <th className={`${ADMIN_TABLE_TH} w-8`} aria-label={copy.table.reorderAria} />
                   <th className={ADMIN_TABLE_TH_CHECK}>
                     <input
                       type="checkbox"
@@ -195,13 +218,35 @@ export function AdminProductsTable({
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
-                {products.map((product) => (
+                {ordered.map((product) => (
                   <AdminProductRow
                     key={product.id}
                     locale={locale}
                     product={product}
                     selected={selected.has(product.id)}
                     disabled={isPending}
+                    isDragging={draggingId === product.id}
+                    reorderLabel={copy.table.reorderItemAria.replace('{title}', product.title)}
+                    onRowDragOver={(event: DragEvent<HTMLTableRowElement>) => {
+                      if (isPending || !draggingId) return;
+                      event.preventDefault();
+                      event.dataTransfer.dropEffect = 'move';
+                      reorderToward(product.id);
+                    }}
+                    onRowDrop={(event: DragEvent<HTMLTableRowElement>) => {
+                      event.preventDefault();
+                      endDrag();
+                    }}
+                    onGripDragStart={(event: DragEvent<HTMLButtonElement>) => {
+                      if (isPending) {
+                        event.preventDefault();
+                        return;
+                      }
+                      event.dataTransfer.effectAllowed = 'move';
+                      event.dataTransfer.setData('text/plain', product.id);
+                      beginDrag(product.id);
+                    }}
+                    onGripDragEnd={endDrag}
                     copy={{ table: copy.table, common: copy.common }}
                     onToggle={() => toggleOne(product.id)}
                     onEdit={() => onEdit(product)}

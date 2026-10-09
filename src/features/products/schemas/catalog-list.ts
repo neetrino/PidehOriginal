@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CATALOG_SORT_VALUES = ['newest', 'price_asc', 'price_desc', 'popular'] as const;
+export const CATALOG_SORT_VALUES = ['manual', 'newest', 'price_asc', 'price_desc', 'popular'] as const;
 
 export type CatalogSort = (typeof CATALOG_SORT_VALUES)[number];
 
@@ -8,7 +8,7 @@ export const CATALOG_PAGE_SIZES = [16] as const;
 
 export type CatalogPageSize = (typeof CATALOG_PAGE_SIZES)[number];
 
-export const DEFAULT_CATALOG_SORT: CatalogSort = 'newest';
+export const DEFAULT_CATALOG_SORT: CatalogSort = 'manual';
 export const DEFAULT_CATALOG_PAGE_SIZE: CatalogPageSize = 16;
 
 /** Inclusive ceiling for catalog price filter inputs (display major units). */

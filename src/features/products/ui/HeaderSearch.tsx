@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 
 import { catalogHref } from '@/features/products/application/catalog-search-params';
-import { DEFAULT_CATALOG_PAGE_SIZE } from '@/features/products/schemas/catalog-list';
+import { DEFAULT_CATALOG_PAGE_SIZE, DEFAULT_CATALOG_SORT } from '@/features/products/schemas/catalog-list';
 import {
   searchHeaderProductsAction,
   type HeaderSearchProduct,
@@ -153,7 +153,7 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
   const showEmpty = searchedQuery.length > 0 && products.length === 0 && !pending;
   const viewAllHref = catalogHref(locale, {
     q: searchedQuery || query.trim(),
-    sort: 'newest',
+    sort: DEFAULT_CATALOG_SORT,
     page: 1,
     pageSize: DEFAULT_CATALOG_PAGE_SIZE,
   });
