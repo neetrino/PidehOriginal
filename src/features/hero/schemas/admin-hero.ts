@@ -7,10 +7,20 @@ const localeCopySchema = z.object({
   buttonUrl: z.string().trim().max(500).optional(),
 });
 
-/** Modal create/edit payload — title, subtitle, and optional image handled separately. */
-export const upsertHeroSlideSchema = z.object({
+const heroLocaleInputSchema = z.object({
   title: z.string().trim().min(1).max(120),
   subtitle: z.string().trim().max(240).optional(),
+});
+
+/** Modal create/edit payload — per-locale copy, image handled separately. */
+export const upsertHeroSlideSchema = z.object({
+  translations: z
+    .object({
+      hy: heroLocaleInputSchema.optional(),
+      en: heroLocaleInputSchema.optional(),
+      ru: heroLocaleInputSchema.optional(),
+    })
+    .refine((value) => value.hy != null || value.en != null || value.ru != null),
 });
 
 export type UpsertHeroSlideInput = z.infer<typeof upsertHeroSlideSchema>;

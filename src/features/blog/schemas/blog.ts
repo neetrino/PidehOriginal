@@ -45,6 +45,19 @@ export const upsertBlogPostSchema = z.object({
         .filter((tag) => tag.length > 0)
         .slice(0, 20);
     }),
+  copies: z
+    .array(
+      z.object({
+        locale: z.enum(locales),
+        title: z.string().trim().min(1).max(200),
+        slug: z.string().trim().min(1).max(200),
+        excerpt: z.string().trim().max(500).optional(),
+        content: z.string().trim().min(1).max(100_000),
+      }),
+    )
+    .max(3)
+    .optional(),
+  syncLocales: z.boolean().optional(),
 });
 
 export type UpsertBlogPostFormInput = z.input<typeof upsertBlogPostSchema>;

@@ -68,7 +68,9 @@
       "user": "user",
       "users": "users"
     },
-    "requiredMark": "*"
+    "requiredMark": "*",
+    "languages": "Language",
+    "atLeastOneLanguage": "Fill in at least one language."
   },
   "confirm": {
     "deleteTitle": "Delete",

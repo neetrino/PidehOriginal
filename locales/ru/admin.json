@@ -68,7 +68,9 @@
       "user": "пользователь",
       "users": "пользователя"
     },
-    "requiredMark": "*"
+    "requiredMark": "*",
+    "languages": "Язык",
+    "atLeastOneLanguage": "Заполните хотя бы один язык."
   },
   "confirm": {
     "deleteTitle": "Удалить",

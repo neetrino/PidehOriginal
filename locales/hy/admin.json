@@ -68,7 +68,9 @@
       "user": "օգտատեր",
       "users": "օգտատեր"
     },
-    "requiredMark": "*"
+    "requiredMark": "*",
+    "languages": "Լեզու",
+    "atLeastOneLanguage": "Լրացրեք առնվազն մեկ լեզու։"
   },
   "confirm": {
     "deleteTitle": "Ջնջել",

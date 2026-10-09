@@ -27,24 +27,39 @@ function buildTranslations(
   data: UpsertHeroSlideInput,
   existing?: HeroTranslationsJson,
 ): HeroTranslationsJson {
-  const previous = existing?.en ?? existing?.hy ?? existing?.ru ?? undefined;
+  const next: HeroTranslationsJson = {};
+  for (const loc of ['hy', 'en', 'ru'] as const) {
+    const copy = data.translations[loc];
+    if (!copy) continue;
+    const previous = existing?.[loc];
+    next[loc] = {
+      title: copy.title,
+      subtitle: copy.subtitle || undefined,
+      buttonLabel: previous?.buttonLabel,
+      buttonUrl: previous?.buttonUrl,
+    };
+  }
+  return next;
+}
 
-  const copy = {
-    title: data.title,
-    subtitle: data.subtitle || undefined,
-    buttonLabel: previous?.buttonLabel,
-    buttonUrl: previous?.buttonUrl,
-  };
-
-  return { hy: copy, en: copy, ru: copy };
+function heroTitle(data: UpsertHeroSlideInput): string {
+  return (
+    data.translations.hy?.title ??
+    data.translations.en?.title ??
+    data.translations.ru?.title ??
+    ''
+  );
 }
 
 function parseModalFormData(formData: FormData): UpsertHeroSlideInput | null {
-  const parsed = upsertHeroSlideSchema.safeParse({
-    title: formData.get('title'),
-    subtitle: String(formData.get('subtitle') ?? '') || undefined,
-  });
-  return parsed.success ? parsed.data : null;
+  const raw = formData.get('translations');
+  if (typeof raw !== 'string') return null;
+  try {
+    const parsed = upsertHeroSlideSchema.safeParse({ translations: JSON.parse(raw) });
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
 }
 
 function revalidateHero(locale: string, slideId?: string): void {
@@ -97,7 +112,7 @@ export async function createHeroSlideAction(
         targetType: 'hero_slide',
         targetId: id,
         afterDiff: {
-          title: data.title,
+          title: heroTitle(data),
           isActive: true,
           sortOrder: 0,
         },
@@ -175,7 +190,7 @@ export async function updateHeroSlideAction(
           sortOrder: row.sortOrder,
         },
         afterDiff: {
-          title: data.title,
+          title: heroTitle(data),
           isActive: row.isActive,
           sortOrder: row.sortOrder,
         },

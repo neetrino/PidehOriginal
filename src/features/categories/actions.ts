@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { getDb } from '@/db/client';
-import { categories, type TranslationsJson } from '@/db/schema';
+import { categories } from '@/db/schema';
 import {
   persistCategoryImage,
   removeCategoryImage,
@@ -16,18 +16,43 @@ import { createId } from '@/lib/id';
 import { isLocale, type Locale } from '@/lib/i18n/config';
 import { err, ok, type Result } from '@/lib/result';
 
-const createCategorySchema = z.object({
+const categoryLocaleSchema = z.object({
   title: z.string().trim().min(1).max(120),
   slug: z.string().trim().min(1).max(120),
+});
+
+const createCategorySchema = z.object({
+  translations: z
+    .object({
+      hy: categoryLocaleSchema.optional(),
+      en: categoryLocaleSchema.optional(),
+      ru: categoryLocaleSchema.optional(),
+    })
+    .refine((value) => value.hy != null || value.en != null || value.ru != null),
   parentId: z.string().uuid().nullable(),
   status: z.enum(['ACTIVE', 'ARCHIVED']),
 });
 
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
 
-function buildTranslations(title: string, slug: string): TranslationsJson {
-  const translation = { title, slug };
-  return { hy: translation, en: translation, ru: translation };
+function parseCategoryForm(formData: FormData): CreateCategoryInput | null {
+  const rawParent = formData.get('parentId');
+  const rawTranslations = formData.get('translations');
+  if (typeof rawTranslations !== 'string') return null;
+
+  let translations: unknown;
+  try {
+    translations = JSON.parse(rawTranslations);
+  } catch {
+    return null;
+  }
+
+  const parsed = createCategorySchema.safeParse({
+    translations,
+    parentId: typeof rawParent === 'string' && rawParent.trim() ? rawParent.trim() : null,
+    status: formData.get('status'),
+  });
+  return parsed.success ? parsed.data : null;
 }
 
 function revalidateCategories(locale: string): void {
@@ -65,7 +90,7 @@ async function insertCategory(
     .values({
       id,
       parentId: data.parentId,
-      translations: buildTranslations(data.title, data.slug),
+      translations: data.translations,
       sortOrder: (maxSort?.value ?? 0) + 1,
       status: data.status,
     });
@@ -101,20 +126,13 @@ export async function createCategoryFromDrawerAction(
     return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
-  const rawParent = formData.get('parentId');
-  const parsed = createCategorySchema.safeParse({
-    title: formData.get('title'),
-    slug: formData.get('slug'),
-    parentId: typeof rawParent === 'string' && rawParent.trim() ? rawParent.trim() : null,
-    status: formData.get('status'),
-  });
-
-  if (!parsed.success) {
+  const data = parseCategoryForm(formData);
+  if (!data) {
     return err('VALIDATION_ERROR', 'Invalid category payload.');
   }
 
   await requireAdmin(locale as Locale);
-  const created = await insertCategory(locale, parsed.data);
+  const created = await insertCategory(locale, data);
   if (!created.ok) return created;
 
   const image = formData.get('image');
@@ -139,19 +157,12 @@ export async function updateCategoryFromDrawerAction(
     return err('INVALID_LOCALE', 'Invalid locale.');
   }
 
-  const rawParent = formData.get('parentId');
-  const parsed = createCategorySchema.safeParse({
-    title: formData.get('title'),
-    slug: formData.get('slug'),
-    parentId: typeof rawParent === 'string' && rawParent.trim() ? rawParent.trim() : null,
-    status: formData.get('status'),
-  });
-
-  if (!parsed.success) {
+  const data = parseCategoryForm(formData);
+  if (!data) {
     return err('VALIDATION_ERROR', 'Invalid category payload.');
   }
 
-  if (parsed.data.parentId === categoryId) {
+  if (data.parentId === categoryId) {
     return err('VALIDATION_ERROR', 'A category cannot be its own parent.');
   }
 
@@ -167,11 +178,11 @@ export async function updateCategoryFromDrawerAction(
     return err('NOT_FOUND', 'Category not found.');
   }
 
-  if (parsed.data.parentId) {
+  if (data.parentId) {
     const [parent] = await getDb()
       .select({ id: categories.id })
       .from(categories)
-      .where(and(eq(categories.id, parsed.data.parentId), isNull(categories.deletedAt)))
+      .where(and(eq(categories.id, data.parentId), isNull(categories.deletedAt)))
       .limit(1);
     if (!parent) {
       return err('NOT_FOUND', 'Parent category not found.');
@@ -181,9 +192,9 @@ export async function updateCategoryFromDrawerAction(
   await getDb()
     .update(categories)
     .set({
-      parentId: parsed.data.parentId,
-      translations: buildTranslations(parsed.data.title, parsed.data.slug),
-      status: parsed.data.status,
+      parentId: data.parentId,
+      translations: data.translations,
+      status: data.status,
       updatedAt: new Date(),
     })
     .where(eq(categories.id, existing.id));

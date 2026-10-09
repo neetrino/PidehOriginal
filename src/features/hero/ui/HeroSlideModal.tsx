@@ -4,12 +4,20 @@ import { useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { SideSheet } from '@/components/ui/SideSheet';
-import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
+import { ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import {
   createHeroSlideAction,
   updateHeroSlideAction,
 } from '@/features/hero/application/manage-hero';
 import type { AdminHeroSlideListItem } from '@/features/hero/application/queries';
+import {
+  HeroSlideLocaleFields,
+  collectHeroTranslations,
+  emptyHeroDrafts,
+  heroDraftsFrom,
+  type HeroLocaleDraft,
+} from '@/features/hero/ui/HeroSlideLocaleFields';
+import { isLocale, type Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type HeroSlideModalProps = {
@@ -52,8 +60,10 @@ function HeroSlideDrawerForm({ locale, onClose, slide, copy }: HeroSlideDrawerFo
   const router = useRouter();
   const isEdit = slide != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [title, setTitle] = useState(slide && slide.title !== 'Untitled' ? slide.title : '');
-  const [subtitle, setSubtitle] = useState(slide?.subtitle ?? '');
+  const [activeLocale, setActiveLocale] = useState<Locale>(isLocale(locale) ? locale : 'hy');
+  const [drafts, setDrafts] = useState(() =>
+    slide ? heroDraftsFrom(slide.translations) : emptyHeroDrafts(),
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(slide?.imageUrl ?? null);
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
@@ -72,9 +82,13 @@ function HeroSlideDrawerForm({ locale, onClose, slide, copy }: HeroSlideDrawerFo
         className="flex min-h-0 flex-1 flex-col"
         onSubmit={(event) => {
           event.preventDefault();
+          const translations = collectHeroTranslations(drafts);
+          if (!translations) {
+            setError(copy.common.atLeastOneLanguage);
+            return;
+          }
           const formData = new FormData();
-          formData.set('title', title.trim());
-          formData.set('subtitle', subtitle.trim());
+          formData.set('translations', JSON.stringify(translations));
           if (imageFile) {
             formData.set('image', imageFile);
           }
@@ -100,26 +114,15 @@ function HeroSlideDrawerForm({ locale, onClose, slide, copy }: HeroSlideDrawerFo
         }}
       >
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-          <label className="block">
-            <span className={ADMIN_LABEL}>{copy.hero.drawer.title}</span>
-            <input
-              required
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
-
-          <label className="block">
-            <span className={ADMIN_LABEL}>{copy.hero.drawer.subtitle}</span>
-            <input
-              value={subtitle}
-              onChange={(event) => setSubtitle(event.target.value)}
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
+          <HeroSlideLocaleFields
+            active={activeLocale}
+            drafts={drafts}
+            disabled={isPending}
+            onActiveChange={setActiveLocale}
+            onDraftChange={(loc: Locale, patch: Partial<HeroLocaleDraft>) =>
+              setDrafts((current) => ({ ...current, [loc]: { ...current[loc], ...patch } }))
+            }
+          />
 
           <div>
             <span className={ADMIN_LABEL}>{copy.hero.drawer.uploadImage}</span>
@@ -187,7 +190,10 @@ function HeroSlideDrawerForm({ locale, onClose, slide, copy }: HeroSlideDrawerFo
         </div>
 
         <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
-          <Button type="submit" disabled={isPending || !title.trim()}>
+          <Button
+            type="submit"
+            disabled={isPending || !Object.values(drafts).some((draft) => draft.title.trim())}
+          >
             {isPending
               ? isEdit
                 ? copy.common.saving

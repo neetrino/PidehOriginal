@@ -31,7 +31,7 @@ import { loadProductImagesForAdmin } from '@/features/products/application/persi
 import { loadProductDiscounts } from '@/features/products/application/sync-product-discount';
 import type { AdminProductDiscount } from '@/features/products/types/product-discount';
 import type { AdminProductsFilter } from '@/features/products/schemas/admin-list';
-import type { Locale } from '@/lib/i18n/config';
+import { locales, type Locale } from '@/lib/i18n/config';
 import { mediaPublicUrl } from '@/lib/media/public-url';
 
 const PAGE_SIZE = 20;
@@ -54,6 +54,9 @@ export type AdminProductListItem = {
   title: string;
   slug: string;
   description: string;
+  translations: Partial<
+    Record<Locale, { title: string; slug: string; description: string }>
+  >;
   imageUrl: string | null;
   categoryIds: string[];
   categoryLabels: string[];
@@ -274,6 +277,17 @@ export async function listAdminProducts(
       const translation = translationFor(product.translations, locale);
       const categoryMeta = categoryMap.get(product.id);
       const discount = discountMap.get(product.id) ?? null;
+      const stored: AdminProductListItem['translations'] = {};
+      for (const loc of locales) {
+        const copy = product.translations[loc];
+        if (!copy?.title) continue;
+        stored[loc] = {
+          title: copy.title,
+          slug: copy.slug,
+          description: copy.description ?? '',
+        };
+      }
+
       return {
         id: product.id,
         sku: product.sku,
@@ -286,6 +300,7 @@ export async function listAdminProducts(
         title: translation?.title ?? product.sku,
         slug: translation?.slug ?? '',
         description: translation?.description ?? '',
+        translations: stored,
         imageUrl: primaryImages.get(product.id) ?? null,
         categoryIds: categoryMeta?.ids ?? [],
         categoryLabels: categoryMeta?.labels ?? [],

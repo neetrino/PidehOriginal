@@ -7,6 +7,7 @@ import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes
 import { createCategoryAction } from '@/features/categories/actions';
 import { slugifyCategoryTitle } from '@/features/categories/domain/slugify';
 import type { AdminCategoryOption } from '@/features/products/application/list-admin-products';
+import { isLocale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ProductDrawerCategoriesProps = {
@@ -59,8 +60,12 @@ export function ProductDrawerCategories({
     startTransition(async () => {
       setError(null);
       const result = await createCategoryAction(locale, {
-        title,
-        slug: slugifyCategoryTitle(title),
+        translations: {
+          [isLocale(locale) ? locale : 'hy']: {
+            title,
+            slug: slugifyCategoryTitle(title),
+          },
+        },
         parentId: null,
         status: 'ACTIVE',
       });

@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { SideSheet } from '@/components/ui/SideSheet';
-import { ADMIN_INPUT, ADMIN_LABEL, ADMIN_TEXTAREA } from '@/features/admin/ui/admin-form-classes';
+import { ADMIN_INPUT, ADMIN_LABEL } from '@/features/admin/ui/admin-form-classes';
 import type {
   AdminCategoryOption,
   AdminProductListItem,
@@ -23,6 +23,14 @@ import {
   type ProductDraftImage,
 } from '@/features/products/ui/ProductDrawerImages';
 import { ProductDrawerModifiers } from '@/features/products/ui/ProductDrawerModifiers';
+import {
+  ProductDrawerLocaleFields,
+  collectProductTranslations,
+  emptyProductDrafts,
+  productDraftsFrom,
+  type ProductLocaleDraft,
+} from '@/features/products/ui/ProductDrawerLocaleFields';
+import { isLocale, type Locale } from '@/lib/i18n/config';
 import type { Dictionary } from '@/lib/i18n/get-dictionary';
 
 type ProductDrawerProduct = Pick<
@@ -32,6 +40,7 @@ type ProductDrawerProduct = Pick<
   | 'title'
   | 'slug'
   | 'description'
+  | 'translations'
   | 'priceAmount'
   | 'stockOnHand'
   | 'status'
@@ -81,9 +90,8 @@ export function ProductDrawer({
 }: ProductDrawerProps) {
   const router = useRouter();
   const isEdit = product != null;
-  const [title, setTitle] = useState('');
-  const [slug, setSlug] = useState('');
-  const [description, setDescription] = useState('');
+  const [activeLocale, setActiveLocale] = useState<Locale>(isLocale(locale) ? locale : 'hy');
+  const [drafts, setDrafts] = useState(emptyProductDrafts);
   const [images, setImages] = useState<ProductDraftImage[]>([]);
   const [removedImageIds, setRemovedImageIds] = useState<string[]>([]);
   const [categories, setCategories] = useState<AdminCategoryOption[]>(initialCategories);
@@ -103,9 +111,8 @@ export function ProductDrawer({
     setCategories(initialCategories);
     setModifierLibrary(initialModifierLibrary);
     if (product) {
-      setTitle(product.title);
-      setSlug(product.slug);
-      setDescription(product.description);
+      setActiveLocale(isLocale(locale) ? locale : 'hy');
+      setDrafts(productDraftsFrom(product.translations));
       setImages(imagesFromProduct(product));
       setRemovedImageIds([]);
       setCategoryIds(product.categoryIds);
@@ -128,9 +135,8 @@ export function ProductDrawer({
       setSku(product.sku);
       setError(null);
     } else {
-      setTitle('');
-      setSlug('');
-      setDescription('');
+      setActiveLocale(isLocale(locale) ? locale : 'hy');
+      setDrafts(emptyProductDrafts());
       setImages([]);
       setRemovedImageIds([]);
       setCategoryIds([]);
@@ -140,7 +146,7 @@ export function ProductDrawer({
       setSku('');
       setError(null);
     }
-  }, [open, product, initialCategories, initialModifierLibrary]);
+  }, [open, product, locale, initialCategories, initialModifierLibrary]);
 
   function handleImagesChange(next: ProductDraftImage[]): void {
     const nextKeys = new Set(next.map((image) => image.key));
@@ -156,6 +162,10 @@ export function ProductDrawer({
       setRemovedImageIds((prev) => [...prev, ...removedExisting]);
     }
     setImages(next);
+  }
+
+  function updateDraft(loc: Locale, patch: Partial<ProductLocaleDraft>): void {
+    setDrafts((current) => ({ ...current, [loc]: { ...current[loc], ...patch } }));
   }
 
   return (
@@ -181,11 +191,15 @@ export function ProductDrawer({
             ? newImages.findIndex((image) => image.key === primaryImage.key)
             : null;
 
+          const translations = collectProductTranslations(drafts);
+          if (!translations) {
+            setError(copy.common.atLeastOneLanguage);
+            return;
+          }
+
           const payload = {
             sku: sku.trim(),
-            title: title.trim(),
-            slug: slug.trim(),
-            description: description.trim() || undefined,
+            translations,
             priceAmount: Number(priceAmount),
             stockOnHand: product
               ? product.stockOnHand
@@ -235,45 +249,13 @@ export function ProductDrawer({
         }}
       >
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label>
-              <span className={ADMIN_LABEL}>
-                {copy.drawer.title} <span className="text-red-600">{copy.common.requiredMark}</span>
-              </span>
-              <input
-                required
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                placeholder={copy.drawer.titlePlaceholder}
-                className={ADMIN_INPUT}
-                disabled={isPending}
-              />
-            </label>
-            <label>
-              <span className={ADMIN_LABEL}>
-                {copy.drawer.slug} <span className="text-red-600">{copy.common.requiredMark}</span>
-              </span>
-              <input
-                required
-                value={slug}
-                onChange={(event) => setSlug(event.target.value)}
-                placeholder={copy.drawer.slugPlaceholder}
-                className={ADMIN_INPUT}
-                disabled={isPending}
-              />
-            </label>
-          </div>
-
-          <label className="block">
-            <span className={ADMIN_LABEL}>{copy.drawer.description}</span>
-            <textarea
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              placeholder={copy.drawer.descriptionPlaceholder}
-              className={ADMIN_TEXTAREA}
-              disabled={isPending}
-            />
-          </label>
+          <ProductDrawerLocaleFields
+            active={activeLocale}
+            drafts={drafts}
+            disabled={isPending}
+            onActiveChange={setActiveLocale}
+            onDraftChange={updateDraft}
+          />
 
           <ProductDrawerImages
             images={images}
